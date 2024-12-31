@@ -186,7 +186,6 @@
 .dots-container::-webkit-scrollbar {
     height: 8px;
 }
-
 /* Track */
 .dots-container::-webkit-scrollbar-track {
     background: #29292930;
@@ -202,6 +201,22 @@
 /* Handle on hover */
 .dots-container::-webkit-scrollbar-thumb:hover {
     background: rgba(247, 187, 97, 0.895);
+}
+
+/* Firefox scrollbar styles */
+.dots-container {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(253, 149, 22, 0.895) #29292930;
+}
+
+/* Handle on hover for Firefox */
+.dots-container:hover {
+    scrollbar-color: rgba(247, 187, 97, 0.895) #29292930;
+}
+
+/* Remove arrows on Chrome Windows */
+.dots-container::-webkit-scrollbar-button {
+    display: none;
 }
 
 .dot {

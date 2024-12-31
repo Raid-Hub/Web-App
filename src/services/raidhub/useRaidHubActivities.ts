@@ -185,8 +185,6 @@ export const useRaidHubActivities = (
                 ? new Collection()
                 : new Collection(
                       queries.flatMap(q => q.data?.activities ?? []).map(a => [a.instanceId, a])
-                  ).sort((a, b) =>
-                      new Date(b.dateCompleted) < new Date(a.dateCompleted) ? -1 : 1
                   ),
             isLoading: queries.length === 0 || queries.some(q => q.isLoading)
         }),

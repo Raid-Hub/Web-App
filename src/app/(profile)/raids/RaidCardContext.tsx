@@ -1,7 +1,7 @@
 "use client"
 
 import { Collection } from "@discordjs/collection"
-import { createContext, useContext, type ReactNode } from "react"
+import { createContext, useContext, useMemo, type ReactNode } from "react"
 import { type RaidHubInstanceForPlayer } from "~/services/raidhub/types"
 
 const RaidContext = createContext<
@@ -31,6 +31,14 @@ export const RaidCardContext = ({
     isLoadingActivities: boolean
     raidId: number
 }) => {
+    const memoizedSortedActivities = useMemo(
+        () =>
+            activities.toSorted(
+                (a, b) => new Date(a.dateCompleted).getTime() - new Date(b.dateCompleted).getTime()
+            ),
+        [activities]
+    )
+
     return (
         <RaidContext.Provider
             value={{
@@ -39,7 +47,7 @@ export const RaidCardContext = ({
                     ? { isLoadingActivities: true, activities: null }
                     : {
                           isLoadingActivities: false,
-                          activities
+                          activities: memoizedSortedActivities
                       })
             }}>
             {children}

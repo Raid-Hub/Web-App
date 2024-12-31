@@ -103,9 +103,7 @@ export const RaidsWrapper = () => {
             if (!coll.has(a.activityId)) coll.set(a.activityId, new Collection())
             coll.get(a.activityId)!.set(a.instanceId, a)
         })
-        return coll.each(group =>
-            group.sort((a, b) => (new Date(a.dateCompleted) < new Date(b.dateCompleted) ? -1 : -1))
-        )
+        return coll
     }, [activities, isLoadingActivities])
 
     const { validatedSearchParams, set } = useQueryParams<{
