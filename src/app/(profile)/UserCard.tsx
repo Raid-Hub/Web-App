@@ -18,6 +18,7 @@ import { getBungieDisplayName } from "~/util/destiny/getBungieDisplayName"
 import { decodeHtmlEntities } from "~/util/presentation/formatting"
 import { $media } from "../layout/media"
 import { trpc } from "../trpc"
+import { CommunityProfiles } from "./CommunityProfiles."
 import { UserCardSocials } from "./UserCardSocials"
 import type { ProfileProps } from "./types"
 
@@ -118,66 +119,16 @@ export function UserCard() {
                                 priority
                                 alt="profile banner"
                             />
+                            <BannerOverlay>{/* <Badge /> */}</BannerOverlay>
                         </Container>
-                        <Flex $direction="column">
-                            <Flex
-                                $direction="column"
-                                $crossAxis="flex-start"
-                                $gap={0.25}
-                                $padding={0}
-                                $fullWidth>
-                                <Nameplate>
-                                    {userInfo ? getBungieDisplayName(userInfo) : "Guardian#0000"}
-                                </Nameplate>
-                                {clanTitle && (
-                                    <Subtitle>
-                                        <Link href={`/clan/${clan!.groupId}`}>{clanTitle}</Link>
-                                    </Subtitle>
-                                )}
-                            </Flex>
-                            {/* Rankings */}
-                            <UserCardSocials size="lg" />
-                        </Flex>
-                    </div>
-                }
-                lg={
-                    <div>
-                        <Container
-                            $aspectRatio={{
-                                width: 1958,
-                                height: 146
-                            }}>
-                            <BannerOverlay>
-                                <UserCardSocials size="sm" bottom />
-                            </BannerOverlay>
-                            <Image
-                                src={emblemBannerUrl}
-                                style={{ zIndex: -1 }}
-                                unoptimized
-                                fill
-                                priority
-                                alt="profile banner"
-                            />
-                        </Container>
-                        <Flex
-                            $direction="row"
-                            $align="space-between"
-                            $gap={0.25}
-                            $padding={0.75}
-                            $fullWidth>
-                            <Flex $padding={0}>
-                                <ProfilePicture
-                                    src={icon}
-                                    width={50}
-                                    height={50}
-                                    alt="profile picture"
-                                    unoptimized
-                                />
+                        <Flex $direction="row" $wrap $align="flex-start" $padding={0}>
+                            <Flex $direction="column">
                                 <Flex
                                     $direction="column"
                                     $crossAxis="flex-start"
-                                    $gap={0.1}
-                                    $padding={0.3}>
+                                    $gap={0.25}
+                                    $padding={0}
+                                    $fullWidth>
                                     <Nameplate>
                                         {userInfo
                                             ? getBungieDisplayName(userInfo)
@@ -190,6 +141,60 @@ export function UserCard() {
                                     )}
                                 </Flex>
                             </Flex>
+                            <CommunityProfiles />
+                        </Flex>
+                    </div>
+                }
+                lg={
+                    <div>
+                        <Container
+                            $aspectRatio={{
+                                width: 1958,
+                                height: 146
+                            }}>
+                            <Image
+                                src={emblemBannerUrl}
+                                style={{ zIndex: -1 }}
+                                unoptimized
+                                fill
+                                priority
+                                alt="profile banner"
+                            />
+                            <BannerOverlay>{/* <Badge /> */}</BannerOverlay>
+                        </Container>
+                        <Flex
+                            $direction="row"
+                            $align="flex-start"
+                            $padding={0.75}
+                            $fullWidth
+                            $wrap
+                            $gap={2}>
+                            <ProfilePicture>
+                                <Image
+                                    src={icon}
+                                    alt="profile picture"
+                                    fill
+                                    unoptimized
+                                    style={{ objectFit: "cover" }}
+                                />
+                            </ProfilePicture>
+                            <Flex
+                                $direction="column"
+                                $crossAxis="flex-start"
+                                $gap={0.1}
+                                $padding={0.3}>
+                                <Nameplate>
+                                    {userInfo ? getBungieDisplayName(userInfo) : "Guardian#0000"}
+                                </Nameplate>
+                                {clanTitle && (
+                                    <Subtitle>
+                                        <Link href={`/clan/${clan!.groupId}`}>{clanTitle}</Link>
+                                    </Subtitle>
+                                )}
+                            </Flex>
+                            <UserCardSocials />
+                            <CommunityProfiles />
+                            {/* Rankings */}
                         </Flex>
                     </div>
                 }
@@ -220,28 +225,33 @@ const Subtitle = styled.div`
     }
 `
 
-const ProfilePicture = styled(Image)`
+const ProfilePicture = styled.div`
     aspect-ratio: 1 / 1;
+    position: relative;
 
     z-index: 1;
-    margin: 0 0.25em;
-    margin-top: -25%;
+    margin-top: -3em;
 
     height: 6em;
-    width: unset;
 
     border-radius: 50%;
     border: 1px solid color-mix(in srgb, ${({ theme }) => theme.colors.border.medium}, #0000 60%);
+    overflow: hidden;
 
     -webkit-backdrop-filter: blur(5px);
     backdrop-filter: blur(5px);
     box-shadow: 0 0 0.5em
         color-mix(in srgb, ${({ theme }) => theme.colors.border.medium}, #0000 60%);
+
+    display: flex;
 `
 
 const BannerOverlay = styled.div`
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
-    left: 8em;
+    left: 10rem;
+    ${$media.max.mobile`
+        left: 25%;
+    `}
 `

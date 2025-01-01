@@ -1,12 +1,16 @@
 import { type ReactNode } from "react"
 
-export const OptionalWrapper = <T, C extends ReactNode>(props: {
+export const OptionalWrapper = <
+    T,
+    C extends ReactNode,
+    NNT = T extends NonNullable<T> ? NonNullable<T> : never
+>(props: {
     condition: T
-    children: T extends NonNullable<T> ? never : C // forces the children to be never if the condition is non-nullable
-    wrapper: (props: { children: C; value: NonNullable<T> }) => ReactNode
+    children: C
+    wrapper: (props: { children: C; value: NNT }) => ReactNode
 }) =>
     !props.condition ? (
         props.children
     ) : (
-        <props.wrapper value={props.condition}>{props.children}</props.wrapper>
+        <props.wrapper value={props.condition as NNT}>{props.children}</props.wrapper>
     )

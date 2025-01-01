@@ -32,9 +32,7 @@ export const TooltipContainer = forwardRef<
             ref={ref}
             {...props}
             onMouseEnter={() => setShow(true)}
-            onMouseLeave={() => setShow(false)}
-            onFocus={() => setShow(true)}
-            onBlur={() => setShow(false)}>
+            onMouseLeave={() => setShow(false)}>
             {Children.map(children, child => {
                 try {
                     return isValidElement(child)
@@ -66,6 +64,7 @@ const StyledTooltipContainer = styled.div<{
 }>`
     display: flex;
     position: relative;
+    z-index: 11;
 
     ${({ $aspectRatio }) =>
         $aspectRatio ? `aspect-ratio: ${$aspectRatio.width}/${$aspectRatio.height};` : ""}
