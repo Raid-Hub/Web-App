@@ -1,10 +1,11 @@
 import Image from "next/image"
 import Link from "next/link"
+import styled from "styled-components"
 import { TooltipContainer, TooltipData } from "~/components/Tooltip"
 import ExternalLink from "~/components/icons/ExternalLink"
-import { Container } from "~/components/layout/Container"
 import { Flex } from "~/components/layout/Flex"
 import { usePageProps } from "~/components/layout/PageWrapper"
+import { $media } from "../layout/media"
 import { type ProfileProps } from "./types"
 
 const memTypeToString: Record<number, string> = {
@@ -22,7 +23,7 @@ export function CommunityProfiles() {
         memTypeToString[props.destinyMembershipType] ?? props.destinyMembershipType
 
     return (
-        <Flex $padding={0.5} $wrap $align="flex-start">
+        <Flex $padding={0.5} $wrap $align="flex-start" style={{ flex: 1, minWidth: 140 }}>
             <Profile
                 title="Dungeon Report"
                 url={`https://dungeon.report/${membershipTypeS}/${props.destinyMembershipId}`}
@@ -50,7 +51,7 @@ export function CommunityProfiles() {
             />
             <Profile
                 title="Guardian Report"
-                url={`https://guardian.report/?guardians=[${props.destinyMembershipId}`}
+                url={`https://guardian.report/?guardians=${props.destinyMembershipId}`}
                 icon="https://guardian.report/favicon.ico"
             />
             <Profile
@@ -79,16 +80,19 @@ const Profile = ({ title, url, icon }: { title: string; url: string; icon: strin
                     </Flex>
                 </TooltipData>
             }>
-            <Container
-                style={{ width: "28px" }}
-                $aspectRatio={{
-                    height: 1,
-                    width: 1
-                }}>
-                <Link href={url} target="_blank">
-                    <Image src={icon} alt={title} fill unoptimized />
-                </Link>
-            </Container>
+            <ImageContainer href={url} target="_blank">
+                <Image src={icon} alt={title} fill unoptimized />
+            </ImageContainer>
         </TooltipContainer>
     )
 }
+
+const ImageContainer = styled(Link)`
+    aspect-ratio: 1/1;
+    width: 28px;
+    ${$media.max.mobile`
+        width: 20px;
+    `}
+
+    position: relative;
+`

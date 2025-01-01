@@ -37,6 +37,8 @@ model User {
   raidHubAccessToken RaidHubAccessToken? @relation("UserToRaidHubAccessToken")
   sessions           Session[]           @relation("UserToSession")
 
+  badges Badge[] @relation("UserToBadge")
+
   @@map("bungie_user")
 }
 
@@ -91,6 +93,17 @@ model PGCR {
   profilesWithPinned Profile[] @relation("PGCRToProfile")
 
   @@map("pgcr")
+}
+
+model Badge {
+  id          String @id
+  name        String
+  description String
+  icon        String
+
+  users User[] @relation("UserToBadge")
+
+  @@map("badge")
 }
 
 model Migration {

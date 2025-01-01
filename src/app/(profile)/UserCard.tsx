@@ -19,6 +19,7 @@ import { decodeHtmlEntities } from "~/util/presentation/formatting"
 import { $media } from "../layout/media"
 import { trpc } from "../trpc"
 import { CommunityProfiles } from "./CommunityProfiles."
+import { ProfileBadge } from "./ProfileBadge"
 import { UserCardSocials } from "./UserCardSocials"
 import type { ProfileProps } from "./types"
 
@@ -44,12 +45,12 @@ export function UserCard() {
         }
     )
 
-    const { data: appProfileImage } = trpc.profile.getUnique.useQuery(
+    const { data: raidHubUser } = trpc.profile.getUnique.useQuery(
         {
             destinyMembershipId: props.destinyMembershipId
         },
         {
-            select: data => data?.user?.image ?? null,
+            select: data => data?.user,
             // Required to prevent the query from running before the page is ready
             enabled: props.ready
         }
@@ -80,7 +81,7 @@ export function UserCard() {
 
     const icon =
         // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
-        appProfileImage ||
+        raidHubUser?.image ||
         bungieProfileIconUrl(
             Object.values(destinyProfileQuery?.data?.characters.data ?? {})[0]?.emblemPath ??
                 resolvedPlayer?.iconPath
@@ -102,6 +103,10 @@ export function UserCard() {
         [clan]
     )
 
+    const [displayName, displayNameCode] = (
+        userInfo ? getBungieDisplayName(userInfo) : "Guardian#0000"
+    ).split("#")
+
     return (
         <Card $overflowHidden style={{ minWidth: "min(100%, 1300px)", maxWidth: "1300px" }}>
             <MobileDesktopSwitch
@@ -119,9 +124,23 @@ export function UserCard() {
                                 priority
                                 alt="profile banner"
                             />
-                            <BannerOverlay>{/* <Badge /> */}</BannerOverlay>
+                            <BannerOverlay>
+                                <Flex>
+                                    {raidHubUser?.badges?.slice(0, 5).map(badge => (
+                                        <ProfileBadge key={badge.id} {...badge} size={24} />
+                                    ))}
+                                </Flex>
+                            </BannerOverlay>
                         </Container>
-                        <Flex $direction="row" $wrap $align="flex-start" $padding={0}>
+                        <Flex
+                            $direction="row"
+                            $wrap
+                            $align="flex-start"
+                            $padding={0}
+                            $gap={0}
+                            style={{
+                                columnGap: "1em"
+                            }}>
                             <Flex $direction="column">
                                 <Flex
                                     $direction="column"
@@ -130,9 +149,8 @@ export function UserCard() {
                                     $padding={0}
                                     $fullWidth>
                                     <Nameplate>
-                                        {userInfo
-                                            ? getBungieDisplayName(userInfo)
-                                            : "Guardian#0000"}
+                                        {displayName}
+                                        {displayNameCode && <span>#{displayNameCode}</span>}
                                     </Nameplate>
                                     {clanTitle && (
                                         <Subtitle>
@@ -160,7 +178,13 @@ export function UserCard() {
                                 priority
                                 alt="profile banner"
                             />
-                            <BannerOverlay>{/* <Badge /> */}</BannerOverlay>
+                            <BannerOverlay>
+                                <Flex $gap={1.5}>
+                                    {raidHubUser?.badges?.map(badge => (
+                                        <ProfileBadge key={badge.id} {...badge} size={32} />
+                                    ))}
+                                </Flex>
+                            </BannerOverlay>
                         </Container>
                         <Flex
                             $direction="row"
@@ -184,7 +208,8 @@ export function UserCard() {
                                 $gap={0.1}
                                 $padding={0.3}>
                                 <Nameplate>
-                                    {userInfo ? getBungieDisplayName(userInfo) : "Guardian#0000"}
+                                    {displayName}
+                                    {displayNameCode && <span>#{displayNameCode}</span>}
                                 </Nameplate>
                                 {clanTitle && (
                                     <Subtitle>
@@ -211,6 +236,11 @@ const Nameplate = styled.h1`
     `}
 
     color: ${({ theme }) => theme.colors.text.primary};
+
+    & span {
+        color: ${({ theme }) => theme.colors.text.secondary};
+        font-weight: 400;
+    }
 `
 
 const Subtitle = styled.div`
@@ -254,4 +284,6 @@ const BannerOverlay = styled.div`
     ${$media.max.mobile`
         left: 25%;
     `}
+
+    z-index: 2;
 `

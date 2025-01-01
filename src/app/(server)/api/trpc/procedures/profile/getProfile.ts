@@ -18,6 +18,7 @@ export const getProfile = publicProcedure
             include: {
                 user: {
                     select: {
+                        badges: true,
                         name: true,
                         image: true,
                         accounts: {
