@@ -28,8 +28,6 @@ switch (process.env.APP_ENV) {
         version = "unknown"
 }
 
-const developers: [display: string, path: string][] = [["Newo", "newo"]]
-
 const contactIcons: { url: string; Icon: SVGComponent }[] = [
     {
         url: "https://ko-fi.com/raidhub",
