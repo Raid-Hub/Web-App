@@ -1,144 +1,143 @@
 {
-  "name": "raidhub",
-  "private": true,
-  "license": "UNLICENSED",
-  "scripts": {
-    "prepare": "husky",
-    "dev": "next dev --experimental-https",
-    "docs": "openapi-typescript https://api-docs.raidhub.io/openapi.json -o ./src/services/raidhub/openapi.d.ts --immutable-types",
-    "docs:dev": "openapi-typescript http://localhost:8000/static/openapi -o ./src/services/raidhub/openapi.d.ts --immutable-types",
-    "migrate:create": "prisma migrate dev --create-only",
-    "migrate:drift": "prisma migrate diff --to-migrations \"./prisma/migrations\" --from-schema-datamodel \"./prisma/schema.prisma\" --exit-code",
-    "studio": "prisma studio",
-    "analyze": "ANALYZE=true bun build",
-    "lint": "next lint",
-    "format": "prettier --write \"src/**/*.{ts,tsx,json}\" && prisma format",
-    "format:check": "prettier --check \"src/**/*.{ts,tsx,json}\"",
-    "build": "bun prisma generate && next build",
-    "deploy": "./vercel/dev-deploy.sh"
-  },
-  "dependencies": {
-    "@auth/core": "0.32.0",
-    "@aws-sdk/client-s3": "3.598.0",
-    "@aws-sdk/s3-presigned-post": "3.598.0",
-    "@discordjs/collection": "2.1.0",
-    "@formatjs/intl-localematcher": "0.5.4",
-    "@hookform/resolvers": "3.3.4",
-    "@libsql/client": "0.6.2",
-    "@prisma/adapter-libsql": "5.15.0",
-    "@prisma/client": "5.15.0",
-    "@tanstack/react-query": "4.36.1",
-    "@trpc/client": "10.44.1",
-    "@trpc/react-query": "10.44.1",
-    "@trpc/server": "10.44.1",
-    "bungie-net-core": "2.1.3",
-    "core-js": "3.37.1",
-    "dexie": "3.2.4",
-    "dexie-react-hooks": "1.1.7",
-    "framer-motion": "10.13.0",
-    "next": "14.2.0-canary.26",
-    "next-auth": "^5.0.0-beta.19",
-    "nextjs-toploader": "1.6.6",
-    "react": "18.3.1",
-    "react-dom": "18.3.1",
-    "react-hook-form": "7.45.2",
-    "react-markdown": "9.0.1",
-    "react-simple-typewriter": "5.0.1",
-    "recharts": "^2.12.7",
-    "server-only": "0.0.1",
-    "sharp": "0.33.4",
-    "styled-components": "6.1.8",
-    "superjson": "1.13.1",
-    "uuid": "9.0.0",
-    "zod": "3"
-  },
-  "devDependencies": {
-    "@libsql/linux-x64-gnu": "0.4.0-pre.6",
-    "@next/bundle-analyzer": "14.2.0-canary.26",
-    "@next/eslint-plugin-next": "14.2.0-canary.26",
-    "@tanstack/react-query-devtools": "4.36",
-    "@types/node": "20",
-    "@types/react": "18.3.0",
-    "@types/react-dom": "18.3.0",
-    "@types/uuid": "9.0.2",
-    "@typescript-eslint/eslint-plugin": "6.21.0",
-    "@typescript-eslint/parser": "6.21.0",
-    "dotenv": "16.0.3",
-    "eslint": "8.40.0",
-    "eslint-config-next": "14.1.0",
-    "eslint-plugin": "1.0.1",
-    "eslint-plugin-unused-imports": "2.0.0",
-    "husky": "9.0.6",
-    "node-fetch": "3.3.1",
-    "openapi-typescript": "6.7.4",
-    "prettier": "2.8.7",
-    "prettier-plugin-organize-imports": "3.2.4",
-    "prisma": "5.15.0",
-    "ts-node": "10.9.1",
-    "typescript": "5.3.3",
-    "vercel": "latest"
-  },
-  "lint-staged": {
-    "*.{ts,json}": [
-      "prettier --write",
-      "eslint --fix"
-    ],
-    "*.js": "eslint --cache --fix"
-  },
-  "prettier": {
-    "printWidth": 100,
-    "tabWidth": 4,
-    "useTabs": false,
-    "semi": false,
-    "singleQuote": false,
-    "quoteProps": "as-needed",
-    "jsxSingleQuote": false,
-    "trailingComma": "none",
-    "bracketSpacing": true,
-    "bracketSameLine": true,
-    "arrowParens": "avoid",
-    "endOfLine": "lf",
-    "plugins": [
-      "prettier-plugin-organize-imports"
-    ]
-  },
-  "eslintConfig": {
-    "parser": "@typescript-eslint/parser",
-    "parserOptions": {
-      "project": true
+    "name": "raidhub",
+    "private": true,
+    "license": "UNLICENSED",
+    "scripts": {
+        "prepare": "husky",
+        "dev": "next dev --experimental-https",
+        "docs": "openapi-typescript https://api-docs.raidhub.io/openapi.json -o ./src/services/raidhub/openapi.d.ts --immutable-types",
+        "docs:dev": "openapi-typescript http://localhost:8000/static/openapi -o ./src/services/raidhub/openapi.d.ts --immutable-types",
+        "migrate:create": "prisma migrate dev --create-only",
+        "migrate:drift": "prisma migrate diff --to-migrations \"./prisma/migrations\" --from-schema-datamodel \"./prisma/schema.prisma\" --exit-code",
+        "studio": "prisma studio",
+        "analyze": "ANALYZE=true bun build",
+        "lint": "next lint",
+        "format": "prettier --write \"src/**/*.{ts,tsx,json}\" && prisma format",
+        "format:check": "prettier --check \"src/**/*.{ts,tsx,json}\"",
+        "build": "bun prisma generate && next build",
+        "deploy": "./vercel/dev-deploy.sh"
     },
-    "plugins": [
-      "@typescript-eslint"
-    ],
-    "extends": [
-      "next/core-web-vitals",
-      "plugin:@typescript-eslint/recommended-type-checked",
-      "plugin:@typescript-eslint/stylistic-type-checked"
-    ],
-    "ignorePatterns": [
-      "*.d.ts"
-    ],
-    "rules": {
-      "@typescript-eslint/consistent-type-imports": [
-        "error",
-        {
-          "prefer": "type-imports",
-          "fixStyle": "inline-type-imports"
+    "dependencies": {
+        "@auth/core": "0.32.0",
+        "@aws-sdk/client-s3": "3.598.0",
+        "@aws-sdk/s3-presigned-post": "3.598.0",
+        "@discordjs/collection": "2.1.0",
+        "@formatjs/intl-localematcher": "0.5.4",
+        "@hookform/resolvers": "3.3.4",
+        "@libsql/client": "0.6.2",
+        "@prisma/adapter-libsql": "5.15.0",
+        "@prisma/client": "5.15.0",
+        "@tanstack/react-query": "4.36.1",
+        "@trpc/client": "10.44.1",
+        "@trpc/react-query": "10.44.1",
+        "@trpc/server": "10.44.1",
+        "bungie-net-core": "2.1.3",
+        "core-js": "3.37.1",
+        "dexie": "3.2.4",
+        "dexie-react-hooks": "1.1.7",
+        "framer-motion": "10.13.0",
+        "next": "14.2.0-canary.26",
+        "next-auth": "^5.0.0-beta.19",
+        "nextjs-toploader": "1.6.6",
+        "react": "18.3.1",
+        "react-dom": "18.3.1",
+        "react-hook-form": "7.45.2",
+        "react-markdown": "9.0.1",
+        "react-simple-typewriter": "5.0.1",
+        "recharts": "^2.12.7",
+        "server-only": "0.0.1",
+        "sharp": "0.33.4",
+        "styled-components": "6.1.8",
+        "superjson": "1.13.1",
+        "uuid": "9.0.0",
+        "zod": "3"
+    },
+    "devDependencies": {
+        "@libsql/linux-x64-gnu": "0.4.0-pre.6",
+        "@next/bundle-analyzer": "14.2.0-canary.26",
+        "@next/eslint-plugin-next": "14.2.0-canary.26",
+        "@tanstack/react-query-devtools": "4.36",
+        "@types/node": "20",
+        "@types/react": "18.3.0",
+        "@types/react-dom": "18.3.0",
+        "@types/uuid": "9.0.2",
+        "@typescript-eslint/eslint-plugin": "6.21.0",
+        "@typescript-eslint/parser": "6.21.0",
+        "dotenv": "16.0.3",
+        "eslint": "8.40.0",
+        "eslint-config-next": "14.1.0",
+        "eslint-plugin": "1.0.1",
+        "eslint-plugin-unused-imports": "2.0.0",
+        "husky": "9.0.6",
+        "node-fetch": "3.3.1",
+        "openapi-typescript": "6.7.4",
+        "prettier": "2.8.7",
+        "prettier-plugin-organize-imports": "3.2.4",
+        "prisma": "5.15.0",
+        "ts-node": "10.9.1",
+        "typescript": "5.3.3"
+    },
+    "lint-staged": {
+        "*.{ts,json}": [
+            "prettier --write",
+            "eslint --fix"
+        ],
+        "*.js": "eslint --cache --fix"
+    },
+    "prettier": {
+        "printWidth": 100,
+        "tabWidth": 4,
+        "useTabs": false,
+        "semi": false,
+        "singleQuote": false,
+        "quoteProps": "as-needed",
+        "jsxSingleQuote": false,
+        "trailingComma": "none",
+        "bracketSpacing": true,
+        "bracketSameLine": true,
+        "arrowParens": "avoid",
+        "endOfLine": "lf",
+        "plugins": [
+            "prettier-plugin-organize-imports"
+        ]
+    },
+    "eslintConfig": {
+        "parser": "@typescript-eslint/parser",
+        "parserOptions": {
+            "project": true
+        },
+        "plugins": [
+            "@typescript-eslint"
+        ],
+        "extends": [
+            "next/core-web-vitals",
+            "plugin:@typescript-eslint/recommended-type-checked",
+            "plugin:@typescript-eslint/stylistic-type-checked"
+        ],
+        "ignorePatterns": [
+            "*.d.ts"
+        ],
+        "rules": {
+            "@typescript-eslint/consistent-type-imports": [
+                "error",
+                {
+                    "prefer": "type-imports",
+                    "fixStyle": "inline-type-imports"
+                }
+            ],
+            "@typescript-eslint/no-unused-vars": [
+                "warn",
+                {
+                    "argsIgnorePattern": "^_"
+                }
+            ],
+            "@typescript-eslint/require-await": "off",
+            "@typescript-eslint/array-type": "off",
+            "@typescript-eslint/consistent-type-definitions": "off",
+            "@next/next/no-page-custom-font": "off",
+            "@typescript-eslint/unbound-method": "off",
+            "@typescript-eslint/no-unsafe-enum-comparison": "off",
+            "@typescript-eslint/no-misused-promises": "off"
         }
-      ],
-      "@typescript-eslint/no-unused-vars": [
-        "warn",
-        {
-          "argsIgnorePattern": "^_"
-        }
-      ],
-      "@typescript-eslint/require-await": "off",
-      "@typescript-eslint/array-type": "off",
-      "@typescript-eslint/consistent-type-definitions": "off",
-      "@next/next/no-page-custom-font": "off",
-      "@typescript-eslint/unbound-method": "off",
-      "@typescript-eslint/no-unsafe-enum-comparison": "off",
-      "@typescript-eslint/no-misused-promises": "off"
     }
-  }
 }

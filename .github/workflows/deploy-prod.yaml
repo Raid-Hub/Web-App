@@ -24,6 +24,7 @@ jobs:
             - name: Download dependencies
               run: |
                   bun install --frozen-lockfile
+                  bun install -g vercel
                   bun prisma generate
 
             - name: Install Turso CLI
