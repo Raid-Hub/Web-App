@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 "use client"
 
 import { Suspense, useEffect, useMemo, useRef, useState } from "react"
@@ -30,10 +31,12 @@ export const DonationBanner = () => {
         return d
     }, [])
 
-    const shouldShowBanner =
-        isMounted &&
-        kofiBannerNotShown > 15 &&
-        (kofiBannerDismissDate === null || new Date(kofiBannerDismissDate) < oneMonthAgo)
+    // const shouldShowBanner =
+    //     isMounted &&
+    //     kofiBannerNotShown > 15 &&
+    //     (kofiBannerDismissDate === null || new Date(kofiBannerDismissDate) < oneMonthAgo)
+
+    const shouldShowBanner = false
 
     useEffect(() => {
         setKofiBannerNotShown(old => old + 1)

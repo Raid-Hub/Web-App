@@ -1,7 +1,7 @@
 "use client"
 
 import Link from "next/link"
-import { Fragment, type ReactNode } from "react"
+import { type ReactNode } from "react"
 import styled from "styled-components"
 import { type SVGComponent } from "~/components/SVG"
 import DiscordIcon from "~/components/icons/DiscordIcon"
@@ -28,12 +28,6 @@ switch (process.env.APP_ENV) {
         version = "unknown"
 }
 
-const developers: [display: string, path: string][] = [
-    ["Newo", "newo"],
-    ["Sam", "sam"],
-    ["Theos", "theos"]
-]
-
 const contactIcons: { url: string; Icon: SVGComponent }[] = [
     {
         url: "https://ko-fi.com/raidhub",
@@ -59,15 +53,7 @@ export const Footer = () => {
             <Flex $align="space-between" $padding={1}>
                 <FooterSide side="left">
                     <div>
-                        <DevelopedBy>Developed by</DevelopedBy>
-                        <div>
-                            {developers.map(([display, path], idx) => (
-                                <Fragment key={idx}>
-                                    <Developer href={`/${path}`}>{display}</Developer>
-                                    {idx !== developers.length - 1 && <span>{", "}</span>}
-                                </Fragment>
-                            ))}
-                        </div>
+                        Developed by <Developer href={`/newo`}>{"Newo"}</Developer>
                     </div>
                     <div>
                         RaidHub <Version>{version}</Version>
@@ -124,10 +110,6 @@ const FooterSide = (props: { children: ReactNode; side: "left" | "right" }) => (
         {props.children}
     </Flex>
 )
-
-const DevelopedBy = styled.div`
-    margin-bottom: 0.2em;
-`
 
 const Developer = styled(Link)`
     font-weight: 800;

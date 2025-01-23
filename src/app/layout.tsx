@@ -10,6 +10,7 @@ import { Header } from "./layout/header/Header"
 import { HeaderContent } from "./layout/header/HeaderContent"
 import { DestinyServiceStatusBanner } from "./layout/overlays/DestinyServiceStatusBanner"
 import { DonationBanner } from "./layout/overlays/DonationBanner"
+import { G2GBanner } from "./layout/overlays/G2GBanner"
 import { RaidHubStatusBanner } from "./layout/overlays/RaidHubStatusBanner"
 import { SearchModal } from "./layout/overlays/SearchModal"
 import { ClientComponentManager } from "./layout/wrappers/ClientComponentManager"
@@ -60,6 +61,7 @@ export default async function RootLayout(params: { children: ReactNode }) {
                                                 <HeaderContent />
                                             </Header>
                                             <DonationBanner />
+                                            <G2GBanner />
                                             <DestinyServiceStatusBanner />
                                             <RaidHubStatusBanner />
                                             <SearchModal />
