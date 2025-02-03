@@ -78,7 +78,7 @@ export default function RaidCard({
     }, [activities, isReprisedRaid, isChallengeMode, leaderboardEntry, activityDefinition])
 
     const { fastestFullClear, averageClear, stats } = useMemo(() => {
-        const freshFulls = activities?.filter(a => a.completed && a.fresh)
+        const freshFulls = activities?.filter(a => a.player.completed && a.fresh)
         const fastestFullClear = freshFulls?.size
             ? freshFulls?.reduce<RaidHubInstanceForPlayer>((curr, nxt) =>
                   nxt.duration < curr.duration ? nxt : curr
