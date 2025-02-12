@@ -31,12 +31,10 @@ export const DonationBanner = () => {
         return d
     }, [])
 
-    // const shouldShowBanner =
-    //     isMounted &&
-    //     kofiBannerNotShown > 15 &&
-    //     (kofiBannerDismissDate === null || new Date(kofiBannerDismissDate) < oneMonthAgo)
-
-    const shouldShowBanner = false
+    const shouldShowBanner =
+        isMounted &&
+        kofiBannerNotShown > 15 &&
+        (kofiBannerDismissDate === null || new Date(kofiBannerDismissDate) < oneMonthAgo)
 
     useEffect(() => {
         setKofiBannerNotShown(old => old + 1)
