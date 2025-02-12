@@ -1,6 +1,6 @@
 import { createTRPCRouter } from "."
-import { createVanity } from "./procedures/admin/createVanity"
-import { removeVanity } from "./procedures/admin/removeVanity"
+import { addBadge, createBadge, listBadges, removeBadge } from "./procedures/admin/badges"
+import { createVanity, removeVanity } from "./procedures/admin/vanity"
 import { unhandledClientError } from "./procedures/monitoring/unhandledClientError"
 import { getProfile } from "./procedures/profile/getProfile"
 import { createPresignedProfilePicURL } from "./procedures/user/account/createPresignedProfilePicURL"
@@ -35,8 +35,13 @@ export const appRouter = createTRPCRouter({
     monitoring: createTRPCRouter({
         unhandledClientError: unhandledClientError
     }),
+    // admin router for managing profiles and users
     admin: createTRPCRouter({
         createVanity: createVanity,
-        removeVanity: removeVanity
+        removeVanity: removeVanity,
+        listBadges: listBadges,
+        addBadge: addBadge,
+        removeBadge: removeBadge,
+        createBadge: createBadge
     })
 })

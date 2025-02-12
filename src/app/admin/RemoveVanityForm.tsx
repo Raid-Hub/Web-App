@@ -20,7 +20,7 @@ export const RemoveVanityForm = () => {
     } = useForm<FormState>()
 
     return (
-        <form onSubmit={handleSubmit(state => mutate(state))}>
+        <form onSubmit={handleSubmit(state => mutate(state))} style={{ maxWidth: "600px" }}>
             <h2>Vanity Removal</h2>
             <Flex $align="flex-start" $padding={0.5}>
                 <label>Vanity String</label>

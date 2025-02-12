@@ -125,7 +125,7 @@ export function UserCard() {
                                 alt="profile banner"
                             />
                             <BannerOverlay>
-                                <Flex>
+                                <Flex $crossAxis="stretch">
                                     {raidHubUser?.badges?.slice(0, 5).map(badge => (
                                         <ProfileBadge key={badge.id} {...badge} size={24} />
                                     ))}
@@ -179,7 +179,7 @@ export function UserCard() {
                                 alt="profile banner"
                             />
                             <BannerOverlay>
-                                <Flex $gap={1.5}>
+                                <Flex $gap={1.5} $padding={0.5} $crossAxis="stretch">
                                     {raidHubUser?.badges?.map(badge => (
                                         <ProfileBadge key={badge.id} {...badge} size={32} />
                                     ))}
@@ -286,4 +286,6 @@ const BannerOverlay = styled.div`
     `}
 
     z-index: 2;
+    height: 100%;
+    display: flex;
 `
