@@ -2,7 +2,11 @@ import { type Metadata } from "next"
 import { revalidateTag } from "next/cache"
 import { Flex } from "~/components/layout/Flex"
 import { PageWrapper } from "~/components/layout/PageWrapper"
+import { AddBadgeForm } from "./AddBadgeForm"
 import { AddVanityForm } from "./AddVanityForm"
+import { BadgesDisplay } from "./BadgesDisplay"
+import { CreateBadgeForm } from "./CreateBadgeForm"
+import { RemoveBadgeForm } from "./RemoveBadgeForm"
 import { RemoveVanityForm } from "./RemoveVanityForm"
 
 export default async function Page() {
@@ -15,8 +19,18 @@ export default async function Page() {
         <PageWrapper>
             <h1>Admin Panel</h1>
             <Flex $direction="column" $crossAxis="flex-start">
-                <AddVanityForm />
-                <RemoveVanityForm />
+                <Flex $wrap $crossAxis="flex-start">
+                    <AddVanityForm />
+                    <RemoveVanityForm />
+                </Flex>
+                <Flex $wrap $crossAxis="flex-start">
+                    <CreateBadgeForm />
+                    <BadgesDisplay />
+                </Flex>
+                <Flex $wrap $crossAxis="flex-start">
+                    <AddBadgeForm />
+                    <RemoveBadgeForm />
+                </Flex>
                 <form action={purgeManifest}>
                     <h2>Reset Cache</h2>
                     <button type="submit">Refresh Manifest</button>

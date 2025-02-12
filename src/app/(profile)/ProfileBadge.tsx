@@ -13,7 +13,7 @@ export function ProfileBadge(badge: {
             $bottom
             tooltipId={badge.id}
             tooltipBody={
-                <TooltipData $mt={0.5}>
+                <TooltipData>
                     <p>
                         <b>{badge.name}</b>
                         <br />
@@ -21,12 +21,13 @@ export function ProfileBadge(badge: {
                     </p>
                 </TooltipData>
             }>
-            <CloudflareIcon
-                path={badge.icon}
-                alt={badge.name}
-                width={badge.size}
-                height={badge.size}
-            />
+            <div
+                style={{
+                    minWidth: badge.size,
+                    position: "relative"
+                }}>
+                <CloudflareIcon path={badge.icon} alt={badge.name} fill objectFit="contain" />
+            </div>
         </TooltipContainer>
     )
 }
