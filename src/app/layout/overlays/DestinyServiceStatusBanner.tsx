@@ -15,7 +15,8 @@ const commonQueryOptions = {
     refetchOnWindowFocus: true
 }
 
-const offlineAlertKeys = ["D2-OfflineSoonToday", "All-OfflineSoonToday"]
+const offlineSoonTodayAlertKeys = ["D2-OfflineSoonToday", "All-OfflineSoonToday"]
+const offlineSoonTomorrowAlertKeys = ["D2-OfflineSoonTomorrow", "All-OfflineSoonTomorrow"]
 
 export const DestinyServiceStatusBanner = () => {
     const { data: d2ServersOnline } = useCommonSettings<boolean | null>({
@@ -41,13 +42,23 @@ export const DestinyServiceStatusBanner = () => {
 
     const filteredAlerts = useMemo(() => {
         const utcHour = new Date().getUTCHours()
+        const utcDayOfWeek = new Date().getUTCDay()
+
         // Remove D2-OfflineSoonToday if:
         // - Servers are offline
         // - Past reset today
         // - More than 12 hours until next reset
-        return d2ServersOnline == false || utcHour >= 17 || utcHour < 5
-            ? alerts?.filter(alert => !offlineAlertKeys.includes(alert.AlertKey))
-            : alerts
+
+        const alertsPruned = alerts?.filter(
+            alert => !offlineSoonTomorrowAlertKeys.includes(alert.AlertKey)
+        )
+
+        const canShowOfflineTodayAlerts =
+            d2ServersOnline && utcDayOfWeek == 2 && (utcHour < 17 || utcHour >= 5)
+
+        return canShowOfflineTodayAlerts
+            ? alertsPruned
+            : alertsPruned?.filter(alert => !offlineSoonTodayAlertKeys.includes(alert.AlertKey))
     }, [d2ServersOnline, alerts])
 
     return (
