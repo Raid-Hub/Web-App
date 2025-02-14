@@ -29,8 +29,9 @@ import { FilterSelect } from "./FilterSelect"
 import { PantheonLayout } from "./PantheonLayout"
 import { RaidCardContext } from "./RaidCardContext"
 import { Teammates } from "./Teammates"
+import { InstanceFinder } from "./finder/InstanceFinder"
 
-type TabTitle = "classic" | "pantheon" | "history" | "teammates"
+type TabTitle = "classic" | "pantheon" | "history" | "teammates" | "finder"
 
 export const RaidsWrapper = () => {
     const { destinyMembershipId, destinyMembershipType, ready } = usePageProps<ProfileProps>()
@@ -166,6 +167,8 @@ export const RaidsWrapper = () => {
                 )
             case "teammates":
                 return <Teammates />
+            case "finder":
+                return <InstanceFinder />
             default:
                 return null
         }
@@ -196,6 +199,9 @@ export const RaidsWrapper = () => {
                     </Tab>
                     <Tab aria-selected={tab === "teammates"} onClick={() => setTab("teammates")}>
                         Teammates
+                    </Tab>
+                    <Tab aria-selected={tab === "finder"} onClick={() => setTab("finder")}>
+                        Finder
                     </Tab>
                     <Tab aria-selected={tab === "pantheon"} onClick={() => setTab("pantheon")}>
                         Pantheon

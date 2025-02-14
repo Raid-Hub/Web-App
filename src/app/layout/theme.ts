@@ -50,7 +50,8 @@ export const theme: DefaultTheme = {
         },
         button: {
             green: "rgb(57, 195, 131)",
-            destructive: "rgb(160, 79, 79)"
+            destructive: "rgb(160, 79, 79)",
+            info: "rgb(37, 150, 190)"
         },
         highlight: {
             orange: "rgb(255, 140, 57)"
@@ -102,6 +103,7 @@ declare module "styled-components" {
             button: {
                 green: string
                 destructive: string
+                info: string
             }
             highlight: {
                 orange: string
