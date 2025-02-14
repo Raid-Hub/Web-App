@@ -12,7 +12,7 @@ export const FinderPlayerSearch = memo(
     ({ onSelect }: { onSelect: (player: RaidHubPlayerInfo) => void }) => {
         const hideResults = useCallback(() => setIsShowingResults(false), [])
 
-        const { enteredText, results, handleInputChange } = useSearch({
+        const { enteredText, results, handleInputChange, clearQuery } = useSearch({
             onRedirect: hideResults
         })
         const [isShowingResults, setIsShowingResults] = useState(false)
@@ -39,14 +39,15 @@ export const FinderPlayerSearch = memo(
                 />
                 {isShowingResults && (
                     <SearchResultsContainer>
-                        <Grid $gap={0} $minCardWidth={250} $minCardWidthMobile={150}>
-                            {results.map(player => (
+                        <Grid $gap={0} $minCardWidth={250} $minCardWidthMobile={200}>
+                            {results.map((player, idx) => (
                                 <SinglePlayerSearchResult
-                                    key={player.membershipId}
+                                    key={idx}
                                     player={player}
                                     size={1.2}
                                     noLink
                                     handleSelect={() => {
+                                        clearQuery()
                                         onSelect(player)
                                         hideResults()
                                     }}

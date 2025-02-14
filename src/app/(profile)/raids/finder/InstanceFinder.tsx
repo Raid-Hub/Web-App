@@ -1,6 +1,10 @@
 "use client"
 
+import { signIn } from "next-auth/react"
+import Link from "next/link"
+import { OptionalWrapper } from "~/components/OptionalWrapper"
 import { usePageProps } from "~/components/layout/PageWrapper"
+import { useSession } from "~/hooks/app/useSession"
 import { useInstances } from "~/services/raidhub/useRaidHubInstances"
 import { type ProfileProps } from "../../types"
 import { InstanceFinderForm } from "./InstanceFinderForm"
@@ -8,7 +12,46 @@ import { InstanceTable } from "./InstanceTable"
 
 export const InstanceFinder = () => {
     const { destinyMembershipId } = usePageProps<ProfileProps>()
-    const { mutate: queryInstances, ...state } = useInstances()
+    const session = useSession()
+
+    const Component = () => {
+        switch (session.status) {
+            case "authenticated":
+                if (
+                    destinyMembershipId === session.data?.primaryDestinyMembershipId ||
+                    session.data.user.role === "ADMIN"
+                ) {
+                    return <InstanceFinderInternal />
+                } else {
+                    return (
+                        <p>
+                            For privacy reasons, this feature is only available from{" "}
+                            <OptionalWrapper
+                                condition={session.data?.primaryDestinyMembershipId}
+                                wrapper={({ value, children }) => (
+                                    <Link href={`/profile/${value}?tab=finder`}>{children}</Link>
+                                )}>
+                                your own profile
+                            </OptionalWrapper>
+                        </p>
+                    )
+                }
+            case "loading":
+                return <p>Loading...</p>
+            case "unauthenticated":
+                return (
+                    <div>
+                        <p>You must be logged in to view this page.</p>
+                        <button
+                            onClick={() => {
+                                void signIn("bungie")
+                            }}>
+                            Log In
+                        </button>
+                    </div>
+                )
+        }
+    }
 
     return (
         <div
@@ -21,6 +64,16 @@ export const InstanceFinder = () => {
                 This tool allows you to search for specific raids which you have participated in.
                 Use the filters below to narrow down your search.
             </p>
+            <Component />
+        </div>
+    )
+}
+
+const InstanceFinderInternal = () => {
+    const { destinyMembershipId } = usePageProps<ProfileProps>()
+    const { mutate: queryInstances, ...state } = useInstances()
+    return (
+        <div>
             <div>
                 <InstanceFinderForm
                     onSubmit={query =>

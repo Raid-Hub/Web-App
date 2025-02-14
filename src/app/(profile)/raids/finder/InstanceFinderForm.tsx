@@ -279,7 +279,10 @@ const Form = styled.form`
     border: 1px solid color-mix(in srgb, ${({ theme }) => theme.colors.border.medium}, #0000 50%);
 `
 
-const PlayerGrid = styled(Grid)`
+const PlayerGrid = styled(Grid).attrs({
+    $minCardWidth: 350,
+    $minCardWidthMobile: 275
+})`
     width: 100%;
 
     row-gap: 8px;
