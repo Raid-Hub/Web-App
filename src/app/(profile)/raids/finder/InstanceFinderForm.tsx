@@ -2,6 +2,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import Image from "next/image"
 import { FormProvider, useFieldArray, useForm, useFormContext } from "react-hook-form"
 import styled from "styled-components"
+import { type DefaultTheme } from "styled-components/dist/types"
 import { z } from "zod"
 import { useRaidHubManifest } from "~/app/layout/wrappers/RaidHubManifestManager"
 import { Flex } from "~/components/layout/Flex"
@@ -12,7 +13,7 @@ import { type InstanceFinderQuery } from "~/services/raidhub/types"
 import { useRaidHubResolvePlayer } from "~/services/raidhub/useRaidHubResolvePlayer"
 import { bungieProfileIconUrl, getBungieDisplayName } from "~/util/destiny"
 import { type ProfileProps } from "../../types"
-import { FinderPlayerSearch } from "./FinderPlayerSearch"
+import { FinderPlayerSearch } from "./InstanceFinderPlayerSearch"
 
 type FormState = z.infer<typeof FormSchema>
 const FormSchema = z.preprocess(
@@ -128,7 +129,10 @@ export const InstanceFinderForm = ({
                         {player.data && <SinglePlayerDisplay player={player.data} />}
                         {playersArray.fields.map((field, index) => (
                             <SinglePlayerDisplay player={field} key={field.membershipId}>
-                                <Button type="button" onClick={() => playersArray.remove(index)}>
+                                <Button
+                                    type="button"
+                                    $color="destructive"
+                                    onClick={() => playersArray.remove(index)}>
                                     Remove
                                 </Button>
                             </SinglePlayerDisplay>
@@ -178,18 +182,21 @@ export const InstanceFinderForm = ({
                     <Input label="Min Date" type="date" field="minDate" />
                     <Input label="Max Date" type="date" field="maxDate" />
                 </Flex>
-                <button
-                    type="reset"
-                    style={{
-                        alignSelf: "flex-end"
-                    }}
-                    onClick={() => {
-                        form.reset()
-                        playersArray.remove()
-                    }}>
-                    Clear
-                </button>
-                <Button type="submit">Submit</Button>
+                <Flex $padding={0} $fullWidth>
+                    <Button type="submit" $color="info">
+                        Search
+                    </Button>
+                    <Button
+                        style={{ flex: 1 }}
+                        type="reset"
+                        $color="destructive"
+                        onClick={() => {
+                            form.reset()
+                            playersArray.remove()
+                        }}>
+                        Clear
+                    </Button>
+                </Flex>
             </Form>
         </FormProvider>
     )
@@ -316,9 +323,11 @@ const SelectField = styled.select`
     border: 1px solid color-mix(in srgb, ${({ theme }) => theme.colors.border.medium}, #0000 50%);
 `
 
-const Button = styled.button`
+const Button = styled.button<{
+    $color: keyof DefaultTheme["colors"]["button"]
+}>`
     padding: 8px 16px;
-    background-color: #007bff;
+    background-color: ${({ theme, $color }) => theme.colors.button[$color]};
     color: white;
     border: none;
     border-radius: 4px;
@@ -326,7 +335,12 @@ const Button = styled.button`
 
     width: 100%;
 
+    transition: background-color 0.1s;
     &:hover {
-        background-color: #0056b3;
+        background-color: color-mix(
+            in srgb,
+            ${({ theme, $color }) => theme.colors.button[$color]},
+            #0000 50%
+        );
     }
 `
