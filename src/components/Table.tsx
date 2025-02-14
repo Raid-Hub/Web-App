@@ -24,7 +24,7 @@ export const Table = styled.table<{
             color-mix(in srgb, ${({ theme }) => theme.colors.border.dark}, #0000 40%);
 
         ${({ $padding }) => `padding: ${$padding ?? 1}rem ${($padding ?? 1) * 1.5}rem;`}
-        ${({ $align }) => $align && `text-align: center`}
+        ${({ $align }) => $align && `text-align: center;`}
         letter-spacing: 0.04em;
 
         font-weight: 500;
@@ -32,6 +32,10 @@ export const Table = styled.table<{
         ${$media.max.mobile`
             font-size: 0.75rem;
         `}
+    }
+
+    & th {
+        text-align: left;
     }
 
     & td:first-child,
