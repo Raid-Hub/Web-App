@@ -2,6 +2,7 @@
 
 import { signIn } from "next-auth/react"
 import Link from "next/link"
+import { memo, useCallback } from "react"
 import { OptionalWrapper } from "~/components/OptionalWrapper"
 import { usePageProps } from "~/components/layout/PageWrapper"
 import { useSession } from "~/hooks/app/useSession"
@@ -14,7 +15,7 @@ export const InstanceFinder = () => {
     const { destinyMembershipId } = usePageProps<ProfileProps>()
     const session = useSession()
 
-    const Component = () => {
+    const Component = useCallback(() => {
         switch (session.status) {
             case "authenticated":
                 if (
@@ -51,7 +52,7 @@ export const InstanceFinder = () => {
                     </div>
                 )
         }
-    }
+    }, [destinyMembershipId, session])
 
     return (
         <div
@@ -69,7 +70,7 @@ export const InstanceFinder = () => {
     )
 }
 
-const InstanceFinderInternal = () => {
+const InstanceFinderInternal = memo(() => {
     const { destinyMembershipId } = usePageProps<ProfileProps>()
     const { mutate: queryInstances, ...state } = useInstances()
     return (
@@ -114,4 +115,5 @@ const InstanceFinderInternal = () => {
             </div>
         </div>
     )
-}
+})
+InstanceFinderInternal.displayName = "InstanceFinderInternal"
