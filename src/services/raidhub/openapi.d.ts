@@ -558,6 +558,129 @@ export interface paths {
       };
     };
   };
+  "/player/{membershipId}/instances": {
+    /**
+     * /player/{membershipId}/instances
+     * @description Find a set of instances based on the query parameters. Some parameters will not work together, such as providing a season outside the range of the min/max season. Requires authentication.
+     */
+    get: {
+      parameters: {
+        query?: {
+          membershipIds?: readonly string[];
+          activityId?: number;
+          versionId?: number;
+          completed?: boolean;
+          fresh?: boolean;
+          flawless?: boolean;
+          playerCount?: number;
+          minPlayerCount?: number;
+          maxPlayerCount?: number;
+          minDurationSeconds?: number | null;
+          maxDurationSeconds?: number | null;
+          season?: number;
+          minSeason?: number;
+          maxSeason?: number;
+          minDate?: string;
+          maxDate?: string;
+        };
+        path: {
+          membershipId: string;
+        };
+      };
+      responses: {
+        /** @description Success */
+        200: {
+          content: {
+            readonly "application/json": {
+              /** Format: date-time */
+              readonly minted: string;
+              /** @enum {boolean} */
+              readonly success: true;
+              readonly response: components["schemas"]["PlayerInstancesResponse"];
+            };
+          };
+        };
+        /** @description Bad request */
+        400: {
+          content: {
+            readonly "application/json": {
+              /** Format: date-time */
+              readonly minted: string;
+              /** @enum {boolean} */
+              readonly success: false;
+              /** @enum {string} */
+              readonly code: "QueryValidationError";
+              readonly error: components["schemas"]["QueryValidationError"];
+            };
+          };
+        };
+        /** @description Unauthorized */
+        401: {
+          content: {
+            readonly "application/json": {
+              /** Format: date-time */
+              readonly minted: string;
+              /** @enum {boolean} */
+              readonly success: false;
+              /** @enum {string} */
+              readonly code: "ApiKeyError";
+              readonly error: components["schemas"]["ApiKeyError"];
+            };
+          };
+        };
+        /** @description PlayerProtectedResourceError */
+        403: {
+          content: {
+            readonly "application/json": {
+              /** Format: date-time */
+              readonly minted: string;
+              /** @enum {boolean} */
+              readonly success: false;
+              /** @enum {string} */
+              readonly code: "PlayerProtectedResourceError";
+              readonly error: components["schemas"]["PlayerProtectedResourceError"];
+            };
+          };
+        };
+        /** @description Not found */
+        404: {
+          content: {
+            readonly "application/json": {
+              /** Format: date-time */
+              readonly minted: string;
+              /** @enum {boolean} */
+              readonly success: false;
+              /** @enum {string} */
+              readonly code: "PlayerNotFoundError";
+              readonly error: components["schemas"]["PlayerNotFoundError"];
+            } | {
+              /** Format: date-time */
+              readonly minted: string;
+              /** @enum {boolean} */
+              readonly success: false;
+              /** @enum {string} */
+              readonly code: "PathValidationError";
+              readonly error: components["schemas"]["PathValidationError"];
+            };
+          };
+        };
+        /** @description Internal Server Error */
+        500: {
+          content: {
+            readonly "application/json": {
+              /** Format: date-time */
+              readonly minted: string;
+              /** @enum {boolean} */
+              readonly success: false;
+              /** @enum {string} */
+              readonly code: "InternalServerError";
+              readonly error: components["schemas"]["InternalServerError"];
+            };
+          };
+        };
+      };
+    };
+  };
   "/activity/{instanceId}": {
     /**
      * /activity/{instanceId}
@@ -1796,7 +1919,7 @@ export type webhooks = Record<string, never>;
 export interface components {
   schemas: {
     /** @enum {string} */
-    readonly ErrorCode: "ApiKeyError" | "PathValidationError" | "QueryValidationError" | "BodyValidationError" | "PlayerNotFoundError" | "PlayerPrivateProfileError" | "InstanceNotFoundError" | "PGCRNotFoundError" | "PlayerNotOnLeaderboardError" | "RaidNotFoundError" | "PantheonVersionNotFoundError" | "InvalidActivityVersionComboError" | "ClanNotFoundError" | "AdminQuerySyntaxError" | "InsufficientPermissionsError" | "InvalidClientSecretError" | "InternalServerError" | "BungieServiceOffline";
+    readonly ErrorCode: "ApiKeyError" | "PathValidationError" | "QueryValidationError" | "BodyValidationError" | "PlayerNotFoundError" | "PlayerPrivateProfileError" | "PlayerProtectedResourceError" | "InstanceNotFoundError" | "PGCRNotFoundError" | "PlayerNotOnLeaderboardError" | "RaidNotFoundError" | "PantheonVersionNotFoundError" | "InvalidActivityVersionComboError" | "ClanNotFoundError" | "AdminQuerySyntaxError" | "InsufficientPermissionsError" | "InvalidClientSecretError" | "InternalServerError" | "BungieServiceOffline";
     readonly RaidHubResponse: OneOf<[{
       /** Format: date-time */
       readonly minted: string;
@@ -1857,6 +1980,7 @@ export interface components {
       readonly dateStarted: string;
       /** Format: date-time */
       readonly dateCompleted: string;
+      readonly season: number;
       /** @description Activity duration in seconds */
       readonly duration: number;
       readonly platformType: components["schemas"]["DestinyMembershipType"];
@@ -2166,6 +2290,9 @@ export interface components {
     readonly InstanceForPlayer: components["schemas"]["Instance"] & {
       readonly player: components["schemas"]["InstancePlayer"];
     };
+    readonly InstanceWithPlayers: components["schemas"]["Instance"] & {
+      readonly players: readonly components["schemas"]["PlayerInfo"][];
+    };
     readonly PlayerProfileActivityStats: {
       readonly activityId: number;
       readonly freshClears: number;
@@ -2321,6 +2448,11 @@ export interface components {
       };
     };
     readonly PlayerTeammatesResponse: readonly components["schemas"]["Teammate"][];
+    readonly PlayerInstancesResponse: readonly components["schemas"]["InstanceWithPlayers"][];
+    readonly PlayerProtectedResourceError: {
+      readonly message: string;
+      readonly membershipId: string;
+    };
     readonly ActivityResponse: components["schemas"]["Instance"] & ({
       readonly leaderboardRank: number | null;
       readonly metadata: components["schemas"]["InstanceMetadata"];

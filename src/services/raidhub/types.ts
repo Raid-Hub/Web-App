@@ -32,6 +32,7 @@ export type RaidHubVersionDefinition = Component<"VersionDefinition">
 export type RaidHubPlayerInfo = Component<"PlayerInfo">
 export type RaidHubInstance = Component<"Instance">
 export type RaidHubInstanceExtended = Component<"InstanceExtended">
+export type RaidHubInstanceWithPlayers = Component<"InstanceWithPlayers">
 export type RaidHubInstancePlayerExtended = Component<"InstancePlayerExtended">
 export type RaidHubInstanceCharacter = Component<"InstanceCharacter">
 export type RaidHubInstanceForPlayer = Component<"InstanceForPlayer">
@@ -63,6 +64,10 @@ export type RaidHubAdminQueryBody = Required<
 
 export type ClanStatsColumns = NonNullable<
     NonNullable<paths["/leaderboard/clan"]["get"]["parameters"]["query"]>["column"]
+>
+
+export type InstanceFinderQuery = NonNullable<
+    paths["/player/{membershipId}/instances"]["get"]["parameters"]["query"]
 >
 
 // Responses
