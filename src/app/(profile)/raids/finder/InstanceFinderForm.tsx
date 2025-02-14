@@ -95,10 +95,8 @@ export const InstanceFinderForm = ({
         label: getVersionString(id)
     }))
 
-    const seasons = useSeasons({ reversed: true })
-    console.log(seasons)
     const seasonsOptions =
-        seasons
+        useSeasons({ reversed: true })
             ?.filter(s => s.seasonNumber <= 26)
             .map(season => ({
                 value: season.seasonNumber,
@@ -118,13 +116,15 @@ export const InstanceFinderForm = ({
                 })}>
                 <Flex $direction="column" $align="flex-start" $crossAxis="flex-start" $fullWidth>
                     <Label>Players</Label>
-                    <FinderPlayerSearch onSelect={player => playersArray.append(player)} />
-                    <Grid
-                        $fullWidth
+                    <p
                         style={{
-                            rowGap: "8px",
-                            columnGap: "32px"
+                            margin: 0,
+                            fontSize: "0.75rem"
                         }}>
+                        You may select up to 6 additional players
+                    </p>
+                    <FinderPlayerSearch onSelect={player => playersArray.append(player)} />
+                    <PlayerGrid>
                         {player.data && <SinglePlayerDisplay player={player.data} />}
                         {playersArray.fields.map((field, index) => (
                             <SinglePlayerDisplay player={field} key={field.membershipId}>
@@ -133,7 +133,7 @@ export const InstanceFinderForm = ({
                                 </Button>
                             </SinglePlayerDisplay>
                         ))}
-                    </Grid>
+                    </PlayerGrid>
                 </Flex>
                 <Flex $direction="column" $align="flex-start" $crossAxis="flex-start">
                     <Select label="Activity" options={activityOptions} field="activityId" />
@@ -158,8 +158,16 @@ export const InstanceFinderForm = ({
                     />
                 </Flex>
                 <Flex $direction="column" $align="flex-start" $crossAxis="flex-start">
-                    <Input label="Min Duration (sec)" type="number" field="minDurationSeconds" />
-                    <Input label="Max Duration (sec)" type="number" field="maxDurationSeconds" />
+                    <Input
+                        label="Min Duration (seconds)"
+                        type="number"
+                        field="minDurationSeconds"
+                    />
+                    <Input
+                        label="Max Duration (seconds)"
+                        type="number"
+                        field="maxDurationSeconds"
+                    />
                 </Flex>
                 <Flex $direction="column" $align="flex-start" $crossAxis="flex-start">
                     <Select label="Season" field="season" options={seasonsOptions} />
@@ -195,7 +203,7 @@ function SinglePlayerDisplay({
     children?: React.ReactNode
 }) {
     return (
-        <Flex $align="flex-start">
+        <SinglePlayerDisplayStyled>
             <Image
                 src={bungieProfileIconUrl(player.iconPath)}
                 unoptimized
@@ -205,7 +213,7 @@ function SinglePlayerDisplay({
             />
             <div>{getBungieDisplayName(player)}</div>
             {children}
-        </Flex>
+        </SinglePlayerDisplayStyled>
     )
 }
 
@@ -262,7 +270,30 @@ const Form = styled.form`
     gap: 16px;
     padding: 16px;
     border: 1px solid color-mix(in srgb, ${({ theme }) => theme.colors.border.medium}, #0000 50%);
-    border-radius: 8px;
+`
+
+const PlayerGrid = styled(Grid)`
+    width: 100%;
+
+    row-gap: 8px;
+    column-gap: 32px;
+
+    padding: 8px;
+`
+
+const SinglePlayerDisplayStyled = styled.div`
+    display: flex;
+    border: 1px solid color-mix(in srgb, ${({ theme }) => theme.colors.border.medium}, #0000 50%);
+
+    justify-content: flex-start;
+    align-items: center;
+    gap: 1em;
+
+    & button {
+        flex: 0;
+        margin-right: 1em;
+        margin-left: auto;
+    }
 `
 
 const InputContainer = styled.div`
@@ -277,14 +308,12 @@ const Label = styled.label`
 
 const InputField = styled.input`
     padding: 8px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
+    border: 1px solid color-mix(in srgb, ${({ theme }) => theme.colors.border.medium}, #0000 50%);
 `
 
 const SelectField = styled.select`
     padding: 8px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
+    border: 1px solid color-mix(in srgb, ${({ theme }) => theme.colors.border.medium}, #0000 50%);
 `
 
 const Button = styled.button`

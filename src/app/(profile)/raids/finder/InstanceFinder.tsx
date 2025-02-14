@@ -32,7 +32,13 @@ export const InstanceFinder = () => {
                 />
             </div>
             <div>
-                <h2>Results</h2>
+                <h2
+                    style={{
+                        marginTop: "2rem",
+                        marginBottom: "0.5rem"
+                    }}>
+                    Results
+                </h2>
                 <div
                     style={{
                         overflowX: "auto"
