@@ -184,7 +184,14 @@ export const useRaidHubActivities = (
             activities: queries.some(q => q.isLoading)
                 ? new Collection()
                 : new Collection(
-                      queries.flatMap(q => q.data?.activities ?? []).map(a => [a.instanceId, a])
+                      queries
+                          .flatMap(q => q.data?.activities ?? [])
+                          .sort(
+                              (a, b) =>
+                                  new Date(b.dateCompleted).getTime() -
+                                  new Date(a.dateCompleted).getTime()
+                          )
+                          .map(a => [a.instanceId, a])
                   ),
             isLoading: queries.length === 0 || queries.some(q => q.isLoading)
         }),

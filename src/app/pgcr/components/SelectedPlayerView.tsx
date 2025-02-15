@@ -89,7 +89,7 @@ export const SelectedPlayerView = (props: {
                 style={{ padding: "1em" }}
                 $borderRadius={5}>
                 {props.selectedPlayer.characters.length > 1 && (
-                    <TabSelector $wrap>
+                    <TabSelector>
                         <H4
                             $mBlock={0.2}
                             aria-selected={selectedCharacterId === null}

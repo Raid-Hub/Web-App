@@ -181,7 +181,7 @@ async function refreshRaidHubBearer({
     }
 
     return {
-        token,
+        token: newToken ?? token,
         errors
     }
 }
