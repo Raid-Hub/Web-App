@@ -27,5 +27,5 @@ TabSelector.defaultProps = {
     $direction: "row",
     $align: "flex-start",
     $crossAxis: "flex-end",
-    $wrap: false
+    $wrap: true
 }

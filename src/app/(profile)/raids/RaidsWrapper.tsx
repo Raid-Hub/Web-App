@@ -189,7 +189,15 @@ export const RaidsWrapper = () => {
     return (
         <FilterContextProvider>
             <ProfileError error={playerErrors.find(e => e instanceof RaidHubError)} />
-            <Flex $direction="row" $padding={0} $align="space-between" $fullWidth $wrap>
+            <Flex
+                $direction="row"
+                $padding={0}
+                $align="space-between"
+                $fullWidth
+                $wrap
+                style={{
+                    maxWidth: "100%"
+                }}>
                 <TabSelector>
                     <Tab aria-selected={tab === "classic"} onClick={() => setTab("classic")}>
                         Classic
@@ -208,29 +216,6 @@ export const RaidsWrapper = () => {
                     </Tab>
                 </TabSelector>
                 <Flex $padding={0}>
-                    {tab !== "teammates" && (
-                        <Flex $padding={0.2} $gap={0.4} $direction="column">
-                            <H4
-                                style={{
-                                    margin: 0,
-                                    fontSize: "0.75rem"
-                                }}>
-                                Refresh
-                            </H4>
-                            <ReloadArrow
-                                onClick={() => {
-                                    if (!isLoadingMainData) {
-                                        refetchPlayers()
-                                        refreshActivities()
-                                    }
-                                }}
-                                sx={20}
-                                color={isLoadingMainData ? "lightGray" : "white"}
-                                hoverColor={isLoadingMainData ? undefined : "orange"}
-                                cursor={isLoadingMainData ? "not-allowed" : "pointer"}
-                            />
-                        </Flex>
-                    )}
                     {(tab === "classic" || tab === "pantheon") && (
                         <>
                             <Flex $padding={0.2} $gap={0.4} $direction="column">
@@ -259,6 +244,29 @@ export const RaidsWrapper = () => {
                                 />
                             </Flex>
                         </>
+                    )}
+                    {tab !== "teammates" && (
+                        <Flex $padding={0.2} $gap={0.4} $direction="column">
+                            <H4
+                                style={{
+                                    margin: 0,
+                                    fontSize: "0.75rem"
+                                }}>
+                                Refresh
+                            </H4>
+                            <ReloadArrow
+                                onClick={() => {
+                                    if (!isLoadingMainData) {
+                                        refetchPlayers()
+                                        refreshActivities()
+                                    }
+                                }}
+                                sx={20}
+                                color={isLoadingMainData ? "lightGray" : "white"}
+                                hoverColor={isLoadingMainData ? undefined : "orange"}
+                                cursor={isLoadingMainData ? "not-allowed" : "pointer"}
+                            />
+                        </Flex>
                     )}
                 </Flex>
             </Flex>
