@@ -24,9 +24,9 @@
         "@discordjs/collection": "2.1.0",
         "@formatjs/intl-localematcher": "0.5.4",
         "@hookform/resolvers": "3.3.4",
-        "@libsql/client": "0.6.2",
-        "@prisma/adapter-libsql": "5.15.0",
-        "@prisma/client": "5.15.0",
+        "@libsql/client": "0.8.1",
+        "@prisma/adapter-libsql": "6.5.0",
+        "@prisma/client": "6.5.0",
         "@tanstack/react-query": "4.36.1",
         "@trpc/client": "10.44.1",
         "@trpc/react-query": "10.44.1",
@@ -53,7 +53,7 @@
         "zod": "3"
     },
     "devDependencies": {
-        "@libsql/linux-x64-gnu": "0.4.0-pre.6",
+        "@libsql/linux-x64-gnu": "0.5.5",
         "@next/bundle-analyzer": "14.2.0-canary.26",
         "@next/eslint-plugin-next": "14.2.0-canary.26",
         "@tanstack/react-query-devtools": "4.36",
@@ -71,10 +71,8 @@
         "husky": "9.0.6",
         "node-fetch": "3.3.1",
         "openapi-typescript": "6.7.4",
-        "prettier": "2.8.7",
         "prettier-plugin-organize-imports": "3.2.4",
-        "prisma": "5.15.0",
-        "ts-node": "10.9.1",
+        "prisma": "6.5.0",
         "typescript": "5.3.3"
     },
     "lint-staged": {
