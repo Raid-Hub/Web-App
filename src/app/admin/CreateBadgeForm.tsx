@@ -42,11 +42,7 @@ export const CreateBadgeForm = () => {
             </Flex>
             <Flex $align="flex-start" $padding={0.5}>
                 <label>Badge Description</label>
-                <input
-                    {...register("description", { required: true })}
-                    type="text"
-                    autoComplete="off"
-                />
+                <textarea {...register("description", { required: true })} autoComplete="off" />
                 {errors.description && <span>This field is required</span>}
             </Flex>
             <Flex $align="flex-start" $padding={0.5}>
