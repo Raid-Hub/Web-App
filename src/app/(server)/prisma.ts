@@ -12,20 +12,20 @@ interface GlobalThisWithPrisma {
 }
 const globalForPrisma = globalThis as unknown as GlobalThisWithPrisma
 
-const createPrismaWithExtension = () =>
-    new PrismaClient({
+const createPrismaWithExtension = () => {
+    const libSQL = createClient(
+        process.env.APP_ENV === "local"
+            ? { url: "file:./prisma/raidhub-sqlite.db" }
+            : {
+                  url: process.env.TURSO_DATABASE_URL!,
+                  authToken: process.env.TURSO_AUTH_TOKEN,
+                  fetch: fetchWithLog
+              }
+    )
+
+    return new PrismaClient({
         log: process.env.APP_ENV === "local" ? ["query", "error", "warn"] : ["error"],
-        adapter: new PrismaLibSQL(
-            createClient(
-                process.env.APP_ENV === "local"
-                    ? { url: "file:./prisma/raidhub-sqlite.db" }
-                    : {
-                          url: process.env.TURSO_DATABASE_URL!,
-                          authToken: process.env.TURSO_AUTH_TOKEN,
-                          fetch: fetchWithLog
-                      }
-            )
-        )
+        adapter: new PrismaLibSQL(libSQL)
     }).$extends({
         name: "roleEnum",
         result: {
@@ -39,6 +39,7 @@ const createPrismaWithExtension = () =>
             }
         }
     })
+}
 
 export const prisma = globalForPrisma.prisma ?? createPrismaWithExtension()
 

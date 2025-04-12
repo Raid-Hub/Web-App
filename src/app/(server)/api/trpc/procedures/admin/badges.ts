@@ -1,4 +1,5 @@
 import { TRPCError } from "@trpc/server"
+import { revalidatePath } from "next/cache"
 import { z } from "zod"
 import { adminProcedure } from "../.."
 
@@ -34,6 +35,8 @@ const badgeExtension = adminProcedure.use(({ ctx, next }) => {
                             }
                         },
                         select: {
+                            destinyMembershipId: true,
+                            vanity: true,
                             user: {
                                 select: {
                                     badges: true,
@@ -42,7 +45,15 @@ const badgeExtension = adminProcedure.use(({ ctx, next }) => {
                             }
                         }
                     })
-                    .then(result => result.user)
+                    .then(result =>
+                        result.user
+                            ? {
+                                  ...result.user,
+                                  vanity: result.vanity,
+                                  destinyMembershipId: result.destinyMembershipId
+                              }
+                            : null
+                    )
         }
     })
 })
@@ -78,6 +89,11 @@ export const addBadge = badgeExtension
                 code: "BAD_REQUEST",
                 message: `User with destinyMembershipId ${input.destinyMembershipId} not found`
             })
+        }
+
+        revalidatePath(`/profile/${updatedUser.destinyMembershipId}`)
+        if (updatedUser.vanity) {
+            revalidatePath(`/user/${updatedUser.vanity}`)
         }
 
         return updatedUser

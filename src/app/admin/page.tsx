@@ -19,15 +19,15 @@ export default async function Page() {
         <PageWrapper>
             <h1>Admin Panel</h1>
             <Flex $direction="column" $crossAxis="flex-start">
-                <Flex $wrap $crossAxis="flex-start">
+                <Flex $wrap $crossAxis="flex-start" $align="flex-start">
                     <AddVanityForm />
                     <RemoveVanityForm />
                 </Flex>
-                <Flex $wrap $crossAxis="flex-start">
+                <Flex $wrap $crossAxis="flex-start" $align="flex-start">
                     <CreateBadgeForm />
                     <BadgesDisplay />
                 </Flex>
-                <Flex $wrap $crossAxis="flex-start">
+                <Flex $wrap $crossAxis="flex-start" $align="flex-start">
                     <AddBadgeForm />
                     <RemoveBadgeForm />
                 </Flex>
