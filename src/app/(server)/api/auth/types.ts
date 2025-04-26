@@ -1,7 +1,10 @@
 import { type AdapterUser } from "@auth/core/adapters"
 import { type Awaitable, type User } from "@auth/core/types"
 import { type Session as PrismaSession } from "@prisma/client"
-import { type BungieMembershipType, type UserMembershipData } from "bungie-net-core/models"
+import {
+    type BungieMembershipType,
+    type DestinyLinkedProfilesResponse
+} from "bungie-net-core/models"
 
 declare module "@auth/core/types" {
     interface Session {
@@ -22,13 +25,7 @@ declare module "@auth/core/types" {
     interface Account {
         refresh_expires_in?: number
     }
-
-    interface User {
-        role: "USER" | "ADMIN"
-    }
 }
-
-export type BungieProfile = UserMembershipData
 
 declare module "@auth/core/adapters" {
     interface AdapterUser {
@@ -54,12 +51,12 @@ declare module "@auth/core/adapters" {
     }
 
     interface Adapter {
-        createUser?(
-            user: User & {
-                userMembershipData: UserMembershipData
-            }
-        ): Awaitable<AdapterUser>
+        createUser?(user: User | BungieUser): Awaitable<AdapterUser>
     }
+}
+
+export interface BungieUser extends User {
+    userMembershipData: DestinyLinkedProfilesResponse
 }
 
 export type AuthToken = {

@@ -6,11 +6,14 @@ import Image from "next/image"
 import Link from "next/link"
 import styled from "styled-components"
 import { Card } from "~/components/Card"
+import { ErrorCard } from "~/components/ErrorCard"
 import { Container } from "~/components/layout/Container"
 import { Flex } from "~/components/layout/Flex"
 import { Grid } from "~/components/layout/Grid"
 import { usePageProps } from "~/components/layout/PageWrapper"
+import { type RaidHubError } from "~/services/raidhub/RaidHubError"
 import { getRaidHubApi } from "~/services/raidhub/common"
+import { type RaidHubErrorCode, type RaidHubTeammatesResponse } from "~/services/raidhub/types"
 import { bungieProfileIconUrl, getBungieDisplayName } from "~/util/destiny"
 import { secondsToYDHMS } from "~/util/presentation/formatting"
 import { type ProfileProps } from "../types"
@@ -19,13 +22,13 @@ export const Teammates = () => {
     const session = useSession()
     const { destinyMembershipId } = usePageProps<ProfileProps>()
 
-    const teammates = useQuery({
+    const teammates = useQuery<RaidHubTeammatesResponse, RaidHubError>({
         queryKey: ["raidhub", "player", destinyMembershipId, "teammates"] as const,
-        queryFn: ({ queryKey }) =>
+        queryFn: () =>
             getRaidHubApi(
                 "/player/{membershipId}/teammates",
                 {
-                    membershipId: queryKey[2]
+                    membershipId: destinyMembershipId
                 },
                 null,
                 {
@@ -44,7 +47,16 @@ export const Teammates = () => {
     }
 
     if (teammates.isError) {
-        return <Container>Error loading teammates</Container>
+        return (
+            <Container $fullWidth>
+                <ErrorCard>
+                    <p>
+                        Error loading Teammates: <code>{teammates.error.errorCode}</code>
+                    </p>
+                    <p>{getErrorMessage(teammates.error.errorCode)}</p>
+                </ErrorCard>
+            </Container>
+        )
     }
 
     return (
@@ -111,3 +123,14 @@ const Rank = styled.div`
     top: 5px;
     left: 5px;
 `
+
+const getErrorMessage = (errorCode: RaidHubErrorCode) => {
+    switch (errorCode) {
+        case "PlayerPrivateProfileError":
+            return "The owner of this profile has chosen to keep their activity history private. No Peeking!"
+        case "PlayerNotFoundError":
+            return "This profile does not exist in RaidHub's database."
+        default:
+            return "An error occurred"
+    }
+}

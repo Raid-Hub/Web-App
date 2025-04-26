@@ -77,6 +77,7 @@ export type RaidHubPlayerProfileResponse = Component<"PlayerProfileResponse">
 export type RaidHubPlayerSearchResponse = Component<"PlayerSearchResponse">
 export type RaidHubAdminQueryResponse = Component<"AdminQueryResponse">
 export type RaidHubLeaderboardClanResponse = Component<"LeaderboardClanResponse">
+export type RaidHubTeammatesResponse = Component<"PlayerTeammatesResponse">
 export type RaidHubStatusResponse = Component<"StatusResponse">
 export type RaidHubMetricsWeaponsRollingWeekResponse =
     Component<"MetricsWeaponsRollingWeekResponse">

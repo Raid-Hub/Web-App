@@ -1,7 +1,10 @@
+import { getLinkedProfiles } from "bungie-net-core/endpoints/Destiny2"
 import { unstable_cache } from "next/cache"
 import "server-only"
+import { BungiePlatformError } from "~/models/BungieAPIError"
 
 import { trpcServer } from "~/server/api/trpc/rpc"
+import ServerBungieClient from "~/server/serverBungieClient"
 import { getRaidHubApi } from "~/services/raidhub/common"
 import { reactRequestDedupe } from "~/util/react-cache"
 
@@ -85,4 +88,24 @@ export const prefetchRaidHubPlayerBasic = reactRequestDedupe(async (membershipId
     )
         .then(res => res.response)
         .catch(() => null)
+)
+
+const bungieClient = new ServerBungieClient({
+    timeout: 5000
+})
+
+export const prefetchDestinyLinkedProfiles = reactRequestDedupe((membershipId: string) =>
+    getLinkedProfiles(bungieClient, {
+        membershipType: -1,
+        membershipId: membershipId,
+        getAllMemberships: true
+    })
+        .then(res => res.Response)
+        .catch(e => {
+            if (e instanceof BungiePlatformError) {
+                return null
+            } else {
+                throw e
+            }
+        })
 )

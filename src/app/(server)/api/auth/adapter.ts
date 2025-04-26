@@ -8,10 +8,10 @@ import { getDiscordProfile } from "./providers/discord"
 import { getTwitchProfile } from "./providers/twitch"
 import { getTwitterProfile } from "./providers/twitter"
 import { getYoutubeProfile } from "./providers/youtube"
-import { updateDestinyProfiles } from "./updateDestinyProfiles"
 
 export const PrismaAdapter = (prisma: PrismaClientWithExtensions): Adapter => ({
     async createUser(input) {
+        // Prevent users from being created without a Bungie profile first
         if (!("userMembershipData" in input)) {
             throw new Error("Bungie profile is required")
         }
@@ -24,14 +24,12 @@ export const PrismaAdapter = (prisma: PrismaClientWithExtensions): Adapter => ({
         delete input.id
         const user = await prisma.user.create({
             data: {
-                id: input.userMembershipData.bungieNetUser.membershipId,
+                id: input.userMembershipData.bnetMembership.membershipId,
                 name: input.name,
                 image: input.image,
-                role_: input.role
+                role_: "USER"
             }
         })
-
-        await updateDestinyProfiles(input.userMembershipData)
 
         return {
             ...user,
