@@ -12,10 +12,10 @@ export interface ActivityFilter {
     encode(): object | string
 }
 
-const craftStartDate = new Date("2023-09-15")
-const craftEndDate = new Date("2023-09-21")
-const horsemanStartDate = new Date("2023-04-26")
-const horsemanEndDate = new Date("2023-04-28")
+const craftStartDate = new Date("2023-09-15T17:00:00Z")
+const craftEndDate = new Date("2023-09-21T17:00:00Z")
+const horsemanStartDate = new Date("2023-04-26T17:00:00Z")
+const horsemanEndDate = new Date("2023-04-28T17:00:00Z")
 
 export const SingleActivityFilterFunctions = {
     All: () => true,
@@ -29,8 +29,9 @@ export const SingleActivityFilterFunctions = {
     Solo: (activity: RaidHubInstanceForPlayer) => activity.playerCount === 1,
     Min5MinsPlayed: (activity: RaidHubInstanceForPlayer) => activity.duration >= 5 * 60,
     Min15MinsPlayed: (activity: RaidHubInstanceForPlayer) => activity.duration >= 15 * 60,
-    Horseman: (activity: RaidHubInstanceForPlayer) => !(new Date(activity.dateCompleted) > horsemanStartDate && new Date(activity.dateCompleted) < horsemanEndDate),
-    Craftening: (activity: RaidHubInstanceForPlayer) => !(new Date(activity.dateCompleted) > craftStartDate && new Date(activity.dateCompleted) < craftEndDate)
+    CrafteningOrHorseman: (activity: RaidHubInstanceForPlayer) =>
+        !(new Date(activity.dateCompleted) > horsemanStartDate && new Date(activity.dateCompleted) < horsemanEndDate) ||
+        !(new Date(activity.dateCompleted) > craftStartDate && new Date(activity.dateCompleted) < craftEndDate)
 } satisfies Record<string, FilterPredicate>
 
 export const FilterPresets = {
@@ -44,8 +45,7 @@ export const FilterPresets = {
                     new SingleActivityFilter("FullTeam"),
                     new NotActivityFilter(new SingleActivityFilter("CheckpointBot"))
                 ]),
-                new SingleActivityFilter("Horseman"),
-                new SingleActivityFilter("Craftening")
+                    new SingleActivityFilter("CrafteningOrHorseman")
             ])
     },
     All: {
@@ -68,13 +68,9 @@ export const FilterPresets = {
         displayName: "Flawless Only",
         getFilter: () => new SingleActivityFilter("Flawless")
     },
-    Horseman: {
-        displayName: "Exclude Horseman",
-        getFilter: () => new SingleActivityFilter("Horseman")
-    },
-    Craftening: {
-        displayName: "Exclude Craftening",
-        getFilter: () => new SingleActivityFilter("Craftening")
+    CrafteningOrHorseman: {
+        displayName: "Exclude Craftening/Horseman",
+        getFilter: () => new SingleActivityFilter("CrafteningOrHorseman")
     },
 } satisfies Record<
     string,
