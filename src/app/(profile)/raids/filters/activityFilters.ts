@@ -12,6 +12,11 @@ export interface ActivityFilter {
     encode(): object | string
 }
 
+const craftStartDate = new Date("2023-09-15T17:00:00Z")
+const craftEndDate = new Date("2023-09-21T17:00:00Z")
+const horsemanStartDate = new Date("2023-04-26T17:00:00Z")
+const horsemanEndDate = new Date("2023-04-28T17:00:00Z")
+
 export const SingleActivityFilterFunctions = {
     All: () => true,
     Success: (activity: RaidHubInstanceForPlayer) => activity.player.completed,
@@ -23,7 +28,10 @@ export const SingleActivityFilterFunctions = {
     Duo: (activity: RaidHubInstanceForPlayer) => activity.playerCount === 2,
     Solo: (activity: RaidHubInstanceForPlayer) => activity.playerCount === 1,
     Min5MinsPlayed: (activity: RaidHubInstanceForPlayer) => activity.duration >= 5 * 60,
-    Min15MinsPlayed: (activity: RaidHubInstanceForPlayer) => activity.duration >= 15 * 60
+    Min15MinsPlayed: (activity: RaidHubInstanceForPlayer) => activity.duration >= 15 * 60,
+    CrafteningOrHorseman: (activity: RaidHubInstanceForPlayer) =>
+        !(new Date(activity.dateCompleted) > horsemanStartDate && new Date(activity.dateCompleted) < horsemanEndDate) ||
+        !(new Date(activity.dateCompleted) > craftStartDate && new Date(activity.dateCompleted) < craftEndDate)
 } satisfies Record<string, FilterPredicate>
 
 export const FilterPresets = {
@@ -36,7 +44,8 @@ export const FilterPresets = {
                     new SingleActivityFilter("Min15MinsPlayed"),
                     new SingleActivityFilter("FullTeam"),
                     new NotActivityFilter(new SingleActivityFilter("CheckpointBot"))
-                ])
+                ]),
+                    new SingleActivityFilter("CrafteningOrHorseman")
             ])
     },
     All: {
@@ -58,7 +67,11 @@ export const FilterPresets = {
     Flawless: {
         displayName: "Flawless Only",
         getFilter: () => new SingleActivityFilter("Flawless")
-    }
+    },
+    CrafteningOrHorseman: {
+        displayName: "Exclude Craftening/Horseman",
+        getFilter: () => new SingleActivityFilter("CrafteningOrHorseman")
+    },
 } satisfies Record<
     string,
     {
