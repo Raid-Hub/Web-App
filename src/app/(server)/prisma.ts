@@ -3,7 +3,7 @@ import "server-only"
 import { createClient } from "@libsql/client"
 import { PrismaLibSQL } from "@prisma/adapter-libsql"
 import { PrismaClient } from "@prisma/client"
-import { fetchWithLog } from "./fetchWithLog"
+import { fetchWithErrorLog } from "./fetchWithErrorLog"
 
 export type PrismaClientWithExtensions = ReturnType<typeof createPrismaWithExtension>
 
@@ -19,7 +19,10 @@ const createPrismaWithExtension = () => {
             : {
                   url: process.env.TURSO_DATABASE_URL!,
                   authToken: process.env.TURSO_AUTH_TOKEN,
-                  fetch: fetchWithLog
+                  fetch: async (request: Request) =>
+                      fetchWithErrorLog(request, {
+                          cache: "no-store"
+                      })
               }
     )
 
