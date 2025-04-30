@@ -60,13 +60,13 @@ export default class ServerBungieClient extends BaseBungieClient {
                 !(err instanceof DOMException) &&
                 !(
                     err instanceof BungiePlatformError &&
-                    BaseBungieClient.ExpectedErrorCodes.has(err.ErrorCode)
+                    ServerBungieClient.ExpectedErrorCodes.has(err.ErrorCode)
                 )
             ) {
                 console.error(err)
                 if (
                     err instanceof BungiePlatformError &&
-                    BaseBungieClient.RetryableErrorCodes.has(err.ErrorCode)
+                    ServerBungieClient.RetryableErrorCodes.has(err.ErrorCode)
                 ) {
                     url.searchParams.set("retry", err.cause.ErrorStatus)
                     return this.request(url, payload) as T

@@ -45,7 +45,7 @@ export default class ClientBungieClient extends BaseBungieClient {
             } else if (
                 (err instanceof Response && err.status === 401) ||
                 (err instanceof BungiePlatformError &&
-                    BaseBungieClient.AuthErrorCodes.has(err.ErrorCode))
+                    ClientBungieClient.AuthErrorCodes.has(err.ErrorCode))
             ) {
                 this.clearToken()
                 this.emitter.emit("unauthorized")
@@ -63,7 +63,7 @@ export default class ClientBungieClient extends BaseBungieClient {
                 })
             } else if (
                 err instanceof BungiePlatformError &&
-                BaseBungieClient.RetryableErrorCodes.has(err.ErrorCode)
+                ClientBungieClient.RetryableErrorCodes.has(err.ErrorCode)
             ) {
                 url.searchParams.set("retry", err.cause.ErrorStatus)
                 return this.request(url, payload)
