@@ -1,16 +1,9 @@
 import "server-only"
 
 import type { BungieFetchConfig } from "bungie-net-core"
-import type { PlatformErrorCodes } from "bungie-net-core/models"
 import { BungiePlatformError } from "~/models/BungieAPIError"
 import BaseBungieClient from "~/services/bungie/BungieClient"
 import { baseUrl } from "./util"
-
-const ExpectedErrorCodes = new Set<PlatformErrorCodes>([
-    5, // SystemDisabled
-    686, // ClanNotFound
-    1653 // PGCRNotFound
-])
 
 export default class ServerBungieClient extends BaseBungieClient {
     private next: NextFetchRequestConfig
@@ -65,9 +58,19 @@ export default class ServerBungieClient extends BaseBungieClient {
         } catch (err) {
             if (
                 !(err instanceof DOMException) &&
-                !(err instanceof BungiePlatformError && ExpectedErrorCodes.has(err.ErrorCode))
+                !(
+                    err instanceof BungiePlatformError &&
+                    ServerBungieClient.ExpectedErrorCodes.has(err.ErrorCode)
+                )
             ) {
                 console.error(err)
+                if (
+                    err instanceof BungiePlatformError &&
+                    ServerBungieClient.RetryableErrorCodes.has(err.ErrorCode)
+                ) {
+                    url.searchParams.set("retry", err.cause.ErrorStatus)
+                    return this.request(url, payload) as T
+                }
             }
             throw err
         }

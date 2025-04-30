@@ -19,6 +19,9 @@ model Profile {
   user                  User?   @relation("UserToProfile", fields: [bungieMembershipId], references: [id], onDelete: Cascade)
   pinnedPGCR            PGCR?   @relation("PGCRToProfile", fields: [pinnedActivityId], references: [id])
 
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
   @@index([pinnedActivityId])
   @@index([bungieMembershipId])
   @@map("destiny_profile")
@@ -30,14 +33,15 @@ model User {
   emailVerified      DateTime?           @map("email_verified")
   name               String?
   image              String?
-  createdAt          DateTime            @default(now()) @map("created_at")
   role_              String              @default("USER") @map("role")
   accounts           Account[]           @relation("UserToAccount")
   profiles           Profile[]           @relation("UserToProfile")
   raidHubAccessToken RaidHubAccessToken? @relation("UserToRaidHubAccessToken")
   sessions           Session[]           @relation("UserToSession")
+  badges             Badge[]             @relation("UserToBadge")
 
-  badges Badge[] @relation("UserToBadge")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
 
   @@map("bungie_user")
 }
@@ -48,6 +52,9 @@ model Session {
   sessionToken String   @unique @map("session_token")
   expires      DateTime @default(now())
   user         User     @relation("UserToSession", fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
 
   @@index([userId])
   @@map("session")
@@ -78,11 +85,13 @@ model Account {
 }
 
 model RaidHubAccessToken {
-  id        String   @id @default(uuid())
-  userId    String   @unique @map("bungie_membership_id")
-  value     String
+  id     String @id @default(uuid())
+  userId String @unique @map("bungie_membership_id")
+  value  String
+  user   User   @relation("UserToRaidHubAccessToken", fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now()) @map("created_at")
   expiresAt DateTime @map("expires_at")
-  user      User     @relation("UserToRaidHubAccessToken", fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("raidhub_access_token")
 }
@@ -102,6 +111,8 @@ model Badge {
   icon        String
 
   users User[] @relation("UserToBadge")
+
+  createdAt DateTime @default(now()) @map("created_at")
 
   @@map("badge")
 }

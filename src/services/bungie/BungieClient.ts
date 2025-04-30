@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access */
 import type { BungieClientProtocol, BungieFetchConfig } from "bungie-net-core"
+import { type PlatformErrorCodes } from "bungie-net-core/models"
 import {
     BungieHTMLError,
     BungiePlatformError,
@@ -68,4 +69,24 @@ export default abstract class BaseBungieClient implements BungieClientProtocol {
      * @protected This method can be overridden in derived classes.
      */
     protected abstract handle<T>(url: URL, payload: RequestInit): Promise<T>
+
+    static readonly AuthErrorCodes = new Set<PlatformErrorCodes>([
+        99, // WebAuthRequired
+        22, // WebAuthModuleAsyncFailed
+        2124, // AuthorizationRecordRevoked
+        2123, // AuthorizationRecordExpired
+        2122, // AuthorizationCodeStale
+        2106 // AuthorizationCodeInvalid
+    ])
+
+    static readonly RetryableErrorCodes = new Set<PlatformErrorCodes>([
+        1672, // DestinyThrottledByGameServer,
+        1688 // DestinyDirectBabelClientTimeout
+    ])
+
+    static readonly ExpectedErrorCodes = new Set<PlatformErrorCodes>([
+        5, // SystemDisabled
+        686, // ClanNotFound
+        1653 // PGCRNotFound
+    ])
 }
