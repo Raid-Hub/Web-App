@@ -3,28 +3,32 @@ import { prisma } from "~/server/prisma"
 
 // TODO: Expose this functionality in a tRPC route
 export const updateDestinyProfiles = async (data: DestinyLinkedProfilesResponse) => {
-    const applicableMemberships = data.profiles.filter(m => m.applicableMembershipTypes.length > 0)
+    const applicableMemberships = data.profiles.filter(
+        m =>
+            m.applicableMembershipTypes.length > 0 ||
+            (m.isOverridden && new Date(m.dateLastPlayed).getTime() > 0)
+    )
 
     const primaryDestinyMembershipId = applicableMemberships.sort(
         (a, b) => new Date(b.dateLastPlayed).getTime() - new Date(a.dateLastPlayed).getTime()
     )[0]?.membershipId
 
-    if (!primaryDestinyMembershipId) throw new Error("No primary membership found")
-
-    const [, ...profiles] = await prisma.$transaction([
-        prisma.profile.deleteMany({
-            where: {
-                bungieMembershipId: data.bnetMembership.membershipId,
-                vanity: null
+    if (!primaryDestinyMembershipId)
+        throw new TypeError("No primary Destiny membership found", {
+            cause: {
+                data,
+                applicableMemberships
             }
-        }),
-        ...applicableMemberships.map(membership =>
+        })
+
+    const profiles = await prisma.$transaction(
+        applicableMemberships.map(membership =>
             prisma.profile.upsert({
                 create: {
-                    destinyMembershipId: membership.membershipId,
-                    destinyMembershipType: membership.membershipType,
+                    bungieMembershipId: data.bnetMembership.membershipId,
                     isPrimary: membership.membershipId === primaryDestinyMembershipId,
-                    bungieMembershipId: data.bnetMembership.membershipId
+                    destinyMembershipId: membership.membershipId,
+                    destinyMembershipType: membership.membershipType
                 },
                 update: {
                     bungieMembershipId: data.bnetMembership.membershipId,
@@ -41,7 +45,7 @@ export const updateDestinyProfiles = async (data: DestinyLinkedProfilesResponse)
                 }
             })
         )
-    ])
+    )
 
     return profiles
 }

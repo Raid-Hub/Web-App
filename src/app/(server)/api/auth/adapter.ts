@@ -265,20 +265,9 @@ export const PrismaAdapter = (prisma: PrismaClientWithExtensions): Adapter => ({
     async getSessionAndUser(sessionToken: string) {
         const userAndSession = await prisma.session.findUnique({
             where: { sessionToken },
-            select: {
-                id: true,
-                userId: true,
-                expires: true,
-                sessionToken: true,
+            include: {
                 user: {
-                    select: {
-                        id: true,
-                        emailVerified: true,
-                        name: true,
-                        image: true,
-                        email: true,
-                        role: true,
-                        createdAt: true,
+                    include: {
                         profiles: {
                             select: {
                                 isPrimary: true,
@@ -316,8 +305,13 @@ export const PrismaAdapter = (prisma: PrismaClientWithExtensions): Adapter => ({
         } = userAndSession
 
         const bungieAccount = accounts[0]
-
-        if (!bungieAccount) throw new Error("Bungie account not found")
+        if (!bungieAccount)
+            throw new TypeError("Bungie account not found", {
+                cause: {
+                    sessionToken,
+                    userId: userAndSession.user.id
+                }
+            })
 
         return {
             user: {
