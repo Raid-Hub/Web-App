@@ -1,17 +1,7 @@
 import type { BungieFetchConfig } from "bungie-net-core"
-import type { PlatformErrorCodes } from "bungie-net-core/models"
 import EventEmitter from "events"
 import { BungiePlatformError } from "~/models/BungieAPIError"
 import BaseBungieClient from "./BungieClient"
-
-const AuthErrorCodes = new Set<PlatformErrorCodes>([
-    99, // WebAuthRequired
-    22, // WebAuthModuleAsyncFailed
-    2124, // AuthorizationRecordRevoked
-    2123, // AuthorizationRecordExpired
-    2122, // AuthorizationCodeStale
-    2106 // AuthorizationCodeInvalid
-])
 
 export default class ClientBungieClient extends BaseBungieClient {
     private accessToken: string | null = null
@@ -54,7 +44,8 @@ export default class ClientBungieClient extends BaseBungieClient {
                 return this.request(url, payload)
             } else if (
                 (err instanceof Response && err.status === 401) ||
-                (err instanceof BungiePlatformError && AuthErrorCodes.has(err.ErrorCode))
+                (err instanceof BungiePlatformError &&
+                    BaseBungieClient.AuthErrorCodes.has(err.ErrorCode))
             ) {
                 this.clearToken()
                 this.emitter.emit("unauthorized")
@@ -70,8 +61,11 @@ export default class ClientBungieClient extends BaseBungieClient {
                     }
                     this.emitter.once("authorized", listener)
                 })
-            } else if (err instanceof BungiePlatformError && err.ErrorCode === 1688) {
-                url.searchParams.set("retry", "DestinyDirectBabelClientTimeout")
+            } else if (
+                err instanceof BungiePlatformError &&
+                BaseBungieClient.RetryableErrorCodes.has(err.ErrorCode)
+            ) {
+                url.searchParams.set("retry", err.cause.ErrorStatus)
                 return this.request(url, payload)
             } else {
                 throw err
