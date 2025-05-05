@@ -87,8 +87,8 @@ const Dot = ({ centerX, activity, centerY, isTargeted, setTooltip, tooltipData }
                             ? DotFlawless
                             : DotSuccess
                         : activity.completed
-                        ? DotTaxi
-                        : DotFail
+                          ? DotTaxi
+                          : DotFail
                 }
                 fillOpacity={0.978}
                 r={RADIUS}

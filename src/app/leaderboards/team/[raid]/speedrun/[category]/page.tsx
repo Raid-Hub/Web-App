@@ -54,8 +54,8 @@ export async function generateMetadata({ params }: DynamicParams): Promise<Metad
 
     const displayName =
         params.category !== "all"
-            ? SpeedrunVariables[definition.path]?.variable?.values[params.category]?.displayName ??
-              null
+            ? (SpeedrunVariables[definition.path]?.variable?.values[params.category]?.displayName ??
+              null)
             : null
 
     const title = [definition.name, displayName, "Speedrun Leaderboards"].filter(Boolean).join(" ")

@@ -92,7 +92,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
     const username = basic?.bungieGlobalDisplayName
         ? `${basic.bungieGlobalDisplayName}#${basic.bungieGlobalDisplayNameCode}`
-        : basic?.displayName ?? null
+        : (basic?.displayName ?? null)
     const displayName = username?.split("#")[0] ?? null
 
     if (!username || !displayName) {

@@ -140,16 +140,17 @@ async function refreshRaidHubBearer({
 
     const errors: AuthError[] = []
 
-    const newToken = await (role === "ADMIN"
-        ? postRaidHubApi("/authorize/admin", null, {
-              bungieMembershipId: userId,
-              adminClientSecret: process.env.RAIDHUB_ADMIN_CLIENT_SECRET!
-          })
-        : postRaidHubApi("/authorize/user", null, {
-              bungieMembershipId: userId,
-              destinyMembershipIds: profiles.map(p => p.destinyMembershipId),
-              clientSecret: process.env.RAIDHUB_CLIENT_SECRET!
-          })
+    const newToken = await (
+        role === "ADMIN"
+            ? postRaidHubApi("/authorize/admin", null, {
+                  bungieMembershipId: userId,
+                  adminClientSecret: process.env.RAIDHUB_ADMIN_CLIENT_SECRET!
+              })
+            : postRaidHubApi("/authorize/user", null, {
+                  bungieMembershipId: userId,
+                  destinyMembershipIds: profiles.map(p => p.destinyMembershipId),
+                  clientSecret: process.env.RAIDHUB_CLIENT_SECRET!
+              })
     )
         .then(res => res.response)
         .catch(e => {

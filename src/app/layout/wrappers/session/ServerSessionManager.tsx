@@ -1,6 +1,6 @@
 import { Suspense, type ReactNode } from "react"
+import { isStaticRequest } from "~/lib/server"
 import { getServerSession } from "~/server/api/auth"
-import { isStaticRequest } from "~/server/util"
 import { ClientSessionManager } from "./ClientSessionManager"
 
 /**

@@ -27,7 +27,7 @@ export const SpeedrunComControls = (props: {
 
         const categoryId = SpeedrunVariables[props.raidPath].categoryId
         const variable = SpeedrunVariables[props.raidPath].variable
-        const id = props.category ? variable?.values[props.category]?.id ?? null : null
+        const id = props.category ? (variable?.values[props.category]?.id ?? null) : null
         url.searchParams.set(
             "x",
             `${categoryId}${variable && id ? `-${variable.variableId}.${id}` : ""}`

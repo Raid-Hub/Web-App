@@ -1,6 +1,6 @@
 "use client"
 
-import { forwardRef } from "react"
+import { type ComponentPropsWithoutRef, forwardRef } from "react"
 import styled, { css, type DefaultTheme } from "styled-components"
 import { $media } from "~/app/layout/media"
 import { type deviceSizes } from "~/app/layout/theme"
@@ -15,7 +15,7 @@ export type SVGWrapperProps = Omit<
         absolute?: boolean
         pointer?: boolean
     } & React.SVGProps<SVGSVGElement>,
-    "className" | "ref"
+    "ref"
 >
 
 export type SVGComponent = (props: SVGWrapperProps) => JSX.Element
@@ -35,16 +35,15 @@ const StyledSvg = styled.svg<StyledSvgProps>`
         typeof $sx === "number"
             ? `width: ${$sx}px;`
             : typeof $sx === "object"
-            ? o.map(
-                  $sx,
-                  (device, value) =>
-                      css`
-                          ${$media.max[device]`
+              ? o.map(
+                    $sx,
+                    (device, value) => css`
+                        ${$media.max[device]`
                              width: ${value}px;
                         `}
-                      `
-              )
-            : ""}
+                    `
+                )
+              : ""}
 
     ${({ theme, $color }) => $color !== "none" && `fill: ${theme.colors.icon[$color ?? "white"]}`};
 
@@ -92,3 +91,5 @@ export const DeepFilledSvg = styled(SVG)<{
         }
     `}
 `
+
+export type SVGProps = Omit<ComponentPropsWithoutRef<"svg">, "viewBox">

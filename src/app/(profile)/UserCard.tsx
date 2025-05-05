@@ -126,9 +126,11 @@ export function UserCard() {
                             />
                             <BannerOverlay>
                                 <Flex $crossAxis="stretch">
-                                    {raidHubUser?.badges?.slice(0, 5).map(badge => (
-                                        <ProfileBadge key={badge.id} {...badge} size={24} />
-                                    ))}
+                                    {raidHubUser?.badges
+                                        ?.slice(0, 5)
+                                        .map(badge => (
+                                            <ProfileBadge key={badge.id} {...badge} size={24} />
+                                        ))}
                                 </Flex>
                             </BannerOverlay>
                         </Container>

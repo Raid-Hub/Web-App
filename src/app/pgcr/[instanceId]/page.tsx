@@ -1,25 +1,24 @@
 import type { Metadata } from "next"
-import { notFound } from "next/navigation"
 import { metadata as rootMetaData } from "~/app/layout"
-import { PGCRPage } from "../PGCRPage"
-import { getMetaData, prefetchActivity, type PageProps } from "../server"
+
+import { PageWrapper } from "~/components/layout/PageWrapper"
+import { assertValidPath, getMetaData, prefetchActivity } from "~/lib/pgcr/server"
+import { type PGCRPageProps } from "~/lib/pgcr/types"
+import PGCR from "../components/PGCR"
 
 export const revalidate = 0
 
-const assertValidPath = (instanceId: string) => {
-    if (!/^\d+$/.test(instanceId)) {
-        notFound()
-    }
-}
-
-export default async function Page({ params }: PageProps) {
+export default async function Page({ params }: PGCRPageProps) {
     assertValidPath(params.instanceId)
     const activity = await prefetchActivity(params.instanceId)
-
-    return <PGCRPage instanceId={params.instanceId} ssrActivity={activity} isReady={true} />
+    return (
+        <PageWrapper>
+            <PGCR data={activity} />
+        </PageWrapper>
+    )
 }
 
-export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+export async function generateMetadata({ params }: PGCRPageProps): Promise<Metadata> {
     assertValidPath(params.instanceId)
     const activity = await prefetchActivity(params.instanceId)
 

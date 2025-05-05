@@ -1,4 +1,4 @@
-import { useMemo } from "react"
+import { useCallback, useMemo } from "react"
 import Hunter from "~/components/icons/Hunter"
 import QuestionMark from "~/components/icons/QuestionMark"
 import Titan from "~/components/icons/Titan"
@@ -20,4 +20,19 @@ export const useCharacterClass = (classHash: number | string) => {
                 return QuestionMark
         }
     }, [characterClass])
+}
+
+export const useGetCharacterClass = () => {
+    return useCallback((classHash: number | null): [typeof Titan, string] => {
+        switch (classHash) {
+            case 3655393761:
+                return [Titan, "Titan"]
+            case 671679327:
+                return [Hunter, "Hunter"]
+            case 2271682572:
+                return [Warlock, "Warlock"]
+            default:
+                return [QuestionMark, "Unknown"]
+        }
+    }, [])
 }

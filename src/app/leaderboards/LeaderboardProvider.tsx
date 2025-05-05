@@ -22,7 +22,7 @@ export const LeaderboardProvider = <T extends RaidHubLeaderboardURL>(props: {
 
     const query = useLeaderboard({
         // The SSR page may not be the same as the current page, so we need to check
-        initialData: props.ssrPage === String(page) ? props.ssrData ?? undefined : undefined,
+        initialData: props.ssrPage === String(page) ? (props.ssrData ?? undefined) : undefined,
         initialDataUpdatedAt: props.ssrUpdatedAt ?? undefined,
         queryKey: queryKeyWithPage,
         queryFn: () =>

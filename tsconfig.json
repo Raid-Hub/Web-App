@@ -19,9 +19,11 @@
         "paths": {
             "~/server/*": ["./app/(server)/*"],
             "~/app/*": ["./app/*"],
+            "~/shad/*": ["./components/ui/*"],
             "~/components/*": ["./components/*"],
             "~/data/*": ["./data/*"],
             "~/hooks/*": ["./hooks/*"],
+            "~/lib/*": ["./lib/*"],
             "~/models/*": ["./models/*"],
             "~/services/*": ["./services/*"],
             "~/types/*": ["./types/*"],
@@ -33,7 +35,13 @@
             }
         ]
     },
-    "include": ["**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "next.config.js"],
+    "include": [
+        "**/*.ts",
+        "**/*.tsx",
+        ".next/types/**/*.ts",
+        "next.config.js",
+        "postcss.config.cjs"
+    ],
     "exclude": ["node_modules"],
     "ts-node": {
         "compilerOptions": {

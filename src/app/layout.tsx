@@ -1,8 +1,7 @@
-import type { Metadata, Viewport } from "next"
+import type { Viewport } from "next"
 import dynamic from "next/dynamic"
 import NextTopLoader from "nextjs-toploader"
 import { type ReactNode } from "react"
-import { baseUrl } from "~/server/util"
 import { prefetchManifest } from "~/services/raidhub/prefetchRaidHubManifest"
 import "./global.css"
 import { Footer } from "./layout/footer/Footer"
@@ -28,11 +27,11 @@ export const fetchCache = "default-no-store"
 export const revalidate = false
 export const maxDuration = 10 // max lambda duration in seconds
 
-export default async function RootLayout(params: { children: ReactNode }) {
+export default async function RootLayout(params: { children: ReactNode; modal: ReactNode }) {
     const manifest = await prefetchManifest()
 
     return (
-        <html>
+        <html suppressHydrationWarning>
             <head>
                 <meta name="discord:site" content="https://discord.gg/raidhub" />
 
@@ -65,6 +64,7 @@ export default async function RootLayout(params: { children: ReactNode }) {
                                             <RaidHubStatusBanner />
                                             <SearchModal />
                                             {params.children}
+                                            {params.modal}
                                             <Footer />
                                         </DestinyManifestManager>
                                     </ClientComponentManager>
@@ -78,36 +78,7 @@ export default async function RootLayout(params: { children: ReactNode }) {
     )
 }
 
-const title: Metadata["title"] = {
-    absolute: "RaidHub",
-    template: "%s | RaidHub"
-}
-const description: Metadata["description"] =
-    "RaidHub is the fastest Destiny 2 raid analytics site. View dozens of leaderboards, millions of profiles, and millions of raid completions."
-
-export const metadata = {
-    title: title,
-    description: description,
-    icons: {
-        shortcut: "/favicon.ico"
-    },
-    robots: {
-        follow: true,
-        index: true
-    },
-    keywords: ["destiny 2", "raidhub", "raid hub", "raid", "leaderboards", "statistics"],
-    metadataBase: new URL(baseUrl),
-    openGraph: {
-        title: title,
-        description: description,
-        siteName: "RaidHub",
-        images: ["/logo.png"] as string[] | undefined,
-        type: "website"
-    },
-    twitter: {
-        site: "@raidhubio"
-    }
-}
+export { metadata } from "~/lib/metadata"
 
 export const viewport: Viewport = {
     colorScheme: "dark",
