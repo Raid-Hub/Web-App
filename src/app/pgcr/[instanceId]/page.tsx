@@ -1,7 +1,7 @@
 import type { Metadata } from "next"
-import { metadata as rootMetaData } from "~/app/layout"
 
 import { PageWrapper } from "~/components/layout/PageWrapper"
+import { baseMetadata } from "~/lib/metadata"
 import { assertValidPath, getMetaData, prefetchActivity } from "~/lib/pgcr/server"
 import { type PGCRPageProps } from "~/lib/pgcr/types"
 import PGCR from "../components/PGCR"
@@ -33,7 +33,7 @@ export async function generateMetadata({ params }: PGCRPageProps): Promise<Metad
 
     const { idTitle, ogTitle, description } = getMetaData(activity)
 
-    const inheritedOpengraph = structuredClone(rootMetaData.openGraph)
+    const inheritedOpengraph = structuredClone(baseMetadata.openGraph)
     // Remove images from inherited metadata, otherwise it overrides the image generated
     // by the dynamic image generator
     delete inheritedOpengraph.images
@@ -42,7 +42,7 @@ export async function generateMetadata({ params }: PGCRPageProps): Promise<Metad
         title: idTitle,
         description: description,
         keywords: [
-            ...rootMetaData.keywords,
+            ...baseMetadata.keywords,
             "pgcr",
             "activity",
             activity.completed ? "clear" : "attempt",
@@ -61,7 +61,7 @@ export async function generateMetadata({ params }: PGCRPageProps): Promise<Metad
             description: description
         },
         twitter: {
-            ...rootMetaData.twitter,
+            ...baseMetadata.twitter,
             card: "summary_large_image"
         },
         robots: {

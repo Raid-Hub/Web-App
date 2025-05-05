@@ -1,11 +1,11 @@
 import { type Metadata } from "next"
-import { metadata as rootMetaData } from "~/app/layout"
+import { baseMetadata } from "~/lib/metadata"
 import { LegalPage } from "../LegalPage"
 
 export const metadata: Metadata = {
     title: "Terms and Conditions",
     openGraph: {
-        ...rootMetaData.openGraph,
+        ...baseMetadata.openGraph,
         title: "Terms and Conditions"
     }
 }

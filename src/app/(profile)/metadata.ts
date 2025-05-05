@@ -1,5 +1,5 @@
 import { type Metadata } from "next"
-import { metadata as rootMetaData } from "~/app/layout"
+import { baseMetadata } from "~/lib/metadata"
 
 export const generatePlayerMetadata = ({
     displayName,
@@ -19,7 +19,7 @@ export const generatePlayerMetadata = ({
         title: displayName,
         description,
         keywords: [
-            ...rootMetaData.keywords,
+            ...baseMetadata.keywords,
             "raid report",
             "profile",
             "raid history",
@@ -27,7 +27,7 @@ export const generatePlayerMetadata = ({
             username
         ],
         openGraph: {
-            ...rootMetaData.openGraph,
+            ...baseMetadata.openGraph,
             type: "profile",
             username,
             title: displayName,

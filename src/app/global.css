@@ -29,6 +29,14 @@ body {
     flex-direction: column;
 
     background-color: #010011;
+    background: linear-gradient(
+        90deg,
+        rgba(1, 0, 17, 1) 0%,
+        rgba(1, 0, 17, 1) 25%,
+        rgba(23, 1, 13, 1) 48%,
+        rgba(1, 0, 17, 1) 91%,
+        rgba(19, 3, 1, 1) 100%
+    );
     background-size: 100% 100%;
 }
 
@@ -130,6 +138,6 @@ img[src=""] {
         @apply border-border outline-ring/50;
     }
     body {
-        @apply bg-background text-foreground;
+        @apply text-foreground;
     }
 }

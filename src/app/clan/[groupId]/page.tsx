@@ -1,7 +1,7 @@
 import { type Metadata } from "next"
-import { metadata as rootMetaData } from "~/app/layout"
 import { ClanComponent } from "~/components/__deprecated__/clan/Clan"
 import { PageWrapper } from "~/components/layout/PageWrapper"
+import { baseMetadata } from "~/lib/metadata"
 import { fixClanName } from "~/util/destiny/fixClanName"
 import { getClan, type PageProps } from "../server"
 
@@ -23,7 +23,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
     const clanName = fixClanName(clan.detail.name)
 
-    const inheritedOpengraph = structuredClone(rootMetaData.openGraph)
+    const inheritedOpengraph = structuredClone(baseMetadata.openGraph)
     // Remove images from inherited metadata, otherwise it overrides the image generated
     // by the dynamic image generator
     delete inheritedOpengraph.images
@@ -31,7 +31,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     return {
         title: clanName,
         description: clan.detail.motto,
-        keywords: [...rootMetaData.keywords, "clan", clanName],
+        keywords: [...baseMetadata.keywords, "clan", clanName],
         openGraph: {
             ...inheritedOpengraph,
             title: clanName,

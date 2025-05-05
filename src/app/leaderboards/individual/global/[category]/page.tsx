@@ -1,5 +1,5 @@
 import { type Metadata } from "next"
-import { metadata as rootMetadata } from "~/app/layout"
+import { baseMetadata } from "~/lib/metadata"
 import { type PathParamsForLeaderboardURL } from "~/services/raidhub/types"
 import { Leaderboard } from "../../../Leaderboard"
 import { LeaderboardSSR } from "../../../LeaderboardSSR"
@@ -40,9 +40,9 @@ export async function generateMetadata({ params }: DynamicParams): Promise<Metad
     return {
         title: title,
         description: description,
-        keywords: [...rootMetadata.keywords, categoryName, "top", "rankings"],
+        keywords: [...baseMetadata.keywords, categoryName, "top", "rankings"],
         openGraph: {
-            ...rootMetadata.openGraph,
+            ...baseMetadata.openGraph,
             title: title,
             description: description
         }

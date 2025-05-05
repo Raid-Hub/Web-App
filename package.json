@@ -156,5 +156,10 @@
             "@typescript-eslint/no-unsafe-enum-comparison": "off",
             "@typescript-eslint/no-misused-promises": "off"
         }
+    },
+    "postcss": {
+        "plugins": {
+            "@tailwindcss/postcss": {}
+        }
     }
 }

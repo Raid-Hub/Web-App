@@ -78,7 +78,7 @@ export default async function RootLayout(params: { children: ReactNode; modal: R
     )
 }
 
-export { metadata } from "~/lib/metadata"
+export { baseMetadata as metadata } from "~/lib/metadata"
 
 export const viewport: Viewport = {
     colorScheme: "dark",

@@ -1,8 +1,8 @@
 import { type Metadata } from "next"
 import { notFound } from "next/navigation"
-import { metadata as rootMetadata } from "~/app/layout"
 import { LeaderboardSSR } from "~/app/leaderboards/LeaderboardSSR"
 import { getRaidSplash } from "~/data/activity-images"
+import { baseMetadata } from "~/lib/metadata"
 import { prefetchManifest } from "~/services/raidhub/prefetchRaidHubManifest"
 import { type RaidHubManifestResponse } from "~/services/raidhub/types"
 import { Leaderboard } from "../../../../Leaderboard"
@@ -47,10 +47,10 @@ export async function generateMetadata({ params }: DynamicParams): Promise<Metad
             version.name,
             "world first",
             "rankings",
-            ...rootMetadata.keywords
+            ...baseMetadata.keywords
         ],
         openGraph: {
-            ...rootMetadata.openGraph,
+            ...baseMetadata.openGraph,
             title: title,
             description: description
         }

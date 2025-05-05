@@ -8,7 +8,7 @@ const title: Metadata["title"] = {
 const description: Metadata["description"] =
     "RaidHub is the fastest Destiny 2 raid analytics site. View dozens of leaderboards, millions of profiles, and millions of raid completions."
 
-export const metadata = {
+export const baseMetadata = {
     title: title,
     description: description,
     icons: {
