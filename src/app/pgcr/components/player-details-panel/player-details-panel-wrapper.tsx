@@ -1,12 +1,12 @@
 "use client"
 
-import { usePGCRQueryParams } from "../../hooks/usePGCRQueryParams"
+import { usePgcrParams } from "../../hooks/usePgcrParams"
 import { usePGCRContext } from "../ClientStateManager"
 import { PlayerDetailsPanel } from "./player-details-panel"
 
 export const PlayerDetailsPanelWrapper = () => {
     const { data } = usePGCRContext()
-    const { validatedSearchParams, remove } = usePGCRQueryParams()
+    const { validatedSearchParams, remove } = usePgcrParams()
     const selectedPlayer = validatedSearchParams.get("player")
     const selectedPlayerData =
         data.players.find(player => player.playerInfo.membershipId === selectedPlayer) ??

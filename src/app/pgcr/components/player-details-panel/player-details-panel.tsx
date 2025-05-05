@@ -14,7 +14,7 @@ import { bungieIconUrl, getBungieDisplayName } from "~/util/destiny"
 import { round } from "~/util/math"
 import { secondsToHMS } from "~/util/presentation/formatting"
 import { useGetCharacterClass } from "../../hooks/useCharacterClass"
-import { usePGCRQueryParams } from "../../hooks/usePGCRQueryParams"
+import { usePgcrParams } from "../../hooks/usePgcrParams"
 import { usePGCRContext } from "../ClientStateManager"
 import { WeaponTable } from "../pgcr-weapons"
 import { PlayerBadge } from "../player-badge"
@@ -26,7 +26,7 @@ interface PlayerDetailsPanelProps {
 }
 
 export const PlayerDetailsPanel = ({ player, onClose }: PlayerDetailsPanelProps) => {
-    const { validatedSearchParams, get, set, remove } = usePGCRQueryParams()
+    const { validatedSearchParams, get, set, remove } = usePgcrParams()
     const { data, mvp, playerStatsMerged, weaponsMap } = usePGCRContext()
 
     useEffect(() => {

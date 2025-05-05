@@ -12,7 +12,7 @@ import { bungieProfileIconUrl, getBungieDisplayName } from "~/util/destiny"
 import { round } from "~/util/math"
 import { secondsToHMS } from "~/util/presentation/formatting"
 import { useGetCharacterClass } from "../hooks/useCharacterClass"
-import { usePGCRQueryParams } from "../hooks/usePGCRQueryParams"
+import { usePgcrParams } from "../hooks/usePgcrParams"
 import { usePGCRContext } from "./ClientStateManager"
 import { PlayerBadge } from "./player-badge"
 
@@ -22,7 +22,7 @@ interface PlayerRowProps {
 }
 
 export default function PlayerRow({ player, isSelected }: PlayerRowProps) {
-    const { set } = usePGCRQueryParams()
+    const { set } = usePgcrParams()
     const { data, playerStatsMerged } = usePGCRContext()
 
     const stats = playerStatsMerged.get(player.playerInfo.membershipId)!
