@@ -104,7 +104,7 @@ export default function PGCR({ data }: PGCRProps) {
         }
     )
 
-    const totalKd = (totals.kills / totals.deaths) * 100
+    const totalKd = (totals.kills / totals.deaths)
 
     return (
         <ClientStateManager
