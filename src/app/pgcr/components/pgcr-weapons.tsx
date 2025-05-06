@@ -1,7 +1,7 @@
 "use client"
 
 import { Collection } from "@discordjs/collection"
-import { Crosshair } from "lucide-react"
+import { Crosshair, Swords } from "lucide-react"
 import Image from "next/image"
 import Link from "next/link"
 import { useMemo } from "react"
@@ -35,7 +35,10 @@ export const WeaponTable = ({
     return (
         <Card className="gap-2 border-zinc-800 bg-zinc-950">
             <CardHeader className="pb-0">
-                <h3 className="text-lg font-medium">Weapons</h3>
+                <h3 className="flex items-center gap-2 text-base font-medium md:text-lg">
+                    <Swords className="text-raidhub h-4 w-4 md:h-5 md:w-5" />
+                    Weapons
+                </h3>
             </CardHeader>
             <CardContent>
                 <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
@@ -159,7 +162,7 @@ export const WeaponCard = ({
         <Card className="overflow-hidden rounded-none border-zinc-800 bg-zinc-950 py-0">
             <CardContent className="p-0">
                 <div className="flex items-center">
-                    <div className="flex h-16 w-16 flex-shrink-0 items-center justify-center overflow-hidden bg-zinc-800">
+                    <div className="flex size-12 flex-shrink-0 items-center justify-center overflow-hidden bg-zinc-800 md:size-16">
                         {imageUrl && (
                             <Image
                                 unoptimized
@@ -171,10 +174,10 @@ export const WeaponCard = ({
                             />
                         )}
                     </div>
-                    <div className="flex-1 p-3">
+                    <div className="flex-1 space-y-1 p-3">
                         <div className="flex items-center justify-between">
                             <Link
-                                className="text-primary text-sm font-medium"
+                                className="text-primary text-xs font-medium md:text-sm"
                                 target="_blank"
                                 rel="noopener"
                                 href={`https://d2foundry.gg/w/${weaponHash}`}>
@@ -182,7 +185,7 @@ export const WeaponCard = ({
                             </Link>
                             <div className="text-lg font-medium">{kills}</div>
                         </div>
-                        <div className="mt-1 flex items-center gap-2">
+                        <div className="hidden items-center gap-2 md:flex">
                             <Progress
                                 value={(kills / totalPlayerKills) * 100}
                                 className="h-1.5 flex-1"
@@ -191,7 +194,7 @@ export const WeaponCard = ({
                                 {((kills / totalPlayerKills) * 100).toFixed(1)}%
                             </span>
                         </div>
-                        <div className="mt-1 flex justify-end">
+                        <div className="hidden justify-end md:flex">
                             <Tooltip>
                                 <TooltipTrigger asChild>
                                     <span className="flex items-center gap-1 text-xs text-zinc-400">

@@ -1,5 +1,5 @@
 import { Collection } from "@discordjs/collection"
-import { CheckCircle, Clock, Flag, Swords, Trophy, Users, XCircle } from "lucide-react"
+import { CheckCircle, Clock, Flag, Sword, Trophy, Users, XCircle } from "lucide-react"
 import { Fragment } from "react"
 import PlayerRow from "~/app/pgcr/components/player-row"
 import { R2RaidSplash, getRaidSplash } from "~/data/activity-images"
@@ -113,17 +113,17 @@ export default function PGCR({ data }: PGCRProps) {
             playerStatsMerged={Array.from(playerMergedStats.entries())}>
             <TooltipProvider>
                 <div className="container mx-auto my-auto w-full max-w-5xl">
-                    <Card className="gap-0 overflow-hidden border border-zinc-800 bg-zinc-950 py-0 shadow-md">
+                    <Card className="w-full gap-0 overflow-hidden border border-zinc-800 bg-zinc-950 py-0 shadow-md md:w-[768px] lg:w-[956px] xl:w-[1096px]">
                         {/* Header with background splash */}
                         <div
-                            className="relative h-36 overflow-hidden rounded-t-lg md:h-48"
+                            className="relative min-h-40 overflow-hidden rounded-t-lg md:h-48"
                             style={{
                                 backgroundImage: `url(${backgroundImageUrl})`,
                                 backgroundSize: "cover",
                                 backgroundPosition: "center"
                             }}>
                             <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/50 to-black/30 backdrop-blur-[2px]" />
-                            <CardHeader className="absolute inset-0 flex flex-col gap-2 p-4 md:p-6">
+                            <CardHeader className="absolute inset-0 flex flex-col gap-2 p-2 md:p-6">
                                 <PGCRDate />
                                 <div className="flex flex-wrap items-center gap-2">
                                     <h1 className="text-2xl font-bold tracking-tight text-white md:text-4xl">
@@ -207,11 +207,11 @@ export default function PGCR({ data }: PGCRProps) {
 
                         <Separator className="bg-zinc-800" />
 
-                        <CardContent className="space-y-6 bg-black p-4 md:p-6">
+                        <CardContent className="space-y-6 bg-black p-2 md:p-6">
                             {/* Players Section */}
-                            <div className="space-y-3">
-                                <div className="flex items-center justify-between">
-                                    <div>Summary</div>
+                            <div className="space-y-2">
+                                <div className="hidden items-center justify-between md:flex">
+                                    <h3>Summary</h3>
                                     <Tooltip>
                                         <TooltipTrigger asChild>
                                             <Badge
@@ -232,153 +232,152 @@ export default function PGCR({ data }: PGCRProps) {
                                     </Tooltip>
                                 </div>
 
-                                <Card className="gap-1 border-zinc-800 bg-zinc-950 py-2">
-                                    <CardHeader className="p-3 pb-1 md:px-4">
-                                        <div className="grid w-full grid-cols-10 text-xs font-medium text-zinc-500 uppercase md:grid-cols-8">
-                                            <div className="col-span-5 min-w-[200px] md:col-span-3">
-                                                Player
-                                            </div>
+                                <Card className="gap-1 border-zinc-800 bg-zinc-950 py-0">
+                                    <CardHeader className="gap-0 p-2 pb-1 md:px-4">
+                                        <div className="grid w-full grid-cols-7 text-xs font-medium text-zinc-500 uppercase md:grid-cols-9">
+                                            <div className="col-span-4 min-w-[200px]">Player</div>
                                             <div className="text-center">Kills</div>
                                             <div className="text-center">Deaths</div>
-                                            <div className="text-center">Assists</div>
-                                            <div className="text-center">K/D</div>
+                                            <div className="hidden text-center md:block">
+                                                Assists
+                                            </div>
+                                            <div className="hidden text-center md:block">K/D</div>
                                             <div className="text-center">Time</div>
                                         </div>
                                     </CardHeader>
                                     <CardContent className="p-0">
-                                        <ScrollArea className="max-h-[600px] overflow-x-auto">
-                                            <div className="w-full">
-                                                {Array.from(sortScores.keys()).map((id, idx) => (
-                                                    <Fragment key={id}>
-                                                        <PlayerRow
-                                                            player={
-                                                                data.players.find(
-                                                                    p =>
-                                                                        p.playerInfo
-                                                                            .membershipId === id
-                                                                )!
-                                                            }
-                                                        />
-                                                        {idx < data.players.length - 1 && (
-                                                            <Separator className="bg-zinc-800" />
-                                                        )}
-                                                    </Fragment>
-                                                ))}
-                                            </div>
+                                        <ScrollArea className="max-h-[600px] w-full overflow-x-auto">
+                                            {sortScores.map((_, id) => (
+                                                <Fragment key={id}>
+                                                    <Separator className="bg-zinc-800" />
+                                                    <PlayerRow
+                                                        player={
+                                                            data.players.find(
+                                                                p =>
+                                                                    p.playerInfo.membershipId === id
+                                                            )!
+                                                        }
+                                                    />
+                                                </Fragment>
+                                            ))}
                                         </ScrollArea>
                                     </CardContent>
                                 </Card>
                             </div>
 
                             {/* Activity Summary Section */}
-                            <div className="space-y-6">
-                                {data.playerCount > 1 && (
-                                    <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                                        <Card className="border-zinc-800 bg-zinc-950">
-                                            <CardHeader className="p-4 pb-2">
-                                                <h3 className="flex items-center gap-2 text-base font-medium md:text-lg">
-                                                    <Trophy className="h-4 w-4 text-amber-500 md:h-5 md:w-5" />
-                                                    Activity Highlights
-                                                </h3>
-                                            </CardHeader>
-                                            <CardContent className="space-y-3 p-4 pt-0">
-                                                {mvpPlayer && (
-                                                    <>
-                                                        <LabeledStat
-                                                            label="MVP"
-                                                            value={getBungieDisplayName(
-                                                                mvpPlayer.playerInfo,
-                                                                {
-                                                                    excludeCode: true
-                                                                }
-                                                            )}
-                                                        />
-                                                        <Separator className="bg-zinc-800" />
-                                                    </>
-                                                )}
-                                                <LabeledStat
-                                                    label="Most Kills"
-                                                    value={`${getBungieDisplayName(
-                                                        mostKillsPlayer.playerInfo,
-                                                        {
-                                                            excludeCode: true
-                                                        }
-                                                    )} - ${playerMergedStats.get(mostKills)!.kills.toLocaleString()}`}
-                                                />
-                                                <Separator className="bg-zinc-800" />
-                                                <LabeledStat
-                                                    label="Most Assists"
-                                                    value={`${getBungieDisplayName(
-                                                        mostKillsPlayer.playerInfo,
-                                                        {
-                                                            excludeCode: true
-                                                        }
-                                                    )} - ${playerMergedStats.get(mostKills)!.assists.toLocaleString()}`}
-                                                />
-                                                <Separator className="bg-zinc-800" />
-                                                <LabeledStat
-                                                    label="Best K/D"
-                                                    value={`${getBungieDisplayName(
-                                                        bestKDPlayer.playerInfo,
-                                                        {
-                                                            excludeCode: true
-                                                        }
-                                                    )} - ${(
-                                                        playerMergedStats.get(bestKD)!.kills /
-                                                        playerMergedStats.get(bestKD)!.deaths
-                                                    ).toFixed(2)}`}
-                                                />
-                                                {totals.deaths > 0 && (
-                                                    <>
-                                                        <Separator className="bg-zinc-800" />
-                                                        <LabeledStat
-                                                            label="Most Deaths"
-                                                            value={`${getBungieDisplayName(
-                                                                mostDeathsPlayer.playerInfo,
-                                                                {
-                                                                    excludeCode: true
-                                                                }
-                                                            )} - ${playerMergedStats.get(mostDeaths)!.deaths.toLocaleString()}`}
-                                                        />
-                                                    </>
-                                                )}
-                                            </CardContent>
-                                        </Card>
 
-                                        <Card className="border-zinc-800 bg-zinc-950">
-                                            <CardHeader className="p-4 pb-2">
-                                                <h3 className="flex items-center gap-2 text-base font-medium md:text-lg">
-                                                    <Swords className="h-4 w-4 text-red-500 md:h-5 md:w-5" />
-                                                    Combat Stats
-                                                </h3>
-                                            </CardHeader>
-                                            <CardContent className="space-y-3 p-4 pt-0">
-                                                <LabeledStat
-                                                    label="Total Kills"
-                                                    value={totals.kills.toLocaleString()}
-                                                />
-                                                <Separator className="bg-zinc-800" />
-                                                <LabeledStat
-                                                    label="Total Assists"
-                                                    value={totals.assists.toLocaleString()}
-                                                />
-                                                <Separator className="bg-zinc-800" />
-                                                <LabeledStat
-                                                    label="Total Deaths"
-                                                    value={totals.deaths.toLocaleString()}
-                                                />
-                                                <Separator className="bg-zinc-800" />
-                                                <LabeledStat
-                                                    label="Team K/D"
-                                                    value={totalKd.toFixed(2)}
-                                                />
-                                            </CardContent>
-                                        </Card>
-                                    </div>
-                                )}
+                            {data.playerCount > 1 && (
+                                <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                                    <Card className="border-zinc-800 bg-zinc-950">
+                                        <CardHeader>
+                                            <h3 className="flex items-center gap-2 text-base font-medium md:text-lg">
+                                                <Trophy className="text-raidhub h-4 w-4 md:h-5 md:w-5" />
+                                                Activity Highlights
+                                            </h3>
+                                        </CardHeader>
+                                        <CardContent className="space-y-3 p-4 pt-0">
+                                            {mvpPlayer && (
+                                                <>
+                                                    <LabeledStat
+                                                        label="MVP"
+                                                        value={getBungieDisplayName(
+                                                            mvpPlayer.playerInfo,
+                                                            {
+                                                                excludeCode: true
+                                                            }
+                                                        )}
+                                                    />
+                                                    <Separator className="bg-zinc-800" />
+                                                </>
+                                            )}
+                                            <LabeledStat
+                                                label="Most Kills"
+                                                value={`${getBungieDisplayName(
+                                                    mostKillsPlayer.playerInfo,
+                                                    {
+                                                        excludeCode: true
+                                                    }
+                                                )} - ${playerMergedStats.get(mostKills)!.kills.toLocaleString()}`}
+                                            />
+                                            <Separator className="bg-zinc-800" />
+                                            <LabeledStat
+                                                label="Most Assists"
+                                                value={`${getBungieDisplayName(
+                                                    mostKillsPlayer.playerInfo,
+                                                    {
+                                                        excludeCode: true
+                                                    }
+                                                )} - ${playerMergedStats.get(mostKills)!.assists.toLocaleString()}`}
+                                            />
+                                            <Separator className="bg-zinc-800" />
+                                            <LabeledStat
+                                                label="Best K/D"
+                                                value={`${getBungieDisplayName(
+                                                    bestKDPlayer.playerInfo,
+                                                    {
+                                                        excludeCode: true
+                                                    }
+                                                )} - ${(
+                                                    playerMergedStats.get(bestKD)!.kills /
+                                                    playerMergedStats.get(bestKD)!.deaths
+                                                ).toFixed(2)}`}
+                                            />
+                                            {totals.deaths > 0 && (
+                                                <>
+                                                    <Separator className="bg-zinc-800" />
+                                                    <LabeledStat
+                                                        label="Most Deaths"
+                                                        value={`${getBungieDisplayName(
+                                                            mostDeathsPlayer.playerInfo,
+                                                            {
+                                                                excludeCode: true
+                                                            }
+                                                        )} - ${playerMergedStats.get(mostDeaths)!.deaths.toLocaleString()}`}
+                                                    />
+                                                </>
+                                            )}
+                                        </CardContent>
+                                    </Card>
 
-                                <AllPgcrWeaponsWrapper {...totals} />
-                            </div>
+                                    <Card className="border-zinc-800 bg-zinc-950">
+                                        <CardHeader>
+                                            <h3 className="flex items-center gap-2 text-base font-medium md:text-lg">
+                                                <Sword className="text-raidhub h-4 w-4 md:h-5 md:w-5" />
+                                                Combat Stats
+                                            </h3>
+                                        </CardHeader>
+                                        <CardContent className="space-y-3 p-4 pt-0">
+                                            <LabeledStat
+                                                label="Total Kills"
+                                                value={totals.kills.toLocaleString()}
+                                            />
+                                            <Separator className="bg-zinc-800" />
+                                            <LabeledStat
+                                                label="Total Assists"
+                                                value={totals.assists.toLocaleString()}
+                                            />
+                                            <Separator className="bg-zinc-800" />
+                                            <LabeledStat
+                                                label="Total Deaths"
+                                                value={totals.deaths.toLocaleString()}
+                                            />
+                                            <Separator className="bg-zinc-800" />
+                                            <LabeledStat
+                                                label="Team K/D"
+                                                value={totalKd.toFixed(2)}
+                                            />
+                                            <Separator className="bg-zinc-800" />
+                                            <LabeledStat
+                                                label="Total Super Kills"
+                                                value={totals.superKills.toLocaleString()}
+                                            />
+                                        </CardContent>
+                                    </Card>
+                                </div>
+                            )}
+
+                            <AllPgcrWeaponsWrapper {...totals} />
                         </CardContent>
                     </Card>
 

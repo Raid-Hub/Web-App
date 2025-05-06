@@ -1,15 +1,19 @@
+import { cn } from "~/lib/tw"
+
 interface ActivityPieChartProps {
     percentage: number
     size?: number
     strokeWidth?: number
     color?: "green" | "orange" | "primary"
+    className?: string
 }
 
 export function ActivityPieChart({
     percentage,
     size = 24,
     strokeWidth = 3,
-    color = "primary"
+    color = "primary",
+    className
 }: ActivityPieChartProps) {
     const radius = (size - strokeWidth) / 2
     const circumference = 2 * Math.PI * radius
@@ -31,7 +35,7 @@ export function ActivityPieChart({
             width={size}
             height={size}
             viewBox={`0 0 ${size} ${size}`}
-            className="-rotate-90 transform">
+            className={cn("-rotate-90 transform", className)}>
             {/* Background circle */}
             <circle
                 cx={size / 2}

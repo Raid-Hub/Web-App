@@ -38,15 +38,15 @@ export default function PlayerRow({ player, isSelected }: PlayerRowProps) {
     return (
         <Button
             variant="ghost"
-            className="group h-auto w-full cursor-pointer rounded-none p-0 hover:bg-zinc-900"
+            className="group h-auto w-full max-w-full cursor-pointer rounded-none p-0 hover:bg-zinc-900"
             onClick={() => set("player", player.playerInfo.membershipId)}>
             <TooltipProvider>
                 <div
                     className={cn(
-                        "grid w-full min-w-max grid-cols-10 items-center px-2 py-2 md:grid-cols-8 md:px-4 md:py-3",
+                        "grid w-full grid-cols-7 items-center p-2 md:grid-cols-9 md:p-4",
                         { "bg-zinc-900": isSelected }
                     )}>
-                    <div className="col-span-5 flex min-w-[200px] items-center gap-2 overflow-hidden md:col-span-3 md:gap-3">
+                    <div className="col-span-4 flex min-w-[200px] items-center gap-2 overflow-hidden md:gap-3">
                         <Avatar
                             className={cn("h-6 w-6 flex-shrink-0 rounded-sm md:h-8 md:w-8", {
                                 "opacity-50": !player.completed
@@ -60,13 +60,7 @@ export default function PlayerRow({ player, isSelected }: PlayerRowProps) {
                             </AvatarFallback>
                         </Avatar>
                         <div className="flex flex-nowrap items-center gap-1 overflow-x-auto text-sm font-medium md:gap-2 md:text-lg">
-                            <span
-                                className={cn("truncate", {
-                                    "text-zinc-500": !player.completed
-                                })}>
-                                {displayName}
-                            </span>
-                            <div className="ml-2 flex h-8 items-center gap-1">
+                            <div className="ml-1 flex h-8 items-center gap-1">
                                 {player.characters
                                     .toSorted((c1, c2) => {
                                         if (!c1.completed !== c2.completed) {
@@ -100,7 +94,14 @@ export default function PlayerRow({ player, isSelected }: PlayerRowProps) {
                                         )
                                     })}
                             </div>
-                            <div className="ml-1 flex items-center gap-1">
+                            <div
+                                className={cn("ml-2 truncate", {
+                                    "text-zinc-500": !player.completed
+                                })}>
+                                {displayName}
+                            </div>
+
+                            <div className="ml-1 hidden items-center gap-1 md:flex">
                                 {player.sherpas > 0 && <PlayerBadge variant="sherpa" />}
                                 {player.isFirstClear && <PlayerBadge variant="firstClear" />}
                                 {!player.completed && <PlayerBadge variant="dnf" />}
@@ -114,31 +115,37 @@ export default function PlayerRow({ player, isSelected }: PlayerRowProps) {
                         </div>
                     </div>
                     <div
-                        className={cn("text-center text-xs md:text-lg", {
+                        className={cn("text-primary/85 text-center text-xs md:text-lg", {
                             "text-zinc-500": !player.completed
                         })}>
                         {stats.kills.toLocaleString()}
                     </div>
                     <div
-                        className={cn("text-center text-xs md:text-lg", {
+                        className={cn("text-primary/85 text-center text-xs md:text-lg", {
                             "text-zinc-500": !player.completed
                         })}>
                         {stats.deaths.toLocaleString()}
                     </div>
                     <div
-                        className={cn("hidden text-center text-xs md:block md:text-lg", {
-                            "text-zinc-500": !player.completed
-                        })}>
+                        className={cn(
+                            "text-primary/85 hidden text-center text-xs md:block md:text-lg",
+                            {
+                                "text-zinc-500": !player.completed
+                            }
+                        )}>
                         {stats.assists.toLocaleString()}
                     </div>
                     <div
-                        className={cn("hidden text-center text-xs md:block md:text-lg", {
-                            "text-zinc-500": !player.completed
-                        })}>
+                        className={cn(
+                            "text-primary/85 hidden text-center text-xs md:block md:text-lg",
+                            {
+                                "text-zinc-500": !player.completed
+                            }
+                        )}>
                         {(stats.kills / stats.deaths).toFixed(2)}
                     </div>
                     <div
-                        className={cn("text-center", {
+                        className={cn("text-primary/85 text-center", {
                             "text-zinc-500": !player.completed
                         })}>
                         <Tooltip>
@@ -148,8 +155,9 @@ export default function PlayerRow({ player, isSelected }: PlayerRowProps) {
                                         percentage={activityPercentage}
                                         size={16}
                                         color={player.completed ? "green" : "orange"}
+                                        className="hidden md:block"
                                     />
-                                    <span className="ml-2 text-xs md:text-lg">
+                                    <span className="text-primary/85 ml-2 text-xs md:text-lg">
                                         {secondsToHMS(timePlayed, false)}
                                     </span>
                                 </div>

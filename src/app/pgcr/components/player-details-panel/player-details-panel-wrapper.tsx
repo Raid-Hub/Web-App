@@ -22,7 +22,7 @@ export const PlayerDetailsPanelWrapper = () => {
             className={`fixed inset-0 z-50 flex items-center justify-center bg-black/80 ${
                 selectedPlayer ? "opacity-100" : "pointer-events-none opacity-0"
             } transition-opacity duration-200`}>
-            <div className="relative h-full w-full max-w-4xl overflow-hidden rounded-lg border border-zinc-800 bg-black md:h-[80vh] md:max-h-[90vh]">
+            <div className="relative h-[80vh] max-h-[90vh] w-full max-w-4xl overflow-hidden rounded-lg border border-zinc-800 bg-black">
                 <PlayerDetailsPanel player={selectedPlayerData} onClose={() => exitPlayerPanel()} />
             </div>
         </div>
