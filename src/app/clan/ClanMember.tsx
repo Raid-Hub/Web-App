@@ -33,8 +33,8 @@ export const ClanMember = ({ bungie, raidhub, stats, statKey }: ClanMemberProps)
                 return bungie.isOnline
                     ? "Now"
                     : raidhub?.lastSeen
-                    ? formattedTimeSince(new Date(raidhub.lastSeen), locale)
-                    : "Never"
+                      ? formattedTimeSince(new Date(raidhub.lastSeen), locale)
+                      : "Never"
             case "totalTimePlayedSeconds":
                 return secondsToYDHMS(stats?.totalTimePlayedSeconds ?? 0, 3)
             default:

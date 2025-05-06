@@ -1,7 +1,7 @@
 import { type Metadata } from "next"
 import { notFound } from "next/navigation"
-import { metadata as rootMetadata } from "~/app/layout"
 import { LeaderboardSSR } from "~/app/leaderboards/LeaderboardSSR"
+import { baseMetadata } from "~/lib/metadata"
 import { prefetchManifest } from "~/services/raidhub/prefetchRaidHubManifest"
 import {
     type PathParamsForLeaderboardURL,
@@ -53,7 +53,7 @@ export async function generateMetadata({
         title: title,
         description: description,
         keywords: [
-            ...rootMetadata.keywords,
+            ...baseMetadata.keywords,
             categoryName,
             "pantheon",
             definition.name,
@@ -61,7 +61,7 @@ export async function generateMetadata({
             "rankings"
         ],
         openGraph: {
-            ...rootMetadata.openGraph,
+            ...baseMetadata.openGraph,
             title: title,
             description: description
         }

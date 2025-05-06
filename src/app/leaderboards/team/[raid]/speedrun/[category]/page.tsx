@@ -2,8 +2,8 @@ import { type Metadata } from "next"
 import { notFound } from "next/navigation"
 import { Leaderboard } from "~/app/leaderboards/Leaderboard"
 import { SpeedrunVariables, type RTABoardCategory } from "~/data/speedrun-com-mappings"
+import { baseMetadata } from "~/lib/metadata"
 import { prefetchManifest } from "~/services/raidhub/prefetchRaidHubManifest"
-import { metadata as rootMetadata } from "../../../../../layout"
 import { getRaidDefinition } from "../../../../util"
 import { SpeedrunComBanner } from "./SpeedrunComBanner"
 import { SpeedrunComControls } from "./SpeedrunComControls"
@@ -54,8 +54,8 @@ export async function generateMetadata({ params }: DynamicParams): Promise<Metad
 
     const displayName =
         params.category !== "all"
-            ? SpeedrunVariables[definition.path]?.variable?.values[params.category]?.displayName ??
-              null
+            ? (SpeedrunVariables[definition.path]?.variable?.values[params.category]?.displayName ??
+              null)
             : null
 
     const title = [definition.name, displayName, "Speedrun Leaderboards"].filter(Boolean).join(" ")
@@ -72,10 +72,10 @@ export async function generateMetadata({ params }: DynamicParams): Promise<Metad
             "speedrun",
             "world record",
             "rankings",
-            ...rootMetadata.keywords
+            ...baseMetadata.keywords
         ].filter(Boolean) as string[],
         openGraph: {
-            ...rootMetadata.openGraph,
+            ...baseMetadata.openGraph,
             title: title,
             description: description
         }

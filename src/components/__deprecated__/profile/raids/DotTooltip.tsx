@@ -29,10 +29,10 @@ const DotTooltip = ({ offset, isShowing, activity }: DotTooltipProps) => {
         ? activity.playerCount === 1
             ? Tag.SOLO
             : activity.playerCount === 2
-            ? Tag.DUO
-            : activity.playerCount === 3
-            ? Tag.TRIO
-            : null
+              ? Tag.DUO
+              : activity.playerCount === 3
+                ? Tag.TRIO
+                : null
         : null
 
     return (
@@ -48,8 +48,8 @@ const DotTooltip = ({ offset, isShowing, activity }: DotTooltipProps) => {
                         ? DotFlawless
                         : DotSuccess
                     : activity.completed
-                    ? DotTaxi
-                    : DotFail
+                      ? DotTaxi
+                      : DotFail
             }}>
             <div>{secondsToHMS(activity.duration, false)}</div>
             <div className={styles["dot-tooltip-date"]}>{dateString}</div>

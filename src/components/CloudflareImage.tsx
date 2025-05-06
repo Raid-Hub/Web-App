@@ -37,13 +37,6 @@ const CloudflareImages = {
             large: "large.avif"
         }
     },
-    pantheonSplash: {
-        path: "splash/pantheon",
-        variants: {
-            small: "small.png",
-            large: "large.png"
-        }
-    },
     g2gBanner: {
         path: "g2g/banner",
         variants: {

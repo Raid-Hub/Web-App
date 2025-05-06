@@ -1,16 +1,16 @@
 import { PageWrapper } from "~/components/layout/PageWrapper"
-import { metadata as rootMetadata } from "../layout"
+import { baseMetadata } from "~/lib/metadata"
 import { ClanLeaderboards } from "./ClanLeaderboards"
 
 export const metadata = {
     title: "Clan Leaderboards",
     description: "View the top clans in Destiny 2 by a variety of metrics.",
     openGraph: {
-        ...rootMetadata.openGraph,
+        ...baseMetadata.openGraph,
         title: "Clan Leaderboards",
         description: "View the top clans in Destiny 2 by a variety of metrics."
     },
-    keywords: [...rootMetadata.keywords, "clan", "rankings"]
+    keywords: [...baseMetadata.keywords, "clan", "rankings"]
 }
 
 export default function Page() {

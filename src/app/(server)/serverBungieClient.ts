@@ -1,9 +1,9 @@
 import "server-only"
 
 import type { BungieFetchConfig } from "bungie-net-core"
+import { baseUrl } from "~/lib/server"
 import { BungiePlatformError } from "~/models/BungieAPIError"
 import BaseBungieClient from "~/services/bungie/BungieClient"
-import { baseUrl } from "./util"
 
 export default class ServerBungieClient extends BaseBungieClient {
     private next: NextFetchRequestConfig

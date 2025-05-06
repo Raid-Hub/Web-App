@@ -1,5 +1,5 @@
 import { type ReactNode } from "react"
-import { metadata as rootMetadata } from "~/app/layout"
+import { baseMetadata } from "~/lib/metadata"
 
 export default function Layout({ children }: { children: ReactNode }) {
     return <>{children}</>
@@ -11,9 +11,9 @@ const description = "View the weekly raiding meta for weapons in Destiny 2"
 export const metadata = {
     title,
     description,
-    keywords: [...rootMetadata.keywords, "weapons", "meta", "analytics"],
+    keywords: [...baseMetadata.keywords, "weapons", "meta", "analytics"],
     openGraph: {
-        ...rootMetadata.openGraph,
+        ...baseMetadata.openGraph,
         title,
         description
     }

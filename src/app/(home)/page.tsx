@@ -1,6 +1,6 @@
 import { PageWrapper } from "~/components/layout/PageWrapper"
+import { baseMetadata } from "~/lib/metadata"
 import { prefetchManifest } from "~/services/raidhub/prefetchRaidHubManifest"
-import { metadata as rootMetadata } from "../layout"
 import { Cards } from "./HomeCards"
 import { HomeLogo } from "./HomeLogo"
 import { HomeToolButtons } from "./HomeToolButtons"
@@ -13,7 +13,7 @@ export async function generateMetadata() {
 
     return {
         keywords: [
-            ...rootMetadata.keywords,
+            ...baseMetadata.keywords,
             ...Object.values(manifest.activityDefinitions)
                 .map(def => def.name)
                 .reverse()

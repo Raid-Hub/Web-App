@@ -1,7 +1,7 @@
 import { type Metadata } from "next"
 import { Suspense } from "react"
-import { metadata as rootMetaData } from "~/app/layout"
 import { PageWrapper } from "~/components/layout/PageWrapper"
+import { baseMetadata } from "~/lib/metadata"
 import { getProviders } from "~/server/api/auth"
 import { Client } from "./Client"
 
@@ -24,7 +24,7 @@ export default async function Page() {
 export const metadata: Metadata = {
     title: "Account",
     openGraph: {
-        ...rootMetaData.openGraph,
+        ...baseMetadata.openGraph,
         title: "Account"
     }
 }

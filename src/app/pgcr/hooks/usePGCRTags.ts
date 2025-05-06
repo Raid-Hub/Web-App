@@ -1,10 +1,12 @@
 import { useMemo } from "react"
 import { useRaidHubManifest } from "~/app/layout/wrappers/RaidHubManifestManager"
 import { Tag } from "~/models/tag"
-import { type RaidHubInstanceExtended } from "~/services/raidhub/types"
+import { usePGCRContext } from "../components/ClientStateManager"
 
-export const usePGCRTags = (activity: RaidHubInstanceExtended | null) => {
+export const usePGCRTags = () => {
+    const { data: activity } = usePGCRContext()
     const { isChallengeMode } = useRaidHubManifest()
+
     return useMemo(() => {
         if (!activity) return []
 
@@ -17,17 +19,7 @@ export const usePGCRTags = (activity: RaidHubInstanceExtended | null) => {
         } else if (activity.isDayOne) {
             const placement = isChallengeMode(activity.versionId) ? null : activity.leaderboardRank
             tags.push({ tag: Tag.DAY_ONE, placement })
-        } else if (activity.isContest) {
-            tags.push({ tag: Tag.CONTEST })
         }
-        if (activity.fresh === false) tags.push({ tag: Tag.CHECKPOINT })
-        if (activity.metadata.versionName === "Prestige") {
-            tags.push({ tag: Tag.PRESTIGE, placement: activity.leaderboardRank })
-        }
-        if (activity.metadata.versionName === "Master") {
-            tags.push({ tag: Tag.MASTER, placement: activity.leaderboardRank })
-        }
-        if (activity.metadata.versionName === "Guided Games") tags.push({ tag: Tag.GUIDEDGAMES })
         if (activity.playerCount === 1) tags.push({ tag: Tag.SOLO })
         else if (activity.playerCount === 2) tags.push({ tag: Tag.DUO })
         else if (activity.playerCount === 3) tags.push({ tag: Tag.TRIO })

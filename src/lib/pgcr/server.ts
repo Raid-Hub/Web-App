@@ -5,9 +5,9 @@ import { getRaidHubApi } from "~/services/raidhub/common"
 import { type RaidHubInstanceExtended } from "~/services/raidhub/types"
 import { reactRequestDedupe } from "~/util/react-cache"
 
-export type PageProps = {
-    params: {
-        instanceId: string
+export const assertValidPath = (instanceId: string) => {
+    if (!/^\d+$/.test(instanceId)) {
+        notFound()
     }
 }
 
@@ -18,7 +18,7 @@ export const prefetchActivity = reactRequestDedupe((instanceId: string) =>
             if (err instanceof RaidHubError && err.errorCode === "InstanceNotFoundError") {
                 notFound()
             } else {
-                return null
+                throw err
             }
         })
 )
@@ -28,10 +28,10 @@ export const getMetaData = (activity: RaidHubInstanceExtended) => {
         ? activity.playerCount === 1
             ? Tag.SOLO
             : activity.playerCount === 2
-            ? Tag.DUO
-            : activity.playerCount === 3
-            ? Tag.TRIO
-            : null
+              ? Tag.DUO
+              : activity.playerCount === 3
+                ? Tag.TRIO
+                : null
         : null
     const flawlessPrefix = activity.flawless ? "Flawless" : null
 

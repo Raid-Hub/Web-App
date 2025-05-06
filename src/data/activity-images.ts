@@ -42,6 +42,9 @@ export const getRaidSplash = (raid: string | number): keyof typeof R2RaidSplash 
         case "salvationsedge":
         case 14:
             return "salvationsEdgeSplash"
+        case "pantheon":
+        case 101:
+            return "pantheonSplash"
         default:
             return null
     }
@@ -158,6 +161,13 @@ export const R2RaidSplash = {
             tiny: "tiny.jpg",
             small: "small.jpg",
             medium: "medium.jpg"
+        }
+    },
+    pantheonSplash: {
+        path: "splash/pantheon",
+        variants: {
+            small: "small.png",
+            large: "large.png"
         }
     },
     salvationsEdgeSplash: {

@@ -3,10 +3,11 @@ import { notFound } from "next/navigation"
 import { ImageResponse } from "next/og"
 import { cloudflareImageLoader } from "~/components/CloudflareImage"
 import { getRaidSplash } from "~/data/activity-images"
-import { baseUrl } from "~/server/util"
+import { getMetaData, prefetchActivity } from "~/lib/pgcr/server"
+import { type PGCRPageProps } from "~/lib/pgcr/types"
+import { baseUrl } from "~/lib/server"
 import { bungieIconUrl, getBungieDisplayName } from "~/util/destiny"
 import { secondsToHMS } from "~/util/presentation/formatting"
-import { getMetaData, prefetchActivity, type PageProps } from "../server"
 
 const size = {
     width: 800,
@@ -16,7 +17,7 @@ const size = {
 export const runtime = "edge"
 
 // Image generation
-export default async function Image({ params: { instanceId } }: PageProps) {
+export default async function Image({ params: { instanceId } }: PGCRPageProps) {
     const interSemiBold = fetch(baseUrl + "/Inter-SemiBold.ttf").then(res => res.arrayBuffer())
 
     const activity = await prefetchActivity(instanceId)
@@ -84,8 +85,8 @@ export default async function Image({ params: { instanceId } }: PageProps) {
                                     activity.playerCount < 4
                                         ? "100%"
                                         : activity.playerCount === 5 && idx == 0
-                                        ? "55%"
-                                        : "48%",
+                                          ? "55%"
+                                          : "48%",
                                 display: "flex",
                                 flexDirection: "row",
                                 alignItems: "center",
