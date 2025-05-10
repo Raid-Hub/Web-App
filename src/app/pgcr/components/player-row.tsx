@@ -23,7 +23,7 @@ interface PlayerRowProps {
 
 export default function PlayerRow({ player, isSelected }: PlayerRowProps) {
     const { set } = usePgcrParams()
-    const { data, playerStatsMerged } = usePGCRContext()
+    const { data, playerStatsMerged, mvp } = usePGCRContext()
 
     const stats = playerStatsMerged.get(player.playerInfo.membershipId)!
     const timePlayed = Math.min(stats.timePlayedSeconds, data.duration)
@@ -102,6 +102,9 @@ export default function PlayerRow({ player, isSelected }: PlayerRowProps) {
                             </div>
 
                             <div className="ml-1 hidden items-center gap-1 md:flex">
+                                {mvp === player.playerInfo.membershipId && (
+                                    <PlayerBadge variant="mvp" />
+                                )}
                                 {player.sherpas > 0 && <PlayerBadge variant="sherpa" />}
                                 {player.isFirstClear && <PlayerBadge variant="firstClear" />}
                                 {!player.completed && <PlayerBadge variant="dnf" />}
@@ -115,20 +118,20 @@ export default function PlayerRow({ player, isSelected }: PlayerRowProps) {
                         </div>
                     </div>
                     <div
-                        className={cn("text-primary/85 text-center text-xs md:text-lg", {
+                        className={cn("text-primary/85 text-center text-xs md:text-sm lg:text-lg", {
                             "text-zinc-500": !player.completed
                         })}>
                         {stats.kills.toLocaleString()}
                     </div>
                     <div
-                        className={cn("text-primary/85 text-center text-xs md:text-lg", {
+                        className={cn("text-primary/85 text-center text-xs md:text-sm lg:text-lg", {
                             "text-zinc-500": !player.completed
                         })}>
                         {stats.deaths.toLocaleString()}
                     </div>
                     <div
                         className={cn(
-                            "text-primary/85 hidden text-center text-xs md:block md:text-lg",
+                            "text-primary/85 hidden text-center text-xs md:block md:text-sm lg:text-lg",
                             {
                                 "text-zinc-500": !player.completed
                             }
@@ -137,7 +140,7 @@ export default function PlayerRow({ player, isSelected }: PlayerRowProps) {
                     </div>
                     <div
                         className={cn(
-                            "text-primary/85 hidden text-center text-xs md:block md:text-lg",
+                            "text-primary/85 hidden text-center text-xs md:block md:text-sm lg:text-lg",
                             {
                                 "text-zinc-500": !player.completed
                             }
@@ -157,7 +160,13 @@ export default function PlayerRow({ player, isSelected }: PlayerRowProps) {
                                         color={player.completed ? "green" : "orange"}
                                         className="hidden md:block"
                                     />
-                                    <span className="text-primary/85 ml-2 text-xs md:text-lg">
+                                    <span
+                                        className={cn(
+                                            "text-primary/85 ml-2 text-xs md:text-sm lg:text-lg",
+                                            {
+                                                "text-zinc-500": !player.completed
+                                            }
+                                        )}>
                                         {secondsToHMS(timePlayed, false)}
                                     </span>
                                 </div>

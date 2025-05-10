@@ -4,23 +4,20 @@ import { Fragment } from "react"
 import PlayerRow from "~/app/pgcr/components/player-row"
 import { R2RaidSplash, getRaidSplash } from "~/data/activity-images"
 import { cn } from "~/lib/tw"
-import {
-    type RaidHubInstanceExtended,
-    type RaidHubInstancePlayerExtended
-} from "~/services/raidhub/types"
+import { type RaidHubInstanceExtended } from "~/services/raidhub/types"
 import { Badge } from "~/shad/badge"
 import { Card, CardContent, CardHeader } from "~/shad/card"
 import { ScrollArea } from "~/shad/scroll-area"
 import { Separator } from "~/shad/separator"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "~/shad/tooltip"
 import { getBungieDisplayName } from "~/util/destiny"
-import { round } from "~/util/math"
 import { secondsToHMS } from "~/util/presentation/formatting"
 import { ClientStateManager } from "./ClientStateManager"
 import { PGCRDate, TimeRangeTooltip } from "./pgcr-date"
 import { PGCRTags } from "./pgcr-tags"
 import { AllPgcrWeaponsWrapper } from "./pgcr-weapons"
-import { PlayerDetailsPanelWrapper } from "./player-details-panel/player-details-panel-wrapper"
+import { PlayerDetailsPanelWrapper } from "./player-details-panel"
+import { generateSortScore } from "./riis"
 
 interface PGCRProps {
     data: RaidHubInstanceExtended
@@ -28,8 +25,20 @@ interface PGCRProps {
 
 export default function PGCR({ data }: PGCRProps) {
     const sortScores = new Collection(
-        data.players.map(p => [p.playerInfo.membershipId, generateSortScore(p)])
-    ).toSorted((a, b) => b - a)
+        data.players.map(p => [
+            p.playerInfo.membershipId,
+            {
+                completed: p.completed,
+                score: generateSortScore(p)
+            }
+        ])
+    ).toSorted((a, b) => {
+        if (a.completed === b.completed) {
+            return b.score - a.score
+        } else {
+            return a.completed ? -1 : 1
+        }
+    })
 
     const playerMergedStats = new Collection(
         data.players.map(
@@ -74,6 +83,8 @@ export default function PGCR({ data }: PGCRProps) {
     const mvpPlayer = mvp ? data.players.find(p => p.playerInfo.membershipId === mvp)! : null
     const mostKills = playerMergedStats.sort((a, b) => b.kills - a.kills).firstKey()!
     const mostKillsPlayer = data.players.find(p => p.playerInfo.membershipId === mostKills)!
+    const mostAssists = playerMergedStats.sort((a, b) => b.assists - a.assists).firstKey()!
+    const mostAssistsPlayer = data.players.find(p => p.playerInfo.membershipId === mostAssists)!
     const mostDeaths = playerMergedStats.sort((a, b) => b.deaths - a.deaths).firstKey()!
     const mostDeathsPlayer = data.players.find(p => p.playerInfo.membershipId === mostDeaths)!
     const bestKD = playerMergedStats
@@ -104,12 +115,13 @@ export default function PGCR({ data }: PGCRProps) {
         }
     )
 
-    const totalKd = (totals.kills / totals.deaths)
+    const totalKd = totals.kills / totals.deaths
 
     return (
         <ClientStateManager
             data={data}
             mvp={mvp}
+            scores={Array.from(sortScores.entries())}
             playerStatsMerged={Array.from(playerMergedStats.entries())}>
             <TooltipProvider>
                 <div className="container mx-auto my-auto w-full max-w-5xl">
@@ -135,15 +147,19 @@ export default function PGCR({ data }: PGCRProps) {
                                     {/* Cleared status badge */}
                                     <Tooltip>
                                         <TooltipTrigger asChild>
-                                            {data.completed ? (
-                                                <div className="rounded-full bg-green-500/20 p-1 text-green-400">
+                                            <div
+                                                className={cn(
+                                                    "rounded-full p-1",
+                                                    data.completed
+                                                        ? "bg-green-500/30 text-green-400"
+                                                        : "bg-red-500/30 text-red-400"
+                                                )}>
+                                                {data.completed ? (
                                                     <CheckCircle className="h-7 w-7 p-1" />
-                                                </div>
-                                            ) : (
-                                                <div className="rounded-full bg-red-500/20 p-1 text-red-400">
+                                                ) : (
                                                     <XCircle className="h-7 w-7 p-1" />
-                                                </div>
-                                            )}
+                                                )}
+                                            </div>
                                         </TooltipTrigger>
                                         <TooltipContent>
                                             {data.completed
@@ -158,10 +174,10 @@ export default function PGCR({ data }: PGCRProps) {
                                             <TooltipTrigger asChild>
                                                 <div
                                                     className={cn(
-                                                        "rounded-full",
+                                                        "rounded-full p-1",
                                                         data.fresh === null
-                                                            ? "bg-amber-500/20 text-amber-400"
-                                                            : "bg-red-500/20 p-1 text-red-400"
+                                                            ? "bg-amber-500/30 text-amber-400"
+                                                            : "bg-orange-500/30 text-orange-400"
                                                     )}>
                                                     <Flag className="h-7 w-7 p-1" />
                                                 </div>
@@ -188,20 +204,42 @@ export default function PGCR({ data }: PGCRProps) {
                                     {/* Tags */}
                                     <PGCRTags />
                                 </div>
-                                <Tooltip>
-                                    <TooltipTrigger asChild>
-                                        <div className="mt-4 flex items-center gap-2 text-zinc-300">
-                                            <Clock className="h-3 w-3 md:h-4 md:w-4" />
-                                            <span className="text-xs md:text-sm">
-                                                {secondsToHMS(data.duration, false)}
-                                            </span>
-                                        </div>
-                                    </TooltipTrigger>
-                                    <TimeRangeTooltip
-                                        startDate={new Date(data.dateStarted)}
-                                        endDate={new Date(data.dateCompleted)}
-                                    />
-                                </Tooltip>
+                                <div className="mt-4 flex items-center justify-center gap-4">
+                                    <Tooltip>
+                                        <TooltipTrigger asChild>
+                                            <div className="flex items-center gap-2 text-zinc-300">
+                                                <Clock className="h-3 w-3 md:h-4 md:w-4" />
+                                                <span className="text-xs md:text-sm">
+                                                    {secondsToHMS(data.duration, false)}
+                                                </span>
+                                            </div>
+                                        </TooltipTrigger>
+                                        <TimeRangeTooltip
+                                            startDate={new Date(data.dateStarted)}
+                                            endDate={new Date(data.dateCompleted)}
+                                        />
+                                    </Tooltip>
+                                    {(data.playerCount > 3 || !data.completed) && (
+                                        <Tooltip>
+                                            <TooltipTrigger asChild>
+                                                <Badge
+                                                    variant="outline"
+                                                    className="bg-background/70 flex items-center gap-1 border-zinc-700 whitespace-nowrap">
+                                                    <Users className="h-3 w-3" />
+                                                    <span>{data.playerCount} Players</span>
+                                                </Badge>
+                                            </TooltipTrigger>
+                                            <TooltipContent side="bottom">
+                                                {`${data.players.reduce(
+                                                    (acc, player) => +player.completed + acc,
+                                                    0
+                                                )} of ${
+                                                    data.playerCount
+                                                } players completed the activity`}
+                                            </TooltipContent>
+                                        </Tooltip>
+                                    )}
+                                </div>
                             </CardHeader>
                         </div>
 
@@ -209,61 +247,37 @@ export default function PGCR({ data }: PGCRProps) {
 
                         <CardContent className="space-y-6 bg-black p-2 md:p-6">
                             {/* Players Section */}
-                            <div className="space-y-2">
-                                <div className="hidden items-center justify-between md:flex">
-                                    <h3>Summary</h3>
-                                    <Tooltip>
-                                        <TooltipTrigger asChild>
-                                            <Badge
-                                                variant="outline"
-                                                className="flex items-center gap-1 border-zinc-700 whitespace-nowrap">
-                                                <Users className="h-3 w-3" />
-                                                <span>{data.playerCount} Players</span>
-                                            </Badge>
-                                        </TooltipTrigger>
-                                        <TooltipContent>
-                                            {`${data.players.reduce(
-                                                (acc, player) => +player.completed + acc,
-                                                0
-                                            )} of ${
-                                                data.playerCount
-                                            } players completed the activity`}
-                                        </TooltipContent>
-                                    </Tooltip>
-                                </div>
 
-                                <Card className="gap-1 border-zinc-800 bg-zinc-950 py-0">
-                                    <CardHeader className="gap-0 p-2 pb-1 md:px-4">
-                                        <div className="grid w-full grid-cols-7 text-xs font-medium text-zinc-500 uppercase md:grid-cols-9">
-                                            <div className="col-span-4 min-w-[200px]">Player</div>
-                                            <div className="text-center">Kills</div>
-                                            <div className="text-center">Deaths</div>
-                                            <div className="hidden text-center md:block">
-                                                Assists
-                                            </div>
-                                            <div className="hidden text-center md:block">K/D</div>
-                                            <div className="text-center">Time</div>
-                                        </div>
-                                    </CardHeader>
-                                    <CardContent className="p-0">
-                                        <ScrollArea className="max-h-[600px] w-full overflow-x-auto">
-                                            {sortScores.map((_, id) => (
-                                                <Fragment key={id}>
-                                                    <Separator className="bg-zinc-800" />
-                                                    <PlayerRow
-                                                        player={
-                                                            data.players.find(
-                                                                p =>
-                                                                    p.playerInfo.membershipId === id
-                                                            )!
-                                                        }
-                                                    />
-                                                </Fragment>
-                                            ))}
-                                        </ScrollArea>
-                                    </CardContent>
-                                </Card>
-                            </div>
+                            <Card className="gap-1 rounded-lg border-zinc-800 bg-zinc-950 py-0 md:rounded-xl">
+                                <CardHeader className="gap-0 p-2 pb-0">
+                                    <div className="grid w-full grid-cols-7 justify-center text-xs font-medium text-zinc-500 uppercase md:grid-cols-9">
+                                        <h3 className="col-span-4 min-w-[200px] text-sm">
+                                            Summary
+                                        </h3>
+                                        <div className="text-center">Kills</div>
+                                        <div className="text-center">Deaths</div>
+                                        <div className="hidden text-center md:block">Assists</div>
+                                        <div className="hidden text-center md:block">K/D</div>
+                                        <div className="text-center">Time</div>
+                                    </div>
+                                </CardHeader>
+                                <CardContent className="p-0">
+                                    <ScrollArea className="max-h-[600px] w-full overflow-x-auto">
+                                        {sortScores.map((_, id) => (
+                                            <Fragment key={id}>
+                                                <Separator className="bg-zinc-800" />
+                                                <PlayerRow
+                                                    player={
+                                                        data.players.find(
+                                                            p => p.playerInfo.membershipId === id
+                                                        )!
+                                                    }
+                                                />
+                                            </Fragment>
+                                        ))}
+                                    </ScrollArea>
+                                </CardContent>
+                            </Card>
 
                             {/* Activity Summary Section */}
 
@@ -304,11 +318,11 @@ export default function PGCR({ data }: PGCRProps) {
                                             <LabeledStat
                                                 label="Most Assists"
                                                 value={`${getBungieDisplayName(
-                                                    mostKillsPlayer.playerInfo,
+                                                    mostAssistsPlayer.playerInfo,
                                                     {
                                                         excludeCode: true
                                                     }
-                                                )} - ${playerMergedStats.get(mostKills)!.assists.toLocaleString()}`}
+                                                )} - ${playerMergedStats.get(mostAssists)!.assists.toLocaleString()}`}
                                             />
                                             <Separator className="bg-zinc-800" />
                                             <LabeledStat
@@ -372,6 +386,22 @@ export default function PGCR({ data }: PGCRProps) {
                                                 label="Total Super Kills"
                                                 value={totals.superKills.toLocaleString()}
                                             />
+                                            <Separator className="bg-zinc-800" />
+                                            <Tooltip>
+                                                <TooltipTrigger asChild>
+                                                    <LabeledStat
+                                                        label="MGR"
+                                                        value={(
+                                                            100 * totals.grenadeKills +
+                                                            totals.meleeKills
+                                                        ).toFixed(2)}
+                                                    />
+                                                </TooltipTrigger>
+                                                <TooltipContent side="top" align="start">
+                                                    Percentage of kills from Grenade and Melee
+                                                    abilities
+                                                </TooltipContent>
+                                            </Tooltip>
                                         </CardContent>
                                     </Card>
                                 </div>
@@ -395,47 +425,3 @@ const LabeledStat = ({ label, value }: { label: string; value: string }) => (
         <span className="text-sm font-medium">{value}</span>
     </div>
 )
-
-function generateSortScore(d: RaidHubInstancePlayerExtended) {
-    const stats = d.characters.reduce(
-        (acc, c) => ({
-            kills: acc.kills + c.kills,
-            deaths: acc.deaths + c.deaths,
-            assists: acc.assists + c.assists,
-            precisionKills: acc.precisionKills + c.precisionKills,
-            superKills: acc.superKills + c.superKills,
-            score: acc.score + c.score
-        }),
-        {
-            kills: 0,
-            deaths: 0,
-            assists: 0,
-            precisionKills: 0,
-            superKills: 0,
-            score: 0
-        }
-    )
-
-    const adjustedTimePlayedSeconds = Math.min(d.timePlayedSeconds || 1, 32767)
-    // kills weighted 2x assists, slight diminishing returns
-    const killScore =
-        (100 * (stats.kills + 0.5 * stats.assists) ** 0.95) /
-            (round(adjustedTimePlayedSeconds, -1) || 1) +
-        stats.kills / 400
-
-    // a multiplier based on your time per deaths squared, normalized a bit by using deaths + 7
-    const deathScore = ((1 / 6) * adjustedTimePlayedSeconds) / (stats.deaths + 7) ** 0.95
-
-    const timeScore = 50 * (adjustedTimePlayedSeconds / 3600) // 50 points per hour
-
-    const precisionScore = (stats.precisionKills / (stats.kills || 1)) * 10 // 1 point per 10% of kills
-
-    const superScore = (stats.superKills / (adjustedTimePlayedSeconds / 60)) * 5 // 1 point per super kill per minute
-
-    const completionScore = d.completed ? 1 : 0.5
-
-    const raidhubScore =
-        (killScore * deathScore + timeScore + precisionScore + superScore) * completionScore
-
-    return raidhubScore * Math.max(stats.score, 1)
-}

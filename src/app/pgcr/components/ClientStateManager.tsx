@@ -13,6 +13,15 @@ interface ClientStateManagerProps {
     data: RaidHubInstanceExtended
     mvp: string | null
     playerStatsMerged: Array<[string, PlayerStats]>
+    scores: Array<
+        [
+            string,
+            {
+                completed: boolean
+                score: number
+            }
+        ]
+    >
     children: ReactNode
 }
 
@@ -20,6 +29,13 @@ interface PGCRState {
     data: RaidHubInstanceExtended
     playerStatsMerged: Collection<string, PlayerStats>
     mvp: string | null
+    scores: Collection<
+        string,
+        {
+            completed: boolean
+            score: number
+        }
+    >
     weaponsMap: Collection<number, DestinyInventoryItemDefinition>
 }
 
@@ -36,6 +52,7 @@ export const ClientStateManager = ({
     data,
     playerStatsMerged,
     mvp,
+    scores,
     children
 }: ClientStateManagerProps) => {
     const queryClient = useQueryClient()
@@ -61,7 +78,13 @@ export const ClientStateManager = ({
 
     return (
         <PGCRContext.Provider
-            value={{ data, mvp, playerStatsMerged: new Collection(playerStatsMerged), weaponsMap }}>
+            value={{
+                data,
+                mvp,
+                playerStatsMerged: new Collection(playerStatsMerged),
+                weaponsMap,
+                scores: new Collection(scores)
+            }}>
             {children}
         </PGCRContext.Provider>
     )

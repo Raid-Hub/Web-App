@@ -1,5 +1,7 @@
+"use client"
+
 import { Collection } from "@discordjs/collection"
-import { CheckCircle, ExternalLink, X } from "lucide-react"
+import { CheckCircle, LinkIcon, X } from "lucide-react"
 import Link from "next/link"
 import { useEffect, useMemo } from "react"
 import { ActivityPieChart } from "~/app/pgcr/components/activity-pie-chart"
@@ -13,21 +15,46 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "~/shad
 import { bungieIconUrl, getBungieDisplayName } from "~/util/destiny"
 import { round } from "~/util/math"
 import { secondsToHMS } from "~/util/presentation/formatting"
-import { useGetCharacterClass } from "../../hooks/useCharacterClass"
-import { usePgcrParams } from "../../hooks/usePgcrParams"
-import { usePGCRContext } from "../ClientStateManager"
-import { WeaponTable } from "../pgcr-weapons"
-import { PlayerBadge } from "../player-badge"
-import { StatCard } from "../stat-card"
+import { useGetCharacterClass } from "../hooks/useCharacterClass"
+import { usePgcrParams } from "../hooks/usePgcrParams"
+import { usePGCRContext } from "./ClientStateManager"
+import { WeaponTable } from "./pgcr-weapons"
+import { PlayerBadge } from "./player-badge"
+import { StatCard } from "./stat-card"
 
 interface PlayerDetailsPanelProps {
     player: RaidHubInstancePlayerExtended
     onClose: () => void
 }
 
-export const PlayerDetailsPanel = ({ player, onClose }: PlayerDetailsPanelProps) => {
+export const PlayerDetailsPanelWrapper = () => {
+    const { data } = usePGCRContext()
+    const { validatedSearchParams, remove } = usePgcrParams()
+    const selectedPlayer = validatedSearchParams.get("player")
+    const selectedPlayerData =
+        data.players.find(player => player.playerInfo.membershipId === selectedPlayer) ??
+        data.players[0]
+
+    const exitPlayerPanel = () => {
+        remove("character", undefined, { commit: false })
+        remove("player", undefined, { commit: true, shallow: true })
+    }
+
+    return (
+        <div
+            className={`fixed inset-0 top-20 z-50 flex items-center justify-center bg-black/80 ${
+                selectedPlayer ? "opacity-100" : "pointer-events-none opacity-0"
+            } transition-opacity duration-200`}>
+            <div className="relative h-full w-full max-w-4xl overflow-hidden rounded-lg border border-zinc-800 bg-black">
+                <PlayerDetailsPanel player={selectedPlayerData} onClose={() => exitPlayerPanel()} />
+            </div>
+        </div>
+    )
+}
+
+const PlayerDetailsPanel = ({ player, onClose }: PlayerDetailsPanelProps) => {
     const { validatedSearchParams, get, set, remove } = usePgcrParams()
-    const { data, mvp, playerStatsMerged, weaponsMap } = usePGCRContext()
+    const { data, mvp, playerStatsMerged, weaponsMap, scores } = usePGCRContext()
 
     useEffect(() => {
         const handleEscape = (e: KeyboardEvent) => {
@@ -150,7 +177,7 @@ export const PlayerDetailsPanel = ({ player, onClose }: PlayerDetailsPanelProps)
                                                 asChild>
                                                 <Link
                                                     href={`/profile/${player.playerInfo.membershipId}`}>
-                                                    <ExternalLink className="h-3 w-3" />
+                                                    <LinkIcon className="size-6" />
                                                 </Link>
                                             </Button>
                                         </TooltipTrigger>
@@ -195,7 +222,7 @@ export const PlayerDetailsPanel = ({ player, onClose }: PlayerDetailsPanelProps)
                             size="icon"
                             className="cursor-pointer rounded-full"
                             onClick={onClose}>
-                            <X className="h-6 w-6 md:h-8 md:w-8" />
+                            <X className="size-7 p-1 md:size-10" />
                         </Button>
                     </div>
                 </div>
@@ -307,6 +334,36 @@ export const PlayerDetailsPanel = ({ player, onClose }: PlayerDetailsPanelProps)
                                         label="Precision Kills"
                                         value={selectedStats.precisionKills.toLocaleString()}
                                     />
+                                    <Tooltip>
+                                        <TooltipTrigger>
+                                            <StatCard
+                                                label="RIIS"
+                                                value={
+                                                    scores
+                                                        .get(player.playerInfo.membershipId)
+                                                        ?.score.toLocaleString() ?? "0"
+                                                }
+                                            />
+                                        </TooltipTrigger>
+                                        <TooltipContent>
+                                            <p className="text-sm">
+                                                <strong>
+                                                    RaidHub Individual Impact Score (RIIS)
+                                                </strong>
+                                                {[
+                                                    " is a calculated score based",
+                                                    "on the player's kills, deaths, assists, and other available stats.",
+                                                    "It is used to measure a player's overall performance in the activity",
+                                                    " and determine their contribution to the team's success."
+                                                ].map((text, index, arr) => (
+                                                    <span key={index}>
+                                                        {text}
+                                                        {index < arr.length - 1 && <br />}
+                                                    </span>
+                                                ))}
+                                            </p>
+                                        </TooltipContent>
+                                    </Tooltip>
                                 </div>
                             </CardContent>
                         </Card>
