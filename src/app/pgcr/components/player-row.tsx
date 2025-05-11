@@ -69,7 +69,7 @@ export default function PlayerRow({ player }: PlayerRowProps) {
                             className={cn(
                                 "hidden size-6 flex-shrink-0 rounded-sm md:block md:size-8",
                                 {
-                                    "opacity-75 grayscale": !player.completed
+                                    "opacity-40 grayscale": !player.completed
                                 }
                             )}>
                             <AvatarImage
