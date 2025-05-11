@@ -40,7 +40,7 @@ export const getMetaData = (activity: RaidHubInstanceExtended) => {
     const activityName = activity.metadata.activityName
 
     const resultSuffix = activity.completed
-        ? activity.fresh == false
+        ? activity.fresh === false
             ? "checkpoint cleared on"
             : "completed on"
         : "attempted on"

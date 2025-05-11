@@ -33,7 +33,7 @@ export const WeaponTable = ({
 }) => {
     const { weaponsMap } = usePGCRContext()
     return (
-        <Card className="gap-2 border-zinc-800 bg-zinc-950">
+        <Card className="gap-2 rounded-none border-zinc-800 bg-zinc-950">
             <CardHeader className="pb-0">
                 <h3 className="flex items-center gap-2 text-base font-medium md:text-lg">
                     <Swords className="text-raidhub h-4 w-4 md:h-5 md:w-5" />
@@ -175,7 +175,7 @@ export const WeaponCard = ({
                         )}
                     </div>
                     <div className="flex-1 space-y-1 p-3">
-                        <div className="flex items-center justify-between">
+                        <div className="flex items-center justify-between gap-1">
                             <Link
                                 className="text-primary text-xs font-medium md:text-sm"
                                 target="_blank"

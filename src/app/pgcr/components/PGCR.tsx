@@ -88,7 +88,7 @@ export default function PGCR({ data }: PGCRProps) {
     const mostDeaths = playerMergedStats.sort((a, b) => b.deaths - a.deaths).firstKey()!
     const mostDeathsPlayer = data.players.find(p => p.playerInfo.membershipId === mostDeaths)!
     const bestKD = playerMergedStats
-        .sort((a, b) => b.kills / b.deaths - a.kills / (a.deaths || 1))
+        .sort((a, b) => b.kills / (b.deaths || 1) - a.kills / (a.deaths || 1))
         .firstKey()!
     const bestKDPlayer = data.players.find(p => p.playerInfo.membershipId === bestKD)!
 
@@ -248,42 +248,37 @@ export default function PGCR({ data }: PGCRProps) {
                         <CardContent className="space-y-6 bg-black p-2 md:p-6">
                             {/* Players Section */}
 
-                            <Card className="gap-1 rounded-lg border-zinc-800 bg-zinc-950 py-0 md:rounded-xl">
-                                <CardHeader className="gap-0 p-2 pb-0">
-                                    <div className="grid w-full grid-cols-7 justify-center text-xs font-medium text-zinc-500 uppercase md:grid-cols-9">
-                                        <h3 className="col-span-4 min-w-[200px] text-sm">
-                                            Summary
-                                        </h3>
-                                        <div className="text-center">Kills</div>
-                                        <div className="text-center">Deaths</div>
-                                        <div className="hidden text-center md:block">Assists</div>
-                                        <div className="hidden text-center md:block">K/D</div>
-                                        <div className="text-center">Time</div>
-                                    </div>
-                                </CardHeader>
-                                <CardContent className="p-0">
-                                    <ScrollArea className="max-h-[600px] w-full overflow-x-auto">
-                                        {sortScores.map((_, id) => (
-                                            <Fragment key={id}>
-                                                <Separator className="bg-zinc-800" />
-                                                <PlayerRow
-                                                    player={
-                                                        data.players.find(
-                                                            p => p.playerInfo.membershipId === id
-                                                        )!
-                                                    }
-                                                />
-                                            </Fragment>
-                                        ))}
-                                    </ScrollArea>
-                                </CardContent>
-                            </Card>
+                            <div className="gap-1 rounded-lg border-none py-0 md:rounded-none">
+                                <div className="grid w-full grid-cols-7 justify-center p-2 text-xs font-medium text-zinc-500 uppercase md:grid-cols-9">
+                                    <h3 className="col-span-4 min-w-[200px] text-sm">Summary</h3>
+                                    <div className="text-center">Kills</div>
+                                    <div className="text-center">Deaths</div>
+                                    <div className="hidden text-center md:block">Assists</div>
+                                    <div className="hidden text-center md:block">K/D</div>
+                                    <div className="text-center">Time</div>
+                                </div>
+
+                                <ScrollArea className="bg-background max-h-[600px] w-full overflow-x-auto border-x-1 border-b-1 border-zinc-800">
+                                    {sortScores.map((_, id) => (
+                                        <Fragment key={id}>
+                                            <Separator className="bg-zinc-800" />
+                                            <PlayerRow
+                                                player={
+                                                    data.players.find(
+                                                        p => p.playerInfo.membershipId === id
+                                                    )!
+                                                }
+                                            />
+                                        </Fragment>
+                                    ))}
+                                </ScrollArea>
+                            </div>
 
                             {/* Activity Summary Section */}
 
                             {data.playerCount > 1 && (
                                 <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                                    <Card className="border-zinc-800 bg-zinc-950">
+                                    <Card className="rounded-none border-zinc-800 bg-zinc-950">
                                         <CardHeader>
                                             <h3 className="flex items-center gap-2 text-base font-medium md:text-lg">
                                                 <Trophy className="text-raidhub h-4 w-4 md:h-5 md:w-5" />
@@ -354,7 +349,7 @@ export default function PGCR({ data }: PGCRProps) {
                                         </CardContent>
                                     </Card>
 
-                                    <Card className="border-zinc-800 bg-zinc-950">
+                                    <Card className="rounded-none border-zinc-800 bg-zinc-950">
                                         <CardHeader>
                                             <h3 className="flex items-center gap-2 text-base font-medium md:text-lg">
                                                 <Sword className="text-raidhub h-4 w-4 md:h-5 md:w-5" />
@@ -386,22 +381,6 @@ export default function PGCR({ data }: PGCRProps) {
                                                 label="Total Super Kills"
                                                 value={totals.superKills.toLocaleString()}
                                             />
-                                            <Separator className="bg-zinc-800" />
-                                            <Tooltip>
-                                                <TooltipTrigger asChild>
-                                                    <LabeledStat
-                                                        label="MGR"
-                                                        value={(
-                                                            100 * totals.grenadeKills +
-                                                            totals.meleeKills
-                                                        ).toFixed(2)}
-                                                    />
-                                                </TooltipTrigger>
-                                                <TooltipContent side="top" align="start">
-                                                    Percentage of kills from Grenade and Melee
-                                                    abilities
-                                                </TooltipContent>
-                                            </Tooltip>
                                         </CardContent>
                                     </Card>
                                 </div>

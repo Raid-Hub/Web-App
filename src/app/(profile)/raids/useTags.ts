@@ -30,7 +30,7 @@ export const useTags = (activities: Collection<string, RaidHubInstance>) => {
             bestPossible: boolean
         }>()
         for (const { activity, weight } of sorted) {
-            const isElevatedDifficulty = weight % 2 == 1
+            const isElevatedDifficulty = weight % 2 === 1
             const covers = isElevatedDifficulty
                 ? weight & ~bitfieldForElevatedDifficulty
                 : weight & ~bitfield

@@ -29,7 +29,7 @@ export const WeeklyProgress = ({ raid }: { raid: number }) => {
         if (
             profile &&
             !profile.characterProgressions?.disabled &&
-            profile.characterProgressions?.data == undefined
+            profile.characterProgressions?.data === undefined
         ) {
             return "No profile data available."
         }

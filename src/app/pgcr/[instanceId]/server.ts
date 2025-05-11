@@ -28,10 +28,10 @@ export const getMetaData = (activity: RaidHubInstanceExtended) => {
         ? activity.playerCount === 1
             ? Tag.SOLO
             : activity.playerCount === 2
-            ? Tag.DUO
-            : activity.playerCount === 3
-            ? Tag.TRIO
-            : null
+              ? Tag.DUO
+              : activity.playerCount === 3
+                ? Tag.TRIO
+                : null
         : null
     const flawlessPrefix = activity.flawless ? "Flawless" : null
 
@@ -40,7 +40,7 @@ export const getMetaData = (activity: RaidHubInstanceExtended) => {
     const activityName = activity.metadata.activityName
 
     const resultSuffix = activity.completed
-        ? activity.fresh == false
+        ? activity.fresh === false
             ? "checkpoint cleared on"
             : "completed on"
         : "attempted on"

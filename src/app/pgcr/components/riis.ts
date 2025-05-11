@@ -52,18 +52,5 @@ export function generateSortScore(d: RaidHubInstancePlayerExtended) {
     const raidhubScore =
         kdScore + assistScore + timeScore + precisionScore + superScore + startScore + scoreScore
 
-    console.log(d.playerInfo.bungieGlobalDisplayName, {
-        killScore,
-        deathScore,
-        kdScore,
-        timeScore,
-        precisionScore,
-        superScore,
-        assistScore,
-        startScore,
-        scoreScore,
-        raidhubScore
-    })
-
     return raidhubScore
 }
