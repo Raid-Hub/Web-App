@@ -35,7 +35,7 @@ export const DestinyServiceStatusBanner = () => {
             refetchInterval: () => {
                 const utcHour = new Date().getUTCHours()
                 // Refetch every 5 minutes if near reset
-                return (utcHour >= 17 && d2ServersOnline == false ? 5 : 60) * 60000
+                return (utcHour >= 17 && d2ServersOnline === false ? 5 : 60) * 60000
             }
         }
     )
@@ -54,7 +54,7 @@ export const DestinyServiceStatusBanner = () => {
         )
 
         const canShowOfflineTodayAlerts =
-            d2ServersOnline && utcDayOfWeek == 2 && (utcHour < 17 || utcHour >= 5)
+            d2ServersOnline && utcDayOfWeek === 2 && (utcHour < 17 || utcHour >= 5)
 
         return canShowOfflineTodayAlerts
             ? alertsPruned

@@ -152,7 +152,7 @@ class CustomDexie extends Dexie implements Tables {
                 this.transaction("rw", this.items, async () => {
                     const itemsWithHashes = Object.entries(items)
                         // Weapon & Emblems
-                        .filter(([, item]) => item.itemType === 3 || item.itemType == 14)
+                        .filter(([, item]) => item.itemType === 3 || item.itemType === 14)
                         .map(([hash, item]) => ({
                             ...item,
                             hash: Number(hash)

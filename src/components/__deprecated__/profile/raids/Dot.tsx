@@ -76,6 +76,7 @@ const Dot = ({ centerX, activity, centerY, isTargeted, setTooltip, tooltipData }
     return (
         <Link
             href={`/pgcr/${activity.instanceId}`}
+            rel="nofollow"
             ref={ref}
             onMouseEnter={handleHover}
             onMouseLeave={handleMouseLeave}

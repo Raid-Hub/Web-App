@@ -5,9 +5,9 @@ import { getRaidHubApi } from "~/services/raidhub/common"
 import { type RaidHubInstanceExtended } from "~/services/raidhub/types"
 import { reactRequestDedupe } from "~/util/react-cache"
 
-export const assertValidPath = (instanceId: string) => {
-    if (!/^\d+$/.test(instanceId)) {
-        notFound()
+export type PageProps = {
+    params: {
+        instanceId: string
     }
 }
 
@@ -18,7 +18,7 @@ export const prefetchActivity = reactRequestDedupe((instanceId: string) =>
             if (err instanceof RaidHubError && err.errorCode === "InstanceNotFoundError") {
                 notFound()
             } else {
-                throw err
+                return null
             }
         })
 )

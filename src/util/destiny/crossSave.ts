@@ -21,7 +21,7 @@ export function isPrimaryCrossSave(
     forDestinyMembershipId?: string
 ) {
     return (
-        ((!forDestinyMembershipId || forDestinyMembershipId == membershipId) &&
+        ((!forDestinyMembershipId || forDestinyMembershipId === membershipId) &&
             crossSaveOverride === 0) ||
         crossSaveOverride === membershipType
     )

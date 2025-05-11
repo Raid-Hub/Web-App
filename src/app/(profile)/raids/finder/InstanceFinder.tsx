@@ -100,7 +100,7 @@ const InstanceFinderInternal = memo(() => {
                     {state.isIdle && <p>Enter your search criteria above to find instances.</p>}
                     {state.isLoading && <p>Loading...</p>}
                     {state.isError && <p>Error: {(state.error as Error).message}</p>}
-                    {state.isSuccess && state.data.length == 0 && <p>No instances found.</p>}
+                    {state.isSuccess && state.data.length === 0 && <p>No instances found.</p>}
                     {state.isSuccess && state.data.length > 0 && (
                         <InstanceTable instances={state.data} />
                     )}
