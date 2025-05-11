@@ -46,7 +46,7 @@ export default function PlayerRow({ player }: PlayerRowProps) {
                 <div
                     className={cn(
                         "absolute inset-0 bg-[left_2%_center]",
-                        player.completed ? "opacity-30" : "opacity-10"
+                        player.completed ? "opacity-20" : "opacity-5 grayscale"
                     )}
                     style={
                         emblemDefinition
@@ -69,7 +69,7 @@ export default function PlayerRow({ player }: PlayerRowProps) {
                             className={cn(
                                 "hidden size-6 flex-shrink-0 rounded-sm md:block md:size-8",
                                 {
-                                    "opacity-50": !player.completed
+                                    "opacity-75 grayscale": !player.completed
                                 }
                             )}>
                             <AvatarImage
