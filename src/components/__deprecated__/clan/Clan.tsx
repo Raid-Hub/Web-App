@@ -119,7 +119,7 @@ export function ClanComponent(props: { groupId: string; clan: GroupResponse | nu
         return <ErrorCard>{String(error)}</ErrorCard>
     }
 
-    const aggStats = clanStatsQuery.data?.aggregateStats
+    const aggStats = clanStatsQuery.data?.aggregateStats.stats
     const clanLevelProgression = clan?.detail.clanInfo.d2ClanProgressions[584850370]
 
     return (
