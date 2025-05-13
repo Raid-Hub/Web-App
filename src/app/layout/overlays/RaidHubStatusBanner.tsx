@@ -18,18 +18,49 @@ type AtlasState =
       }
     | {
           status: "paused"
-          lastCrawledDate: Date
+          lastCompletedDate: Date
       }
     | {
           status: "warn"
           lagSeconds: number
-          lastCrawledDate: Date
+          lastCompletedDate: Date
           estimatedCatchupDate: Date | null
       }
     | {
           status: "alert"
-          lastCrawledDate: Date
+          lastCompletedDate: Date
           reason: string
+      }
+    | {
+          status: "error"
+          reason: string
+      }
+
+type FloodgatesState =
+    | {
+          status: "loading"
+      }
+    | {
+          status: "ok"
+      }
+    | {
+          status: "closed"
+          backlogSize: number
+          incomingRate: number
+      }
+    | {
+          status: "emptying"
+          backlogSize: number
+          resolveRate: number
+      }
+    | {
+          status: "emptying2"
+          backlogSize: number
+          incomingRate: number
+          resolveRate: number
+          estimatedCatchupDate: Date | null
+          currentLag: number
+          lastCompletedDate: Date
       }
     | {
           status: "error"
@@ -61,7 +92,7 @@ export const RaidHubStatusBanner = () => {
                     return {
                         status: "warn",
                         lagSeconds: atlas.medianSecondsBehindNow,
-                        lastCrawledDate: new Date(atlas.latestActivity.dateCompleted),
+                        lastCompletedDate: new Date(atlas.latestResolvedInstance.dateCompleted),
                         estimatedCatchupDate: atlas.estimatedCatchUpTimestamp
                             ? new Date(atlas.estimatedCatchUpTimestamp)
                             : null
@@ -70,12 +101,12 @@ export const RaidHubStatusBanner = () => {
             case "Idle":
                 return {
                     status: "paused",
-                    lastCrawledDate: new Date(atlas.latestActivity.dateCompleted)
+                    lastCompletedDate: new Date(atlas.latestResolvedInstance.dateCompleted)
                 }
             case "Offline":
                 return {
                     status: "alert",
-                    lastCrawledDate: new Date(atlas.latestActivity.dateCompleted),
+                    lastCompletedDate: new Date(atlas.latestResolvedInstance.dateCompleted),
                     reason: "Crawler Offline"
                 }
             default:
@@ -86,14 +117,68 @@ export const RaidHubStatusBanner = () => {
         }
     }, [statusQuery])
 
+    const floodgatesStatus = useMemo((): FloodgatesState => {
+        if (statusQuery.isLoading) return { status: "loading" }
+        if (statusQuery.isError) return { status: "error", reason: statusQuery.error.message }
+
+        const floodgates = statusQuery.data.FloodgatesPGCR
+
+        switch (floodgates.status) {
+            case "Empty":
+            case "Live":
+                return {
+                    status: "ok"
+                }
+            case "Blocked":
+                return {
+                    status: "closed",
+                    backlogSize: floodgates.backlog,
+                    incomingRate: floodgates.incomingRate
+                }
+            case "Crawling":
+                if (!floodgates.latestResolvedInstance) {
+                    return {
+                        status: "emptying",
+                        backlogSize: floodgates.backlog,
+                        resolveRate: floodgates.resolveRate
+                    }
+                } else {
+                    return {
+                        status: "emptying2",
+                        backlogSize: floodgates.backlog,
+                        incomingRate: floodgates.incomingRate,
+                        resolveRate: floodgates.resolveRate,
+                        estimatedCatchupDate: floodgates.estimatedBacklogEmptied
+                            ? new Date(floodgates.estimatedBacklogEmptied)
+                            : null,
+                        currentLag:
+                            (new Date(floodgates.latestResolvedInstance.dateResolved).getTime() -
+                                new Date(
+                                    floodgates.latestResolvedInstance.dateCompleted
+                                ).getTime()) /
+                            1000,
+                        lastCompletedDate: new Date(floodgates.latestResolvedInstance.dateCompleted)
+                    }
+                }
+            default:
+                return {
+                    status: "error",
+                    reason: "Unknown Floodgates state"
+                }
+        }
+    }, [statusQuery])
+
     return (
         <Container $fullWidth>
-            <RaidHubStatsBannerInner state={atlasStatus} />
+            <RaidHubAtlasBannerInner {...atlasStatus} />
+            {atlasStatus.status !== "error" && (
+                <RaidHubFloodgatesBannerInner {...floodgatesStatus} />
+            )}
         </Container>
     )
 }
 
-const RaidHubStatsBannerInner = ({ state }: { state: AtlasState }) => {
+const RaidHubAtlasBannerInner = (state: AtlasState) => {
     const { locale } = useLocale()
     switch (state.status) {
         case "ok":
@@ -104,7 +189,7 @@ const RaidHubStatsBannerInner = ({ state }: { state: AtlasState }) => {
                 <StyledRaidHubStatsBanner $alertLevel="warn">
                     {`RaidHub activity crawling is currently paused. Latest activity crawled at: `}
                     <b>
-                        {state.lastCrawledDate.toLocaleString(locale, {
+                        {state.lastCompletedDate.toLocaleString(locale, {
                             timeZoneName: "short"
                         })}
                     </b>
@@ -139,7 +224,7 @@ const RaidHubStatsBannerInner = ({ state }: { state: AtlasState }) => {
                 <StyledRaidHubStatsBanner $alertLevel="alert">
                     {`Alert: No new activities are currently being added (${state.reason}). Latest activity crawled at: `}
                     <b>
-                        {state.lastCrawledDate.toLocaleString(locale, {
+                        {state.lastCompletedDate.toLocaleString(locale, {
                             timeZoneName: "short"
                         })}
                     </b>
@@ -159,6 +244,75 @@ const RaidHubStatsBannerInner = ({ state }: { state: AtlasState }) => {
                         Discord server
                     </Link>
                     {` if you continue to experience issues.`}
+                </StyledRaidHubStatsBanner>
+            )
+    }
+}
+
+const RaidHubFloodgatesBannerInner = (state: FloodgatesState) => {
+    const { locale } = useLocale()
+    switch (state.status) {
+        case "ok":
+        case "loading":
+            return null
+        case "closed":
+            return (
+                <StyledRaidHubStatsBanner $alertLevel="warn">
+                    <p className="mb-2">
+                        Warning: Some PGCRs are currently being withheld/redacted by Bungie. This is
+                        normal and expected. They will become available when Bungie unblocks them in
+                        the API.
+                    </p>
+                    <p>
+                        The backlog size is currently <strong>{state.backlogSize} instances</strong>{" "}
+                        with an additional{" "}
+                        <strong>
+                            {(state.incomingRate * 60).toFixed()} instances coming in every minute.
+                        </strong>
+                    </p>
+                </StyledRaidHubStatsBanner>
+            )
+        case "emptying":
+            return (
+                <StyledRaidHubStatsBanner $alertLevel="warn">
+                    <p>
+                        Warning: Bungie recently unredacted a batch of PGCRs. We are currently
+                        processing a backlog of <strong>{state.backlogSize} instances</strong> at a
+                        rate of{" "}
+                        <strong>{(state.resolveRate * 60).toFixed()} instances per minute.</strong>
+                    </p>
+                </StyledRaidHubStatsBanner>
+            )
+        case "emptying2":
+            return (
+                <StyledRaidHubStatsBanner $alertLevel="warn">
+                    <p>
+                        Warning: Bungie recently unredacted a batch of PGCRs. We are currently
+                        processing a backlog of <strong>{state.backlogSize} instances</strong> at a
+                        rate of{" "}
+                        <strong>{(state.resolveRate * 60).toFixed()} instances per minute.</strong>{" "}
+                        The most recent activity crawled was terminated at{" "}
+                        <strong>
+                            {state.lastCompletedDate.toLocaleTimeString(locale, {
+                                timeZoneName: "short"
+                            })}
+                            .
+                        </strong>
+                        {state.estimatedCatchupDate && (
+                            <>
+                                {" "}
+                                We expect to be fully caught up by{" "}
+                                <b>
+                                    {state.estimatedCatchupDate?.toLocaleTimeString(locale, {
+                                        timeZoneName: "short",
+                                        hour: "numeric",
+                                        minute: "numeric"
+                                    })}
+                                </b>{" "}
+                                ({formattedTimeSince(state.estimatedCatchupDate)})
+                            </>
+                        )}
+                    </p>
                 </StyledRaidHubStatsBanner>
             )
     }
