@@ -2083,7 +2083,7 @@ export interface components {
       readonly lastUpdated: string;
       readonly knownMemberCount: number;
     };
-    readonly ClanAggregateStats: {
+    readonly ClanLeaderboardAggregateStats: {
       readonly clears: number;
       readonly averageClears: number;
       readonly freshClears: number;
@@ -2094,6 +2094,17 @@ export interface components {
       readonly averageTimePlayedSeconds: number;
       readonly totalContestScore: number;
       readonly weightedContestScore: number;
+    };
+    readonly ClanAggregateStats: {
+      readonly stats: components["schemas"]["ClanLeaderboardAggregateStats"];
+      readonly ranks: {
+        readonly clearsRank: number;
+        readonly freshClearsRank: number;
+        readonly sherpasRank: number;
+        readonly timePlayedSecondsRank: number;
+        readonly totalContestScoreRank: number;
+        readonly weightedContestScoreRank: number;
+      } | null;
     };
     readonly ClanLeaderboardEntry: {
       readonly clan: components["schemas"]["Clan"];
