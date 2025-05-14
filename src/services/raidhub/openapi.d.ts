@@ -2043,7 +2043,8 @@ export interface components {
     readonly PlayerInfo: {
       /** Format: int64 */
       readonly membershipId: string;
-      readonly membershipType: components["schemas"]["DestinyMembershipType"];
+      /** @description The platform on which the player created their account. */
+      readonly membershipType: components["schemas"]["DestinyMembershipType"] | null;
       readonly iconPath: string | null;
       /** @description The platform-specific display name of the player. No longer shown in-game. */
       readonly displayName: string | null;
@@ -2128,10 +2129,10 @@ export interface components {
     };
     readonly ClanStats: {
       readonly aggregateStats: components["schemas"]["ClanAggregateStats"];
-      readonly members: readonly {
-          readonly playerInfo: components["schemas"]["PlayerInfo"];
+      readonly members: readonly ({
+          readonly playerInfo: components["schemas"]["PlayerInfo"] | null;
           readonly stats: components["schemas"]["ClanMemberStats"];
-        }[];
+        })[];
     };
     readonly TeamLeaderboardEntry: {
       readonly position: number;
@@ -2197,13 +2198,13 @@ export interface components {
       readonly isSunset: boolean;
       readonly isRaid: boolean;
       /** Format: date-time */
-      readonly releaseDate: string;
+      readonly releaseDate: string | null;
       /** Format: date-time */
-      readonly dayOneEnd: string;
+      readonly dayOneEnd: string | null;
       /** Format: date-time */
-      readonly contestEnd: string;
+      readonly contestEnd: string | null;
       /** Format: date-time */
-      readonly weekOneEnd: string;
+      readonly weekOneEnd: string | null;
       /** Format: uint32 */
       readonly milestoneHash: number | null;
     };
@@ -2248,7 +2249,7 @@ export interface components {
               readonly iconPath?: string | null;
               readonly crossSaveOverride: components["schemas"]["DestinyMembershipType"];
               readonly applicableMembershipTypes?: (readonly components["schemas"]["DestinyMembershipType"][]) | null;
-              readonly membershipType?: components["schemas"]["DestinyMembershipType"];
+              readonly membershipType?: components["schemas"]["DestinyMembershipType"] | null;
               readonly membershipId: string;
               readonly displayName?: string | null;
               readonly bungieGlobalDisplayName?: string | null;
@@ -2309,17 +2310,17 @@ export interface components {
       readonly freshClears: number;
       readonly clears: number;
       readonly sherpas: number;
-      readonly fastestInstance: components["schemas"]["Instance"];
+      readonly fastestInstance: components["schemas"]["Instance"] | null;
     };
     readonly GlobalStat: {
       readonly rank: number;
       readonly value: number;
     };
     readonly PlayerProfileGlobalStats: {
-      readonly clears: components["schemas"]["GlobalStat"];
-      readonly freshClears: components["schemas"]["GlobalStat"];
-      readonly sherpas: components["schemas"]["GlobalStat"];
-      readonly sumOfBest: components["schemas"]["GlobalStat"];
+      readonly clears: components["schemas"]["GlobalStat"] | null;
+      readonly freshClears: components["schemas"]["GlobalStat"] | null;
+      readonly sherpas: components["schemas"]["GlobalStat"] | null;
+      readonly sumOfBest: components["schemas"]["GlobalStat"] | null;
     };
     readonly WorldFirstEntry: {
       readonly activityId: number;
@@ -2341,7 +2342,7 @@ export interface components {
         };
       };
       readonly worldFirstEntries: {
-        [key: string]: components["schemas"]["WorldFirstEntry"];
+        [key: string]: components["schemas"]["WorldFirstEntry"] | null;
       };
     };
     readonly Teammate: {
@@ -2349,6 +2350,31 @@ export interface components {
       readonly clears: number;
       readonly instanceCount: number;
       readonly playerInfo: components["schemas"]["PlayerInfo"];
+    };
+    readonly LatestResolvedInstance: {
+      /** Format: date-time */
+      readonly dateCompleted: string;
+      /** Format: date-time */
+      readonly dateResolved: string;
+      readonly instanceId: string;
+    };
+    readonly AtlasStatus: {
+      /** @enum {string} */
+      readonly status: "Crawling" | "Idle" | "Offline";
+      readonly medianSecondsBehindNow: number | null;
+      /** Format: date-time */
+      readonly estimatedCatchUpTimestamp: string | null;
+      readonly latestResolvedInstance: components["schemas"]["LatestResolvedInstance"];
+    };
+    readonly FloodgatesStatus: {
+      /** @enum {string} */
+      readonly status: "Empty" | "Blocked" | "Crawling" | "Live";
+      readonly incomingRate: number;
+      readonly resolveRate: number;
+      readonly backlog: number;
+      readonly latestResolvedInstance: components["schemas"]["LatestResolvedInstance"] | null;
+      /** Format: date-time */
+      readonly estimatedBacklogEmptied: string | null;
     };
     readonly ManifestResponse: {
       /** @description The mapping of each Bungie.net hash to a RaidHub activityId and versionId */
@@ -2388,18 +2414,8 @@ export interface components {
       };
     };
     readonly StatusResponse: {
-      readonly AtlasPGCR: {
-        /** @enum {string} */
-        readonly status: "Crawling" | "Idle" | "Offline";
-        readonly medianSecondsBehindNow: number | null;
-        /** Format: date-time */
-        readonly estimatedCatchUpTimestamp: string;
-        readonly latestActivity: {
-          /** Format: date-time */
-          readonly dateCompleted: string;
-          readonly instanceId: string;
-        };
-      };
+      readonly AtlasPGCR: components["schemas"]["AtlasStatus"];
+      readonly FloodgatesPGCR: components["schemas"]["FloodgatesStatus"];
     };
     readonly PlayerSearchResponse: {
       readonly params: {
@@ -2411,7 +2427,7 @@ export interface components {
     readonly PlayerActivitiesResponse: {
       readonly membershipId: string;
       /** Format: date-time */
-      readonly nextCursor: string;
+      readonly nextCursor: string | null;
       readonly activities: readonly components["schemas"]["InstanceForPlayer"][];
     };
     readonly PlayerNotFoundError: {
@@ -2435,7 +2451,8 @@ export interface components {
     readonly PlayerBasicResponse: {
       /** Format: int64 */
       readonly membershipId: string;
-      readonly membershipType: components["schemas"]["DestinyMembershipType"];
+      /** @description The platform on which the player created their account. */
+      readonly membershipType: components["schemas"]["DestinyMembershipType"] | null;
       readonly iconPath: string | null;
       /** @description The platform-specific display name of the player. No longer shown in-game. */
       readonly displayName: string | null;
@@ -2455,7 +2472,7 @@ export interface components {
         };
       };
       readonly worldFirstEntries: {
-        [key: string]: components["schemas"]["WorldFirstEntry"];
+        [key: string]: components["schemas"]["WorldFirstEntry"] | null;
       };
     };
     readonly PlayerTeammatesResponse: readonly components["schemas"]["Teammate"][];
@@ -2593,7 +2610,7 @@ export interface components {
               readonly iconPath?: string | null;
               readonly crossSaveOverride: components["schemas"]["DestinyMembershipType"];
               readonly applicableMembershipTypes?: (readonly components["schemas"]["DestinyMembershipType"][]) | null;
-              readonly membershipType?: components["schemas"]["DestinyMembershipType"];
+              readonly membershipType?: components["schemas"]["DestinyMembershipType"] | null;
               readonly membershipId: string;
               readonly displayName?: string | null;
               readonly bungieGlobalDisplayName?: string | null;
@@ -2648,10 +2665,10 @@ export interface components {
     };
     readonly ClanResponse: {
       readonly aggregateStats: components["schemas"]["ClanAggregateStats"];
-      readonly members: readonly {
-          readonly playerInfo: components["schemas"]["PlayerInfo"];
+      readonly members: readonly ({
+          readonly playerInfo: components["schemas"]["PlayerInfo"] | null;
           readonly stats: components["schemas"]["ClanMemberStats"];
-        }[];
+        })[];
     };
     readonly ClanNotFoundError: {
       readonly groupId: string;
