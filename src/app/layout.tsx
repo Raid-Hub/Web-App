@@ -27,7 +27,7 @@ export const fetchCache = "default-no-store"
 export const revalidate = false
 export const maxDuration = 10 // max lambda duration in seconds
 
-export default async function RootLayout(params: { children: ReactNode; modal: ReactNode }) {
+export default async function RootLayout(params: { children: ReactNode }) {
     const manifest = await prefetchManifest()
 
     return (
@@ -64,7 +64,6 @@ export default async function RootLayout(params: { children: ReactNode; modal: R
                                             <RaidHubStatusBanner />
                                             <SearchModal />
                                             {params.children}
-                                            {params.modal}
                                             <Footer />
                                         </DestinyManifestManager>
                                     </ClientComponentManager>

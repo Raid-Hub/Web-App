@@ -7,11 +7,13 @@ import { updateDestinyProfiles } from "./updateDestinyProfiles"
 
 export const signInCallback: Required<AuthConfig>["callbacks"]["signIn"] = async params => {
     if (params.account?.provider === "bungie" && params.profile) {
-        await Promise.all([
+        if (
             // Check if we have an adapter user (existing user) or a new user
             // If we have an adapter user, we need to update the access tokens
             "createdAt" in params.user &&
-                params.user.createdAt.getTime() > 0 &&
+            params.user.createdAt.getTime() > 0
+        )
+            await Promise.all([
                 updateBungieAccessTokens({
                     userId: params.account.providerAccountId,
                     access: {
@@ -23,8 +25,8 @@ export const signInCallback: Required<AuthConfig>["callbacks"]["signIn"] = async
                         expires: new Date(Date.now() + params.account.refresh_expires_in! * 1000)
                     }
                 }),
-            updateDestinyProfiles(params.profile as unknown as DestinyLinkedProfilesResponse)
-        ])
+                updateDestinyProfiles(params.profile as unknown as DestinyLinkedProfilesResponse)
+            ])
     }
     return true
 }

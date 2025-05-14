@@ -8,6 +8,7 @@ import { getDiscordProfile } from "./providers/discord"
 import { getTwitchProfile } from "./providers/twitch"
 import { getTwitterProfile } from "./providers/twitter"
 import { getYoutubeProfile } from "./providers/youtube"
+import { updateDestinyProfiles } from "./updateDestinyProfiles"
 
 export const PrismaAdapter = (prisma: PrismaClientWithExtensions): Adapter => ({
     async createUser(input) {
@@ -30,6 +31,8 @@ export const PrismaAdapter = (prisma: PrismaClientWithExtensions): Adapter => ({
                 role_: "USER"
             }
         })
+
+        await updateDestinyProfiles(input.userMembershipData)
 
         return {
             ...user,

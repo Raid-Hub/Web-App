@@ -5,6 +5,7 @@ import { useMemo } from "react"
 import styled from "styled-components"
 import { Container } from "~/components/layout/Container"
 import { useRaidHubStatus } from "~/services/raidhub/useRaidHubStatus"
+import { round } from "~/util/math"
 import { formattedTimeSince, secondsToString } from "~/util/presentation/formatting"
 import { useLocale } from "../wrappers/LocaleManager"
 
@@ -52,6 +53,8 @@ type FloodgatesState =
           status: "emptying"
           backlogSize: number
           resolveRate: number
+          incomingRate: number
+          estimatedCatchupDate: Date | null
       }
     | {
           status: "emptying2"
@@ -140,7 +143,11 @@ export const RaidHubStatusBanner = () => {
                     return {
                         status: "emptying",
                         backlogSize: floodgates.backlog,
-                        resolveRate: floodgates.resolveRate
+                        resolveRate: floodgates.resolveRate,
+                        incomingRate: floodgates.incomingRate,
+                        estimatedCatchupDate: floodgates.estimatedBacklogEmptied
+                            ? new Date(floodgates.estimatedBacklogEmptied)
+                            : null
                     }
                 } else {
                     return {
@@ -264,10 +271,11 @@ const RaidHubFloodgatesBannerInner = (state: FloodgatesState) => {
                         the API.
                     </p>
                     <p>
-                        The backlog size is currently <strong>{state.backlogSize} instances</strong>{" "}
-                        with an additional{" "}
+                        The backlog size is currently{" "}
+                        <strong>{state.backlogSize.toLocaleString()}</strong> with an additional{" "}
                         <strong>
-                            {(state.incomingRate * 60).toFixed()} instances coming in every minute.
+                            {round(state.incomingRate * 60, 0).toLocaleString()} instances coming in
+                            every minute.
                         </strong>
                     </p>
                 </StyledRaidHubStatsBanner>
@@ -277,9 +285,26 @@ const RaidHubFloodgatesBannerInner = (state: FloodgatesState) => {
                 <StyledRaidHubStatsBanner $alertLevel="warn">
                     <p>
                         Warning: Bungie recently unredacted a batch of PGCRs. We are currently
-                        processing a backlog of <strong>{state.backlogSize} instances</strong> at a
-                        rate of{" "}
-                        <strong>{(state.resolveRate * 60).toFixed()} instances per minute.</strong>
+                        processing a backlog of{" "}
+                        <strong>{state.backlogSize.toLocaleString()} instances</strong> at a rate of{" "}
+                        <strong>
+                            {round(state.resolveRate * 60, 0).toLocaleString()} instances per
+                            minute.
+                        </strong>
+                        {state.estimatedCatchupDate && (
+                            <>
+                                {" "}
+                                We expect to be fully caught up by{" "}
+                                <b>
+                                    {state.estimatedCatchupDate?.toLocaleTimeString(locale, {
+                                        timeZoneName: "short",
+                                        hour: "numeric",
+                                        minute: "numeric"
+                                    })}
+                                </b>{" "}
+                                ({formattedTimeSince(state.estimatedCatchupDate)})
+                            </>
+                        )}
                     </p>
                 </StyledRaidHubStatsBanner>
             )
@@ -288,9 +313,12 @@ const RaidHubFloodgatesBannerInner = (state: FloodgatesState) => {
                 <StyledRaidHubStatsBanner $alertLevel="warn">
                     <p>
                         Warning: Bungie recently unredacted a batch of PGCRs. We are currently
-                        processing a backlog of <strong>{state.backlogSize} instances</strong> at a
-                        rate of{" "}
-                        <strong>{(state.resolveRate * 60).toFixed()} instances per minute.</strong>{" "}
+                        processing a backlog of{" "}
+                        <strong>{state.backlogSize.toLocaleString()} instances</strong> at a rate of{" "}
+                        <strong>
+                            {round(state.resolveRate * 60, 0).toLocaleString()} instances per
+                            minute.
+                        </strong>{" "}
                         The most recent activity crawled was terminated at{" "}
                         <strong>
                             {state.lastCompletedDate.toLocaleTimeString(locale, {

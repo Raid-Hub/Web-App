@@ -1,7 +1,6 @@
 import { createTRPCRouter } from "."
 import { addBadge, createBadge, listBadges, removeBadge } from "./procedures/admin/badges"
 import { createVanity, removeVanity } from "./procedures/admin/vanity"
-import { unhandledClientError } from "./procedures/monitoring/unhandledClientError"
 import { getProfile } from "./procedures/profile/getProfile"
 import { createPresignedProfilePicURL } from "./procedures/user/account/createPresignedProfilePicURL"
 import { removeProvider } from "./procedures/user/account/removeProvider"
@@ -30,10 +29,6 @@ export const appRouter = createTRPCRouter({
     // public router for finding and loading profiles
     profile: createTRPCRouter({
         getUnique: getProfile
-    }),
-    // public router for monitoring and debugging
-    monitoring: createTRPCRouter({
-        unhandledClientError: unhandledClientError
     }),
     // admin router for managing profiles and users
     admin: createTRPCRouter({

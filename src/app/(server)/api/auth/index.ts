@@ -1,5 +1,6 @@
 import "server-only"
 
+import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library"
 import NextAuth from "next-auth"
 import DiscordProvider from "next-auth/providers/discord"
 import TwitchProvider from "next-auth/providers/twitch"
@@ -37,6 +38,9 @@ const {
     logger: {
         error(err) {
             console.error(err)
+            if (err.cause instanceof PrismaClientKnownRequestError) {
+                console.error("Error Metadata", JSON.stringify(err.cause.meta, null, 2))
+            }
         },
         warn(code) {
             console.warn(code)
