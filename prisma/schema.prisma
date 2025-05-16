@@ -127,25 +127,24 @@ enum PGCRReportStatus {
 }
 
 model PgcrReport {
-  reportId    Int              @id @default(autoincrement()) @map("report_id")
-  instanceId  String           @map("instance_id")
-  pgcr        Pgcr             @relation("PGCRToReport", fields: [instanceId], references: [instanceId], onDelete: NoAction)
-  category    String
-  players     String
-  explanation String
-  status      PGCRReportStatus @default(PENDING)
-  isReporterInInstance Boolean @map("is_reporter_in_instance")
-  reporterId  String           @map("reporter_id")
-  reporter    User             @relation("UserToPGCRReport", fields: [reporterId], references: [id], onDelete: Cascade)
-  assigneeId  String?          @map("assignee_id")
-  assignee    User?            @relation("UserToPGCRReportAssignee", fields: [assigneeId], references: [id], onDelete: Cascade)
+  reportId             Int              @id @default(autoincrement()) @map("report_id")
+  instanceId           String           @map("instance_id")
+  pgcr                 Pgcr             @relation("PGCRToReport", fields: [instanceId], references: [instanceId], onDelete: NoAction)
+  category             String
+  players              String
+  explanation          String
+  status               PGCRReportStatus @default(PENDING)
+  isReporterInInstance Boolean          @map("is_reporter_in_instance")
+  reporterId           String           @map("reporter_id")
+  reporter             User             @relation("UserToPGCRReport", fields: [reporterId], references: [id], onDelete: Cascade)
+  assigneeId           String?          @map("assignee_id")
+  assignee             User?            @relation("UserToPGCRReportAssignee", fields: [assigneeId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
-  @@map("pgcr_report")
-
   @@index([reporterId, instanceId], name: "pgcr_report_reporter_id_idx")
+  @@map("pgcr_report")
 }
 
 model Migration {
