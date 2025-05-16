@@ -3,6 +3,7 @@ import dynamic from "next/dynamic"
 import NextTopLoader from "nextjs-toploader"
 import { type ReactNode } from "react"
 import { prefetchManifest } from "~/services/raidhub/prefetchRaidHubManifest"
+import { Toaster } from "~/shad/sonner"
 import "./global.css"
 import { Footer } from "./layout/footer/Footer"
 import { Header } from "./layout/header/Header"
@@ -65,6 +66,7 @@ export default async function RootLayout(params: { children: ReactNode }) {
                                             <SearchModal />
                                             {params.children}
                                             <Footer />
+                                            <Toaster />
                                         </DestinyManifestManager>
                                     </ClientComponentManager>
                                 </LocaleManager>

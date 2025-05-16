@@ -4,7 +4,15 @@ import { Collection } from "@discordjs/collection"
 import { useQueryClient } from "@tanstack/react-query"
 import { type DestinyInventoryItemDefinition } from "bungie-net-core/models"
 import { useLiveQuery } from "dexie-react-hooks"
-import { createContext, useContext, useEffect, type ReactNode } from "react"
+import {
+    createContext,
+    useContext,
+    useEffect,
+    useState,
+    type Dispatch,
+    type ReactNode,
+    type SetStateAction
+} from "react"
 import { type RaidHubInstanceExtended, type RaidHubPlayerInfo } from "~/services/raidhub/types"
 import { useDexie } from "~/util/dexie/dexie"
 import { type PlayerStats } from "../types"
@@ -37,6 +45,8 @@ interface PGCRState {
         }
     >
     weaponsMap: Collection<number, DestinyInventoryItemDefinition>
+    isReportModalOpen: boolean
+    setIsReportModalOpen: Dispatch<SetStateAction<boolean>>
 }
 
 const PGCRContext = createContext<PGCRState | undefined>(undefined)
@@ -76,6 +86,8 @@ export const ClientStateManager = ({
         weapons?.filter((w): w is DestinyInventoryItemDefinition => !!w).map(w => [w.hash, w])
     )
 
+    const [isReportModalOpen, setIsReportModalOpen] = useState(false)
+
     return (
         <PGCRContext.Provider
             value={{
@@ -83,7 +95,9 @@ export const ClientStateManager = ({
                 mvp,
                 playerStatsMerged: new Collection(playerStatsMerged),
                 weaponsMap,
-                scores: new Collection(scores)
+                scores: new Collection(scores),
+                isReportModalOpen,
+                setIsReportModalOpen
             }}>
             {children}
         </PGCRContext.Provider>

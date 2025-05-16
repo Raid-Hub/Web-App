@@ -2,6 +2,7 @@ import { createTRPCRouter } from "."
 import { addBadge, createBadge, listBadges, removeBadge } from "./procedures/admin/badges"
 import { createVanity, removeVanity } from "./procedures/admin/vanity"
 import { getProfile } from "./procedures/profile/getProfile"
+import { reportPGCR } from "./procedures/reporting/report-pgcr"
 import { createPresignedProfilePicURL } from "./procedures/user/account/createPresignedProfilePicURL"
 import { removeProvider } from "./procedures/user/account/removeProvider"
 import { addByAPIKey } from "./procedures/user/account/speedrun-com/addByAPIKey"
@@ -38,5 +39,9 @@ export const appRouter = createTRPCRouter({
         addBadge: addBadge,
         removeBadge: removeBadge,
         createBadge: createBadge
+    }),
+    // reporting router for reporting PGCRs and players
+    reporting: createTRPCRouter({
+        reportPGCR: reportPGCR
     })
 })
