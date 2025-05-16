@@ -37,7 +37,8 @@ export const reportPGCR = protectedProcedure
                         }
                     }
                 },
-                category: input.categories.join(", "),
+                categories: input.categories.join(", "),
+                heuristics: input.heuristics.join(", "),
                 explanation: input.explanation,
                 isReporterInInstance: input.selfParticipation,
                 players: input.suspectedPlayers.join(", "),

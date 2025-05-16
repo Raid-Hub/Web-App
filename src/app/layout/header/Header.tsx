@@ -16,7 +16,7 @@ export const Header = (props: { children: ReactNode }) => {
 const StyledHeader = styled.header`
     position: sticky;
     top: 0;
-    z-index: 100;
+    z-index: 50;
 
     min-width: 100%;
     padding: 0.2em;

@@ -4,7 +4,7 @@ import { useForm } from "react-hook-form"
 import { toast } from "sonner"
 import type z from "zod"
 import { trpc } from "~/app/trpc"
-import { pgcrReportReasons, zPgcrReport } from "~/lib/reporting"
+import { pgcrReportHeuristics, pgcrReportReasons, zPgcrReport } from "~/lib/reporting"
 import { Button } from "~/shad/button"
 import {
     Dialog,
@@ -44,7 +44,8 @@ export const ReportModal = ({ open, onOpenChange, reporterProfiles }: ReportModa
         defaultValues: {
             categories: [],
             explanation: "",
-            suspectedPlayers: data.players.map(player => player.playerInfo.membershipId)
+            suspectedPlayers: [],
+            heuristics: []
         }
     })
 
@@ -64,15 +65,10 @@ export const ReportModal = ({ open, onOpenChange, reporterProfiles }: ReportModa
         })
     })
 
+    const reportReasons = form.watch("categories")
+
     return (
-        <Dialog
-            open={open}
-            onOpenChange={open => {
-                onOpenChange(open)
-                if (!open) {
-                    form.reset()
-                }
-            }}>
+        <Dialog open={open} onOpenChange={onOpenChange}>
             <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-[600px]">
                 {isSuccess ? (
                     <div className="flex flex-col items-center justify-center py-12 text-center">
@@ -106,6 +102,16 @@ export const ReportModal = ({ open, onOpenChange, reporterProfiles }: ReportModa
                                     label="Reason for reporting"
                                     description="Select all that apply"
                                 />
+
+                                {reportReasons.includes("cheating") && (
+                                    <MultiSelect
+                                        options={pgcrReportHeuristics}
+                                        control={form.control}
+                                        name="heuristics"
+                                        label="Cheating Heuristics"
+                                        description="Select all that apply, or leave blank if none apply"
+                                    />
+                                )}
 
                                 <FormField
                                     control={form.control}

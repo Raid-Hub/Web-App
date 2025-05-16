@@ -16,8 +16,8 @@ model Profile {
   isPrimary             Boolean @map("is_primary")
   pinnedActivityId      String? @map("pinned_activity_id")
   vanity                String? @unique
-  user                  User?   @relation("UserToProfile", fields: [bungieMembershipId], references: [id], onDelete: Cascade)
-  pinnedPGCR            Pgcr?   @relation("PGCRToProfile", fields: [pinnedActivityId], references: [instanceId])
+  user                  User?   @relation("UserToProfile", fields: [bungieMembershipId], references: [id], onDelete: NoAction)
+  pinnedPGCR            Pgcr?   @relation("PGCRToProfile", fields: [pinnedActivityId], references: [instanceId], onDelete: Restrict)
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
@@ -129,8 +129,9 @@ enum PGCRReportStatus {
 model PgcrReport {
   reportId             Int              @id @default(autoincrement()) @map("report_id")
   instanceId           String           @map("instance_id")
-  pgcr                 Pgcr             @relation("PGCRToReport", fields: [instanceId], references: [instanceId], onDelete: NoAction)
-  category             String
+  pgcr                 Pgcr             @relation("PGCRToReport", fields: [instanceId], references: [instanceId], onDelete: Restrict)
+  categories           String
+  heuristics           String
   players              String
   explanation          String
   status               PGCRReportStatus @default(PENDING)
@@ -143,7 +144,10 @@ model PgcrReport {
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
-  @@index([reporterId, instanceId], name: "pgcr_report_reporter_id_idx")
+  @@index([createdAt(sort: Desc)], name: "pgcr_report_created_at_idx")
+  @@index([instanceId, status], name: "pgcr_report_instance_id_idx")
+  @@index([reporterId, createdAt], name: "pgcr_report_reporter_id_idx")
+  @@index([assigneeId, status, updatedAt], name: "pgcr_report_assignee_id_idx")
   @@map("pgcr_report")
 }
 

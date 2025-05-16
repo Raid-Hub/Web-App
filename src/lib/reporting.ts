@@ -17,6 +17,7 @@ export const pgcrReportHeuristics = [
 
 export const zPgcrReport = z.object({
     categories: z.array(z.string()).min(1, "Please select at least one reason"),
+    heuristics: z.array(z.string()),
     explanation: z
         .string()
         .min(1, "Please provide a detailed explanation")
