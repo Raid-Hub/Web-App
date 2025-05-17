@@ -19,7 +19,6 @@ import { PlayerBadge } from "./player-badge"
 
 interface PlayerRowProps {
     player: RaidHubInstancePlayerExtended
-    isSelected?: boolean
 }
 
 export default function PlayerRow({ player }: PlayerRowProps) {

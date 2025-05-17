@@ -25,13 +25,21 @@ export const updateDestinyProfiles = async (data: DestinyLinkedProfilesResponse)
         applicableMemberships.map(membership =>
             prisma.profile.upsert({
                 create: {
-                    bungieMembershipId: data.bnetMembership.membershipId,
+                    user: {
+                        connect: {
+                            id: data.bnetMembership.membershipId
+                        }
+                    },
                     isPrimary: membership.membershipId === primaryDestinyMembershipId,
                     destinyMembershipId: membership.membershipId,
                     destinyMembershipType: membership.membershipType
                 },
                 update: {
-                    bungieMembershipId: data.bnetMembership.membershipId,
+                    user: {
+                        connect: {
+                            id: data.bnetMembership.membershipId
+                        }
+                    },
                     isPrimary: membership.membershipId === primaryDestinyMembershipId
                 },
                 where: {
