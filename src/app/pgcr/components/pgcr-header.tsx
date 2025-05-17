@@ -7,6 +7,7 @@ import { CardHeader } from "~/shad/card"
 import { Tooltip, TooltipContent, TooltipTrigger } from "~/shad/tooltip"
 import { secondsToHMS } from "~/util/presentation/formatting"
 import { PGCRDate, TimeRangeTooltip } from "./pgcr-date"
+import { PGCRMenu } from "./pgcr-menu"
 import { PGCRTags } from "./pgcr-tags"
 
 interface PGCRHeaderProps {
@@ -130,6 +131,10 @@ export const PGCRHeader = ({ data }: PGCRHeaderProps) => {
                             </TooltipContent>
                         </Tooltip>
                     )}
+                </div>
+
+                <div className="absolute top-2 right-2 flex items-center gap-2">
+                    <PGCRMenu />
                 </div>
             </CardHeader>
         </div>

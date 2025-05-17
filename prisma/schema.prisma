@@ -16,8 +16,8 @@ model Profile {
   isPrimary             Boolean @map("is_primary")
   pinnedActivityId      String? @map("pinned_activity_id")
   vanity                String? @unique
-  user                  User?   @relation("UserToProfile", fields: [bungieMembershipId], references: [id], onDelete: Cascade)
-  pinnedPGCR            PGCR?   @relation("PGCRToProfile", fields: [pinnedActivityId], references: [id])
+  user                  User?   @relation("UserToProfile", fields: [bungieMembershipId], references: [id], onDelete: NoAction)
+  pinnedPGCR            Pgcr?   @relation("PGCRToProfile", fields: [pinnedActivityId], references: [instanceId], onDelete: Restrict)
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
@@ -39,11 +39,26 @@ model User {
   raidHubAccessToken RaidHubAccessToken? @relation("UserToRaidHubAccessToken")
   sessions           Session[]           @relation("UserToSession")
   badges             Badge[]             @relation("UserToBadge")
+  pgcrReports        PgcrReport[]        @relation("UserToPGCRReport")
+  pgcrAssignedReport PgcrReport[]        @relation("UserToPGCRReportAssignee")
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
   @@map("bungie_user")
+}
+
+model Badge {
+  id          String @id
+  name        String
+  description String
+  icon        String
+
+  users User[] @relation("UserToBadge")
+
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@map("badge")
 }
 
 model Session {
@@ -96,25 +111,44 @@ model RaidHubAccessToken {
   @@map("raidhub_access_token")
 }
 
-model PGCR {
-  id                 String    @id @map("instance_id")
-  videoURL           String?   @map("video_url")
-  profilesWithPinned Profile[] @relation("PGCRToProfile")
+model Pgcr {
+  instanceId         String       @id @map("instance_id")
+  videoURL           String?      @map("video_url")
+  profilesWithPinned Profile[]    @relation("PGCRToProfile")
+  reports            PgcrReport[] @relation("PGCRToReport")
 
   @@map("pgcr")
 }
 
-model Badge {
-  id          String @id
-  name        String
-  description String
-  icon        String
+enum PGCRReportStatus {
+  PENDING
+  ACCEPTED
+  REJECTED
+}
 
-  users User[] @relation("UserToBadge")
+model PgcrReport {
+  reportId             Int              @id @default(autoincrement()) @map("report_id")
+  instanceId           String           @map("instance_id")
+  pgcr                 Pgcr             @relation("PGCRToReport", fields: [instanceId], references: [instanceId], onDelete: Restrict)
+  categories           String
+  heuristics           String
+  players              String
+  explanation          String
+  status               PGCRReportStatus @default(PENDING)
+  isReporterInInstance Boolean          @map("is_reporter_in_instance")
+  reporterId           String           @map("reporter_id")
+  reporter             User             @relation("UserToPGCRReport", fields: [reporterId], references: [id], onDelete: Cascade)
+  assigneeId           String?          @map("assignee_id")
+  assignee             User?            @relation("UserToPGCRReportAssignee", fields: [assigneeId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
 
-  @@map("badge")
+  @@index([createdAt(sort: Desc)], name: "pgcr_report_created_at_idx")
+  @@index([instanceId, status], name: "pgcr_report_instance_id_idx")
+  @@index([reporterId, createdAt], name: "pgcr_report_reporter_id_idx")
+  @@index([assigneeId, status, updatedAt], name: "pgcr_report_assignee_id_idx")
+  @@map("pgcr_report")
 }
 
 model Migration {
