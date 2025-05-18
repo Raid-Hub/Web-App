@@ -63,7 +63,7 @@ export interface paths {
   "/status": {
     /**
      * /status
-     * @description Get the status of the RaidHub Services.
+     * @description Get the status of the RaidHub Services. Atlas: The PGCR crawler. Floodgates: The queue system for redacted PGCRs from bungie, almost exclusively during contest mode.
      */
     get: {
       responses: {
@@ -1739,6 +1739,83 @@ export interface paths {
       };
     };
   };
+  "/admin/reporting/standing/{instanceId}": {
+    /**
+     * /admin/reporting/standing/{instanceId}
+     * @description Find a set of instances based on the query parameters. Some parameters will not work together, such as providing a season outside the range of the min/max season. Requires authentication.
+     */
+    get: {
+      parameters: {
+        path: {
+          instanceId: string;
+        };
+      };
+      responses: {
+        /** @description Success */
+        200: {
+          content: {
+            readonly "application/json": {
+              /** Format: date-time */
+              readonly minted: string;
+              /** @enum {boolean} */
+              readonly success: true;
+              readonly response: components["schemas"]["AdminReportingStandingResponse"];
+            };
+          };
+        };
+        /** @description Unauthorized */
+        401: {
+          content: {
+            readonly "application/json": {
+              /** Format: date-time */
+              readonly minted: string;
+              /** @enum {boolean} */
+              readonly success: false;
+              /** @enum {string} */
+              readonly code: "ApiKeyError";
+              readonly error: components["schemas"]["ApiKeyError"];
+            };
+          };
+        };
+        /** @description Not found */
+        404: {
+          content: {
+            readonly "application/json": {
+              /** Format: date-time */
+              readonly minted: string;
+              /** @enum {boolean} */
+              readonly success: false;
+              /** @enum {string} */
+              readonly code: "InstanceNotFoundError";
+              readonly error: components["schemas"]["InstanceNotFoundError"];
+            } | {
+              /** Format: date-time */
+              readonly minted: string;
+              /** @enum {boolean} */
+              readonly success: false;
+              /** @enum {string} */
+              readonly code: "PathValidationError";
+              readonly error: components["schemas"]["PathValidationError"];
+            };
+          };
+        };
+        /** @description Internal Server Error */
+        500: {
+          content: {
+            readonly "application/json": {
+              /** Format: date-time */
+              readonly minted: string;
+              /** @enum {boolean} */
+              readonly success: false;
+              /** @enum {string} */
+              readonly code: "InternalServerError";
+              readonly error: components["schemas"]["InternalServerError"];
+            };
+          };
+        };
+      };
+    };
+  };
   "/authorize/admin": {
     /**
      * /authorize/admin
@@ -2064,6 +2141,113 @@ export interface components {
       readonly metadata: components["schemas"]["InstanceMetadata"];
       readonly players: readonly components["schemas"]["InstancePlayerExtended"][];
     });
+    /**
+     * Format: int64
+     * @description A bitmask of flagged heuristics:
+     * 2^0 = Manual
+     * 2^1 = Leviathan
+     * 2^2 = EaterOfWorlds
+     * 2^3 = SpireOfStars
+     * 2^4 = LastWish
+     * 2^5 = ScourgeOfThePast
+     * 2^6 = CrownOfSorrow
+     * 2^7 = GardenOfSalvation
+     * 2^8 = DeepStoneCrypt
+     * 2^9 = VaultOfGlass
+     * 2^10 = VowOfTheDisciple
+     * 2^11 = KingsFall
+     * 2^12 = RootOfNightmares
+     * 2^13 = CrotasEnd
+     * 2^14 = SalvationsEdge
+     * 2^15 = Raid15
+     * 2^16 = Raid16
+     * 2^17 = Raid17
+     * 2^18 = Raid18
+     * 2^19 = Raid19
+     * 2^20 = Raid20
+     * 2^21 = Raid21
+     * 2^22 = Raid22
+     * 2^23 = Raid23
+     * 2^24 = Raid24
+     * 2^25 = Raid25
+     * 2^26 = Raid26
+     * 2^27 = Raid27
+     * 2^28 = Raid28
+     * 2^29 = Raid29
+     * 2^30 = Raid30
+     * 2^31 = Raid31
+     * 2^32 = Raid32
+     * 2^33 = Pantheon
+     * 2^34 = Bit34
+     * 2^35 = Bit35
+     * 2^36 = Bit36
+     * 2^37 = Bit37
+     * 2^38 = Bit38
+     * 2^39 = Bit39
+     * 2^40 = Bit40
+     * 2^41 = Bit41
+     * 2^42 = Bit42
+     * 2^43 = Bit43
+     * 2^44 = Bit44
+     * 2^45 = Bit45
+     * 2^46 = Bit46
+     * 2^47 = Bit47
+     * 2^48 = Bit48
+     * 2^49 = Bit49
+     * 2^50 = Bit50
+     * 2^51 = Bit51
+     * 2^52 = Bit52
+     * 2^53 = Bit53
+     * 2^54 = TotalInstanceKills
+     * 2^55 = TwoPlusCheaters
+     * 2^56 = PlayerTotalKills
+     * 2^57 = PlayerWeaponDiversity
+     * 2^58 = PlayerSuperKills
+     * 2^59 = PlayerGrenadeKills
+     * 2^60 = TooFast
+     * 2^61 = TooFewPlayersFresh
+     * 2^62 = TooFewPlayersCheckpoint
+     */
+    readonly CheatCheckBitmask: string;
+    readonly InstanceBlacklist: {
+      /** Format: int64 */
+      readonly instanceId: string;
+      /** @enum {string} */
+      readonly reportSource: "Manual" | "CheatCheck" | "WebReport";
+      readonly reportId: number | null;
+      readonly cheatCheckVersion: string | null;
+      readonly reason: string;
+      /** Format: date-time */
+      readonly createdAt: string;
+    };
+    readonly InstanceFlag: {
+      /** Format: date-time */
+      readonly flaggedAt: string;
+      readonly cheatCheckVersion: string;
+      readonly cheatProbability: number;
+      readonly cheatCheckBitmask: components["schemas"]["CheatCheckBitmask"];
+    };
+    readonly InstancePlayerStanding: {
+      readonly playerInfo: components["schemas"]["PlayerInfo"];
+      readonly flags: readonly components["schemas"]["InstanceFlag"][];
+      readonly clears: number;
+      /** @enum {integer} */
+      readonly cheatLevel: 0 | 1 | 2 | 3 | 4;
+      readonly blacklistedInstances: readonly {
+          /** Format: int64 */
+          readonly instanceId: string;
+          /** Format: date-time */
+          readonly instanceDate: string;
+          readonly reason: string;
+          readonly individualReason: string;
+          /** Format: date-time */
+          readonly createdAt: string;
+        }[];
+      readonly otherRecentFlags: readonly (components["schemas"]["InstanceFlag"] & {
+          /** Format: int64 */
+          readonly instanceId: string;
+        })[];
+    };
     readonly ClanBannerData: {
       readonly decalId: number;
       readonly decalColorId: number;
@@ -2709,6 +2893,13 @@ export interface components {
       readonly code?: string;
       readonly line?: string;
       readonly position?: number;
+    };
+    readonly AdminReportingStandingResponse: {
+      /** Format: int64 */
+      readonly instanceId: string;
+      readonly blacklist: components["schemas"]["InstanceBlacklist"] | null;
+      readonly flags: readonly components["schemas"]["InstanceFlag"][];
+      readonly players: readonly components["schemas"]["InstancePlayerStanding"][];
     };
     readonly AuthorizeAdminResponse: {
       readonly value: string;

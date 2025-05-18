@@ -17,7 +17,6 @@ model Profile {
   pinnedActivityId      String? @map("pinned_activity_id")
   vanity                String? @unique
   user                  User?   @relation("UserToProfile", fields: [bungieMembershipId], references: [id], onDelete: NoAction)
-  pinnedPGCR            Pgcr?   @relation("PGCRToProfile", fields: [pinnedActivityId], references: [instanceId], onDelete: Restrict)
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
@@ -111,15 +110,6 @@ model RaidHubAccessToken {
   @@map("raidhub_access_token")
 }
 
-model Pgcr {
-  instanceId         String       @id @map("instance_id")
-  videoURL           String?      @map("video_url")
-  profilesWithPinned Profile[]    @relation("PGCRToProfile")
-  reports            PgcrReport[] @relation("PGCRToReport")
-
-  @@map("pgcr")
-}
-
 enum PGCRReportStatus {
   PENDING
   ACCEPTED
@@ -129,7 +119,6 @@ enum PGCRReportStatus {
 model PgcrReport {
   reportId             Int              @id @default(autoincrement()) @map("report_id")
   instanceId           String           @map("instance_id")
-  pgcr                 Pgcr             @relation("PGCRToReport", fields: [instanceId], references: [instanceId], onDelete: Restrict)
   categories           String
   heuristics           String
   players              String
