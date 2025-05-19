@@ -9,15 +9,15 @@ import PreviousArrowSkip from "~/components/icons/PreviousArrowSkip"
 import ReloadArrow from "~/components/icons/ReloadArrow"
 import { Flex } from "~/components/layout/Flex"
 import { usePageProps } from "~/components/layout/PageWrapper"
+import { usePage } from "~/hooks/util/usePage"
 import { useQueryParams } from "~/hooks/util/useQueryParams"
 import { getRaidHubApi } from "~/services/raidhub/common"
 import { type RaidHubLeaderboardURL } from "~/services/raidhub/types"
-import { usePage } from "../../hooks/util/usePage"
 import { type PageProps } from "./Leaderboard"
 import { LeaderboardSearch } from "./LeaderboardSearch"
 
 export const LeaderboardControls = (props: { hasPages: boolean; hasSearch: boolean }) => {
-    const { set, remove } = useQueryParams<{
+    const { set, tx } = useQueryParams<{
         page: string
         position: string
     }>()
@@ -50,30 +50,31 @@ export const LeaderboardControls = (props: { hasPages: boolean; hasSearch: boole
     )
 
     const handleGoToFirstPage = () => {
-        set("page", "1", {
-            commit: true,
-            shallow: false
-        })
+        set("page", "1", false)
     }
 
     const handleForwards = () => {
-        remove("position", undefined, {
-            commit: false
-        })
-        set("page", String(currentPage + 1), {
-            commit: true,
-            shallow: false
-        })
+        tx(
+            ({ set, remove }) => {
+                remove("position")
+                set("page", String(currentPage + 1))
+            },
+            {
+                history: true
+            }
+        )
     }
 
     const handleBackwards = () => {
-        remove("position", undefined, {
-            commit: false
-        })
-        set("page", String(Math.max(1, currentPage - 1)), {
-            commit: true,
-            shallow: false
-        })
+        tx(
+            ({ set, remove }) => {
+                remove("position")
+                set("page", String(currentPage - 1))
+            },
+            {
+                history: true
+            }
+        )
     }
 
     return (

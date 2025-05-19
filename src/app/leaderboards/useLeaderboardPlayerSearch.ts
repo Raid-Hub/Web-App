@@ -9,7 +9,7 @@ export const useLeaderboardPlayerSearch = ({
     mutationFn: (membershipId: string) => Promise<RaidHubLeaderboardData>
     queryKeyWithoutPage: QueryKey
 }) => {
-    const { set, update, remove } = useQueryParams<{ page: string; position: string }>()
+    const { tx, remove } = useQueryParams<{ page: string; position: string }>()
     const queryClient = useQueryClient()
 
     return useMutation({
@@ -32,22 +32,21 @@ export const useLeaderboardPlayerSearch = ({
                 }
             })?.position
 
-            if (position) {
-                set("position", String(position), {
-                    commit: false
-                })
-            } else {
-                alert(
-                    "Player does not exist on the page they were found on. This is a bug. Please report it in our discord."
-                )
-            }
-            update("page", old => ({
-                value: String(data.page),
-                args: {
-                    commit: true,
-                    shallow: String(data.page) === old
+            tx(
+                ({ set }) => {
+                    if (position) {
+                        set("position", String(position))
+                    } else {
+                        alert(
+                            "Player does not exist on the page they were found on. This is a bug. Please report it in our discord."
+                        )
+                    }
+                    set("page", String(data.page))
+                },
+                {
+                    history: true
                 }
-            }))
+            )
         }
     })
 }

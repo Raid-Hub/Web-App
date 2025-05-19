@@ -27,16 +27,7 @@ export const reportPGCR = protectedProcedure
 
         const createdReport = await ctx.prisma.pgcrReport.create({
             data: {
-                pgcr: {
-                    connectOrCreate: {
-                        where: {
-                            instanceId: input.instanceId
-                        },
-                        create: {
-                            instanceId: input.instanceId
-                        }
-                    }
-                },
+                instanceId: input.instanceId,
                 categories: input.categories.join(", "),
                 heuristics: input.heuristics.join(", "),
                 explanation: input.explanation,

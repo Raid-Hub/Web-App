@@ -1,7 +1,7 @@
 import { useMemo } from "react"
 import { useRaidHubManifest } from "~/app/layout/wrappers/RaidHubManifestManager"
 import { Tag } from "~/models/tag"
-import { usePGCRContext } from "../components/ClientStateManager"
+import { usePGCRContext } from "./ClientStateManager"
 
 export const usePGCRTags = () => {
     const { data: activity } = usePGCRContext()

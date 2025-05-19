@@ -2,10 +2,10 @@
 
 import { useMemo } from "react"
 import { usePageProps } from "~/components/layout/PageWrapper"
+import { usePage } from "~/hooks/util/usePage"
 import { getRaidHubApi } from "~/services/raidhub/common"
 import { type RaidHubLeaderboardData, type RaidHubLeaderboardURL } from "~/services/raidhub/types"
 import { bungieIconUrl, getBungieDisplayName } from "~/util/destiny"
-import { usePage } from "../../hooks/util/usePage"
 import { type PageProps } from "./Leaderboard"
 import { LeaderboardEntriesLoadingWrapper } from "./LeaderboardEntriesLoadingWrapper"
 import { useLeaderboard } from "./useLeaderboard"

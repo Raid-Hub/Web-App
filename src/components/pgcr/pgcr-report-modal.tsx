@@ -4,6 +4,7 @@ import { useForm } from "react-hook-form"
 import { toast } from "sonner"
 import type z from "zod"
 import { trpc } from "~/app/trpc"
+import { usePGCRContext } from "~/hooks/pgcr/ClientStateManager"
 import { pgcrReportHeuristics, pgcrReportReasons, zPgcrReport } from "~/lib/reporting"
 import { Button } from "~/shad/button"
 import {
@@ -26,7 +27,6 @@ import {
 import { MultiSelect } from "~/shad/multi-select"
 import { Textarea } from "~/shad/textarea"
 import { getBungieDisplayName } from "~/util/destiny"
-import { usePGCRContext } from "./ClientStateManager"
 
 type ReportFormValues = z.infer<typeof zPgcrReport>
 

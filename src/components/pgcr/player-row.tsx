@@ -2,19 +2,18 @@
 
 import { ChevronRight, LinkIcon } from "lucide-react"
 import Link from "next/link"
-import { ActivityPieChart } from "~/app/pgcr/components/activity-pie-chart"
-import { Button } from "~/components/ui/button"
+import { ActivityPieChart } from "~/components/pgcr/activity-pie-chart"
 import { useItemDefinition } from "~/hooks/dexie"
+import { usePGCRContext } from "~/hooks/pgcr/ClientStateManager"
+import { useGetCharacterClass } from "~/hooks/pgcr/useCharacterClass"
 import { cn } from "~/lib/tw"
 import { type RaidHubInstancePlayerExtended } from "~/services/raidhub/types"
 import { Avatar, AvatarFallback, AvatarImage } from "~/shad/avatar"
+import { Button } from "~/shad/button"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "~/shad/tooltip"
 import { bungieBannerEmblemUrl, bungieProfileIconUrl, getBungieDisplayName } from "~/util/destiny"
 import { round } from "~/util/math"
 import { secondsToHMS } from "~/util/presentation/formatting"
-import { useGetCharacterClass } from "../hooks/useCharacterClass"
-import { usePgcrParams } from "../hooks/usePgcrParams"
-import { usePGCRContext } from "./ClientStateManager"
 import { PlayerBadge } from "./player-badge"
 
 interface PlayerRowProps {
@@ -22,8 +21,7 @@ interface PlayerRowProps {
 }
 
 export default function PlayerRow({ player }: PlayerRowProps) {
-    const { set } = usePgcrParams()
-    const { data, playerStatsMerged, mvp } = usePGCRContext()
+    const { data, playerStatsMerged, mvp, query } = usePGCRContext()
 
     const stats = playerStatsMerged.get(player.playerInfo.membershipId)!
     const timePlayed = Math.min(stats.timePlayedSeconds, data.duration)
@@ -40,7 +38,7 @@ export default function PlayerRow({ player }: PlayerRowProps) {
         <Button
             variant="ghost"
             className="group relative h-auto w-full max-w-full cursor-pointer rounded-none p-0 hover:bg-zinc-900"
-            onClick={() => set("player", player.playerInfo.membershipId)}>
+            onClick={() => query.set("player", player.playerInfo.membershipId)}>
             <TooltipProvider>
                 <div
                     className={cn(

@@ -70,6 +70,10 @@ export type InstanceFinderQuery = NonNullable<
     paths["/player/{membershipId}/instances"]["get"]["parameters"]["query"]
 >
 
+export type InstanceFlag = Component<"InstanceFlag">
+export type InstanceBlacklist = Component<"InstanceBlacklist">
+export type InstancePlayerStanding = Component<"InstancePlayerStanding">
+
 // Responses
 export type RaidHubManifestResponse = Component<"ManifestResponse">
 export type RaidHubPlayerActivitiesResponse = Component<"PlayerActivitiesResponse">

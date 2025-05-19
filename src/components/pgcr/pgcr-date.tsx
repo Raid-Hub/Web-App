@@ -1,7 +1,7 @@
 "use client"
 
-import { Tooltip, TooltipContent, TooltipTrigger } from "~/components/ui/tooltip"
-import { usePGCRContext } from "./ClientStateManager"
+import { usePGCRContext } from "~/hooks/pgcr/ClientStateManager"
+import { Tooltip, TooltipContent, TooltipTrigger } from "~/shadtooltip"
 
 export const PGCRDate = () => {
     const { data } = usePGCRContext()

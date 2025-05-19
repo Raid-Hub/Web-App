@@ -4,8 +4,10 @@ import { Collection } from "@discordjs/collection"
 import { CheckCircle, LinkIcon, X } from "lucide-react"
 import Link from "next/link"
 import { useEffect, useMemo } from "react"
-import { ActivityPieChart } from "~/app/pgcr/components/activity-pie-chart"
+import { ActivityPieChart } from "~/components/pgcr/activity-pie-chart"
 import { useItemDefinition } from "~/hooks/dexie"
+import { usePGCRContext } from "~/hooks/pgcr/ClientStateManager"
+import { useGetCharacterClass } from "~/hooks/pgcr/useCharacterClass"
 import { cn } from "~/lib/tw"
 import { type RaidHubInstancePlayerExtended } from "~/services/raidhub/types"
 import { Avatar, AvatarFallback, AvatarImage } from "~/shad/avatar"
@@ -15,9 +17,6 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "~/shad
 import { bungieIconUrl, getBungieDisplayName } from "~/util/destiny"
 import { round } from "~/util/math"
 import { secondsToHMS } from "~/util/presentation/formatting"
-import { useGetCharacterClass } from "../hooks/useCharacterClass"
-import { usePgcrParams } from "../hooks/usePgcrParams"
-import { usePGCRContext } from "./ClientStateManager"
 import { WeaponTable } from "./pgcr-weapons"
 import { PlayerBadge } from "./player-badge"
 import { StatCard } from "./stat-card"
@@ -28,16 +27,20 @@ interface PlayerDetailsPanelProps {
 }
 
 export const PlayerDetailsPanelWrapper = () => {
-    const { data } = usePGCRContext()
-    const { validatedSearchParams, remove } = usePgcrParams()
+    const {
+        data,
+        query: { validatedSearchParams, tx }
+    } = usePGCRContext()
     const selectedPlayer = validatedSearchParams.get("player")
     const selectedPlayerData =
         data.players.find(player => player.playerInfo.membershipId === selectedPlayer) ??
         data.players[0]
 
     const exitPlayerPanel = () => {
-        remove("character", undefined, { commit: false })
-        remove("player", undefined, { commit: true, shallow: true })
+        tx(({ remove }) => {
+            remove("character")
+            remove("player")
+        })
     }
 
     return (
@@ -54,21 +57,29 @@ export const PlayerDetailsPanelWrapper = () => {
 }
 
 const PlayerDetailsPanel = ({ player, onClose }: PlayerDetailsPanelProps) => {
-    const { validatedSearchParams, get, set, remove } = usePgcrParams()
-    const { data, mvp, playerStatsMerged, weaponsMap, scores } = usePGCRContext()
+    const {
+        data,
+        mvp,
+        playerStatsMerged,
+        weaponsMap,
+        scores,
+        query: { validatedSearchParams, get, set, tx, remove }
+    } = usePGCRContext()
 
     useEffect(() => {
         const handleEscape = (e: KeyboardEvent) => {
             const playerParam = get("player")
             if (e.key === "Escape" && playerParam) {
-                set("character", undefined, { commit: false })
-                set("player", undefined, { commit: true, shallow: true })
+                tx(({ remove }) => {
+                    remove("player")
+                    remove("character")
+                })
             }
         }
 
         window.addEventListener("keydown", handleEscape)
         return () => window.removeEventListener("keydown", handleEscape)
-    }, [get, set])
+    }, [get, tx])
 
     const selectedCharacter = validatedSearchParams.get("character")
     // If no character is selected, show all data

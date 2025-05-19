@@ -1,13 +1,13 @@
 import { Collection } from "@discordjs/collection"
+import { ClientStateManager } from "~/hooks/pgcr/ClientStateManager"
+import { generateSortScore } from "~/lib/pgcr/riis"
 import { type RaidHubInstanceExtended } from "~/services/raidhub/types"
 import { Card } from "~/shad/card"
 import { Separator } from "~/shad/separator"
 import { TooltipProvider } from "~/shad/tooltip"
-import { ClientStateManager } from "./ClientStateManager"
 import { PGCRHeader } from "./pgcr-header"
 import { PGCRPlayers } from "./pgcr-players"
 import { PlayerDetailsPanelWrapper } from "./player-details-panel"
-import { generateSortScore } from "./riis"
 
 interface PGCRProps {
     data: RaidHubInstanceExtended

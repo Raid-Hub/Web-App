@@ -13,9 +13,11 @@ import {
     type ReactNode,
     type SetStateAction
 } from "react"
+import { z } from "zod"
+import { useQueryParams, type RaidHubQueryParams } from "~/hooks/util/useQueryParams"
 import { type RaidHubInstanceExtended, type RaidHubPlayerInfo } from "~/services/raidhub/types"
 import { useDexie } from "~/util/dexie/dexie"
-import { type PlayerStats } from "../types"
+import { type PGCRPageParams, type PlayerStats } from "../../app/pgcr/[instanceId]/types"
 
 interface ClientStateManagerProps {
     data: RaidHubInstanceExtended
@@ -47,6 +49,7 @@ interface PGCRState {
     weaponsMap: Collection<number, DestinyInventoryItemDefinition>
     isReportModalOpen: boolean
     setIsReportModalOpen: Dispatch<SetStateAction<boolean>>
+    query: RaidHubQueryParams<PGCRPageParams>
 }
 
 const PGCRContext = createContext<PGCRState | undefined>(undefined)
@@ -88,6 +91,19 @@ export const ClientStateManager = ({
 
     const [isReportModalOpen, setIsReportModalOpen] = useState(false)
 
+    const query = useQueryParams<PGCRPageParams>(
+        z.object({
+            player: z
+                .string()
+                .regex(/^\d{19}$/)
+                .optional(),
+            character: z
+                .string()
+                .regex(/^\d{19}$/)
+                .optional()
+        })
+    )
+
     return (
         <PGCRContext.Provider
             value={{
@@ -97,7 +113,8 @@ export const ClientStateManager = ({
                 weaponsMap,
                 scores: new Collection(scores),
                 isReportModalOpen,
-                setIsReportModalOpen
+                setIsReportModalOpen,
+                query
             }}>
             {children}
         </PGCRContext.Provider>
