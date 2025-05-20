@@ -3,6 +3,7 @@ import { trpc } from "~/app/trpc"
 import { StatusBadge } from "~/components/admin/reporting/status-badge"
 import { pgcrReportHeuristics, pgcrReportReasons } from "~/lib/reporting"
 import { cn } from "~/lib/tw"
+import { getRelativeTime } from "~/util/presentation/pastDates"
 
 interface ReportListProps {
     sort: "createdAt" | "closedAt"
@@ -110,7 +111,7 @@ export function ReportList({
                     </div>
                     <div className="flex justify-between text-xs text-white/50">
                         <span>ID: #{report.reportId}</span>
-                        <span>{report.createdAt.toLocaleDateString()}</span>
+                        <span>{getRelativeTime(report.createdAt)}</span>
                     </div>
                 </div>
             ))}
