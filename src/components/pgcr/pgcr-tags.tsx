@@ -1,7 +1,7 @@
 "use client"
 
 import { usePGCRTags } from "~/hooks/pgcr/usePGCRTags"
-import { Badge } from "~/shadbadge"
+import { Badge } from "~/shad/badge"
 
 export const PGCRTags = () => {
     const tags = usePGCRTags()

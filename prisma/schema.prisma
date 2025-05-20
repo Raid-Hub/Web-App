@@ -39,7 +39,7 @@ model User {
   sessions           Session[]           @relation("UserToSession")
   badges             Badge[]             @relation("UserToBadge")
   pgcrReports        PgcrReport[]        @relation("UserToPGCRReport")
-  pgcrAssignedReport PgcrReport[]        @relation("UserToPGCRReportAssignee")
+  pgcrClosedReports  PgcrReport[]        @relation("UserToPGCRReportCloser")
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
@@ -127,16 +127,15 @@ model PgcrReport {
   isReporterInInstance Boolean          @map("is_reporter_in_instance")
   reporterId           String           @map("reporter_id")
   reporter             User             @relation("UserToPGCRReport", fields: [reporterId], references: [id], onDelete: Cascade)
-  assigneeId           String?          @map("assignee_id")
-  assignee             User?            @relation("UserToPGCRReportAssignee", fields: [assigneeId], references: [id], onDelete: Cascade)
+  closedById           String?          @map("closed_by_id")
+  closedBy             User?            @relation("UserToPGCRReportCloser", fields: [closedById], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
+  closedAt  DateTime? @map("closed_at")
 
   @@index([createdAt(sort: Desc)], name: "pgcr_report_created_at_idx")
-  @@index([instanceId, status], name: "pgcr_report_instance_id_idx")
-  @@index([reporterId, createdAt], name: "pgcr_report_reporter_id_idx")
-  @@index([assigneeId, status, updatedAt], name: "pgcr_report_assignee_id_idx")
+  @@index([instanceId], name: "pgcr_report_instance_id_idx")
+  @@index([reporterId, createdAt(sort: Desc)], name: "pgcr_report_reporter_id_idx")
   @@map("pgcr_report")
 }
 

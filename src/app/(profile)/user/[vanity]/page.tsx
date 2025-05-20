@@ -1,7 +1,7 @@
 import { type Metadata } from "next"
 import { notFound } from "next/navigation"
 import { Suspense } from "react"
-import { getServerSession } from "~/server/api/auth"
+import { getServerSession } from "~/lib/server/auth"
 import { type AppProfile } from "~/types/api"
 import { bungieProfileIconUrl } from "~/util/destiny"
 import { ProfileClientWrapper } from "../../ProfileClientWrapper"

@@ -73,6 +73,7 @@ export type InstanceFinderQuery = NonNullable<
 export type InstanceFlag = Component<"InstanceFlag">
 export type InstanceBlacklist = Component<"InstanceBlacklist">
 export type InstancePlayerStanding = Component<"InstancePlayerStanding">
+export type InstancePlayerFlag = Component<"InstancePlayerFlag">
 
 // Responses
 export type RaidHubManifestResponse = Component<"ManifestResponse">
@@ -87,6 +88,7 @@ export type RaidHubMetricsWeaponsRollingWeekResponse =
     Component<"MetricsWeaponsRollingWeekResponse">
 export type RaidHubMetricsPopulationRollingDayResponse =
     Component<"MetricsPopulationRollingDayResponse">
+export type RaidHubInstanceStandingResponse = Component<"AdminReportingStandingResponse">
 
 interface GetSchema {
     get: {

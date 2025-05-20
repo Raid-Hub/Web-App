@@ -2068,6 +2068,26 @@ export interface components {
       /** @description If the activity was completed before the week one end date */
       readonly isWeekOne: boolean;
     };
+    readonly InstanceBasic: {
+      /** Format: int64 */
+      readonly instanceId: string;
+      /** Format: uint32 */
+      readonly hash: number;
+      readonly completed: boolean;
+      readonly playerCount: number;
+      readonly score: number;
+      readonly fresh: boolean | null;
+      readonly flawless: boolean | null;
+      /** Format: date-time */
+      readonly dateStarted: string;
+      /** Format: date-time */
+      readonly dateCompleted: string;
+      readonly season: number;
+      readonly duration: number;
+      readonly platformType: components["schemas"]["DestinyMembershipType"] | null;
+      /** Format: date-time */
+      readonly dateResolved: string;
+    };
     readonly InstanceMetadata: {
       readonly activityName: string;
       readonly versionName: string;
@@ -2227,9 +2247,20 @@ export interface components {
       readonly cheatProbability: number;
       readonly cheatCheckBitmask: components["schemas"]["CheatCheckBitmask"];
     };
+    readonly InstancePlayerFlag: {
+      /** Format: date-time */
+      readonly flaggedAt: string;
+      readonly cheatCheckVersion: string;
+      readonly cheatProbability: number;
+      readonly cheatCheckBitmask: components["schemas"]["CheatCheckBitmask"];
+      /** Format: int64 */
+      readonly instanceId: string;
+      /** Format: int64 */
+      readonly membershipId: string;
+    };
     readonly InstancePlayerStanding: {
       readonly playerInfo: components["schemas"]["PlayerInfo"];
-      readonly flags: readonly components["schemas"]["InstanceFlag"][];
+      readonly flags: readonly components["schemas"]["InstancePlayerFlag"][];
       readonly clears: number;
       /** @enum {integer} */
       readonly cheatLevel: 0 | 1 | 2 | 3 | 4;
@@ -2243,10 +2274,7 @@ export interface components {
           /** Format: date-time */
           readonly createdAt: string;
         }[];
-      readonly otherRecentFlags: readonly (components["schemas"]["InstanceFlag"] & {
-          /** Format: int64 */
-          readonly instanceId: string;
-        })[];
+      readonly otherRecentFlags: readonly components["schemas"]["InstancePlayerFlag"][];
     };
     readonly ClanBannerData: {
       readonly decalId: number;
@@ -2895,8 +2923,7 @@ export interface components {
       readonly position?: number;
     };
     readonly AdminReportingStandingResponse: {
-      /** Format: int64 */
-      readonly instanceId: string;
+      readonly instanceDetails: components["schemas"]["InstanceBasic"];
       readonly blacklist: components["schemas"]["InstanceBlacklist"] | null;
       readonly flags: readonly components["schemas"]["InstanceFlag"][];
       readonly players: readonly components["schemas"]["InstancePlayerStanding"][];

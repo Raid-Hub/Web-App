@@ -51,7 +51,7 @@ export const Footer = () => {
     return (
         <div
             id="footer"
-            className="bg-background-dark/50 border-border-dark/60 mt-auto min-w-full overflow-hidden border-t border-b text-[0.9rem] text-zinc-500 backdrop-blur-[10px]">
+            className="bg-background/40 border-border-dark/60 h-footer mt-auto min-w-full overflow-hidden border-t border-b text-[0.9rem] text-zinc-500 backdrop-blur-xs">
             <Flex $align="space-between" $padding={1}>
                 <FooterSide side="left">
                     <div>

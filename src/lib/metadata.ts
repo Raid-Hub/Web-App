@@ -1,5 +1,5 @@
 import { type Metadata } from "next"
-import { baseUrl } from "~/lib/server"
+import { baseUrl } from "~/lib/server/utils"
 
 const title: Metadata["title"] = {
     absolute: "RaidHub",

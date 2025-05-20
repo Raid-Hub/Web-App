@@ -32,7 +32,7 @@ export default async function RootLayout(params: { children: ReactNode }) {
     const manifest = await prefetchManifest()
 
     return (
-        <html suppressHydrationWarning>
+        <html className="dark" suppressHydrationWarning>
             <head>
                 <meta name="discord:site" content="https://discord.gg/raidhub" />
 

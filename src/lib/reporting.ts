@@ -8,11 +8,11 @@ export const pgcrReportReasons = [
 ]
 
 export const pgcrReportHeuristics = [
-    { id: "playercount", label: "Player Count Too Low" },
-    { id: "speed", label: "Completion Time Too Quick" },
-    { id: "heavykills", label: "Heavy Weapon Kills Too High" },
-    { id: "grenadekills", label: "Grenade Kills Too High" },
-    { id: "superkills", label: "Super Kills Too High" }
+    { id: "playercount", label: "Player Count" },
+    { id: "speed", label: "Completion Time" },
+    { id: "heavykills", label: "Heavy Weapon Kills" },
+    { id: "grenadekills", label: "Grenade Kills" },
+    { id: "superkills", label: "Super Kills" }
 ]
 
 export const zPgcrReport = z.object({

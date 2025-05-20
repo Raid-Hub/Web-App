@@ -3,7 +3,7 @@ import { getRaidHubApi } from "./common"
 
 export const useRaidHubPGCR = (
     instanceId: string,
-    opts: {
+    opts?: {
         enabled: boolean
     }
 ) => {

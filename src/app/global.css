@@ -95,6 +95,7 @@ img[src=""] {
     --color-sidebar-border: var(--sidebar-border);
     --color-sidebar-ring: var(--sidebar-ring);
     --color-raidhub: var(--raidhub);
+    --color-hyperlink: var(--hyperlink);
 
     --spacing-header: var(--header-height);
     --spacing-footer: var(--footer-height);
@@ -102,39 +103,48 @@ img[src=""] {
 }
 
 :root {
+    /* main colors */
     --background: oklch(0.145 0 0);
     --foreground: oklch(0.985 0 0);
     --card: oklch(0.205 0 0);
     --card-foreground: oklch(0.985 0 0);
     --popover: oklch(0.205 0 0);
     --popover-foreground: oklch(0.985 0 0);
+    /* text colors */
     --primary: oklch(0.922 0 0);
     --primary-foreground: oklch(0.205 0 0);
     --secondary: oklch(0.269 0 0);
     --secondary-foreground: oklch(0.985 0 0);
+    /* muted */
     --muted: oklch(0.269 0 0);
     --muted-foreground: oklch(0.708 0 0);
+    /* accent */
     --accent: oklch(0.269 0 0);
     --accent-foreground: oklch(0.985 0 0);
+    /* theme colors */
     --destructive: oklch(0.704 0.191 22.216);
-    --border: oklch(27.4% 0.006 286.033);
+    --border: oklch(0.29 0 none / 0.98);
     --input: oklch(1 0 0 / 15%);
     --ring: oklch(0.556 0 0);
+    --hyperlink: oklch(0.74 0.1485 57.89);
+    /* custom colors */
+    --raidhub: oklch(0.67 0.1564 54.62);
+    /* chart */
     --chart-1: oklch(0.488 0.243 264.376);
     --chart-2: oklch(0.696 0.17 162.48);
     --chart-3: oklch(0.769 0.188 70.08);
     --chart-4: oklch(0.627 0.265 303.9);
     --chart-5: oklch(0.645 0.246 16.439);
+    /* sidebar */
     --sidebar: oklch(0.29 0 0 0.08);
-    --sidebar-background: 0 0% 11%;
-    --sidebar-foreground: 0 0% 98%;
-    --sidebar-border: 0 0% 15%;
-    --sidebar-ring: 20 100% 48%;
-    --sidebar-accent: 0 0% 10%;
-    --sidebar-accent-foreground: 0 0% 98%;
-    --raidhub: oklch(0.67 0.1564 54.62);
+    --sidebar-background: oklch(0.21 0 none);
+    --sidebar-foreground: oklch(0.985 0 0);
+    --sidebar-border: oklch(0.205 0 0);
+    --sidebar-ring: oklch(0.79 0.1379 49.9);
+    --sidebar-accent: oklch(0.38 0.0014 17.22 / 0.19);
+    --sidebar-accent-foreground: oklch(0.985 0 0);
+    /* sizing */
     --radius: 0.5rem;
-
     --header-height: 4rem;
     --footer-height: 6rem;
     --min-body-height: calc(100svh - (var(--header-height)) - (var(--footer-height)));
