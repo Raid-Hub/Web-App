@@ -42,19 +42,43 @@ export async function getRaidHubApi<
 
 export async function postRaidHubApi<
     T extends RaidHubPostPath,
-    P = "parameters" extends keyof paths[T]["post"] ? paths[T]["post"]["parameters"] : null,
-    R = paths[T]["post"]["responses"][200]["content"]["application/json"] extends RaidHubAPISuccessResponse<
-        infer D
-    >
-        ? D
-        : never
+    M extends string & keyof paths[T],
+    P = "parameters" extends keyof paths[T][M] ? paths[T][M]["parameters"] : null,
+    R = "responses" extends keyof paths[T][M]
+        ? 200 extends keyof paths[T][M]["responses"]
+            ? "content" extends keyof paths[T][M]["responses"][200]
+                ? "application/json" extends keyof paths[T][M]["responses"][200]["content"]
+                    ? paths[T][M]["responses"][200]["content"]["application/json"] extends RaidHubAPISuccessResponse<
+                          infer D
+                      >
+                        ? D
+                        : 1
+                    : 2
+                : 3
+            : 4
+        : 5
 >(
     path: T,
-    queryParams: "query" extends keyof P ? P["query"] : null,
-    body?: NonNullable<paths[T]["post"]["requestBody"]>["content"]["application/json"],
+    method: M,
+    body: "requestBody" extends keyof paths[T][M]
+        ? "content" extends keyof paths[T][M]["requestBody"]
+            ? "application/json" extends keyof paths[T][M]["requestBody"]["content"]
+                ? paths[T][M]["requestBody"]["content"]["application/json"]
+                : never
+            : never
+        : never,
+    pathParams: "path" extends keyof P ? P["path"] : null,
+    queryParams?: "query" extends keyof P ? P["query"] : null,
     config?: Omit<RequestInit, "method" | "body">
 ): Promise<RaidHubAPISuccessResponse<R>> {
-    const url = new URL(path, process.env.RAIDHUB_API_URL)
+    const url = new URL(
+        path.replace(/{([^}]+)}/g, (_, paramName) => {
+            // @ts-expect-error types don't really work here
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-member-access
+            return pathParams[paramName]
+        }),
+        process.env.RAIDHUB_API_URL
+    )
     Object.entries(queryParams ?? {}).forEach(([key, value]) => {
         url.searchParams.set(key, String(value))
     })
@@ -62,7 +86,7 @@ export async function postRaidHubApi<
     return fetchRaidHub<R>(url, {
         ...config,
         headers: createHeaders({ "Content-Type": "application/json", ...config?.headers }),
-        method: "POST",
+        method: method.toUpperCase(),
         body: JSON.stringify(body)
     })
 }

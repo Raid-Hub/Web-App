@@ -44,12 +44,12 @@ export default async function RootLayout(params: { children: ReactNode }) {
             </head>
             <body>
                 <QueryManager>
-                    <RaidHubManifestManager serverManifest={manifest}>
-                        <BungieClientProvider>
-                            <SessionManager>
-                                <LocaleManager>
-                                    <ClientComponentManager>
-                                        <DestinyManifestManager>
+                    <BungieClientProvider>
+                        <SessionManager>
+                            <LocaleManager>
+                                <ClientComponentManager>
+                                    <DestinyManifestManager>
+                                        <RaidHubManifestManager serverManifest={manifest}>
                                             <Header>
                                                 <NextTopLoader
                                                     showSpinner={false}
@@ -67,12 +67,12 @@ export default async function RootLayout(params: { children: ReactNode }) {
                                             {params.children}
                                             <Footer />
                                             <Toaster />
-                                        </DestinyManifestManager>
-                                    </ClientComponentManager>
-                                </LocaleManager>
-                            </SessionManager>
-                        </BungieClientProvider>
-                    </RaidHubManifestManager>
+                                        </RaidHubManifestManager>
+                                    </DestinyManifestManager>
+                                </ClientComponentManager>
+                            </LocaleManager>
+                        </SessionManager>
+                    </BungieClientProvider>
                 </QueryManager>
             </body>
         </html>

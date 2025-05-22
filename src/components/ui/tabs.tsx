@@ -9,7 +9,7 @@ function Tabs({ className, ...props }: React.ComponentProps<typeof TabsPrimitive
     return (
         <TabsPrimitive.Root
             data-slot="tabs"
-            className={cn("flex flex-col gap-2", className)}
+            className={cn("flex flex-1 flex-col gap-2", className)}
             {...props}
         />
     )

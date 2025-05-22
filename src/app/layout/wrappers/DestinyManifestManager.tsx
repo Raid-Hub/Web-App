@@ -56,7 +56,7 @@ const DestinyManifestManager = ({ children }: { children: ReactNode }) => {
         []
     )
 
-    const { mutate: storeManifest, ...mutationState } = useMutation({
+    const { mutateAsync: storeManifest, ...mutationState } = useMutation({
         mutationFn: (args: Parameters<typeof dexieDB.updateDefinitions>[1]) =>
             dexieDB.updateDefinitions(seedCache, args),
         onSuccess: setManifestVersion,
@@ -112,7 +112,7 @@ const DestinyManifestManager = ({ children }: { children: ReactNode }) => {
                 ).reduce((acc, val) => (acc += +(val !== undefined)), 0) !==
                     dexieDB.allTables.length
             ) {
-                storeManifest({
+                await storeManifest({
                     newManifestVersion,
                     client,
                     manifest,

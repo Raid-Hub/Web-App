@@ -4,12 +4,14 @@ export const pgcrReportReasons = [
     { id: "cheating", label: "General Cheating" },
     { id: "networkmanipulation", label: "Network Manipulation" },
     { id: "offensive", label: "Offensive Player Names" },
-    { id: "cheatercarry", label: "Cheater Carrying Others" }
+    { id: "cheatercarry", label: "Cheater Carrying Others" },
+    { id: "falseblacklist", label: "Incorrectly Blacklisted" }
 ]
 
 export const pgcrReportHeuristics = [
     { id: "playercount", label: "Player Count" },
     { id: "speed", label: "Completion Time" },
+    { id: "kills", label: "Total Kill Count" },
     { id: "heavykills", label: "Heavy Weapon Kills" },
     { id: "grenadekills", label: "Grenade Kills" },
     { id: "superkills", label: "Super Kills" }

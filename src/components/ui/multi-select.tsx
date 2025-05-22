@@ -8,21 +8,24 @@ import { Button } from "./button"
 import { Checkbox } from "./checkbox"
 import { FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "./form"
 
-interface Option {
+interface Option<T> {
     id: string
-    label: string
+    label: React.ReactNode
+    value: T
 }
 
 type FieldPathsForArray<TFieldValues extends FieldValues> = keyof {
-    [K in FieldPath<TFieldValues> as FieldPathValue<TFieldValues, K> extends unknown[]
+    [K in FieldPath<TFieldValues> as Exclude<FieldPathValue<TFieldValues, K>, undefined> extends
+        | readonly unknown[]
+        | unknown[]
         ? K
         : never]: true
 } &
     FieldPath<TFieldValues>
 
-interface MultiSelectProps<F extends FieldValues> {
-    options: Option[]
-    name: FieldPathsForArray<F>
+interface MultiSelectProps<F extends FieldValues, K extends FieldPathsForArray<F>> {
+    options: Option<Exclude<FieldPathValue<F, K>, undefined>[number]>[]
+    name: K
     control: Control<F>
     label: string
     description?: string
@@ -30,7 +33,7 @@ interface MultiSelectProps<F extends FieldValues> {
     showUnselectAllButton?: boolean
 }
 
-function MultiSelect<F extends FieldValues>({
+function MultiSelect<F extends FieldValues, K extends FieldPathsForArray<F>>({
     options,
     name,
     control,
@@ -38,7 +41,7 @@ function MultiSelect<F extends FieldValues>({
     description,
     showSelectAllButton = false,
     showUnselectAllButton = false
-}: MultiSelectProps<F>) {
+}: MultiSelectProps<F, K>) {
     return (
         <FormField
             control={control}
@@ -51,18 +54,28 @@ function MultiSelect<F extends FieldValues>({
                     </div>
                     <div className="flex flex-col space-y-2">
                         {options.map(option => {
-                            const fieldValue = field.value as string[]
+                            const values = field.value as Option<
+                                Exclude<FieldPathValue<F, K>, undefined>
+                            >[]
+                            const stringifiedOption = JSON.stringify(option.value)
+                            const isSelected = values.some(
+                                value => JSON.stringify(value) === stringifiedOption
+                            )
                             return (
                                 <FormItem
                                     key={option.id}
                                     className="flex flex-row items-center space-y-0 space-x-3">
                                     <FormControl>
                                         <Checkbox
-                                            checked={fieldValue.includes(option.id)}
+                                            checked={isSelected}
                                             onCheckedChange={checked => {
                                                 const newValue = checked
-                                                    ? [...fieldValue, option.id]
-                                                    : fieldValue.filter(v => v !== option.id)
+                                                    ? [...values, option.value]
+                                                    : values.filter(
+                                                          v =>
+                                                              JSON.stringify(v) !==
+                                                              stringifiedOption
+                                                      )
                                                 field.onChange(newValue)
                                             }}
                                         />

@@ -1,29 +1,20 @@
 "use client"
 
-import { MoreHorizontal, ShieldAlert } from "lucide-react"
+import { ShieldAlert } from "lucide-react"
 import { useState } from "react"
 import { trpc } from "~/app/trpc"
-import { ActionsTab } from "~/components/admin/reporting/tabs/actions-tab"
-import { InstanceInfoTab } from "~/components/admin/reporting/tabs/instance-info-tab"
-import { ReportDetailsTab } from "~/components/admin/reporting/tabs/report-details-tab"
 import { useReportedInstance } from "~/services/raidhub/useReportedInstance"
-import { Button } from "~/shad/button"
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuLabel,
-    DropdownMenuSeparator,
-    DropdownMenuTrigger
-} from "~/shad/dropdown-menu"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/shad/tabs"
+import { ActionsTab } from "./tabs/actions-tab"
+import { InstanceInfoTab } from "./tabs/instance-info-tab"
+import { ReportDetailsTab } from "./tabs/report-details-tab"
 
 interface ReportDetailsProps {
     reportId: number
     instanceId: string
 }
 
-export function ReportDetails({ reportId, instanceId }: ReportDetailsProps) {
+export function ReportPanel({ reportId, instanceId }: ReportDetailsProps) {
     const [activeTab, setActiveTab] = useState("details")
 
     const {
@@ -35,19 +26,19 @@ export function ReportDetails({ reportId, instanceId }: ReportDetailsProps) {
     const { data: standing, isLoading, isError, error } = useReportedInstance(instanceId)
     if (isReportLoading) {
         return (
-            <div className="flex h-full flex-3 items-center justify-center rounded-sm border border-white/10 bg-black/30 p-4 backdrop-blur-sm">
+            <div className="flex-1 self-center p-4 text-center">
                 <p className="text-white/60">Loading report details...</p>
             </div>
         )
     } else if (isLoading) {
         return (
-            <div className="flex h-full flex-3 items-center justify-center rounded-sm border border-white/10 bg-black/30 p-4 backdrop-blur-sm">
+            <div className="flex-1 self-center p-4 text-center">
                 <p className="text-white/60">Loading instance details...</p>
             </div>
         )
     } else if (isReportError) {
         return (
-            <div className="flex h-full flex-3 items-center justify-center rounded-sm border border-white/10 bg-black/30 p-4 backdrop-blur-sm">
+            <div className="flex-1 self-center p-4 text-center">
                 <p className="text-red-500">
                     Error loading report details: {reportErrorData.message}
                 </p>
@@ -55,7 +46,7 @@ export function ReportDetails({ reportId, instanceId }: ReportDetailsProps) {
         )
     } else if (isError) {
         return (
-            <div className="flex h-full flex-3 items-center justify-center rounded-sm border border-white/10 bg-black/30 p-4 backdrop-blur-sm">
+            <div className="flex-1 self-center p-4 text-center">
                 <p className="text-red-500">
                     Error loading instance details: {(error as Error).message}
                 </p>
@@ -64,8 +55,8 @@ export function ReportDetails({ reportId, instanceId }: ReportDetailsProps) {
     }
 
     return (
-        <div className="flex-3 overflow-hidden rounded-sm border border-white/10 bg-black/30 backdrop-blur-sm md:col-span-2">
-            <div className="flex flex-row items-start justify-between border-b border-white/10 p-4">
+        <div className="flex flex-1 flex-col">
+            <div className="flex grow-0 flex-row items-start justify-between border-b border-white/10 p-4">
                 <div>
                     <h2 className="flex items-center gap-2 text-lg font-medium">
                         <ShieldAlert className="text-raidhub h-5 w-5" />
@@ -75,22 +66,6 @@ export function ReportDetails({ reportId, instanceId }: ReportDetailsProps) {
                         Reported on {report.createdAt.toLocaleDateString()}
                     </p>
                 </div>
-                <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" size="icon" className="h-8 w-8">
-                            <MoreHorizontal className="h-4 w-4" />
-                        </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent
-                        align="end"
-                        className="rounded-sm border-white/10 bg-black/90">
-                        <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                        <DropdownMenuSeparator className="bg-white/10" />
-                        <DropdownMenuItem>Mark as Resolved</DropdownMenuItem>
-                        <DropdownMenuItem>Blacklist Instance</DropdownMenuItem>
-                        <DropdownMenuItem>Reject Report</DropdownMenuItem>
-                    </DropdownMenuContent>
-                </DropdownMenu>
             </div>
 
             <Tabs defaultValue="details" value={activeTab} onValueChange={setActiveTab}>
@@ -113,16 +88,20 @@ export function ReportDetails({ reportId, instanceId }: ReportDetailsProps) {
                 </TabsList>
 
                 <div className="p-4">
-                    <TabsContent value="details" className="mt-0">
-                        <ReportDetailsTab report={report} players={standing.players} />
+                    <TabsContent value="details" className="mt-0 flex">
+                        <ReportDetailsTab
+                            key={report.reportId}
+                            report={report}
+                            players={standing.players}
+                        />
                     </TabsContent>
 
-                    <TabsContent value="instance" className="mt-0">
-                        <InstanceInfoTab standing={standing} />
+                    <TabsContent value="instance" className="mt-0 flex">
+                        <InstanceInfoTab key={report.reportId} standing={standing} />
                     </TabsContent>
 
-                    <TabsContent value="actions" className="mt-0">
-                        <ActionsTab reportId={reportId} />
+                    <TabsContent value="actions" className="mt-0 flex">
+                        <ActionsTab key={report.reportId} report={report} standing={standing} />
                     </TabsContent>
                 </div>
             </Tabs>

@@ -1,10 +1,14 @@
-import { Check, Shield, TriangleAlert, User, X } from "lucide-react"
+import { useQueryClient } from "@tanstack/react-query"
+import { Check, TriangleAlert, X } from "lucide-react"
+import Image from "next/image"
 import Link from "next/link"
 import { useState } from "react"
+import { toast } from "sonner"
 import { useRaidHubManifest } from "~/app/layout/wrappers/RaidHubManifestManager"
 import { cn } from "~/lib/tw"
 import type { InstancePlayerFlag, InstancePlayerStanding } from "~/services/raidhub/types"
-import { InstanceFlag, type RaidHubInstanceStandingResponse } from "~/services/raidhub/types"
+import { type InstanceFlag, type RaidHubInstanceStandingResponse } from "~/services/raidhub/types"
+import { useRaidHubUpdatePlayer } from "~/services/raidhub/useRaidHubUpdatePlayer"
 import { Badge } from "~/shad/badge"
 import { Button } from "~/shad/button"
 import {
@@ -13,13 +17,13 @@ import {
     SelectGroup,
     SelectItem,
     SelectLabel,
-    SelectTrigger,
-    SelectValue
+    SelectTrigger
 } from "~/shad/select"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "~/shad/table"
-import { getBungieDisplayName } from "~/util/destiny"
+import { bungieIconUrl, getBungieDisplayName } from "~/util/destiny"
 import { secondsToHMS } from "~/util/presentation/formatting"
 import { getRelativeTime } from "~/util/presentation/pastDates"
+import { ReportPanelItemBox } from "../report-panel-item-box"
 
 interface InstanceInfoTabProps {
     standing: RaidHubInstanceStandingResponse
@@ -28,11 +32,11 @@ interface InstanceInfoTabProps {
 export function InstanceInfoTab({ standing }: InstanceInfoTabProps) {
     const { getDefinitionFromHash } = useRaidHubManifest()
     const defs = getDefinitionFromHash(standing.instanceDetails.hash)
+
     return (
-        <div className="space-y-4">
+        <div className="flex flex-col gap-4">
             <div className="flex flex-wrap gap-4">
-                <div className="flex-1 rounded-sm border border-white/10 bg-black/40 p-4">
-                    <h3 className="mb-3 text-base font-medium">Instance Information</h3>
+                <ReportPanelItemBox className="min-w-72" title="Instance Details">
                     <div className="space-y-2 text-sm">
                         <div className="flex justify-start gap-2">
                             <span className="text-white/60">Instance ID:</span>
@@ -71,64 +75,76 @@ export function InstanceInfoTab({ standing }: InstanceInfoTabProps) {
                             <span className="text-white/60">Duration:</span>
                             <span>{secondsToHMS(standing.instanceDetails.duration, false)}</span>
                         </div>
-                        {standing.blacklist && (
-                            <>
-                                <div className="flex justify-between">
-                                    <span className="text-white/60">Blacklist Status:</span>
-                                    <Badge
-                                        variant="outline"
-                                        className="rounded-sm border-red-400/30 bg-red-900/20 text-red-400">
-                                        Blacklisted
-                                    </Badge>
-                                </div>
-                                <div className="flex justify-between">
-                                    <span className="text-white/60">Report Source:</span>
-                                    <span>{standing.blacklist.reportSource}</span>
-                                </div>
-                                {standing.blacklist.cheatCheckVersion && (
-                                    <div className="flex justify-between">
-                                        <span className="text-white/60">CheatCheck Version:</span>
-                                        <span>{standing.blacklist.cheatCheckVersion}</span>
-                                    </div>
-                                )}
-                            </>
-                        )}
                     </div>
-                </div>
+                </ReportPanelItemBox>
 
-                <div className="flex-1 rounded-sm border border-white/10 bg-black/40 p-4">
-                    <h3 className="mb-3 text-base font-medium">Instance Flags</h3>
+                <ReportPanelItemBox className="min-w-80" title="Instance Flags">
                     {standing.flags.length > 0 ? (
                         <div className="space-y-2">
                             {standing.flags.map((flag, idx) => (
-                                <InstanceFlag key={idx} {...flag} />
+                                <InstanceFlagArea key={idx} {...flag} />
                             ))}
                         </div>
                     ) : (
                         <p className="text-sm text-white/60">No flags detected for this instance</p>
                     )}
-                </div>
-            </div>
+                </ReportPanelItemBox>
 
-            {standing.blacklist && (
-                <div className="rounded-sm border border-white/10 bg-black/40 p-4">
-                    <h3 className="mb-3 text-base font-medium">Blacklist Reason</h3>
-                    <div className="rounded-sm border border-white/10 bg-black/40 p-4">
-                        {standing.blacklist.reason}
+                <ReportPanelItemBox
+                    className="min-w-52 space-y-1 text-sm"
+                    title="Blacklist Information">
+                    <div className="flex justify-start gap-2">
+                        <span className="text-white/60">Blacklist Status:</span>
+                        <Badge
+                            variant="outline"
+                            className={cn(
+                                "rounded-sm",
+                                standing.blacklist
+                                    ? "border-red-400/30 bg-red-900/20 text-red-400"
+                                    : "border-green-400/30 bg-green-900/20 text-green-400"
+                            )}>
+                            {standing.blacklist ? "Blacklisted" : "Not Blacklisted"}
+                        </Badge>
                     </div>
-                </div>
-            )}
-
-            <div className="space-y-4">
-                {standing.players.map((player, index) => (
-                    <PlayerCard key={index} player={player} />
-                ))}
+                    {standing.blacklist && (
+                        <>
+                            <div className="flex justify-start gap-2">
+                                <span className="text-white/60">Report Source:</span>
+                                <span>{standing.blacklist.reportSource}</span>
+                            </div>
+                            {standing.blacklist.cheatCheckVersion && (
+                                <div className="flex justify-start gap-2">
+                                    <span className="text-white/60">CheatCheck Version:</span>
+                                    <span>{standing.blacklist.cheatCheckVersion}</span>
+                                </div>
+                            )}
+                            <div className="flex justify-start gap-2">
+                                <span className="text-white/60">Blacklist Reason:</span>
+                                <span>{standing.blacklist.reason}</span>
+                            </div>
+                            <div className="flex justify-start gap-2">
+                                <span className="text-white/60">Date:</span>
+                                <span>
+                                    {new Date(standing.blacklist.createdAt).toLocaleString()}
+                                </span>
+                            </div>
+                        </>
+                    )}
+                </ReportPanelItemBox>
             </div>
+
+            {standing.players.map(player => (
+                <PlayerBox
+                    key={player.playerInfo.membershipId + standing.instanceDetails.instanceId}
+                    player={player}
+                    instanceId={standing.instanceDetails.instanceId}
+                />
+            ))}
         </div>
     )
 }
 
-function InstanceFlag(flag: InstanceFlag) {
+function InstanceFlagArea(flag: InstanceFlag) {
     return (
         <div className="space-y-1 rounded-sm border border-white/10 bg-black/30 p-2 text-sm">
             <div className="flex justify-start gap-2">
@@ -168,53 +184,47 @@ const cheatLevelStrings = {
     4: "Blacklisted"
 }
 
-function PlayerCard({ player }: { player: InstancePlayerStanding }) {
+function PlayerBox({ player, instanceId }: { player: InstancePlayerStanding; instanceId: string }) {
     const [selectedCheatLevel, setSelectedCheatLevel] = useState(player.cheatLevel)
 
+    const queryClient = useQueryClient()
+    const updatePlayer = useRaidHubUpdatePlayer(player.playerInfo.membershipId, {
+        onSuccess: () => {
+            toast.success("Player updated successfully", {
+                description: `Player ${getBungieDisplayName(player.playerInfo)} updated`
+            })
+            void queryClient.invalidateQueries({
+                queryKey: ["raidhub", "reports", instanceId]
+            })
+        },
+        onError: error => {
+            toast.error("Failed to update player", {
+                description: error.message
+            })
+        }
+    })
+
     const handleSave = () => {
-        // optionally update state/UI or show a toast
-        // TODO!!
+        updatePlayer.mutate({
+            cheatLevel: selectedCheatLevel
+        })
     }
 
     return (
-        <div className="overflow-hidden rounded-sm border border-white/10 bg-black/40">
-            <div className="border-b border-white/10 p-4">
-                <div className="flex items-center justify-start gap-4">
-                    <h3 className="flex items-center gap-2 text-base font-medium">
-                        <User className="h-4 w-4" />
+        <div className="flex flex-1 flex-col rounded-sm border border-white/10 bg-black/40">
+            <div className="flex-1 space-y-2 border-b border-white/10 p-4">
+                <div className="flex flex-wrap items-center justify-start gap-x-4 gap-y-2">
+                    <h3 className="flex shrink-0 items-center gap-2 text-base font-medium">
+                        <Image
+                            unoptimized
+                            src={bungieIconUrl(player.playerInfo.iconPath)}
+                            alt="icon"
+                            width={24}
+                            height={24}
+                            className="h-6 w-6 rounded-sm"
+                        />
                         {getBungieDisplayName(player.playerInfo)}
                     </h3>
-                    <Badge
-                        variant="outline"
-                        className={cn("rounded-sm text-xs", {
-                            "border-red-400/30 bg-red-900/20 text-red-400": player.cheatLevel >= 3,
-                            "border-blue-400/30 bg-blue-900/20 text-blue-400":
-                                player.cheatLevel == 2,
-                            "border-yellow-400/30 bg-yellow-900/20 text-yellow-400":
-                                player.cheatLevel == 1,
-                            "border-green-400/30 bg-green-900/20 text-green-400":
-                                player.cheatLevel == 0
-                        })}>
-                        Cheat Level: {cheatLevelStrings[player.cheatLevel]}
-                    </Badge>
-                </div>
-                <p className="text-primary/90 text-sm">
-                    <Link
-                        href={`/profile/${player.playerInfo.membershipId}`}
-                        target="_blank"
-                        className="text-hyperlink">
-                        {player.playerInfo.membershipId}
-                    </Link>{" "}
-                    • {player.clears} clears
-                </p>
-                <div className="mt-2 flex w-48 gap-2">
-                    <Button
-                        variant="outline"
-                        className="w-min justify-start rounded-sm border-white/10 bg-black/40 hover:bg-black/60"
-                        disabled>
-                        <Shield className="mr-2 size-4" />
-                        Blacklist Instance-Player
-                    </Button>
                     <Select
                         onValueChange={value =>
                             setSelectedCheatLevel(
@@ -222,8 +232,25 @@ function PlayerCard({ player }: { player: InstancePlayerStanding }) {
                             )
                         }
                         defaultValue={player.cheatLevel.toString()}>
-                        <SelectTrigger className="h-9 w-full">
-                            <SelectValue />
+                        <SelectTrigger
+                            size="sm"
+                            className={cn("rounded-sm px-2 py-1 text-xs", {
+                                "border-red-400/30 bg-red-900/20 text-red-400":
+                                    selectedCheatLevel >= 3,
+                                "border-orange-400/30 bg-orange-800/20 text-orange-500":
+                                    selectedCheatLevel == 2,
+                                "border-yellow-400/30 bg-yellow-900/20 text-yellow-400":
+                                    selectedCheatLevel == 1,
+                                "border-green-400/30 bg-green-900/20 text-green-400":
+                                    selectedCheatLevel == 0
+                            })}
+                            chevronClassName={cn({
+                                "text-red-400": selectedCheatLevel >= 3,
+                                "text-orange-400": selectedCheatLevel == 2,
+                                "text-yellow-400": selectedCheatLevel == 1,
+                                "text-green-400": selectedCheatLevel == 0
+                            })}>
+                            Cheat Level: {cheatLevelStrings[selectedCheatLevel]}
                         </SelectTrigger>
                         <SelectContent>
                             <SelectGroup>
@@ -238,15 +265,33 @@ function PlayerCard({ player }: { player: InstancePlayerStanding }) {
                     </Select>
 
                     {selectedCheatLevel !== player.cheatLevel && (
-                        <Button size="sm" onClick={handleSave} className="h-9 text-sm" disabled>
+                        <Button
+                            size="sm"
+                            onClick={handleSave}
+                            className="h-8 text-sm"
+                            disabled={updatePlayer.isLoading}>
                             <TriangleAlert className="size-4" />
                             Save Cheat Level
                         </Button>
                     )}
                 </div>
+                <p className="text-primary/90 flex items-center text-sm">
+                    {player.completed ? (
+                        <Check className="mr-2 size-6 text-green-400" />
+                    ) : (
+                        <X className="mr-2 size-6 text-red-400" />
+                    )}
+                    <Link
+                        href={`/profile/${player.playerInfo.membershipId}`}
+                        target="_blank"
+                        className="text-hyperlink">
+                        {player.playerInfo.membershipId}
+                    </Link>{" "}
+                    • {player.clears.toLocaleString()} clears
+                </p>
             </div>
 
-            <div className="space-y-4 p-4">
+            <div className="flex-1 space-y-4 p-4">
                 <CurrentFlag flags={player.flags} />
                 <PlayerBlacklistedInstances instances={player.blacklistedInstances} />
                 <PlayerOtherFlags flags={player.otherRecentFlags} />
@@ -258,10 +303,11 @@ function PlayerCard({ player }: { player: InstancePlayerStanding }) {
 function CurrentFlag({ flags }: { flags: readonly InstancePlayerFlag[] }) {
     return (
         <div>
+            <h4 className="mb-2 text-sm font-medium">Flags in this Instance</h4>
             {flags.length > 0 ? (
                 <div className="space-y-2">
                     {flags.map((flag, flagIndex) => (
-                        <InstanceFlag key={flagIndex} {...flag} />
+                        <InstanceFlagArea key={flagIndex} {...flag} />
                     ))}
                 </div>
             ) : (
@@ -284,7 +330,7 @@ function PlayerBlacklistedInstances({
 }) {
     return (
         <div>
-            <h4 className="mb-2 text-sm font-medium">Blacklisted Instances</h4>
+            <h4 className="mb-2 text-sm font-medium">Other Blacklisted Instances</h4>
             {instances.length > 0 ? (
                 <div className="overflow-hidden rounded-sm bg-black/20">
                     <Table>
@@ -318,7 +364,9 @@ function PlayerBlacklistedInstances({
                     </Table>
                 </div>
             ) : (
-                <p className="text-sm text-white/60">No blacklisted instances for this player</p>
+                <p className="text-sm text-white/60">
+                    No other blacklisted instances for this player
+                </p>
             )}
         </div>
     )
@@ -442,7 +490,7 @@ const CheatFlags: Record<number, string> = {
     50: "Bit 50",
     51: "Bit 51",
     52: "Bit 52",
-    53: "Bit 53",
+    53: "Solo",
     54: "Total Instance Kills",
     55: "Two Plus Cheaters",
     56: "Player Total Kills",
@@ -465,6 +513,10 @@ function getCheatCheckReasonsFromBitmask(bitmask: string): string[] {
                 reasons.push(reason)
             }
         }
+    }
+
+    if (reasons.length === 0) {
+        return ["Unspecified"]
     }
 
     return reasons

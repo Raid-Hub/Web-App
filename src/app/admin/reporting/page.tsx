@@ -4,8 +4,8 @@ import { type PGCRReportStatus } from "@prisma/client"
 import { FileWarning, Search } from "lucide-react"
 import { useState } from "react"
 import { AdminPageHeader } from "~/components/admin-page-header"
-import { ReportDetails } from "~/components/admin/reporting/report-details"
 import { ReportList } from "~/components/admin/reporting/report-list"
+import { ReportPanel } from "~/components/admin/reporting/report-panel"
 import { ReportingTabs } from "~/components/admin/reporting/reporting-tabs"
 import { Input } from "~/shad/input"
 import {
@@ -50,14 +50,14 @@ export default function ReportingDashboardPage() {
     }
 
     return (
-        <div className="flex h-full flex-col gap-4 p-4 md:gap-6 md:p-6">
+        <div className="flex flex-grow flex-col gap-4 p-4 md:gap-6 md:p-6">
             <AdminPageHeader
                 title="PGCR Reports"
                 description="View and manage player reports submitted through the PGCR page."
             />
 
-            <div className="flex flex-1 gap-4">
-                <div className="min-w-min flex-3 overflow-hidden rounded-sm border border-white/10 bg-black/30 backdrop-blur-sm md:flex-1">
+            <div className="flex flex-1 flex-wrap gap-4">
+                <div className="flex-1 overflow-hidden rounded-sm border border-white/10 bg-black/30 backdrop-blur-sm md:min-w-96">
                     <ReportingTabs
                         activeTab={activeTab}
                         onTabChange={v => setActiveTab(v as "all" | PGCRReportStatus)}
@@ -110,11 +110,11 @@ export default function ReportingDashboardPage() {
                     </div>
                 </div>
 
-                {selectedReportId && selectedInstanceId ? (
-                    <ReportDetails reportId={selectedReportId} instanceId={selectedInstanceId} />
-                ) : (
-                    <div className="flex flex-3 items-center justify-center rounded-sm border border-white/10 bg-black/30 backdrop-blur-sm md:flex-2 xl:flex-3">
-                        <div className="py-12 text-center">
+                <div className="flex flex-1 rounded-sm border border-white/10 bg-black/30 backdrop-blur-sm md:min-w-120 md:flex-3">
+                    {selectedReportId && selectedInstanceId ? (
+                        <ReportPanel reportId={selectedReportId} instanceId={selectedInstanceId} />
+                    ) : (
+                        <div className="flex-1 self-center px-4 py-12 text-center">
                             <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-sm bg-black/40">
                                 <FileWarning className="h-6 w-6 text-white/60" />
                             </div>
@@ -123,8 +123,8 @@ export default function ReportingDashboardPage() {
                                 Select a report from the list to view its details and take action.
                             </p>
                         </div>
-                    </div>
-                )}
+                    )}
+                </div>
             </div>
         </div>
     )

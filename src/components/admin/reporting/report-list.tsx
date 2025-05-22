@@ -1,4 +1,5 @@
 import { FileWarning, Flag, Pencil, User } from "lucide-react"
+import { useMemo } from "react"
 import { trpc } from "~/app/trpc"
 import { StatusBadge } from "~/components/admin/reporting/status-badge"
 import { pgcrReportHeuristics, pgcrReportReasons } from "~/lib/reporting"
@@ -37,6 +38,22 @@ export function ReportList({
         }
     )
 
+    // Filter reports based on active tab and search query
+    const filteredReports = useMemo(() => {
+        if (!recentReports) return []
+
+        const lowerQuery = searchQuery.toLowerCase()
+
+        return recentReports.filter(
+            report =>
+                !searchQuery ||
+                report.instanceId.includes(searchQuery) ||
+                report.players.some(p => p.includes(lowerQuery)) ||
+                report.categories.some(c => c.toLowerCase().includes(lowerQuery)) ||
+                report.heuristics.some(h => h.toLowerCase().includes(lowerQuery))
+        )
+    }, [searchQuery, recentReports])
+
     if (isLoading) {
         return <div className="p-4">Loading...</div>
     } else if (isError) {
@@ -49,16 +66,6 @@ export function ReportList({
             </div>
         )
     }
-
-    // Filter reports based on active tab and search query
-    const filteredReports = recentReports.filter(
-        report =>
-            !searchQuery ||
-            report.instanceId.includes(searchQuery) ||
-            report.players.some(p => p.includes(searchQuery.toLowerCase())) ||
-            report.categories.some(c => c.toLowerCase().includes(searchQuery.toLowerCase())) ||
-            report.heuristics.some(h => h.toLowerCase().includes(searchQuery.toLowerCase()))
-    )
 
     if (filteredReports.length === 0) {
         return (
@@ -81,7 +88,7 @@ export function ReportList({
                     )}
                     onClick={() => onSelectReport(report.reportId, report.instanceId)}>
                     <div className="mb-2 flex items-start justify-between">
-                        <div className="font-medium">Instance #{report.instanceId}</div>
+                        <div className="font-light">Report #{report.reportId}</div>
                         <StatusBadge status={report.status} />
                     </div>
                     <div className="mb-1 text-sm text-white/70">
@@ -110,7 +117,7 @@ export function ReportList({
                         </span>
                     </div>
                     <div className="flex justify-between text-xs text-white/50">
-                        <span>ID: #{report.reportId}</span>
+                        <span>Instance: #{report.instanceId}</span>
                         <span>{getRelativeTime(report.createdAt)}</span>
                     </div>
                 </div>
