@@ -148,6 +148,7 @@ function mapUserInfoCardToSearchResult(res: UserInfoCard): RaidHubPlayerInfo {
                   bungieGlobalDisplayName: null,
                   bungieGlobalDisplayNameCode: null
               }),
-        isPrivate: false
+        isPrivate: false,
+        cheatLevel: 0
     }
 }
