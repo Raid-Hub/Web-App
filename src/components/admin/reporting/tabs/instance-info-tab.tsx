@@ -187,7 +187,7 @@ const cheatLevelStrings = {
 }
 
 function PlayerBox({ player, instanceId }: { player: InstancePlayerStanding; instanceId: string }) {
-    const [selectedCheatLevel, setSelectedCheatLevel] = useState(player.cheatLevel)
+    const [selectedCheatLevel, setSelectedCheatLevel] = useState(player.playerInfo.cheatLevel)
 
     const queryClient = useQueryClient()
     const updatePlayer = useRaidHubUpdatePlayer(player.playerInfo.membershipId, {
@@ -203,7 +203,13 @@ function PlayerBox({ player, instanceId }: { player: InstancePlayerStanding; ins
                         ...old,
                         players: old.players.map(p =>
                             p.playerInfo.membershipId === player.playerInfo.membershipId
-                                ? { ...p, cheatLevel: selectedCheatLevel }
+                                ? {
+                                      ...p,
+                                      playerInfo: {
+                                          ...p.playerInfo,
+                                          cheatLevel: selectedCheatLevel
+                                      }
+                                  }
                                 : p
                         )
                     }
@@ -244,7 +250,7 @@ function PlayerBox({ player, instanceId }: { player: InstancePlayerStanding; ins
                                 parseInt(value, 10) as keyof typeof cheatLevelStrings
                             )
                         }
-                        defaultValue={player.cheatLevel.toString()}>
+                        defaultValue={player.playerInfo.cheatLevel.toString()}>
                         <SelectTrigger
                             size="sm"
                             className={cn("rounded-sm px-2 py-1 text-xs", {
@@ -277,7 +283,7 @@ function PlayerBox({ player, instanceId }: { player: InstancePlayerStanding; ins
                         </SelectContent>
                     </Select>
 
-                    {selectedCheatLevel !== player.cheatLevel && (
+                    {selectedCheatLevel !== player.playerInfo.cheatLevel && (
                         <Button
                             size="sm"
                             onClick={handleSave}

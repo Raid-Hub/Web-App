@@ -2466,15 +2466,17 @@ export interface components {
       /** Format: date-time */
       readonly dateCompleted: string;
       readonly season: number;
-      /** @description Activity duration in seconds */
+      /** @description Instance duration in seconds */
       readonly duration: number;
       readonly platformType: components["schemas"]["DestinyMembershipType"];
-      /** @description If the activity was completed before the day one end date */
+      /** @description If the instance was completed before the day one end date */
       readonly isDayOne: boolean;
-      /** @description If the activity was completed before the contest end date */
+      /** @description If the instance was completed before the contest end date */
       readonly isContest: boolean;
-      /** @description If the activity was completed before the week one end date */
+      /** @description If the instance was completed before the week one end date */
       readonly isWeekOne: boolean;
+      /** @description If the instance is blacklisted from leaderboards */
+      readonly isBlacklisted: boolean;
     };
     readonly InstanceBasic: {
       /** Format: int64 */
@@ -2496,7 +2498,15 @@ export interface components {
       /** Format: date-time */
       readonly dateResolved: string;
     };
-    /** @enum {integer} */
+    /**
+     * @description The level of cheating detected on the account.
+     * 0: None
+     * 1: Suspicious
+     * 2: Moderate
+     * 3: Extreme
+     * 4: Blacklisted
+     * @enum {integer}
+     */
     readonly CheatLevel: 0 | 1 | 2 | 3 | 4;
     /**
      * @example {
@@ -2507,7 +2517,8 @@ export interface components {
      *   "iconPath": "/common/destiny2_content/icons/93844c8b76ea80683a880479e3506980.jpg",
      *   "membershipType": 3,
      *   "lastSeen": "2021-05-01T00:00:00.000Z",
-     *   "isPrivate": false
+     *   "isPrivate": false,
+     *   "cheatLevel": 0
      * }
      */
     readonly PlayerInfo: {
@@ -2524,6 +2535,7 @@ export interface components {
       readonly lastSeen: string;
       /** @description Whether or not the player has chosen to hide their on Bungie.net. */
       readonly isPrivate: boolean;
+      readonly cheatLevel: components["schemas"]["CheatLevel"];
     };
     /**
      * Format: int64
@@ -2626,8 +2638,8 @@ export interface components {
       readonly playerInfo: components["schemas"]["PlayerInfo"];
       readonly flags: readonly components["schemas"]["InstancePlayerFlag"][];
       readonly clears: number;
-      readonly cheatLevel: components["schemas"]["CheatLevel"];
       readonly completed: boolean;
+      readonly timePlayedSeconds: number;
       readonly blacklistedInstances: readonly {
           /** Format: int64 */
           readonly instanceId: string;
@@ -3073,7 +3085,8 @@ export interface components {
      *   "iconPath": "/common/destiny2_content/icons/93844c8b76ea80683a880479e3506980.jpg",
      *   "membershipType": 3,
      *   "lastSeen": "2021-05-01T00:00:00.000Z",
-     *   "isPrivate": false
+     *   "isPrivate": false,
+     *   "cheatLevel": 0
      * }
      */
     readonly PlayerBasicResponse: {
@@ -3090,6 +3103,7 @@ export interface components {
       readonly lastSeen: string;
       /** @description Whether or not the player has chosen to hide their on Bungie.net. */
       readonly isPrivate: boolean;
+      readonly cheatLevel: components["schemas"]["CheatLevel"];
     };
     readonly PlayerProfileResponse: {
       readonly playerInfo: components["schemas"]["PlayerInfo"];

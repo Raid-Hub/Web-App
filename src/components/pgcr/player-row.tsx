@@ -1,6 +1,6 @@
 "use client"
 
-import { ChevronRight, LinkIcon } from "lucide-react"
+import { ChevronRight, SquareArrowLeft } from "lucide-react"
 import Link from "next/link"
 import { ActivityPieChart } from "~/components/pgcr/activity-pie-chart"
 import { useItemDefinition } from "~/hooks/dexie"
@@ -37,7 +37,7 @@ export default function PlayerRow({ player }: PlayerRowProps) {
     return (
         <Button
             variant="ghost"
-            className="group relative h-auto w-full max-w-full cursor-pointer rounded-none p-0 hover:bg-zinc-900"
+            className="group relative h-16 w-full max-w-full cursor-pointer rounded-none p-0 hover:bg-zinc-900"
             onClick={() => query.set("player", player.playerInfo.membershipId)}>
             <TooltipProvider>
                 <div
@@ -54,6 +54,16 @@ export default function PlayerRow({ player }: PlayerRowProps) {
                     }
                 />
                 <div className="absolute inset-0 bg-gradient-to-r from-[rgba(0,0,0,0)] to-[rgba(0,0,0,0.9)]" />
+
+                <Link
+                    className="z-10 flex h-full min-w-0 flex-1 overflow-hidden transition-[min-width] duration-500 ease-out group-hover:min-w-16"
+                    href={`/profile/${player.playerInfo.membershipId}`}
+                    onClick={e => e.stopPropagation()}>
+                    <div className="bg-foreground/20 flex w-full flex-col items-center justify-center rounded-r-2xl border-r border-zinc-800 px-3 backdrop-blur-md">
+                        <SquareArrowLeft className="size-6 opacity-0 transition-opacity group-hover:opacity-100" />
+                    </div>
+                </Link>
+
                 <div
                     className={cn(
                         "z-10 grid w-full grid-cols-7 items-center p-2 md:grid-cols-9 md:p-4"
@@ -77,15 +87,6 @@ export default function PlayerRow({ player }: PlayerRowProps) {
                                 {displayName.charAt(0).toLocaleUpperCase()}
                             </AvatarFallback>
                         </Avatar>
-
-                        {/* hover profile link */}
-                        <Link
-                            className="bg-raidhub/30 absolute top-0 left-0 hidden h-full flex-col items-center justify-center border-r-1 border-zinc-800 px-3 backdrop-blur-md group-hover:flex"
-                            href={`/profile/${player.playerInfo.membershipId}`}
-                            onClick={e => e.stopPropagation()}>
-                            <div>View Profile</div>
-                            <LinkIcon className="size-6" />
-                        </Link>
 
                         <div className="flex flex-nowrap items-center gap-1 overflow-x-auto text-sm font-medium md:gap-2 md:text-lg">
                             <div className="ml-1 flex h-8 items-center gap-1">

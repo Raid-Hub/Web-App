@@ -1,4 +1,4 @@
-import { CheckCircle, Clock, Flag, Users, XCircle } from "lucide-react"
+import { CheckCircle, Clock, Flag, TriangleAlert, Users, XCircle } from "lucide-react"
 import { R2RaidSplash, getRaidSplash } from "~/data/activity-images"
 import { cn } from "~/lib/tw"
 import { type RaidHubInstanceExtended } from "~/services/raidhub/types"
@@ -24,15 +24,30 @@ export const PGCRHeader = ({ data }: PGCRHeaderProps) => {
 
     return (
         <div
-            className="relative min-h-40 overflow-hidden rounded-t-lg md:h-48"
+            className="relative min-h-40 overflow-hidden rounded-t-lg bg-cover bg-center md:h-48"
             style={{
-                backgroundImage: `url(${backgroundImageUrl})`,
-                backgroundSize: "cover",
-                backgroundPosition: "center"
+                backgroundImage: `url(${backgroundImageUrl})`
             }}>
             <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/50 to-black/30 backdrop-blur-[2px]" />
             <CardHeader className="absolute inset-0 flex flex-col gap-2 p-2 md:p-6">
-                <PGCRDate />
+                <div className="inline-flex gap-4">
+                    <PGCRDate />
+                    {data.isBlacklisted && (
+                        <Tooltip>
+                            <TooltipTrigger asChild>
+                                <div className="flex-1 rounded-full bg-amber-600/20">
+                                    <TriangleAlert className="size-8 p-1.5 text-amber-400" />
+                                </div>
+                            </TooltipTrigger>
+                            <TooltipContent side="top" align="center">
+                                <p className="max-w-[30ch] text-center">
+                                    This instance is blacklisted from appearing in leaderboards or
+                                    tags on the participant&apos;s profiles
+                                </p>
+                            </TooltipContent>
+                        </Tooltip>
+                    )}
+                </div>
                 <div className="flex flex-wrap items-center gap-2">
                     <h1 className="text-2xl font-bold tracking-tight text-white md:text-4xl">
                         {data.metadata.isRaid

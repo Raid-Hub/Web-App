@@ -10,8 +10,8 @@ export const UserCardSocials = () => {
     const socials = useSocialConnections() ?? []
 
     return (
-        <Card $borderRadius={6} $opacity={60} $color="dark" style={{ width: "min-content" }}>
-            {!!socials?.length && (
+        !!socials?.length && (
+            <Card $borderRadius={6} $opacity={60} $color="dark" style={{ width: "min-content" }}>
                 <Flex $paddingY={0.5} $paddingX={1.2} $align="space-between" $gap={2}>
                     {socials.map(({ Icon, id, displayName, url }) => (
                         <Fragment key={id}>
@@ -31,7 +31,7 @@ export const UserCardSocials = () => {
                         </Fragment>
                     ))}
                 </Flex>
-            )}
-        </Card>
+            </Card>
+        )
     )
 }
