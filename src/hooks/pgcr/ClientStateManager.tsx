@@ -15,7 +15,7 @@ import {
 } from "react"
 import { z } from "zod"
 import { useQueryParams, type RaidHubQueryParams } from "~/hooks/util/useQueryParams"
-import { PGCRPageParams, PlayerStats } from "~/lib/pgcr/types"
+import { type PGCRPageParams, type PlayerStats } from "~/lib/pgcr/types"
 import { type RaidHubInstanceExtended, type RaidHubPlayerInfo } from "~/services/raidhub/types"
 import { useDexie } from "~/util/dexie/dexie"
 

@@ -130,7 +130,7 @@ model PgcrReport {
   closedById           String?          @map("closed_by_id")
   closedBy             User?            @relation("UserToPGCRReportCloser", fields: [closedById], references: [id], onDelete: Cascade)
 
-  createdAt DateTime @default(now()) @map("created_at")
+  createdAt DateTime  @default(now()) @map("created_at")
   closedAt  DateTime? @map("closed_at")
 
   @@index([createdAt(sort: Desc)], name: "pgcr_report_created_at_idx")
