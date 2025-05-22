@@ -91,7 +91,7 @@ export function InstanceInfoTab({ standing }: InstanceInfoTabProps) {
                 </ReportPanelItemBox>
 
                 <ReportPanelItemBox
-                    className="min-w-52 space-y-1 text-sm"
+                    className="min-w-56 space-y-1 text-sm"
                     title="Blacklist Information">
                     <div className="flex justify-start gap-2">
                         <span className="text-white/60">Blacklist Status:</span>
@@ -110,21 +110,23 @@ export function InstanceInfoTab({ standing }: InstanceInfoTabProps) {
                         <>
                             <div className="flex justify-start gap-2">
                                 <span className="text-white/60">Report Source:</span>
-                                <span>{standing.blacklist.reportSource}</span>
+                                <span className="flex-1">{standing.blacklist.reportSource}</span>
                             </div>
                             {standing.blacklist.cheatCheckVersion && (
                                 <div className="flex justify-start gap-2">
                                     <span className="text-white/60">CheatCheck Version:</span>
-                                    <span>{standing.blacklist.cheatCheckVersion}</span>
+                                    <span className="flex-1">
+                                        {standing.blacklist.cheatCheckVersion}
+                                    </span>
                                 </div>
                             )}
                             <div className="flex justify-start gap-2">
                                 <span className="text-white/60">Blacklist Reason:</span>
-                                <span>{standing.blacklist.reason}</span>
+                                <span className="flex-1">{standing.blacklist.reason}</span>
                             </div>
                             <div className="flex justify-start gap-2">
                                 <span className="text-white/60">Date:</span>
-                                <span>
+                                <span className="flex-1">
                                     {new Date(standing.blacklist.createdAt).toLocaleString()}
                                 </span>
                             </div>
@@ -193,9 +195,20 @@ function PlayerBox({ player, instanceId }: { player: InstancePlayerStanding; ins
             toast.success("Player updated successfully", {
                 description: `Player ${getBungieDisplayName(player.playerInfo)} updated`
             })
-            void queryClient.invalidateQueries({
-                queryKey: ["raidhub", "reports", instanceId]
-            })
+            queryClient.setQueryData<RaidHubInstanceStandingResponse>(
+                ["raidhub", "reports", instanceId],
+                old => {
+                    if (!old) return old
+                    return {
+                        ...old,
+                        players: old.players.map(p =>
+                            p.playerInfo.membershipId === player.playerInfo.membershipId
+                                ? { ...p, cheatLevel: selectedCheatLevel }
+                                : p
+                        )
+                    }
+                }
+            )
         },
         onError: error => {
             toast.error("Failed to update player", {

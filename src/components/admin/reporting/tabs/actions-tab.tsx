@@ -78,9 +78,6 @@ export function ActionsTab({
                     description: error.message
                 }
             )
-            void queryClient.invalidateQueries({
-                queryKey: ["raidhub", "reports", standing.instanceDetails.instanceId]
-            })
         }
     })
 
@@ -127,7 +124,6 @@ export function ActionsTab({
                 <div className="space-y-2">
                     <Button
                         onClick={() => setIsDialogOpen(true)}
-                        disabled={isCurrentlyBlacklisted}
                         variant="outline"
                         className="w-full justify-start rounded-sm border-white/10 bg-black/40 hover:bg-black/60">
                         <Shield className="mr-2 size-4" />

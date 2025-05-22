@@ -50,31 +50,30 @@ export default function ReportingDashboardPage() {
     }
 
     return (
-        <div className="flex flex-grow flex-col gap-4 p-4 md:gap-6 md:p-6">
+        <div className="flex h-full w-full flex-1 flex-col">
             <AdminPageHeader
                 title="PGCR Reports"
                 description="View and manage player reports submitted through the PGCR page."
             />
-
-            <div className="flex flex-1 flex-wrap gap-4">
-                <div className="flex-1 overflow-hidden rounded-sm border border-white/10 bg-black/30 backdrop-blur-sm md:min-w-96">
+            <div className="flex min-h-0 max-w-full flex-1 flex-col flex-wrap gap-2 md:flex-row">
+                <div className="flex max-h-full max-w-full flex-col rounded-sm border border-white/10 bg-black/30 backdrop-blur-sm md:flex-1 md:basis-64">
                     <ReportingTabs
                         activeTab={activeTab}
                         onTabChange={v => setActiveTab(v as "all" | PGCRReportStatus)}
                     />
 
-                    <div className="p-3">
-                        <div className="3xl:flex-row mb-3 flex flex-col gap-2">
+                    <div className="flex min-h-0 flex-1 flex-col">
+                        <div className="3xl:flex-row mb-3 flex flex-col gap-2 p-3">
                             <div className="relative flex-1">
                                 <Search className="absolute top-2.5 left-2.5 h-4 w-4 text-white/50" />
                                 <Input
-                                    placeholder="Search by ID, player, or category..."
+                                    placeholder="Search by instance ID, membership ID, or category ID..."
                                     className="w-full rounded-sm border border-white/10 bg-black/40 px-3 py-2 pl-8 text-sm focus:ring-1 focus:ring-orange-500 focus:outline-none"
                                     value={searchQuery}
                                     onChange={e => setSearchQuery(e.target.value)}
                                 />
                             </div>
-                            <Select onValueChange={handleValueChange}>
+                            <Select onValueChange={handleValueChange} defaultValue="newest">
                                 <SelectTrigger className="w-[180px] border-zinc-700/50 bg-zinc-900/90 text-zinc-200 focus:ring-1 focus:ring-zinc-500 focus:ring-offset-0">
                                     <SelectValue placeholder="Sort by" />
                                 </SelectTrigger>
@@ -99,18 +98,20 @@ export default function ReportingDashboardPage() {
                                 </SelectContent>
                             </Select>
                         </div>
-                        <ReportList
-                            sort={sortBy.key}
-                            sortOrder={sortBy.order}
-                            activeTab={activeTab}
-                            searchQuery={searchQuery}
-                            selectedReportId={selectedReportId}
-                            onSelectReport={handleViewReport}
-                        />
+                        <div className="min-h-0 flex-1 overflow-y-auto">
+                            <ReportList
+                                sort={sortBy.key}
+                                sortOrder={sortBy.order}
+                                activeTab={activeTab}
+                                searchQuery={searchQuery}
+                                selectedReportId={selectedReportId}
+                                onSelectReport={handleViewReport}
+                            />
+                        </div>
                     </div>
                 </div>
 
-                <div className="flex flex-1 rounded-sm border border-white/10 bg-black/30 backdrop-blur-sm md:min-w-120 md:flex-3">
+                <div className="flex max-h-full min-h-0 max-w-full flex-1 rounded-sm border border-white/10 bg-black/30 backdrop-blur-sm md:min-w-120 md:flex-3 lg:flex-4 xl:flex-5">
                     {selectedReportId && selectedInstanceId ? (
                         <ReportPanel reportId={selectedReportId} instanceId={selectedInstanceId} />
                     ) : (

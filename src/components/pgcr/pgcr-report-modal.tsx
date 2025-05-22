@@ -96,7 +96,7 @@ export const ReportModal = ({ open, onOpenChange, reporterProfiles }: ReportModa
                         <Form {...form}>
                             <form onSubmit={submitHandler} className="space-y-6">
                                 <MultiSelect
-                                    options={pgcrReportReasons}
+                                    options={pgcrReportReasons.map(r => ({ ...r, value: r.id }))}
                                     control={form.control}
                                     name="categories"
                                     label="Reason for reporting"
@@ -105,7 +105,10 @@ export const ReportModal = ({ open, onOpenChange, reporterProfiles }: ReportModa
 
                                 {reportReasons.includes("cheating") && (
                                     <MultiSelect
-                                        options={pgcrReportHeuristics}
+                                        options={pgcrReportHeuristics.map(r => ({
+                                            ...r,
+                                            value: r.id
+                                        }))}
                                         control={form.control}
                                         name="heuristics"
                                         label="Cheating Heuristics"
@@ -138,6 +141,7 @@ export const ReportModal = ({ open, onOpenChange, reporterProfiles }: ReportModa
                                 <MultiSelect
                                     options={data.players.map(player => ({
                                         id: player.playerInfo.membershipId,
+                                        value: player.playerInfo.membershipId,
                                         label: getBungieDisplayName(player.playerInfo)
                                     }))}
                                     control={form.control}

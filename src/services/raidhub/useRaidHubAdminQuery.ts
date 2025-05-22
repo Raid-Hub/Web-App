@@ -11,7 +11,7 @@ export const useRaidHubAdminQuery = () => {
     const mutation = useMutation({
         mutationKey: ["raidhub", "admin", "query"] as const,
         mutationFn: (body: RaidHubAdminQueryBody) =>
-            postRaidHubApi("/admin/query", null, body, {
+            postRaidHubApi("/admin/query", "post", body, null, null, {
                 headers: session.data?.raidHubAccessToken?.value
                     ? {
                           Authorization: "Bearer " + session.data.raidHubAccessToken.value

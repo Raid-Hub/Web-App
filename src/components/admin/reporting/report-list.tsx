@@ -1,7 +1,7 @@
 import { FileWarning, Flag, Pencil, User } from "lucide-react"
-import { useMemo } from "react"
 import { trpc } from "~/app/trpc"
 import { StatusBadge } from "~/components/admin/reporting/status-badge"
+import { useDebounce } from "~/hooks/util/useDebounce"
 import { pgcrReportHeuristics, pgcrReportReasons } from "~/lib/reporting"
 import { cn } from "~/lib/tw"
 import { getRelativeTime } from "~/util/presentation/pastDates"
@@ -23,6 +23,7 @@ export function ReportList({
     selectedReportId,
     onSelectReport
 }: ReportListProps) {
+    const [debouncedQuery] = useDebounce(searchQuery, 250)
     const {
         data: recentReports,
         isLoading,
@@ -31,28 +32,13 @@ export function ReportList({
         {
             sort,
             sortOrder,
-            status: activeTab === "all" ? null : activeTab
+            status: activeTab === "all" ? null : activeTab,
+            searchQuery: debouncedQuery.toLowerCase()
         },
         {
             keepPreviousData: true
         }
     )
-
-    // Filter reports based on active tab and search query
-    const filteredReports = useMemo(() => {
-        if (!recentReports) return []
-
-        const lowerQuery = searchQuery.toLowerCase()
-
-        return recentReports.filter(
-            report =>
-                !searchQuery ||
-                report.instanceId.includes(searchQuery) ||
-                report.players.some(p => p.includes(lowerQuery)) ||
-                report.categories.some(c => c.toLowerCase().includes(lowerQuery)) ||
-                report.heuristics.some(h => h.toLowerCase().includes(lowerQuery))
-        )
-    }, [searchQuery, recentReports])
 
     if (isLoading) {
         return <div className="p-4">Loading...</div>
@@ -67,7 +53,7 @@ export function ReportList({
         )
     }
 
-    if (filteredReports.length === 0) {
+    if (recentReports.length === 0) {
         return (
             <div className="py-8 text-center text-white/60">
                 <p>No reports match your criteria</p>
@@ -76,8 +62,8 @@ export function ReportList({
     }
 
     return (
-        <div className="max-h-[calc(100vh-280px)] space-y-2 overflow-y-auto pr-2">
-            {filteredReports.map(report => (
+        <div className="space-y-2 overflow-y-auto pr-2">
+            {recentReports.map(report => (
                 <div
                     key={report.reportId}
                     className={cn(

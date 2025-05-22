@@ -55,7 +55,7 @@ export function ReportPanel({ reportId, instanceId }: ReportDetailsProps) {
     }
 
     return (
-        <div className="flex flex-1 flex-col">
+        <div className="flex h-full max-w-full flex-1 flex-col">
             <div className="flex grow-0 flex-row items-start justify-between border-b border-white/10 p-4">
                 <div>
                     <h2 className="flex items-center gap-2 text-lg font-medium">
@@ -68,7 +68,11 @@ export function ReportPanel({ reportId, instanceId }: ReportDetailsProps) {
                 </div>
             </div>
 
-            <Tabs defaultValue="details" value={activeTab} onValueChange={setActiveTab}>
+            <Tabs
+                defaultValue="details"
+                value={activeTab}
+                onValueChange={setActiveTab}
+                className="max-h-full min-h-0 gap-0">
                 <TabsList className="rounded-none border-r border-b border-white/10 bg-black/40">
                     <TabsTrigger
                         value="details"
@@ -87,7 +91,7 @@ export function ReportPanel({ reportId, instanceId }: ReportDetailsProps) {
                     </TabsTrigger>
                 </TabsList>
 
-                <div className="p-4">
+                <div className="min-h-0 flex-1 overflow-y-auto p-4">
                     <TabsContent value="details" className="mt-0 flex">
                         <ReportDetailsTab
                             key={report.reportId}

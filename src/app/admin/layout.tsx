@@ -2,7 +2,7 @@ import { type Metadata } from "next"
 import { redirect } from "next/navigation"
 import { type ReactNode } from "react"
 import { getServerSession } from "~/lib/server/auth"
-import { SidebarProvider } from "~/shad/sidebar"
+import { SidebarProvider, SidebarTrigger } from "~/shad/sidebar"
 import { AdminSidebar } from "./sidebar"
 
 export default async function Layout({ children }: { children: ReactNode }) {
@@ -13,12 +13,12 @@ export default async function Layout({ children }: { children: ReactNode }) {
     }
 
     return (
-        <SidebarProvider className="md:max-h-body md:overflow-hidden">
+        <SidebarProvider className="md:h-body md:overflow-hidden">
             <AdminSidebar />
-            <main className="md:max-h-body flex flex-1 overflow-auto">
-                {/* <div className="absolute top-0 z-10 flex items-center">
-                        <SidebarTrigger className="h-8 w-8" />
-                    </div> */}
+            <main className="flex-1 overflow-auto md:h-full">
+                <div className="md:hidden">
+                    <SidebarTrigger className="size-10 rounded-none" />
+                </div>
 
                 {children}
             </main>

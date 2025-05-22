@@ -22,7 +22,7 @@ export function ReportDetailsTab({ report, players }: ReportDetailsTabProps) {
     )
 
     return (
-        <div className="flex-1 space-y-4">
+        <div className="flex w-full flex-1 flex-col gap-4">
             <ReportPanelItemBox className="space-y-4" title="Report Information">
                 <ReportInfoLine title="Instance Link">
                     <Link
@@ -119,7 +119,7 @@ export function ReportDetailsTab({ report, players }: ReportDetailsTabProps) {
                 </ReportInfoLine>
             </ReportPanelItemBox>
 
-            <ReportPanelItemBox title="Status History" className="md:max-w-120 xl:max-w-none">
+            <ReportPanelItemBox title="Status History" className="max-w-full">
                 <Table>
                     <TableHeader>
                         <TableRow className="border-white/10">

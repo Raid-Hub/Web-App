@@ -6,12 +6,12 @@ import Image from "next/image"
 import Link from "next/link"
 import { useMemo } from "react"
 import { usePGCRContext } from "~/hooks/pgcr/ClientStateManager"
+import { PlayerStats } from "~/lib/pgcr/types"
 import { Badge } from "~/shad/badge"
 import { Card, CardContent, CardHeader } from "~/shad/card"
 import { Progress } from "~/shad/progress"
 import { Tooltip, TooltipContent, TooltipTrigger } from "~/shad/tooltip"
 import { bungieItemUrl, getBungieDisplayName } from "~/util/destiny"
-import { type PlayerStats } from "../../app/pgcr/types"
 
 interface WeaponData {
     kills: number

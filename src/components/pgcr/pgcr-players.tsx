@@ -2,12 +2,12 @@ import { type Collection } from "@discordjs/collection"
 import { Sword, Trophy } from "lucide-react"
 import { Fragment } from "react"
 import PlayerRow from "~/components/pgcr/player-row"
+import { PlayerStats } from "~/lib/pgcr/types"
 import { type RaidHubInstanceExtended } from "~/services/raidhub/types"
 import { Card, CardContent, CardHeader } from "~/shad/card"
 import { ScrollArea } from "~/shad/scroll-area"
 import { Separator } from "~/shad/separator"
 import { getBungieDisplayName } from "~/util/destiny"
-import { type PlayerStats } from "../../app/pgcr/types"
 import { AllPgcrWeaponsWrapper } from "./pgcr-weapons"
 
 interface PGCRPlayersProps {

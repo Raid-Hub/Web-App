@@ -110,7 +110,8 @@ export const recentReports = adminProcedure
             limit: z.number().int().min(1).max(500).default(100),
             sort: z.enum(["createdAt", "closedAt"]).default("createdAt"),
             sortOrder: z.enum(["asc", "desc"]).default("desc"),
-            status: z.enum(["PENDING", "ACCEPTED", "REJECTED"]).nullable()
+            status: z.enum(["PENDING", "ACCEPTED", "REJECTED"]).nullable(),
+            searchQuery: z.string().optional()
         })
     )
     .query(async ({ ctx, input }) => {
@@ -146,7 +147,16 @@ export const recentReports = adminProcedure
                 closedById: true
             },
             where: {
-                status: input.status ?? undefined
+                status: input.status ?? undefined,
+                OR: input.searchQuery
+                    ? [
+                          { instanceId: { contains: input.searchQuery } },
+                          { players: { contains: input.searchQuery } },
+                          { heuristics: { contains: input.searchQuery } },
+                          { categories: { contains: input.searchQuery } },
+                          { explanation: { contains: input.searchQuery } }
+                      ]
+                    : undefined
             },
             orderBy: {
                 [input.sort]: input.sortOrder
