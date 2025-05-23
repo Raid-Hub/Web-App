@@ -5,7 +5,7 @@ import { ReactQueryDevtools } from "@tanstack/react-query-devtools"
 import { httpLink, loggerLink } from "@trpc/client"
 import { useState } from "react"
 import superjson from "superjson"
-import { trpc } from "~/app/trpc"
+import { trpc } from "~/lib/trpc"
 
 function getBaseUrl() {
     if (typeof window !== "undefined") return ""

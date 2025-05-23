@@ -173,7 +173,10 @@ export default function PlayerRow({ player }: PlayerRowProps) {
                                 "text-zinc-500": !player.completed
                             }
                         )}>
-                        {(stats.kills / stats.deaths).toFixed(2)}
+                        {(stats.kills + stats.deaths === 0
+                            ? 0
+                            : stats.kills / stats.deaths
+                        ).toFixed(2)}
                     </div>
                     <div
                         className={cn("text-primary/85 text-center", {

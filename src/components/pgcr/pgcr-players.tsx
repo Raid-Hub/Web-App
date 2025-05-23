@@ -59,7 +59,10 @@ export const PGCRPlayers = ({ data, mvp, playerMergedStats, sortScores }: PGCRPl
         }
     )
 
-    const totalKd = totals.kills / totals.deaths
+    const totalKd = totals.kills + totals.deaths === 0 ? 0 : totals.kills / totals.deaths
+
+    const _bestKd = playerMergedStats.get(bestKD)!.kills / playerMergedStats.get(bestKD)!.deaths
+    const bestKd = Number.isNaN(_bestKd) ? 0 : _bestKd
 
     return (
         <CardContent className="space-y-6 bg-black p-2 md:p-6">
@@ -128,10 +131,7 @@ export const PGCRPlayers = ({ data, mvp, playerMergedStats, sortScores }: PGCRPl
                                 label="Best K/D"
                                 value={`${getBungieDisplayName(bestKDPlayer.playerInfo, {
                                     excludeCode: true
-                                })} - ${(
-                                    playerMergedStats.get(bestKD)!.kills /
-                                    playerMergedStats.get(bestKD)!.deaths
-                                ).toFixed(2)}`}
+                                })} - ${bestKd.toFixed(2)}`}
                             />
                             {totals.deaths > 0 && (
                                 <>

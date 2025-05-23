@@ -34,7 +34,7 @@ export function InstanceInfoTab({ standing }: InstanceInfoTabProps) {
     const defs = getDefinitionFromHash(standing.instanceDetails.hash)
 
     return (
-        <div className="flex flex-col gap-4">
+        <div className="flex flex-1 flex-col gap-4">
             <div className="flex flex-wrap gap-4">
                 <ReportPanelItemBox className="min-w-72" title="Instance Details">
                     <div className="space-y-2 text-sm">

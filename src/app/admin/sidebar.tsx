@@ -42,8 +42,8 @@ const adminRoutes: AdminRoute[] = [
         Icon: Database
     },
     {
-        name: "Caching",
-        path: "/caching",
+        name: "Cache",
+        path: "/cache",
         Icon: Settings
     }
 ]
@@ -53,22 +53,24 @@ export function AdminSidebar() {
     const session = useSession()
 
     const isActive = (path: string) => {
-        return pathname === path || pathname?.startsWith(path + "/")
+        return pathname.startsWith("/admin" + path)
     }
 
     return (
         <Sidebar>
             <SidebarHeader className="border-b border-white/10 py-4">
-                <h1 className="px-2 text-2xl font-semibold">Admin Dashboard</h1>
+                <Link href="/admin">
+                    <h1 className="px-2 text-2xl font-semibold">Admin Dashboard</h1>
+                </Link>
             </SidebarHeader>
-            <SidebarContent className="px-2 py-4">
+            <SidebarContent className="px-2 py-4 lg:px-4">
                 <SidebarMenu>
                     {adminRoutes.map(route => (
                         <SidebarMenuItem key={route.path}>
                             <SidebarMenuButton asChild isActive={isActive(route.path)}>
                                 <Link href={`/admin${route.path}`}>
-                                    <route.Icon className="h-4 w-4" />
-                                    <span>{route.name}</span>
+                                    <route.Icon className="size-4" />
+                                    <span className="xl:text-lg">{route.name}</span>
                                 </Link>
                             </SidebarMenuButton>
                         </SidebarMenuItem>

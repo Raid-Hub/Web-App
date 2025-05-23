@@ -3,8 +3,8 @@
 import Image from "next/image"
 import { useState, type ChangeEventHandler } from "react"
 import { useForm, type SubmitHandler } from "react-hook-form"
-import { trpc } from "~/app/trpc"
 import { useSession } from "~/hooks/app/useSession"
+import { trpc } from "~/lib/trpc"
 import { uploadProfileIcon } from "~/services/s3/uploadProfileIcon"
 import styles from "./account.module.css"
 

@@ -2,7 +2,7 @@
 
 import { ShieldAlert } from "lucide-react"
 import { useState } from "react"
-import { trpc } from "~/app/trpc"
+import { trpc } from "~/lib/trpc"
 import { useReportedInstance } from "~/services/raidhub/useReportedInstance"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/shad/tabs"
 import { ActionsTab } from "./tabs/actions-tab"

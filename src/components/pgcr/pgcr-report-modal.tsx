@@ -3,9 +3,9 @@ import { AlertTriangle, Check } from "lucide-react"
 import { useForm } from "react-hook-form"
 import { toast } from "sonner"
 import type z from "zod"
-import { trpc } from "~/app/trpc"
 import { usePGCRContext } from "~/hooks/pgcr/ClientStateManager"
 import { pgcrReportHeuristics, pgcrReportReasons, zPgcrReport } from "~/lib/reporting"
+import { trpc } from "~/lib/trpc"
 import { Button } from "~/shad/button"
 import {
     Dialog,

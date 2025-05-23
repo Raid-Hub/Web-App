@@ -1,8 +1,8 @@
 import { FileWarning, Flag, Pencil, User } from "lucide-react"
-import { trpc } from "~/app/trpc"
 import { StatusBadge } from "~/components/admin/reporting/status-badge"
 import { useDebounce } from "~/hooks/util/useDebounce"
 import { pgcrReportHeuristics, pgcrReportReasons } from "~/lib/reporting"
+import { trpc } from "~/lib/trpc"
 import { cn } from "~/lib/tw"
 import { getRelativeTime } from "~/util/presentation/pastDates"
 

@@ -3,7 +3,7 @@ import { Check, Flag, Shield, ShieldCheck, Trash, TriangleAlert, X } from "lucid
 import { useState } from "react"
 import { useForm } from "react-hook-form"
 import { toast } from "sonner"
-import { trpc } from "~/app/trpc"
+import { trpc } from "~/lib/trpc"
 import { type RaidHubInstanceStandingResponse } from "~/services/raidhub/types"
 import { useRaidHubBlacklist } from "~/services/raidhub/useRaidHubBlacklist"
 import { Button } from "~/shad/button"

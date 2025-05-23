@@ -5,7 +5,7 @@ import Link from "next/link"
 import React from "react"
 import { useForm, type SubmitHandler } from "react-hook-form"
 import { z } from "zod"
-import { trpc } from "~/app/trpc"
+import { trpc } from "~/lib/trpc"
 import styles from "./account.module.css"
 
 const errMsg = "Invalid API Key format: "
