@@ -1,6 +1,6 @@
 import { useMemo } from "react"
-import { DotFail, DotFlawless, DotSuccess, DotTaxi } from "~/app/(profile)/raids/constants"
 import { useRaidHubManifest } from "~/app/layout/wrappers/RaidHubManifestManager"
+import { DotBlacklisted, DotFail, DotFlawless, DotSuccess, DotTaxi } from "~/lib/profile/constants"
 import { Tag } from "~/models/tag"
 import type { RaidHubInstanceForPlayer } from "~/services/raidhub/types"
 import { secondsToHMS } from "~/util/presentation/formatting"
@@ -43,13 +43,15 @@ const DotTooltip = ({ offset, isShowing, activity }: DotTooltipProps) => {
                 top: `${(offset.y / FULL_HEIGHT) * 100}%`,
                 left: `${offset.x}px`,
                 opacity: isShowing ? 1 : 0,
-                borderColor: activity.player.completed
-                    ? activity.flawless
-                        ? DotFlawless
-                        : DotSuccess
-                    : activity.completed
-                      ? DotTaxi
-                      : DotFail
+                borderColor: activity.isBlacklisted
+                    ? DotBlacklisted
+                    : activity.player.completed
+                      ? activity.flawless
+                          ? DotFlawless
+                          : DotSuccess
+                      : activity.completed
+                        ? DotTaxi
+                        : DotFail
             }}>
             <div>{secondsToHMS(activity.duration, false)}</div>
             <div className={styles["dot-tooltip-date"]}>{dateString}</div>

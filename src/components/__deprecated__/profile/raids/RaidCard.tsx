@@ -4,12 +4,12 @@ import { Collection } from "@discordjs/collection"
 import { useMemo, useState } from "react"
 import { useRaidCardContext } from "~/app/(profile)/raids/RaidCardContext"
 import { WeeklyProgress } from "~/app/(profile)/raids/expanded/WeeklyProgress"
-import { useTags } from "~/app/(profile)/raids/useTags"
 import { useLocale } from "~/app/layout/wrappers/LocaleManager"
 import { useRaidHubManifest } from "~/app/layout/wrappers/RaidHubManifestManager"
 import { CloudflareImage } from "~/components/CloudflareImage"
 import { Loading } from "~/components/Loading"
 import { getRaidSplash } from "~/data/activity-images"
+import { useRaidTags } from "~/hooks/profile/useRaidTags"
 import { useTimeout } from "~/hooks/util/useTimeout"
 import {
     type RaidHubInstanceForPlayer,
@@ -49,7 +49,7 @@ export default function RaidCard({
         [activities]
     )
 
-    const tags = useTags(activities ?? new Collection())
+    const tags = useRaidTags(activities ?? new Collection())
 
     const firstContestClear = useMemo(() => {
         if (!activityDefinition) {

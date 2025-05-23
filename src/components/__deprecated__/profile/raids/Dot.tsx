@@ -2,9 +2,9 @@ import { animate } from "framer-motion"
 import Link from "next/link"
 import { useCallback, useEffect, useRef, type MouseEvent } from "react"
 import { useRaidCardContext } from "~/app/(profile)/raids/RaidCardContext"
-import { DotFail, DotFlawless, DotSuccess, DotTaxi } from "~/app/(profile)/raids/constants"
 import { useRaidHubManifest } from "~/app/layout/wrappers/RaidHubManifestManager"
 import RaidSkull from "~/components/icons/RaidSkull"
+import { DotBlacklisted, DotFail, DotFlawless, DotSuccess, DotTaxi } from "~/lib/profile/constants"
 import { type RaidHubInstanceForPlayer } from "~/services/raidhub/types"
 import { RADIUS, SKULL_FACTOR, SPACING, STAR_OFFSETS } from "./DotGraph"
 import { type DotTooltipProps } from "./DotTooltip"
@@ -82,14 +82,17 @@ const Dot = ({ centerX, activity, centerY, isTargeted, setTooltip, tooltipData }
             onMouseLeave={handleMouseLeave}
             className={[styles.dot, styles["dot-hover"]].join(" ")}>
             <circle
+                className="text-blue-400"
                 fill={
-                    activity.player.completed
-                        ? activity.flawless
-                            ? DotFlawless
-                            : DotSuccess
-                        : activity.completed
-                          ? DotTaxi
-                          : DotFail
+                    activity.isBlacklisted
+                        ? DotBlacklisted
+                        : activity.player.completed
+                          ? activity.flawless
+                              ? DotFlawless
+                              : DotSuccess
+                          : activity.completed
+                            ? DotTaxi
+                            : DotFail
                 }
                 fillOpacity={0.978}
                 r={RADIUS}

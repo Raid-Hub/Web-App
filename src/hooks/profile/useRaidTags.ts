@@ -4,12 +4,25 @@ import { useRaidHubManifest } from "~/app/layout/wrappers/RaidHubManifestManager
 import { type RaidHubInstance } from "~/services/raidhub/types"
 import { includedIn } from "~/util/helpers"
 
-export const useTags = (activities: Collection<string, RaidHubInstance>) => {
+const crafteningStartDate = new Date("2023-09-15T17:00:00Z")
+const crafteningEndDate = new Date("2023-09-21T17:00:00Z")
+const horsemanStartDate = new Date("2023-04-26T17:00:00Z")
+const horsemanEndDate = new Date("2023-04-28T17:00:00Z")
+
+const isDuringOpItemEvent = (activity: RaidHubInstance) => {
+    const date = new Date(activity.dateStarted)
+    return (
+        (date > crafteningStartDate && date < crafteningEndDate) ||
+        (date > horsemanStartDate && date < horsemanEndDate)
+    )
+}
+
+export const useRaidTags = (activities: Collection<string, RaidHubInstance>) => {
     const getWeight = useGetWeight()
 
     return useMemo(() => {
-        const sorted = activities
-            .filter(a => a.completed)
+        const sortedElligibleTags = activities
+            .filter(a => a.completed && !a.isBlacklisted && !isDuringOpItemEvent(a))
             .map(activity => ({
                 activity,
                 weight: getWeight(activity)
@@ -29,7 +42,7 @@ export const useTags = (activities: Collection<string, RaidHubInstance>) => {
             activity: RaidHubInstance
             bestPossible: boolean
         }>()
-        for (const { activity, weight } of sorted) {
+        for (const { activity, weight } of sortedElligibleTags) {
             const isElevatedDifficulty = weight % 2 === 1
             const covers = isElevatedDifficulty
                 ? weight & ~bitfieldForElevatedDifficulty
