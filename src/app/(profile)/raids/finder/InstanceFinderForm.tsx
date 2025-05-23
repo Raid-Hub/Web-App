@@ -16,48 +16,34 @@ import { type ProfileProps } from "../../types"
 import { FinderPlayerSearch } from "./InstanceFinderPlayerSearch"
 
 type FormState = z.infer<typeof FormSchema>
-const FormSchema = z.preprocess(
-    data => {
-        if (typeof data === "object") {
-            for (const key in data) {
-                // @ts-expect-error override
-                if (data[key] === "") {
-                    // @ts-expect-error override
-                    data[key] = undefined
-                }
-            }
-        }
-        return data
-    },
-    z.object({
-        players: z
-            .array(
-                z.object({
-                    membershipId: z.string(),
-                    displayName: z.string().nullable(),
-                    bungieGlobalDisplayName: z.string().nullable(),
-                    bungieGlobalDisplayNameCode: z.string().nullable(),
-                    iconPath: z.string().nullable()
-                })
-            )
-            .optional(),
-        activityId: z.coerce.number().optional(),
-        versionId: z.coerce.number().optional(),
-        completed: z.coerce.boolean().optional(),
-        fresh: z.coerce.boolean().optional(),
-        flawless: z.coerce.boolean().optional(),
-        playerCount: z.coerce.number().optional(),
-        minPlayerCount: z.coerce.number().optional(),
-        maxPlayerCount: z.coerce.number().optional(),
-        minDurationSeconds: z.coerce.number().optional(),
-        maxDurationSeconds: z.coerce.number().optional(),
-        season: z.coerce.number().optional(),
-        minSeason: z.coerce.number().optional(),
-        maxSeason: z.coerce.number().optional(),
-        minDate: z.string().optional(),
-        maxDate: z.string().optional()
-    })
-)
+const FormSchema = z.object({
+    players: z
+        .array(
+            z.object({
+                membershipId: z.string(),
+                displayName: z.string().nullable(),
+                bungieGlobalDisplayName: z.string().nullable(),
+                bungieGlobalDisplayNameCode: z.string().nullable(),
+                iconPath: z.string().nullable()
+            })
+        )
+        .optional(),
+    activityId: z.coerce.number().optional(),
+    versionId: z.coerce.number().optional(),
+    completed: z.coerce.boolean().optional(),
+    fresh: z.coerce.boolean().optional(),
+    flawless: z.coerce.boolean().optional(),
+    playerCount: z.coerce.number().optional(),
+    minPlayerCount: z.coerce.number().optional(),
+    maxPlayerCount: z.coerce.number().optional(),
+    minDurationSeconds: z.coerce.number().optional(),
+    maxDurationSeconds: z.coerce.number().optional(),
+    season: z.coerce.number().optional(),
+    minSeason: z.coerce.number().optional(),
+    maxSeason: z.coerce.number().optional(),
+    minDate: z.string().optional(),
+    maxDate: z.string().optional()
+})
 
 const booleanOptions = [
     { value: true, label: "Yes" },

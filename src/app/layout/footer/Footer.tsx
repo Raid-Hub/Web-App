@@ -49,7 +49,9 @@ const contactIcons: { url: string; Icon: SVGComponent }[] = [
 
 export const Footer = () => {
     return (
-        <FooterStyled id="footer">
+        <div
+            id="footer"
+            className="bg-background/40 border-border-dark/60 h-footer mt-auto min-w-full overflow-hidden border-t border-b text-[0.9rem] text-zinc-500 backdrop-blur-xs">
             <Flex $align="space-between" $padding={1}>
                 <FooterSide side="left">
                     <div>
@@ -73,32 +75,9 @@ export const Footer = () => {
                     </Flex>
                 </FooterSide>
             </Flex>
-        </FooterStyled>
+        </div>
     )
 }
-
-const FooterStyled = styled.footer`
-    overflow: hidden;
-    margin-top: auto;
-    min-width: 100%;
-
-    background-color: color-mix(in srgb, ${({ theme }) => theme.colors.background.dark}, #0000 50%);
-
-    backdrop-filter: blur(10px);
-    border-top: 1px solid color-mix(in srgb, ${({ theme }) => theme.colors.border.dark}, #0000 60%);
-    border-bottom: 1px solid
-        color-mix(in srgb, ${({ theme }) => theme.colors.border.dark}, #0000 60%);
-
-    font-size: 0.9rem;
-    color: ${({ theme }) => theme.colors.text.tertiary};
-
-    & a {
-        color: ${({ theme }) => theme.colors.text.tertiary};
-        &:hover {
-            color: ${({ theme }) => theme.colors.text.secondary};
-        }
-    }
-`
 
 const FooterSide = (props: { children: ReactNode; side: "left" | "right" }) => (
     <Flex

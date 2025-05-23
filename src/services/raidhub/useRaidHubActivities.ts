@@ -27,7 +27,7 @@ async function getActivities({
         : {}
 
     const response = await getRaidHubApi(
-        "/player/{membershipId}/activities",
+        "/player/{membershipId}/history",
         { membershipId },
         { cursor, count: cursor ? 2000 : 250 },
         {

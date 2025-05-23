@@ -2,8 +2,8 @@
 
 import { useQueryClient } from "@tanstack/react-query"
 import { type ReactNode } from "react"
-import { trpc } from "~/app/trpc"
 import { usePageProps } from "~/components/layout/PageWrapper"
+import { trpc } from "~/lib/trpc"
 import { type RaidHubPlayerInfo, type RaidHubPlayerProfileResponse } from "~/services/raidhub/types"
 import { type ProfileProps } from "./types"
 

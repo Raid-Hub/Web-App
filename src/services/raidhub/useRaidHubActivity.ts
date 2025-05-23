@@ -16,7 +16,7 @@ export const useRaidHubActivity = (
     return useQuery({
         queryKey: ["raidhub", "activity", activityId] as const,
         queryFn: ({ queryKey }) =>
-            getRaidHubApi("/activity/{instanceId}", { instanceId: queryKey[2] }, null).then(
+            getRaidHubApi("/instance/{instanceId}", { instanceId: queryKey[2] }, null).then(
                 res => res.response
             ),
         staleTime: 3600_000,

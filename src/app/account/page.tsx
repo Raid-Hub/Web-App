@@ -2,7 +2,7 @@ import { type Metadata } from "next"
 import { Suspense } from "react"
 import { PageWrapper } from "~/components/layout/PageWrapper"
 import { baseMetadata } from "~/lib/metadata"
-import { getProviders } from "~/server/api/auth"
+import { getProviders } from "~/lib/server/auth"
 import { Client } from "./Client"
 
 const providers = getProviders().map(p => ({

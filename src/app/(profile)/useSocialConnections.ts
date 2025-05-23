@@ -1,5 +1,4 @@
 import { useMemo } from "react"
-import { trpc } from "~/app/trpc"
 import { type SVGWrapperProps } from "~/components/SVG"
 import DiscordIcon from "~/components/icons/DiscordIcon"
 import SpeedrunIcon from "~/components/icons/SpeedrunIcon"
@@ -7,6 +6,7 @@ import TwitchIcon from "~/components/icons/TwitchIcon"
 import TwitterIcon from "~/components/icons/TwitterIcon"
 import YoutubeIcon from "~/components/icons/YoutubeIcon"
 import { usePageProps } from "~/components/layout/PageWrapper"
+import { trpc } from "~/lib/trpc"
 import type { ProfileProps } from "./types"
 
 enum Socials {

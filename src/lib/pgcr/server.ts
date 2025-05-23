@@ -12,7 +12,7 @@ export const assertValidPath = (instanceId: string) => {
 }
 
 export const prefetchActivity = reactRequestDedupe((instanceId: string) =>
-    getRaidHubApi("/activity/{instanceId}", { instanceId }, null)
+    getRaidHubApi("/instance/{instanceId}", { instanceId }, null)
         .then(res => res.response)
         .catch(err => {
             if (err instanceof RaidHubError && err.errorCode === "InstanceNotFoundError") {

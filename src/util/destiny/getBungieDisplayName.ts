@@ -1,8 +1,8 @@
 export function getBungieDisplayName(
     user: {
         membershipId: string
-        displayName: string | null | undefined
-        bungieGlobalDisplayName: string | null | undefined
+        displayName?: string | null
+        bungieGlobalDisplayName?: string | null
         bungieGlobalDisplayNameCode?: string | number | null
     },
     opts?: { excludeCode: boolean }

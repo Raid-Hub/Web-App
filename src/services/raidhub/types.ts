@@ -5,7 +5,18 @@ type Component<T extends keyof components["schemas"]> = Prettify<components["sch
 
 // Generic API
 export type RaidHubGetPath = KeysWhichValuesExtend<paths, GetSchema>
-export type RaidHubPostPath = KeysWhichValuesExtend<paths, PostSchema>
+export type RaidHubPostPath = KeysWhichValuesExtend<
+    paths,
+    | {
+          post: PostSchema
+      }
+    | {
+          put: PostSchema
+      }
+    | {
+          patch: PostSchema
+      }
+>
 
 export type RaidHubErrorSchema<E extends RaidHubErrorCode = RaidHubErrorCode> = Component<E>
 
@@ -61,6 +72,9 @@ export type ResponseForLeaderboardURL<T extends RaidHubLeaderboardURL> =
 export type RaidHubAdminQueryBody = Required<
     paths["/admin/query"]["post"]
 >["requestBody"]["content"]["application/json"]
+export type RaidHubBlacklistBody = Required<
+    paths["/admin/reporting/blacklist/{instanceId}"]["put"]
+>["requestBody"]["content"]["application/json"]
 
 export type ClanStatsColumns = NonNullable<
     NonNullable<paths["/leaderboard/clan"]["get"]["parameters"]["query"]>["column"]
@@ -69,6 +83,12 @@ export type ClanStatsColumns = NonNullable<
 export type InstanceFinderQuery = NonNullable<
     paths["/player/{membershipId}/instances"]["get"]["parameters"]["query"]
 >
+
+export type InstanceFlag = Component<"InstanceFlag">
+export type InstanceBlacklist = Component<"InstanceBlacklist">
+export type InstancePlayerStanding = Component<"InstancePlayerStanding">
+export type InstancePlayerFlag = Component<"InstancePlayerFlag">
+export type CheatLevel = Component<"CheatLevel">
 
 // Responses
 export type RaidHubManifestResponse = Component<"ManifestResponse">
@@ -83,6 +103,7 @@ export type RaidHubMetricsWeaponsRollingWeekResponse =
     Component<"MetricsWeaponsRollingWeekResponse">
 export type RaidHubMetricsPopulationRollingDayResponse =
     Component<"MetricsPopulationRollingDayResponse">
+export type RaidHubInstanceStandingResponse = Component<"AdminReportingStandingResponse">
 
 interface GetSchema {
     get: {
@@ -101,21 +122,19 @@ interface GetSchema {
 }
 
 interface PostSchema {
-    post: {
-        requestBody?: {
+    requestBody?: {
+        content: {
+            "application/json": unknown
+        }
+    }
+    parameters?: {
+        query?: unknown
+        path?: unknown
+    }
+    responses: {
+        200: {
             content: {
-                "application/json": unknown
-            }
-        }
-        parameters?: {
-            query?: unknown
-            path?: unknown
-        }
-        responses: {
-            200: {
-                content: {
-                    readonly "application/json": unknown
-                }
+                readonly "application/json": unknown
             }
         }
     }

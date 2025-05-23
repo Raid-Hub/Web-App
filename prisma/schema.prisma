@@ -16,8 +16,7 @@ model Profile {
   isPrimary             Boolean @map("is_primary")
   pinnedActivityId      String? @map("pinned_activity_id")
   vanity                String? @unique
-  user                  User?   @relation("UserToProfile", fields: [bungieMembershipId], references: [id], onDelete: Cascade)
-  pinnedPGCR            PGCR?   @relation("PGCRToProfile", fields: [pinnedActivityId], references: [id])
+  user                  User?   @relation("UserToProfile", fields: [bungieMembershipId], references: [id], onDelete: NoAction)
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
@@ -39,11 +38,26 @@ model User {
   raidHubAccessToken RaidHubAccessToken? @relation("UserToRaidHubAccessToken")
   sessions           Session[]           @relation("UserToSession")
   badges             Badge[]             @relation("UserToBadge")
+  pgcrReports        PgcrReport[]        @relation("UserToPGCRReport")
+  pgcrClosedReports  PgcrReport[]        @relation("UserToPGCRReportCloser")
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
   @@map("bungie_user")
+}
+
+model Badge {
+  id          String @id
+  name        String
+  description String
+  icon        String
+
+  users User[] @relation("UserToBadge")
+
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@map("badge")
 }
 
 model Session {
@@ -96,25 +110,33 @@ model RaidHubAccessToken {
   @@map("raidhub_access_token")
 }
 
-model PGCR {
-  id                 String    @id @map("instance_id")
-  videoURL           String?   @map("video_url")
-  profilesWithPinned Profile[] @relation("PGCRToProfile")
-
-  @@map("pgcr")
+enum PGCRReportStatus {
+  PENDING
+  ACCEPTED
+  REJECTED
 }
 
-model Badge {
-  id          String @id
-  name        String
-  description String
-  icon        String
+model PgcrReport {
+  reportId             Int              @id @default(autoincrement()) @map("report_id")
+  instanceId           String           @map("instance_id")
+  categories           String
+  heuristics           String
+  players              String
+  explanation          String
+  status               PGCRReportStatus @default(PENDING)
+  isReporterInInstance Boolean          @map("is_reporter_in_instance")
+  reporterId           String           @map("reporter_id")
+  reporter             User             @relation("UserToPGCRReport", fields: [reporterId], references: [id], onDelete: Cascade)
+  closedById           String?          @map("closed_by_id")
+  closedBy             User?            @relation("UserToPGCRReportCloser", fields: [closedById], references: [id], onDelete: Cascade)
 
-  users User[] @relation("UserToBadge")
+  createdAt DateTime  @default(now()) @map("created_at")
+  closedAt  DateTime? @map("closed_at")
 
-  createdAt DateTime @default(now()) @map("created_at")
-
-  @@map("badge")
+  @@index([createdAt(sort: Desc)], name: "pgcr_report_created_at_idx")
+  @@index([instanceId], name: "pgcr_report_instance_id_idx")
+  @@index([reporterId, createdAt(sort: Desc)], name: "pgcr_report_reporter_id_idx")
+  @@map("pgcr_report")
 }
 
 model Migration {

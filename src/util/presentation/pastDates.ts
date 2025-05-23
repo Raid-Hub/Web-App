@@ -13,7 +13,7 @@ export function getRelativeTime(date: Date) {
     }
 
     const hours = Math.floor(diff / (1000 * 60 * 60))
-    if (hours <= 72) {
+    if (hours <= 48) {
         return hours + "h ago"
     }
 

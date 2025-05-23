@@ -3,6 +3,7 @@ import dynamic from "next/dynamic"
 import NextTopLoader from "nextjs-toploader"
 import { type ReactNode } from "react"
 import { prefetchManifest } from "~/services/raidhub/prefetchRaidHubManifest"
+import { Toaster } from "~/shad/sonner"
 import "./global.css"
 import { Footer } from "./layout/footer/Footer"
 import { Header } from "./layout/header/Header"
@@ -31,7 +32,7 @@ export default async function RootLayout(params: { children: ReactNode }) {
     const manifest = await prefetchManifest()
 
     return (
-        <html suppressHydrationWarning>
+        <html className="dark" suppressHydrationWarning>
             <head>
                 <meta name="discord:site" content="https://discord.gg/raidhub" />
 
@@ -43,12 +44,12 @@ export default async function RootLayout(params: { children: ReactNode }) {
             </head>
             <body>
                 <QueryManager>
-                    <RaidHubManifestManager serverManifest={manifest}>
-                        <BungieClientProvider>
-                            <SessionManager>
-                                <LocaleManager>
-                                    <ClientComponentManager>
-                                        <DestinyManifestManager>
+                    <BungieClientProvider>
+                        <SessionManager>
+                            <LocaleManager>
+                                <ClientComponentManager>
+                                    <DestinyManifestManager>
+                                        <RaidHubManifestManager serverManifest={manifest}>
                                             <Header>
                                                 <NextTopLoader
                                                     showSpinner={false}
@@ -65,12 +66,13 @@ export default async function RootLayout(params: { children: ReactNode }) {
                                             <SearchModal />
                                             {params.children}
                                             <Footer />
-                                        </DestinyManifestManager>
-                                    </ClientComponentManager>
-                                </LocaleManager>
-                            </SessionManager>
-                        </BungieClientProvider>
-                    </RaidHubManifestManager>
+                                            <Toaster />
+                                        </RaidHubManifestManager>
+                                    </DestinyManifestManager>
+                                </ClientComponentManager>
+                            </LocaleManager>
+                        </SessionManager>
+                    </BungieClientProvider>
                 </QueryManager>
             </body>
         </html>

@@ -1,10 +1,10 @@
 import { getLinkedProfiles } from "bungie-net-core/endpoints/Destiny2"
 import { unstable_cache } from "next/cache"
 import "server-only"
+import { trpcServer } from "~/lib/server/trpc/rpc"
 import { BungiePlatformError } from "~/models/BungieAPIError"
 
-import { trpcServer } from "~/server/api/trpc/rpc"
-import ServerBungieClient from "~/server/serverBungieClient"
+import ServerBungieClient from "~/services/bungie/ServerBungieClient"
 import { getRaidHubApi } from "~/services/raidhub/common"
 import { reactRequestDedupe } from "~/util/react-cache"
 

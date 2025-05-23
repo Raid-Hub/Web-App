@@ -5,7 +5,7 @@ import { cloudflareImageLoader } from "~/components/CloudflareImage"
 import { getRaidSplash } from "~/data/activity-images"
 import { getMetaData, prefetchActivity } from "~/lib/pgcr/server"
 import { type PGCRPageProps } from "~/lib/pgcr/types"
-import { baseUrl } from "~/lib/server"
+import { baseUrl } from "~/lib/server/utils"
 import { bungieIconUrl, getBungieDisplayName } from "~/util/destiny"
 import { secondsToHMS } from "~/util/presentation/formatting"
 
