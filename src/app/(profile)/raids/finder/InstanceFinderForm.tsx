@@ -15,7 +15,22 @@ import { bungieProfileIconUrl, getBungieDisplayName } from "~/util/destiny"
 import { type ProfileProps } from "../../types"
 import { FinderPlayerSearch } from "./InstanceFinderPlayerSearch"
 
-type FormState = z.infer<typeof FormSchema>
+const zPreprocessEmptyStringAsUndefined = <T extends "boolean" | "number" | "string">(
+    type: T
+): z.ZodEffects<
+    z.ZodOptional<ReturnType<(typeof z)[T]>>,
+    z.output<ReturnType<(typeof z)[T]>> | undefined,
+    unknown
+> => {
+    const effect = z.preprocess(
+        input => (input === "" ? undefined : input),
+        z.coerce[type]().optional()
+    )
+    // @ts-expect-error Not gonna bother perfecting the generic type here
+    return effect
+}
+
+type FormState = z.input<typeof FormSchema>
 const FormSchema = z.object({
     players: z
         .array(
@@ -27,22 +42,22 @@ const FormSchema = z.object({
                 iconPath: z.string().nullable()
             })
         )
-        .optional(),
-    activityId: z.coerce.number().optional(),
-    versionId: z.coerce.number().optional(),
-    completed: z.coerce.boolean().optional(),
-    fresh: z.coerce.boolean().optional(),
-    flawless: z.coerce.boolean().optional(),
-    playerCount: z.coerce.number().optional(),
-    minPlayerCount: z.coerce.number().optional(),
-    maxPlayerCount: z.coerce.number().optional(),
-    minDurationSeconds: z.coerce.number().optional(),
-    maxDurationSeconds: z.coerce.number().optional(),
-    season: z.coerce.number().optional(),
-    minSeason: z.coerce.number().optional(),
-    maxSeason: z.coerce.number().optional(),
-    minDate: z.string().optional(),
-    maxDate: z.string().optional()
+        .nullable(),
+    activityId: zPreprocessEmptyStringAsUndefined("number"),
+    versionId: zPreprocessEmptyStringAsUndefined("number"),
+    completed: zPreprocessEmptyStringAsUndefined("boolean"),
+    fresh: zPreprocessEmptyStringAsUndefined("boolean"),
+    flawless: zPreprocessEmptyStringAsUndefined("boolean"),
+    playerCount: zPreprocessEmptyStringAsUndefined("number"),
+    minPlayerCount: zPreprocessEmptyStringAsUndefined("number"),
+    maxPlayerCount: zPreprocessEmptyStringAsUndefined("number"),
+    minDurationSeconds: zPreprocessEmptyStringAsUndefined("number"),
+    maxDurationSeconds: zPreprocessEmptyStringAsUndefined("number"),
+    season: zPreprocessEmptyStringAsUndefined("number"),
+    minSeason: zPreprocessEmptyStringAsUndefined("number"),
+    maxSeason: zPreprocessEmptyStringAsUndefined("number"),
+    minDate: zPreprocessEmptyStringAsUndefined("string"),
+    maxDate: zPreprocessEmptyStringAsUndefined("string")
 })
 
 const booleanOptions = [
@@ -63,7 +78,7 @@ export const InstanceFinderForm = ({
     const { destinyMembershipId } = usePageProps<ProfileProps>()
     const player = useRaidHubResolvePlayer(destinyMembershipId)
 
-    const form = useForm<FormState>({
+    const form = useForm({
         resolver: zodResolver(FormSchema)
     })
     const playersArray = useFieldArray({
@@ -93,12 +108,12 @@ export const InstanceFinderForm = ({
     return (
         <FormProvider {...form}>
             <Form
-                onSubmit={form.handleSubmit(({ players, ...data }) => {
+                onSubmit={form.handleSubmit(({ players, ...restOfData }) => {
                     onSubmit({
+                        ...restOfData,
                         membershipIds: players?.length
                             ? players.map(player => player.membershipId)
-                            : undefined,
-                        ...data
+                            : undefined
                     })
                 })}>
                 <Flex $direction="column" $align="flex-start" $crossAxis="flex-start" $fullWidth>
