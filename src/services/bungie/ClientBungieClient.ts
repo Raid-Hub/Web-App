@@ -1,12 +1,10 @@
 import type { BungieFetchConfig } from "bungie-net-core"
 import EventEmitter from "events"
-import { BungiePlatformError } from "~/models/BungieAPIError"
+import { BungieHTTPError, BungiePlatformError } from "~/models/BungieAPIError"
 import BaseBungieClient from "./BungieClient"
 
 export default class ClientBungieClient extends BaseBungieClient {
     private accessToken: string | null = null
-    // An interval to clear the access token.
-    private tokenClearTimeout: NodeJS.Timeout | null = null
 
     private readonly emitter = new EventEmitter()
 
@@ -43,23 +41,24 @@ export default class ClientBungieClient extends BaseBungieClient {
                 url.searchParams.set("bust", String(Math.floor(Math.random() * 7777777)))
                 return this.request(url, payload)
             } else if (
-                (err instanceof Response && err.status === 401) ||
-                (err instanceof BungiePlatformError &&
-                    ClientBungieClient.AuthErrorCodes.has(err.ErrorCode))
+                !!this.accessToken &&
+                ((err instanceof BungieHTTPError && err.status === 401) ||
+                    (err instanceof BungiePlatformError &&
+                        ClientBungieClient.AuthErrorCodes.has(err.ErrorCode)))
             ) {
-                this.clearToken()
-                this.emitter.emit("unauthorized")
-
                 return await new Promise(resolve => {
                     const timeout = setTimeout(() => {
-                        this.emitter.off("authorized", listener)
+                        this.emitter.off("new-token", listener)
+                        url.searchParams.set("retry", "authorization-timeout")
                         resolve(this.request(url, payload))
                     }, 5000)
                     const listener = () => {
                         clearTimeout(timeout)
+                        url.searchParams.set("retry", "reauthorized")
                         resolve(this.request(url, payload))
                     }
-                    this.emitter.once("authorized", listener)
+                    this.emitter.once("new-token", listener)
+                    this.emitter.emit("unauthorized")
                 })
             } else if (
                 err instanceof BungiePlatformError &&
@@ -87,14 +86,10 @@ export default class ClientBungieClient extends BaseBungieClient {
      * @param token.expires The expiration date of the access token.
      */
     public readonly setToken = (token: { value: string; expires: Date }) => {
-        this.emitter.emit("authorized")
-        if (this.tokenClearTimeout) {
-            clearTimeout(this.tokenClearTimeout)
+        if (token.value !== this.accessToken) {
+            this.emitter.emit("new-token")
         }
         this.accessToken = token.value
-        this.tokenClearTimeout = setTimeout(() => {
-            this.accessToken = null
-        }, token.expires.getTime() - Date.now())
     }
 
     /**
@@ -102,14 +97,10 @@ export default class ClientBungieClient extends BaseBungieClient {
      */
     public readonly clearToken = () => {
         this.accessToken = null
-        if (this.tokenClearTimeout) {
-            clearTimeout(this.tokenClearTimeout)
-        }
     }
 
     public readonly onUnauthorized = (listener: () => void) => {
         this.emitter.once("unauthorized", listener)
-
         return () => {
             this.emitter.off("unauthorized", listener)
         }
