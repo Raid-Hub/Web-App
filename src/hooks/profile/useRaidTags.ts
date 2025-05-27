@@ -58,7 +58,7 @@ export const useRaidTags = (activities: Collection<string, RaidHubInstance>) => 
                     activity,
                     bestPossible: isBestTag(activity, weight)
                 })
-                if (result.length >= 3) break
+                if (result.length >= 4) break
             }
         }
 
@@ -106,6 +106,9 @@ function isIllegalTag(
     weight: number
 ): boolean {
     switch (activityId) {
+        case 14:
+            // trio fresh
+            return bitfieldMatches(weight, 0b001100)
         case 13:
             // solo crota
             return bitfieldMatches(weight, 0b111000)
@@ -146,9 +149,16 @@ function isBestTag(
     weight: number
 ): boolean {
     switch (activityId) {
+        case 14:
+            // master flawless or duo master witness or solo witness
+            return (
+                bitfieldMatches(weight, 0b000101) ||
+                bitfieldMatches(weight, 0b011001) ||
+                bitfieldMatches(weight, 0b111000)
+            )
         case 13:
-            // duo flawless or trio flawless master crota
-            return bitfieldMatches(weight, 0b011100) || bitfieldMatches(weight, 0b001101)
+            // duo flawless master crota
+            return bitfieldMatches(weight, 0b011101)
 
         case 12:
             // solo flawless or duo flawless master ron
