@@ -4,6 +4,7 @@ import { type Adapter, type AdapterUser } from "@auth/core/adapters"
 import { type AuthConfig } from "@auth/core/types"
 import { refreshAuthorization } from "bungie-net-core/auth"
 import { prisma } from "~/lib/server/prisma"
+import { BungieServiceError } from "~/models/BungieAPIError"
 import ServerBungieClient from "~/services/bungie/ServerBungieClient"
 import { postRaidHubApi } from "~/services/raidhub/common"
 import { type AuthError, type BungieAccount } from "./types"
@@ -64,18 +65,25 @@ async function refreshBungieAuth(bungie: BungieAccount, userId: string) {
                 client_secret: process.env.BUNGIE_CLIENT_SECRET!
             },
             bungieClient
-        ).catch(e => {
-            if (
-                // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-                e.response?.error_description === "SystemDisabled" ||
-                // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-                e.response?.error_description === "Error Response for Shard Relay."
-            ) {
-                errors.push("BungieAPIOffline")
+        ).catch((err: unknown) => {
+            if (err instanceof BungieServiceError && err.cause.error === "server_error") {
+                switch (err.cause.error_description) {
+                    case "SystemDisabled":
+                        errors.push("BungieAPIOffline")
+                        break
+                    case "RefreshTokenNotYetValid":
+                    case "AccessTokenHasExpired":
+                    case "AuthorizationCodeInvalid":
+                    case "AuthorizationRecordExpired":
+                    case "AuthorizationRecordRevoked":
+                    case "AuthorizationCodeStale":
+                        errors.push("ExpiredBungieRefreshToken")
+                        break
+                }
             } else {
-                console.error("Failed to refresh Bungie access token", e)
-                errors.push("AccessTokenError")
+                console.error("Unexpected error while refreshing Bungie auth", err)
             }
+            errors.push("BungieAccessTokenError")
             return null
         })
 

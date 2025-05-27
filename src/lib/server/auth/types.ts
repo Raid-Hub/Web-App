@@ -72,8 +72,8 @@ export type BungieAccount = {
 }
 
 export type AuthError =
+    | "BungieAccessTokenError"
     | "BungieAPIOffline"
-    | "AccessTokenError"
-    | "ExpiredRefreshTokenError"
+    | "ExpiredBungieRefreshToken"
     | "RaidHubAuthorizationError"
     | "PrismaError"

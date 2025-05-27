@@ -1,6 +1,6 @@
 import type { BungieNetResponse } from "bungie-net-core/models"
 
-abstract class BungieHTTPError extends Error {
+export abstract class BungieHTTPError extends Error {
     public readonly status: number
     public readonly path: string
 

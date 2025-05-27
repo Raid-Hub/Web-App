@@ -2,7 +2,7 @@
 
 import { type Session } from "next-auth"
 import { SessionProvider, signOut } from "next-auth/react"
-import { useEffect, useState, type ReactNode } from "react"
+import { useEffect, useRef, useState, type ReactNode } from "react"
 import { useSession } from "~/hooks/app/useSession"
 import { useBungieClient } from "./BungieClientProvider"
 
@@ -37,6 +37,7 @@ const TokenManager = ({ setNextRefetch }: { setNextRefetch: (milliseconds: numbe
     const [failedTokenRequests, setFailedTokenRequests] = useState(0)
     const bungieClient = useBungieClient()
     const session = useSession<false>()
+    const lastRefetch = useRef(0)
 
     if (failedTokenRequests >= 4) {
         setFailedTokenRequests(0)
@@ -44,44 +45,65 @@ const TokenManager = ({ setNextRefetch }: { setNextRefetch: (milliseconds: numbe
         bungieClient.clearToken()
     }
 
+    const isAttemptingToRefetchToken = failedTokenRequests < 4
+
     // every time the session is updated, we should set the refresh interval to the remaining time on the token
     useEffect(() => {
-        if (session.status === "unauthenticated") {
-            bungieClient.clearToken()
-            setNextRefetch(0)
-        } else if (!session.data) {
-            // loading, do nothing
-        } else if (session.data.errors.includes("BungieAPIOffline")) {
-            setNextRefetch(120_000)
-        } else if (session.data.errors.includes("AccessTokenError")) {
-            setNextRefetch(10_000)
-            setFailedTokenRequests(prev => prev + 1)
-        } else if (session.data.errors.includes("ExpiredRefreshTokenError")) {
-            bungieClient.clearToken()
-            void signOut()
-            setNextRefetch(0)
-        } else if (session.data.bungieAccessToken) {
-            setFailedTokenRequests(0)
-            const expires = new Date(session.data.bungieAccessToken.expires)
-            bungieClient.setToken({
-                value: session.data.bungieAccessToken.value,
-                expires: expires
-            })
+        switch (session.status) {
+            case "loading":
+                break
+            case "unauthenticated":
+                bungieClient.clearToken()
+                setNextRefetch(0)
+                break
+            case "authenticated":
+                if (session.data.errors.includes("ExpiredBungieRefreshToken")) {
+                    bungieClient.clearToken()
+                    setNextRefetch(0)
+                    void signOut()
+                } else if (session.data.errors.includes("BungieAPIOffline")) {
+                    setNextRefetch(120_000)
+                } else if (
+                    session.data.errors.includes("BungieAccessTokenError") &&
+                    isAttemptingToRefetchToken
+                ) {
+                    setFailedTokenRequests(prev => prev + 1)
+                    setNextRefetch(10_000)
+                } else if (session.data.bungieAccessToken) {
+                    setFailedTokenRequests(0)
+                    const expires = new Date(session.data.bungieAccessToken.expires)
+                    bungieClient.setToken({
+                        value: session.data.bungieAccessToken.value,
+                        expires: expires
+                    })
 
-            const timeRemainingOnBungie = expires.getTime() - Date.now()
-            if (session.data.raidHubAccessToken?.expires) {
-                const timeRemainingOnRaidHubToken =
-                    new Date(session.data.raidHubAccessToken.expires).getTime() - Date.now()
-                setNextRefetch(
-                    Math.max(Math.min(timeRemainingOnBungie, timeRemainingOnRaidHubToken), 1000)
-                )
-            } else {
-                setNextRefetch(Math.max(timeRemainingOnBungie, 1000))
-            }
+                    const timeRemainingOnBungie = expires.getTime() - Date.now()
+                    if (session.data.raidHubAccessToken?.expires) {
+                        const timeRemainingOnRaidHubToken =
+                            new Date(session.data.raidHubAccessToken.expires).getTime() - Date.now()
+                        setNextRefetch(
+                            Math.max(
+                                Math.min(timeRemainingOnBungie, timeRemainingOnRaidHubToken) -
+                                    30_000,
+                                1000
+                            )
+                        )
+                    } else {
+                        setNextRefetch(Math.max(timeRemainingOnBungie - 30_000, 1000))
+                    }
 
-            return bungieClient.onUnauthorized(session.update)
+                    return bungieClient.onUnauthorized(() => {
+                        const now = Date.now()
+                        if (now - lastRefetch.current < 60_000) {
+                            // If the last refetch was less than 60 seconds ago, don't attempt to refetch again
+                            return
+                        }
+                        lastRefetch.current = now
+                        void session.update()
+                    })
+                }
         }
-    }, [bungieClient, session, setNextRefetch])
+    }, [bungieClient, session, setNextRefetch, isAttemptingToRefetchToken, lastRefetch])
 
     return null
 }
