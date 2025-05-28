@@ -60,11 +60,13 @@ export default function RaidCard({
             return leaderboardEntry
         }
 
+        const elligibleActs = activities?.filter(a => !a.isBlacklisted && a.player.completed)
+
         const instance =
-            (isReprisedRaid
-                ? activities?.find(a => a.player.completed && isChallengeMode(a.versionId))
-                : undefined) ??
-            activities?.find(a => a.player.completed && (a.isContest || a.isWeekOne))
+            (isReprisedRaid &&
+                // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
+                elligibleActs?.find(a => isChallengeMode(a.versionId))) ||
+            elligibleActs?.find(a => a.isContest || a.isWeekOne)
         if (!instance) return null
 
         return {

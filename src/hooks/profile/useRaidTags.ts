@@ -43,16 +43,16 @@ export const useRaidTags = (activities: Collection<string, RaidHubInstance>) => 
             bestPossible: boolean
         }>()
         for (const { activity, weight } of sortedElligibleTags) {
-            const isElevatedDifficulty = weight % 2 === 1
+            const isElevatedDifficulty = !!(weight & Tier2Difficulty)
             const covers = isElevatedDifficulty
                 ? weight & ~bitfieldForElevatedDifficulty
                 : weight & ~bitfield
 
             if (covers) {
                 if (isElevatedDifficulty) {
-                    bitfieldForElevatedDifficulty = bitfieldForElevatedDifficulty | weight
+                    bitfieldForElevatedDifficulty |= weight
                 }
-                bitfield = bitfield | weight
+                bitfield |= weight
 
                 result.push({
                     activity,
@@ -66,76 +66,99 @@ export const useRaidTags = (activities: Collection<string, RaidHubInstance>) => 
     }, [activities, getWeight])
 }
 
+const Solo = 0b101010 // includes trio and duo
+const Flawless = 0b010100 // includes fresh
+const Duo = 0b001010 // includes trio
+const Fresh = 0b000100
+const Trio = 0b00010
+const Tier2Difficulty = 0b000001
+
 const useGetWeight = () => {
     const { elevatedDifficulties } = useRaidHubManifest()
 
     return useCallback(
         (activity: RaidHubInstance) => {
-            // non lowman 2 => 1 => 0
-            // trio => 2 => 1
-            // duo => 4 => 3
-            // solo => 8 => 7
-            const adjustedPlayerCount =
-                (1 << Math.max(0, 4 - Math.min(activity.playerCount, 6))) - 1
-            const isElevatedDifficulty = includedIn(elevatedDifficulties, activity.versionId)
-            /*
-        This is a bitfield to measure the weight of an activity. If its not flawless or a lowman, it has 0 weight.
-        From the right,
-        - bit 0 is for master/prestige.
-        - bit 1 for fresh
-        - bit 2 for flawless
-        - bit 3,4,5 for trio, duo, and solo respectively
-        */
-            // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
-            const fresh = activity.fresh || activity.flawless
-            const shouldConsider =
-                activity.completed && (activity.playerCount <= 3 || activity.flawless)
-            return shouldConsider
-                ? (adjustedPlayerCount << 3) +
-                      ((activity.flawless ? 1 : 0) << 2) +
-                      ((fresh ? 1 : 0) << 1) +
-                      +isElevatedDifficulty
-                : 0
+            if (
+                !activity.completed ||
+                (activity.playerCount > 3 && !activity.flawless) ||
+                activity.isBlacklisted
+            )
+                return 0
+
+            let bitfield = 0
+            switch (activity.playerCount) {
+                case 1:
+                    bitfield |= Solo
+                    break
+                case 2:
+                    bitfield |= Duo
+                    break
+                case 3:
+                    bitfield |= Trio
+                    break
+            }
+
+            if (activity.flawless) {
+                bitfield |= Flawless
+            }
+
+            if (activity.fresh) {
+                bitfield |= Fresh
+            }
+
+            if (includedIn(elevatedDifficulties, activity.versionId)) {
+                bitfield |= Tier2Difficulty
+            }
+
+            return bitfield
         },
         [elevatedDifficulties]
     )
 }
 
-function isIllegalTag(
-    { activityId }: { activityId: number; versionId: number },
-    weight: number
-): boolean {
+const soloTaniksFirst = new Date("2024-09-12T17:00:00Z")
+
+function isIllegalTag({ activityId, dateCompleted }: RaidHubInstance, weight: number): boolean {
     switch (activityId) {
+        case 14:
+            // trio fresh
+            return bitfieldMatches(weight, Trio | Fresh)
         case 13:
-            // solo crota
-            return bitfieldMatches(weight, 0b111000)
+            // any crota lowman cp, or solo fresh
+            return (
+                (bitfieldMatches(weight, Trio) && !bitfieldMatches(weight, Fresh)) ||
+                bitfieldMatches(weight, Solo | Fresh)
+            )
+        case 11:
+            // duo fresh kf or solo oryx
+            return bitfieldMatches(weight, Duo | Fresh) || bitfieldMatches(weight, Solo)
         case 10:
             // duo rhulk
-            return bitfieldMatches(weight, 0b011000)
+            return bitfieldMatches(weight, Duo)
         case 8:
-            // solo taniks
-            return bitfieldMatches(weight, 0b111000)
+            // solo taniks before first clear
+            return bitfieldMatches(weight, Solo) && new Date(dateCompleted) < soloTaniksFirst
         case 7:
             // duo fresh gos
-            return bitfieldMatches(weight, 0b011010)
+            return bitfieldMatches(weight, Duo | Fresh)
         case 6:
             // solo crown
-            return bitfieldMatches(weight, 0b111000)
+            return bitfieldMatches(weight, Solo)
         case 5:
             // duo flawless or solo scourge
-            return bitfieldMatches(weight, 0b111000) || bitfieldMatches(weight, 0b011100)
+            return bitfieldMatches(weight, Solo) || bitfieldMatches(weight, Duo | Flawless)
         case 4:
             // duo flawless wish
-            return bitfieldMatches(weight, 0b011100)
+            return bitfieldMatches(weight, Duo | Flawless)
         case 3:
             // any spire lowman
-            return bitfieldMatches(weight, 0b001000)
+            return bitfieldMatches(weight, Trio)
         case 2:
             // any fresh eater lowman
-            return bitfieldMatches(weight, 0b001010)
+            return bitfieldMatches(weight, Trio | Fresh)
         case 1:
             // any fresh levi lowman
-            return bitfieldMatches(weight, 0b001010)
+            return bitfieldMatches(weight, Trio | Fresh) || bitfieldMatches(weight, Solo)
         default:
             return false
     }
@@ -146,46 +169,61 @@ function isBestTag(
     weight: number
 ): boolean {
     switch (activityId) {
+        case 14:
+            // master flawless or duo master witness or solo witness
+            return (
+                bitfieldMatches(weight, Tier2Difficulty | Flawless) ||
+                bitfieldMatches(weight, Duo | Tier2Difficulty) ||
+                bitfieldMatches(weight, Solo)
+            )
         case 13:
-            // duo flawless or trio flawless master crota
-            return bitfieldMatches(weight, 0b011100) || bitfieldMatches(weight, 0b001101)
-
+            // duo flawless master crota
+            return bitfieldMatches(weight, Duo | Flawless | Tier2Difficulty)
         case 12:
             // solo flawless or duo flawless master ron
-            return bitfieldMatches(weight, 0b111100) || bitfieldMatches(weight, 0b011101)
+            return (
+                bitfieldMatches(weight, Solo | Flawless) ||
+                bitfieldMatches(weight, Duo | Flawless | Tier2Difficulty)
+            )
         case 11:
             // duo master oryx or trio flawless master
-            return bitfieldMatches(weight, 0b011001) || bitfieldMatches(weight, 0b001101)
+            return (
+                bitfieldMatches(weight, Duo | Tier2Difficulty) ||
+                bitfieldMatches(weight, Trio | Flawless | Tier2Difficulty)
+            )
         case 10:
             // trio flawless master vow
-            return bitfieldMatches(weight, 0b001101)
+            return bitfieldMatches(weight, Trio | Flawless | Tier2Difficulty)
         case 9:
             // solo atheon or duo flawless master vog
-            return bitfieldMatches(weight, 0b111000) || bitfieldMatches(weight, 0b011101)
+            return (
+                bitfieldMatches(weight, Solo) ||
+                bitfieldMatches(weight, Duo | Flawless | Tier2Difficulty)
+            )
         case 8:
-            // duo flawless dsc
-            return bitfieldMatches(weight, 0b011100)
+            // solo flawless dsc
+            return bitfieldMatches(weight, Solo | Flawless)
         case 7:
             // solo sanc or trio flawless gos
-            return bitfieldMatches(weight, 0b111000) || bitfieldMatches(weight, 0b001100)
+            return bitfieldMatches(weight, Solo) || bitfieldMatches(weight, Trio | Flawless)
         case 6:
             // duo flawless crown
-            return bitfieldMatches(weight, 0b011100)
+            return bitfieldMatches(weight, Duo | Flawless)
         case 5:
             // duo insurrection or trio flawless scourge
-            return bitfieldMatches(weight, 0b011000) || bitfieldMatches(weight, 0b001100)
+            return bitfieldMatches(weight, Duo) || bitfieldMatches(weight, Trio | Flawless)
         case 4:
             // solo queens or trio flawless wish
-            return bitfieldMatches(weight, 0b111000) || bitfieldMatches(weight, 0b001100)
+            return bitfieldMatches(weight, Solo) || bitfieldMatches(weight, Trio | Flawless)
         case 3:
             // flawless prestige :(
-            return bitfieldMatches(weight, 0b000101)
+            return bitfieldMatches(weight, Flawless | Tier2Difficulty)
         case 2:
             // solo argos
-            return bitfieldMatches(weight, 0b111000)
+            return bitfieldMatches(weight, Solo)
         case 1:
             // duo calus
-            return bitfieldMatches(weight, 0b011000)
+            return bitfieldMatches(weight, Duo)
         default:
             return false
     }
