@@ -1,6 +1,6 @@
 import styled from "styled-components"
-import { $media } from "~/app/layout/media"
 import { Container } from "~/components/layout/Container"
+import { $media } from "~/lib/media"
 
 export const Latest = styled(Container)<{
     $playerCount: number

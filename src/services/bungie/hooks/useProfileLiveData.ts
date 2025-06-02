@@ -2,7 +2,7 @@ import { useQuery, type UseQueryOptions } from "@tanstack/react-query"
 import { getProfile } from "bungie-net-core/endpoints/Destiny2"
 import { type BungieMembershipType } from "bungie-net-core/models"
 import { type DestinyProfileResponse } from "bungie-net-core/models/Destiny/Responses/DestinyProfileResponse"
-import { useBungieClient } from "~/app/layout/wrappers/session/BungieClientProvider"
+import { useBungieClient } from "~/components/providers/session/BungieClientProvider"
 
 type UseLiveProfileQueryData = DestinyProfileResponse<[204, 205, 305]>
 

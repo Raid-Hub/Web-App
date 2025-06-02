@@ -2,8 +2,8 @@
 
 import Link from "next/link"
 import { Fragment } from "react"
-import { Card } from "~/components/Card"
 import { Flex } from "~/components/layout/Flex"
+import { Card } from "~/shad/card"
 import { useSocialConnections } from "./useSocialConnections"
 
 export const UserCardSocials = () => {

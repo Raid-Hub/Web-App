@@ -12,10 +12,10 @@ import PreviousArrowSkip from "~/components/icons/PreviousArrowSkip"
 import ReloadArrow from "~/components/icons/ReloadArrow"
 import { Container } from "~/components/layout/Container"
 import { Flex } from "~/components/layout/Flex"
+import { useLocale } from "~/components/providers/LocaleManager"
 import { type ClanStatsColumns } from "~/services/raidhub/types"
 import { useClanStatsLeaderboard } from "~/services/raidhub/useClanStatsLeaderboard"
 import { formattedNumber, secondsToYDHMS } from "~/util/presentation/formatting"
-import { useLocale } from "../layout/wrappers/LocaleManager"
 
 type THParams = { title: string; setSortColumn: () => void; isActive: boolean }
 

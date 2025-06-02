@@ -1,5 +1,5 @@
 import styled from "styled-components"
-import { $media } from "~/app/layout/media"
+import { $media } from "~/lib/media"
 
 export const Table = styled.table<{
     $padding?: number

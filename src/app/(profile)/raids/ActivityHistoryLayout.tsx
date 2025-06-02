@@ -2,9 +2,9 @@
 
 import { type Collection } from "@discordjs/collection"
 import { useState } from "react"
-import { Card } from "~/components/Card"
 import { Flex } from "~/components/layout/Flex"
 import { type RaidHubInstanceForPlayer } from "~/services/raidhub/types"
+import { Card } from "~/shad/card"
 import { ActivityHistoryList } from "./ActivityHistoryList"
 
 export const ActivityHistoryLayout = ({

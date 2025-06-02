@@ -5,7 +5,7 @@ import { TooltipContainer, TooltipData } from "~/components/Tooltip"
 import ExternalLink from "~/components/icons/ExternalLink"
 import { Flex } from "~/components/layout/Flex"
 import { usePageProps } from "~/components/layout/PageWrapper"
-import { $media } from "../layout/media"
+import { $media } from "../../lib/media"
 import { type ProfileProps } from "./types"
 
 const memTypeToString: Record<number, string> = {

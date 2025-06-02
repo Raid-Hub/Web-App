@@ -9,7 +9,7 @@ import { useSearch } from "~/hooks/useSearch"
 import { useClickOutside } from "~/hooks/util/useClickOutside"
 import { useKeyPress } from "~/hooks/util/useKeyPress"
 import { usePageChange } from "~/hooks/util/usePageChange"
-import { $media } from "../media"
+import { $media } from "~/lib/media"
 
 // TODO: animate the modal
 export const SearchModal = () => {

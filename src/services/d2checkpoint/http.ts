@@ -26,10 +26,14 @@ export const getCheckpoints = async () => {
         })
 
         return {
-            alert: {
-                active: response.alert.alertActive,
-                message: response.alert.alertText
-            },
+            alert: !response.alert.alertText.includes("This API is deprecated")
+                ? {
+                      active: response.alert.alertActive,
+                      message: response.alert.alertText
+                  }
+                : {
+                      active: false
+                  },
             updatedAt: new Date(response.lastUpdated * 1000),
             checkpoints:
                 response.official?.map(checkpoint => ({

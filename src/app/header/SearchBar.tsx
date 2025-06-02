@@ -6,11 +6,11 @@ import { Loader } from "~/components/Loader"
 import { SearchInput } from "~/components/form/SearchInput"
 import Search from "~/components/icons/Search"
 import { Flex } from "~/components/layout/Flex"
+import { useLocale } from "~/components/providers/LocaleManager"
 import { useSearch } from "~/hooks/useSearch"
 import { useClickOutside } from "~/hooks/util/useClickOutside"
 import { usePageChange } from "~/hooks/util/usePageChange"
-import { $media } from "../media"
-import { useLocale } from "../wrappers/LocaleManager"
+import { $media } from "~/lib/media"
 import { HeaderSearchResults } from "./HeaderSearchResults"
 
 const HIDE_AFTER_CLICK = 100

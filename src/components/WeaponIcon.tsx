@@ -2,7 +2,7 @@
 
 import Image from "next/image"
 import styled from "styled-components"
-import { $media } from "~/app/layout/media"
+import { $media } from "~/lib/media"
 import { bungieIconUrl, bungieItemWatermarkUrl } from "~/util/destiny"
 import { Container } from "./layout/Container"
 

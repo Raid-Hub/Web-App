@@ -13,8 +13,8 @@ import { Flex } from "~/components/layout/Flex"
 import { useInterval } from "~/hooks/util/useInterval"
 import { useLocalStorage } from "~/hooks/util/useLocalStorage"
 import { G2GEmblems } from "~/lib/g2g-emblems"
+import { $media } from "~/lib/media"
 import { o } from "~/util/o"
-import { $media } from "../media"
 
 const allG2GEmblems = o.entries(G2GEmblems)
 

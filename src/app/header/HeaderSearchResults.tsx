@@ -3,8 +3,8 @@
 import styled from "styled-components"
 import { SinglePlayerSearchResult } from "~/components/SinglePlayerSearchResult"
 import { Grid } from "~/components/layout/Grid"
+import { $media } from "~/lib/media"
 import { type RaidHubPlayerInfo } from "~/services/raidhub/types"
-import { $media } from "../media"
 
 export const HeaderSearchResults = (props: {
     results: RaidHubPlayerInfo[]

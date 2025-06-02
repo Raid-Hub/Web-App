@@ -1,14 +1,14 @@
 "use client"
 
 import Markdown from "react-markdown"
-import { useRaidHubManifest } from "~/app/layout/wrappers/RaidHubManifestManager"
 import { useDialog } from "~/components/Dialog"
 import { Panel } from "~/components/Panel"
-import DiscordIcon from "~/components/icons/DiscordIcon"
+import { DiscordIconOld } from "~/components/icons/DiscordIcon"
 import RulesIcon from "~/components/icons/Rules"
 import SpeedrunIcon from "~/components/icons/SpeedrunIcon"
 import UploadIcon from "~/components/icons/Upload"
 import { Flex } from "~/components/layout/Flex"
+import { useRaidHubManifest } from "~/components/providers/RaidHubManifestManager"
 import { SpeedrunVariables, type RTABoardCategory } from "~/lib/speedrun/speedrun-com-mappings"
 import { useSpeedrunComRules } from "~/services/speedrun-com/useSpeedrunComRules"
 import { includedIn } from "~/util/helpers"
@@ -68,7 +68,7 @@ export const SpeedrunComControls = (props: {
                     )}
                     <TooltipWrapper id="src-discord" title="Speedrun Community Discord">
                         <ExtLink href="https://discord.gg/d2speedrun">
-                            <DiscordIcon sx={25} color="white" />
+                            <DiscordIconOld sx={25} color="white" />
                         </ExtLink>
                     </TooltipWrapper>
                 </Flex>

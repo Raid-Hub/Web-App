@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query"
 import { getLinkedProfiles } from "bungie-net-core/endpoints/Destiny2"
 import { type DestinyLinkedProfilesResponse } from "bungie-net-core/models"
-import { useBungieClient } from "~/app/layout/wrappers/session/BungieClientProvider"
+import { useBungieClient } from "~/components/providers/session/BungieClientProvider"
 
 export const useLinkedProfiles = <T = DestinyLinkedProfilesResponse>(
     params: { membershipId: string },

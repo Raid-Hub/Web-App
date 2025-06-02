@@ -1,9 +1,9 @@
+import { HomeQuickLinks } from "~/components/home/HomeQuickLinks"
 import { PageWrapper } from "~/components/layout/PageWrapper"
 import { baseMetadata } from "~/lib/metadata"
 import { prefetchManifest } from "~/services/raidhub/prefetchRaidHubManifest"
 import { Cards } from "./HomeCards"
 import { HomeLogo } from "./HomeLogo"
-import { HomeToolButtons } from "./HomeToolButtons"
 import { HomeSearchBar } from "./search/HomeSearchBar"
 
 export const revalidate = 180 // static revalidation (5 minutes in seconds)
@@ -25,7 +25,7 @@ export default async function Page() {
         <PageWrapper>
             <HomeLogo />
             <HomeSearchBar />
-            <HomeToolButtons />
+            <HomeQuickLinks />
             <Cards />
         </PageWrapper>
     )

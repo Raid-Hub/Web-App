@@ -2,13 +2,13 @@
 
 import Link from "next/link"
 import styled, { css } from "styled-components"
-import { $media } from "~/app/layout/media"
 import { BackgroundImage } from "~/components/BackgroundImage"
 import { type CloudflareImageId } from "~/components/CloudflareImage"
 import { Panel } from "~/components/Panel"
 import { TooltipContainer, TooltipData } from "~/components/Tooltip"
 import { Flex } from "~/components/layout/Flex"
 import { H4 } from "~/components/typography/H4"
+import { $media } from "~/lib/media"
 
 export const Splash = (props: {
     title: string

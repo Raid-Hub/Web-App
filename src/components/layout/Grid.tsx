@@ -1,7 +1,7 @@
 "use client"
 
 import styled, { css } from "styled-components"
-import { $media } from "~/app/layout/media"
+import { $media } from "~/lib/media"
 
 export const Grid = styled.div.attrs<{
     $minCardWidth?: number

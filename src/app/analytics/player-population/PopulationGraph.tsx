@@ -10,9 +10,9 @@ import {
     type TooltipProps
 } from "recharts"
 import styled from "styled-components"
-import { useLocale } from "~/app/layout/wrappers/LocaleManager"
-import { useRaidHubManifest } from "~/app/layout/wrappers/RaidHubManifestManager"
 import { Container } from "~/components/layout/Container"
+import { useLocale } from "~/components/providers/LocaleManager"
+import { useRaidHubManifest } from "~/components/providers/RaidHubManifestManager"
 import { type RaidHubMetricsPopulationRollingDayResponse } from "~/services/raidhub/types"
 import { formattedNumber } from "~/util/presentation/formatting"
 

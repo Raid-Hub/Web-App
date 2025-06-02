@@ -1,7 +1,7 @@
 import { useQueries, type UseQueryOptions } from "@tanstack/react-query"
 import { getMembersOfGroup } from "bungie-net-core/endpoints/GroupV2"
 import { type SearchResultOfGroupMember } from "bungie-net-core/models"
-import { useBungieClient } from "~/app/layout/wrappers/session/BungieClientProvider"
+import { useBungieClient } from "~/components/providers/session/BungieClientProvider"
 
 type QueryOptions<T> = UseQueryOptions<SearchResultOfGroupMember, Error, T>
 

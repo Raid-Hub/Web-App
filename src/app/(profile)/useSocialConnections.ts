@@ -1,6 +1,6 @@
 import { useMemo } from "react"
 import { type SVGWrapperProps } from "~/components/SVG"
-import DiscordIcon from "~/components/icons/DiscordIcon"
+import { DiscordIconOld } from "~/components/icons/DiscordIcon"
 import SpeedrunIcon from "~/components/icons/SpeedrunIcon"
 import TwitchIcon from "~/components/icons/TwitchIcon"
 import TwitterIcon from "~/components/icons/TwitterIcon"
@@ -43,7 +43,7 @@ export const useSocialConnections = () => {
         if (discord?.displayName) {
             socials.push({
                 id: Socials.Discord,
-                Icon: DiscordIcon,
+                Icon: DiscordIconOld,
                 url: discord.url,
                 displayName: discord.displayName
             })

@@ -4,8 +4,8 @@ import { LazyMotion } from "framer-motion"
 import { useRouter, useServerInsertedHTML } from "next/navigation"
 import { useEffect, useState, type ReactNode } from "react"
 import { ServerStyleSheet, StyleSheetManager, ThemeProvider } from "styled-components"
-import "../polyfills"
-import { theme } from "../theme"
+import "~/lib/polyfills"
+import { theme } from "~/lib/theme"
 
 // General manager for client-side tools
 export const ClientComponentManager = (props: { children: ReactNode }) => {

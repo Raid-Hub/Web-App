@@ -1,22 +1,25 @@
 "use client"
 
-import { createContext, forwardRef, useContext, type ForwardedRef, type ReactNode } from "react"
-import styled from "styled-components"
-import { $media } from "~/app/layout/media"
+import { createContext, forwardRef, useContext, type ReactNode } from "react"
+import { cn } from "~/lib/tw"
 
 const PropsContext = createContext<object | null>(null)
 
 export const PageWrapper = forwardRef<
-    HTMLElement,
+    HTMLDivElement,
     {
         children: ReactNode
+        className?: string
         pageProps?: object
     } & PageWrapperStyleProps
->(({ children, pageProps, ...props }, ref: ForwardedRef<HTMLElement>) => (
+>(({ children, pageProps, className, ...props }, ref) => (
     <PropsContext.Provider value={pageProps ?? {}}>
-        <PageWrapperStyled ref={ref} {...props}>
+        <div
+            ref={ref}
+            {...props}
+            className={cn("mx-auto mt-2 mb-6 w-[95%] lg:w-[90%] xl:w-[85%]", className)}>
             {children}
-        </PageWrapperStyled>
+        </div>
     </PropsContext.Provider>
 ))
 PageWrapper.displayName = "PageWrapper"
@@ -34,23 +37,4 @@ export const usePageProps = <T extends object>() => {
 }
 type PageWrapperStyleProps = {
     $maxWidth?: number
-}
-const PageWrapperStyled = styled.main<PageWrapperStyleProps>`
-    margin: 0 auto;
-    margin-top: 0.5em;
-    margin-bottom: 1.5em;
-
-    ${props => $media.max.desktop`
-        width: min(${props.$maxWidth}px, 85%);
-    `}
-    ${props => $media.max.laptop`
-        width: min(${props.$maxWidth}px, 90%);
-    `}
-    ${props => $media.max.tablet`
-        width: min(${props.$maxWidth}px, 95%);
-    `}
-`
-
-PageWrapperStyled.defaultProps = {
-    $maxWidth: 9999
 }

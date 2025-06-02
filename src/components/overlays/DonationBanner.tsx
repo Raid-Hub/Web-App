@@ -7,7 +7,7 @@ import { useEffect, useMemo, useState } from "react"
 import styled from "styled-components"
 import { Flex } from "~/components/layout/Flex"
 import { useLocalStorage } from "~/hooks/util/useLocalStorage"
-import { $media } from "../media"
+import { $media } from "~/lib/media"
 
 export const DonationBanner = () => {
     const [isMounted, setIsMounted] = useState(false)

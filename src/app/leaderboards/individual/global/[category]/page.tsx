@@ -1,4 +1,5 @@
 import { type Metadata } from "next"
+import { notFound } from "next/navigation"
 import { baseMetadata } from "~/lib/metadata"
 import { type PathParamsForLeaderboardURL } from "~/services/raidhub/types"
 import { Leaderboard } from "../../../Leaderboard"
@@ -10,30 +11,37 @@ export const revalidate = 900
 export const dynamic = "force-static"
 export const fetchCache = "default-no-store"
 
-const getCategoryName = (category: DynamicParams["params"]["category"]) => {
+const getCategoryInfo = (
+    category: DynamicParams["params"]["category"]
+): [
+    string,
+    PathParamsForLeaderboardURL<"/leaderboard/individual/global/{category}">["category"]
+] => {
     switch (category) {
         case "clears":
-            return "Clears"
-        case "freshClears":
-            return "Full Clears"
+            return ["Clears", "clears"]
+        case "full-clears":
+            return ["Full Clears", "freshClears"]
         case "sherpas":
-            return "Sherpas"
+            return ["Sherpas", "sherpas"]
         case "speedrun":
-            return "Speedrun"
-        case "powerRankings":
-            return "World First Race Power Rankings"
+            return ["Speedrun", "speedrun"]
+        case "contest-power-rankings":
+            return ["Contest Power Rankings", "powerRankings"]
         default:
-            return "Unknown Category"
+            notFound()
     }
 }
 
 type DynamicParams = {
-    params: PathParamsForLeaderboardURL<"/leaderboard/individual/global/{category}">
+    params: {
+        category: "clears" | "full-clears" | "sherpas" | "speedrun" | "contest-power-rankings"
+    }
     searchParams: Record<string, string>
 }
 
 export async function generateMetadata({ params }: DynamicParams): Promise<Metadata> {
-    const categoryName = getCategoryName(params.category)
+    const [categoryName] = getCategoryInfo(params.category)
     const title = `${categoryName} Leaderboards`
     const description = `View the ${categoryName.toLowerCase()} global leaderboard`
 
@@ -52,7 +60,11 @@ export async function generateMetadata({ params }: DynamicParams): Promise<Metad
 const ENTRIES_PER_PAGE = 50
 
 export default async function Page({ params, searchParams }: DynamicParams) {
-    const categoryName = getCategoryName(params.category)
+    const [categoryName, category] = getCategoryInfo(params.category)
+
+    const apiParams = {
+        category
+    }
 
     return (
         <Leaderboard
@@ -61,7 +73,7 @@ export default async function Page({ params, searchParams }: DynamicParams) {
                 layout: "individual",
                 queryKey: ["raidhub", "leaderboard", "global", params.category],
                 apiUrl: "/leaderboard/individual/global/{category}",
-                params
+                params: apiParams
             }}
             hasSearch
             hasPages
@@ -78,7 +90,7 @@ export default async function Page({ params, searchParams }: DynamicParams) {
                     page={searchParams.page ?? "1"}
                     entriesPerPage={ENTRIES_PER_PAGE}
                     apiUrl="/leaderboard/individual/global/{category}"
-                    params={params}
+                    params={apiParams}
                 />
             }
         />

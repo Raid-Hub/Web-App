@@ -1,10 +1,10 @@
 "use client"
 
 import { useMemo } from "react"
-import { useRaidHubManifest } from "~/app/layout/wrappers/RaidHubManifestManager"
 import { Container } from "~/components/layout/Container"
 import { Flex } from "~/components/layout/Flex"
 import { usePageProps } from "~/components/layout/PageWrapper"
+import { useRaidHubManifest } from "~/components/providers/RaidHubManifestManager"
 import { H4 } from "~/components/typography/H4"
 import { useProfile } from "~/services/bungie/hooks"
 import type { ProfileProps } from "../../types"

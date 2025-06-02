@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query"
 import { getGroup } from "bungie-net-core/endpoints/GroupV2"
 import { type GroupResponse } from "bungie-net-core/models"
-import { useBungieClient } from "~/app/layout/wrappers/session/BungieClientProvider"
+import { useBungieClient } from "~/components/providers/session/BungieClientProvider"
 
 export const useClan = (
     params: { groupId: string },

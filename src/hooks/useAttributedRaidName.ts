@@ -1,5 +1,5 @@
 import { useMemo } from "react"
-import { useRaidHubManifest } from "~/app/layout/wrappers/RaidHubManifestManager"
+import { useRaidHubManifest } from "~/components/providers/RaidHubManifestManager"
 import { Tag } from "~/models/tag"
 
 export const useAttributedRaidName = (

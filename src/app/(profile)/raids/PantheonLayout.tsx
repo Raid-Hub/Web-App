@@ -1,8 +1,8 @@
 import { Collection } from "@discordjs/collection"
 import { useMemo } from "react"
-import { useRaidHubManifest } from "~/app/layout/wrappers/RaidHubManifestManager"
 import RaidCard from "~/components/__deprecated__/profile/raids/RaidCard"
 import { Grid } from "~/components/layout/Grid"
+import { useRaidHubManifest } from "~/components/providers/RaidHubManifestManager"
 import { type RaidHubInstanceForPlayer } from "~/services/raidhub/types"
 import { RaidCardContext } from "./RaidCardContext"
 

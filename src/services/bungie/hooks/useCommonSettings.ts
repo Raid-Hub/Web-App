@@ -1,7 +1,7 @@
 import { useQuery, type UseQueryOptions } from "@tanstack/react-query"
 import { getCommonSettings } from "bungie-net-core/endpoints/Core"
 import { type CoreSettingsConfiguration } from "bungie-net-core/models"
-import { useBungieClient } from "~/app/layout/wrappers/session/BungieClientProvider"
+import { useBungieClient } from "~/components/providers/session/BungieClientProvider"
 
 export const useCommonSettings = <T = CoreSettingsConfiguration>(
     opts?: Omit<
