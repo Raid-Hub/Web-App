@@ -1,8 +1,8 @@
 "use client"
 
 import { useRaidHubManifest } from "~/app/layout/wrappers/RaidHubManifestManager"
-import { getRaidSplash } from "~/data/activity-images"
-import { SpeedrunVariables, type RTABoardCategory } from "~/data/speedrun-com-mappings"
+import { getRaidSplash } from "~/lib/activity-images"
+import { SpeedrunVariables, type RTABoardCategory } from "~/lib/speedrun/speedrun-com-mappings"
 import { Splash } from "../../../../LeaderboardSplashComponents"
 
 export const SpeedrunComBanner = (props: {

@@ -1,8 +1,8 @@
 "use client"
 
 import { useRaidHubManifest } from "~/app/layout/wrappers/RaidHubManifestManager"
-import { getRaidSplash } from "~/data/activity-images"
-import { SpeedrunVariables } from "~/data/speedrun-com-mappings"
+import { getRaidSplash } from "~/lib/activity-images"
+import { SpeedrunVariables } from "~/lib/speedrun/speedrun-com-mappings"
 import { o } from "~/util/o"
 import { HomeCardGeneric } from "./HomeCardGeneric"
 import { HomeCardContentSection } from "./content/HomeCardContentSection"
@@ -56,9 +56,9 @@ export const HomeCardRaid = ({ raidId }: { raidId: number }) => {
                 </HomeCardContentSection>
             )}
             <HomeCardContentSection sectionTitle="Speedrun Leaderboards">
-                {SpeedrunVariables[raidId]?.variable ? (
+                {SpeedrunVariables[raidUrlPath]?.variable ? (
                     o.map(
-                        SpeedrunVariables[raidId].variable!.values,
+                        SpeedrunVariables[raidUrlPath].variable!.values,
                         (type, data) =>
                             data && (
                                 <HomeCardContentSectionItem

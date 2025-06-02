@@ -8,9 +8,9 @@ import { useLocale } from "~/app/layout/wrappers/LocaleManager"
 import { useRaidHubManifest } from "~/app/layout/wrappers/RaidHubManifestManager"
 import { CloudflareImage } from "~/components/CloudflareImage"
 import { Loading } from "~/components/Loading"
-import { getRaidSplash } from "~/data/activity-images"
 import { useRaidTags } from "~/hooks/profile/useRaidTags"
 import { useTimeout } from "~/hooks/util/useTimeout"
+import { getRaidSplash } from "~/lib/activity-images"
 import {
     type RaidHubInstanceForPlayer,
     type RaidHubWorldFirstEntry

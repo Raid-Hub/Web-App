@@ -1,6 +1,6 @@
 import { type Metadata } from "next"
 import { LeaderboardSSR } from "~/app/leaderboards/LeaderboardSSR"
-import { getRaidSplash } from "~/data/activity-images"
+import { getRaidSplash } from "~/lib/activity-images"
 import { baseMetadata } from "~/lib/metadata"
 import { prefetchManifest } from "~/services/raidhub/prefetchRaidHubManifest"
 import { type PathParamsForLeaderboardURL } from "~/services/raidhub/types"

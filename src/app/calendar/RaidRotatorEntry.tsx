@@ -8,7 +8,7 @@ import { useRaidHubManifest } from "~/app/layout/wrappers/RaidHubManifestManager
 import { BackgroundImage } from "~/components/BackgroundImage"
 import { Flex } from "~/components/layout/Flex"
 import { H4 } from "~/components/typography/H4"
-import { getRaidSplash } from "~/data/activity-images"
+import { getRaidSplash } from "~/lib/activity-images"
 import { type RaidHubActivityDefinition } from "~/services/raidhub/types"
 import { RaidActivity } from "./RaidActivity"
 

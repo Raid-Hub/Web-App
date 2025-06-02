@@ -2,7 +2,7 @@
 import { notFound } from "next/navigation"
 import { ImageResponse } from "next/og"
 import { cloudflareImageLoader } from "~/components/CloudflareImage"
-import { getRaidSplash } from "~/data/activity-images"
+import { getRaidSplash } from "~/lib/activity-images"
 import { getMetaData, prefetchActivity } from "~/lib/pgcr/server"
 import { type PGCRPageProps } from "~/lib/pgcr/types"
 import { baseUrl } from "~/lib/server/utils"

@@ -2,7 +2,7 @@ import {
     SpeedrunVariables,
     destiny2GameId,
     type RTABoardCategory
-} from "~/data/speedrun-com-mappings"
+} from "~/lib/speedrun/speedrun-com-mappings"
 import type { SpeedrunLeaderboardResponse } from "~/types/speedrun-com"
 import { baseUrl } from "./baseUrl"
 

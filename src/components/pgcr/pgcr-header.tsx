@@ -1,5 +1,5 @@
 import { CheckCircle, Clock, Flag, TriangleAlert, Users, XCircle } from "lucide-react"
-import { R2RaidSplash, getRaidSplash } from "~/data/activity-images"
+import { R2RaidSplash, getRaidSplash } from "~/lib/activity-images"
 import { cn } from "~/lib/tw"
 import { type RaidHubInstanceExtended } from "~/services/raidhub/types"
 import { Badge } from "~/shad/badge"

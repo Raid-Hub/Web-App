@@ -1,7 +1,7 @@
 import { type Metadata } from "next"
 import { notFound } from "next/navigation"
 import { LeaderboardSSR } from "~/app/leaderboards/LeaderboardSSR"
-import { getRaidSplash } from "~/data/activity-images"
+import { getRaidSplash } from "~/lib/activity-images"
 import { baseMetadata } from "~/lib/metadata"
 import { prefetchManifest } from "~/services/raidhub/prefetchRaidHubManifest"
 import { type RaidHubManifestResponse } from "~/services/raidhub/types"

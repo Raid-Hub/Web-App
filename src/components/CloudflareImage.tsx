@@ -1,7 +1,7 @@
 import Image, { type ImageLoader } from "next/image"
 import { type ComponentPropsWithoutRef } from "react"
-import { R2RaidSplash } from "~/data/activity-images"
-import { G2GEmblems } from "~/data/g2g-emblems"
+import { R2RaidSplash } from "~/lib/activity-images"
+import { G2GEmblems } from "~/lib/g2g-emblems"
 
 const cloudflareVariants = [
     { name: "tiny", w: 320, h: 180 },

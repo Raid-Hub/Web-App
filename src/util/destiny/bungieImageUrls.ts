@@ -5,7 +5,7 @@ import {
     defaultEmblem,
     defaultIcon,
     defaultProfileIcon
-} from "~/data/bungie-images"
+} from "~/lib/bungie-images"
 
 const baseBungieUrl = "https://www.bungie.net"
 
