@@ -30,6 +30,11 @@ type ManifestContextData = {
     getVersionsForActivity(activityId: number): readonly RaidHubVersionDefinition[]
     getActivityDefinition(activityId: number): RaidHubActivityDefinition | null
     isChallengeMode(versionId: number): boolean
+    rankingTiers: readonly {
+        readonly minPercentile: number
+        readonly tierName: string
+        readonly tierColor: string
+    }[]
 }
 
 const ManifestContext = createContext<ManifestContextData | undefined>(undefined)
@@ -93,7 +98,8 @@ export function RaidHubManifestManager(props: {
             },
             isChallengeMode(versionId) {
                 return data.versionDefinitions[versionId]?.isChallengeMode ?? false
-            }
+            },
+            rankingTiers: data.rankingTiers
         }
     }, [data])
 

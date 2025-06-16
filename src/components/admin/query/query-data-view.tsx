@@ -3,7 +3,7 @@
 import { type UseMutationResult } from "@tanstack/react-query"
 import Link from "next/link"
 import styled from "styled-components"
-import { Panel } from "~/components/Panel"
+import { Panel } from "~/components/__deprecated__/Panel"
 import { RaidHubError } from "~/services/raidhub/RaidHubError"
 import {
     type RaidHubAdminQueryBody,

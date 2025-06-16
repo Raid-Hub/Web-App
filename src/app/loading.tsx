@@ -1,4 +1,4 @@
-import { PageWrapper } from "~/components/layout/PageWrapper"
+import { PageWrapper } from "~/components/PageWrapper"
 
 // TODO
 export default function LoadingSuspense() {

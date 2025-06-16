@@ -5,7 +5,7 @@ import { AnimatePresence, m } from "framer-motion"
 import Link from "next/link"
 import { useEffect, useMemo, useState } from "react"
 import styled from "styled-components"
-import { Flex } from "~/components/layout/Flex"
+import { Flex } from "~/components/__deprecated__/layout/Flex"
 import { useLocalStorage } from "~/hooks/util/useLocalStorage"
 import { $media } from "~/lib/media"
 

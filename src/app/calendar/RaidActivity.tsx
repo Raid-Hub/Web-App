@@ -2,7 +2,7 @@
 
 import type { DestinyPublicMilestoneChallengeActivity } from "bungie-net-core/models"
 import styled from "styled-components"
-import { Flex } from "~/components/layout/Flex"
+import { Flex } from "~/components/__deprecated__/layout/Flex"
 import { RaidActivityModifier } from "./RaidActivityModifier"
 
 export const RaidActivity = (props: {

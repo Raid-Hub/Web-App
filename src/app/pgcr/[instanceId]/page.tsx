@@ -1,10 +1,10 @@
 import type { Metadata } from "next"
 
-import { PageWrapper } from "~/components/layout/PageWrapper"
+import { PageWrapper } from "~/components/PageWrapper"
+import PGCR from "~/components/pgcr/pgcr-view"
 import { baseMetadata } from "~/lib/metadata"
 import { assertValidPath, getMetaData, prefetchActivity } from "~/lib/pgcr/server"
 import { type PGCRPageProps } from "~/lib/pgcr/types"
-import PGCR from "../../../components/pgcr/pgcr-view"
 
 export const revalidate = 0
 

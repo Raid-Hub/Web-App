@@ -1,6 +1,6 @@
 import styled from "styled-components"
 import { WeaponIcon } from "~/components/WeaponIcon"
-import { Flex } from "~/components/layout/Flex"
+import { Flex } from "~/components/__deprecated__/layout/Flex"
 import { useLocale } from "~/components/providers/LocaleManager"
 import { useItemDefinition } from "~/hooks/dexie"
 import { type RaidHubWeaponMetric } from "~/services/raidhub/types"

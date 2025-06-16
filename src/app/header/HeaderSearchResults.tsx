@@ -2,7 +2,7 @@
 
 import styled from "styled-components"
 import { SinglePlayerSearchResult } from "~/components/SinglePlayerSearchResult"
-import { Grid } from "~/components/layout/Grid"
+import { Grid } from "~/components/__deprecated__/layout/Grid"
 import { $media } from "~/lib/media"
 import { type RaidHubPlayerInfo } from "~/services/raidhub/types"
 

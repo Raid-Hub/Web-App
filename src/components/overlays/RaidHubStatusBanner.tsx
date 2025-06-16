@@ -3,7 +3,7 @@
 import Link from "next/link"
 import { useMemo } from "react"
 import styled from "styled-components"
-import { Container } from "~/components/layout/Container"
+import { Container } from "~/components/__deprecated__/layout/Container"
 import { useLocale } from "~/components/providers/LocaleManager"
 import { useRaidHubStatus } from "~/services/raidhub/useRaidHubStatus"
 import { round } from "~/util/math"

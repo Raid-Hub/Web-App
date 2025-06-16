@@ -1,6 +1,6 @@
 "use client"
 
-import { usePageProps } from "~/components/layout/PageWrapper"
+import { usePageProps } from "~/components/PageWrapper"
 import { usePage } from "~/hooks/util/usePage"
 import { type RaidHubLeaderboardURL } from "~/services/raidhub/types"
 import { type PageProps } from "./Leaderboard"

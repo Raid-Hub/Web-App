@@ -75,21 +75,4 @@ export const SVG = forwardRef<SVGSVGElement, AtLeast<SVGWrapperProps, "viewBox">
 
 SVG.displayName = "SVG"
 
-export const DeepFilledSvg = styled(SVG)<{
-    $fill?: string
-    $hoverFill?: string
-}>`
-    ${({ $fill, $hoverFill }) => css`
-        & *:not([data-deep-filled="false"]) {
-            fill: ${$fill};
-        }
-
-        &:hover {
-            & *:not([data-deep-filled="false"]) {
-                fill: ${$hoverFill};
-            }
-        }
-    `}
-`
-
 export type SVGProps = Omit<ComponentPropsWithoutRef<"svg">, "viewBox">

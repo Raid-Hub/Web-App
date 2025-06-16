@@ -2,7 +2,7 @@
 
 import { useCallback, useRef, useState, type ReactNode } from "react"
 import styled from "styled-components"
-import { Flex } from "~/components/layout/Flex"
+import { Flex } from "~/components/__deprecated__/layout/Flex"
 import { useClickOutside } from "~/hooks/util/useClickOutside"
 import { usePageChange } from "~/hooks/util/usePageChange"
 import { AccountDropdown } from "./AccountDropdown"

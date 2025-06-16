@@ -3,8 +3,8 @@
 import { m, type Variants } from "framer-motion"
 import { signIn, signOut } from "next-auth/react"
 import styled from "styled-components"
-import { BackdropBlur } from "~/components/BackdropBlur"
-import { Flex } from "~/components/layout/Flex"
+import { BackdropBlur } from "~/components/__deprecated__/BackdropBlur"
+import { Flex } from "~/components/__deprecated__/layout/Flex"
 import { useSession } from "~/hooks/app/useSession"
 import { DropdownButton, DropdownLink } from "./DropdownItem"
 

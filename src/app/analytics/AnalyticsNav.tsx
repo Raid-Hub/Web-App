@@ -3,7 +3,7 @@
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import styled, { css } from "styled-components"
-import { Flex } from "~/components/layout/Flex"
+import { Flex } from "~/components/__deprecated__/layout/Flex"
 
 const StyledAnalyticsNav = styled(Flex).attrs({
     $padding: 0.5,

@@ -14,6 +14,7 @@ import { BungieClientProvider } from "~/components/providers/session/BungieClien
 import { SessionManager } from "~/components/providers/session/ServerSessionManager"
 import { prefetchManifest } from "~/services/raidhub/prefetchRaidHubManifest"
 import { Toaster } from "~/shad/sonner"
+import { TooltipProvider } from "~/shad/tooltip"
 import Footer from "./footer"
 import "./global.css"
 import { Header } from "./header/Header"
@@ -47,33 +48,35 @@ export default async function RootLayout(params: { children: ReactNode }) {
             <body>
                 <QueryManager>
                     <BungieClientProvider>
-                        <SessionManager>
-                            <LocaleManager>
-                                <ClientComponentManager>
-                                    <DestinyManifestManager>
-                                        <RaidHubManifestManager serverManifest={manifest}>
-                                            <Header>
-                                                <NextTopLoader
-                                                    showSpinner={false}
-                                                    speed={700}
-                                                    height={3}
-                                                    color={"orange"}
-                                                />
-                                                <HeaderContent />
-                                            </Header>
-                                            <DonationBanner />
-                                            {/* <G2GBanner /> */}
-                                            <DestinyServiceStatusBanner />
-                                            <RaidHubStatusBanner />
-                                            <SearchModal />
-                                            {params.children}
-                                            <Footer />
-                                            <Toaster />
-                                        </RaidHubManifestManager>
-                                    </DestinyManifestManager>
-                                </ClientComponentManager>
-                            </LocaleManager>
-                        </SessionManager>
+                        <TooltipProvider>
+                            <SessionManager>
+                                <LocaleManager>
+                                    <ClientComponentManager>
+                                        <DestinyManifestManager>
+                                            <RaidHubManifestManager serverManifest={manifest}>
+                                                <Header>
+                                                    <NextTopLoader
+                                                        showSpinner={false}
+                                                        speed={700}
+                                                        height={3}
+                                                        color={"orange"}
+                                                    />
+                                                    <HeaderContent />
+                                                </Header>
+                                                <DonationBanner />
+                                                {/* <G2GBanner /> */}
+                                                <DestinyServiceStatusBanner />
+                                                <RaidHubStatusBanner />
+                                                <SearchModal />
+                                                {params.children}
+                                                <Footer />
+                                                <Toaster />
+                                            </RaidHubManifestManager>
+                                        </DestinyManifestManager>
+                                    </ClientComponentManager>
+                                </LocaleManager>
+                            </SessionManager>
+                        </TooltipProvider>
                     </BungieClientProvider>
                 </QueryManager>
             </body>

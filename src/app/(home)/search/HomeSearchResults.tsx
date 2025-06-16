@@ -1,7 +1,7 @@
 import type { ReadonlyCollection } from "@discordjs/collection"
 import styled from "styled-components"
 import { SinglePlayerSearchResult } from "~/components/SinglePlayerSearchResult"
-import { Grid } from "~/components/layout/Grid"
+import { Grid } from "~/components/__deprecated__/layout/Grid"
 import type { RaidHubPlayerInfo } from "~/services/raidhub/types"
 
 export const HomeSearchResults = (props: {

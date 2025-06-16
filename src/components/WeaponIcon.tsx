@@ -4,7 +4,7 @@ import Image from "next/image"
 import styled from "styled-components"
 import { $media } from "~/lib/media"
 import { bungieIconUrl, bungieItemWatermarkUrl } from "~/util/destiny"
-import { Container } from "./layout/Container"
+import { Container } from "./__deprecated__/layout/Container"
 
 export const WeaponIcon = (props: {
     size: number

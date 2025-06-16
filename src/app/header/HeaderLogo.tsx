@@ -2,7 +2,7 @@
 
 import Image from "next/image"
 import styled from "styled-components"
-import { Flex } from "~/components/layout/Flex"
+import { Flex } from "~/components/__deprecated__/layout/Flex"
 import { $media } from "~/lib/media"
 
 export const HeaderLogo = () => (

@@ -3,7 +3,7 @@
 import Image from "next/image"
 import Link from "next/link"
 import styled from "styled-components"
-import { Flex } from "~/components/layout/Flex"
+import { Flex } from "~/components/__deprecated__/layout/Flex"
 import { useLocale } from "~/components/providers/LocaleManager"
 import { type RaidHubPlayerInfo } from "~/services/raidhub/types"
 import { bungieProfileIconUrl } from "~/util/destiny"

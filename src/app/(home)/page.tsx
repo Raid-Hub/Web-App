@@ -1,5 +1,5 @@
+import { PageWrapper } from "~/components/PageWrapper"
 import { HomeQuickLinks } from "~/components/home/HomeQuickLinks"
-import { PageWrapper } from "~/components/layout/PageWrapper"
 import { baseMetadata } from "~/lib/metadata"
 import { prefetchManifest } from "~/services/raidhub/prefetchRaidHubManifest"
 import { Cards } from "./HomeCards"

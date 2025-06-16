@@ -1,6 +1,6 @@
 import { type Metadata } from "next"
 import { Suspense } from "react"
-import { PageWrapper } from "~/components/layout/PageWrapper"
+import { PageWrapper } from "~/components/PageWrapper"
 import { baseMetadata } from "~/lib/metadata"
 import { getProviders } from "~/lib/server/auth"
 import { Client } from "./Client"

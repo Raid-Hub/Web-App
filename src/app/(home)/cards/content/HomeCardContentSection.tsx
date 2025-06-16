@@ -1,5 +1,5 @@
 import { type ReactNode } from "react"
-import { Flex } from "~/components/layout/Flex"
+import { Flex } from "~/components/__deprecated__/layout/Flex"
 import { H4 } from "~/components/typography/H4"
 
 export function HomeCardContentSection(props: { sectionTitle: string; children: ReactNode }) {

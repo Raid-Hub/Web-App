@@ -1,15 +1,15 @@
 import { type Metadata } from "next"
 import { RedirectType, notFound, permanentRedirect } from "next/navigation"
-import { bungieProfileIconUrl } from "~/util/destiny"
-import { ProfileClientWrapper } from "../../ProfileClientWrapper"
-import { ProfilePage } from "../../ProfilePage"
-import { generatePlayerMetadata } from "../../metadata"
+import { ProfileClientWrapper } from "~/components/profile/ProfileClientWrapper"
+import { ProfilePage } from "~/components/profile/ProfilePage"
+import { generatePlayerMetadata } from "~/lib/profile/metadata"
 import {
     getUniqueProfileByDestinyMembershipId,
     prefetchDestinyLinkedProfiles,
     prefetchRaidHubPlayerBasic
-} from "../../prefetch"
-import { type ProfileProps } from "../../types"
+} from "~/lib/profile/prefetch"
+import { type ProfileProps } from "~/lib/profile/types"
+import { bungieProfileIconUrl } from "~/util/destiny"
 
 export const revalidate = 0
 

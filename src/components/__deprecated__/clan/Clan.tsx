@@ -5,11 +5,10 @@ import { type GroupMember } from "bungie-net-core/models"
 import { useMemo } from "react"
 import { ClanMember, type ClanMemberProps } from "~/app/clan/ClanMember"
 import { StatBox } from "~/app/clan/StatBox"
-import { ClanBannerComponent } from "~/components/ClanBanner"
 import { ErrorCard } from "~/components/ErrorCard"
-import { Flex } from "~/components/layout/Flex"
+import { Flex } from "~/components/__deprecated__/layout/Flex"
+import { ClanBannerComponent } from "~/components/clan/ClanBanner"
 import { useLocale } from "~/components/providers/LocaleManager"
-import { MobileDesktopSwitch } from "~/components/util/MobileDesktopSwitch"
 import { useLocalStorage } from "~/hooks/util/useLocalStorage"
 import { useClan, useMembersOfGroup } from "~/services/bungie/hooks"
 import { type RaidHubClanMemberStats, type RaidHubPlayerInfo } from "~/services/raidhub/types"
@@ -133,18 +132,13 @@ export function ClanComponent(props: { groupId: string; clan: GroupResponse | nu
                 </h3>
             </div>
             <section className={styles.overview}>
-                <MobileDesktopSwitch
-                    lg={
-                        <div className={styles["overview-left"]}>
-                            <ClanBannerComponent
-                                id={"lg" + clan.detail.groupId}
-                                data={clan.detail.clanInfo.clanBannerData}
-                                sx={20}
-                            />
-                        </div>
-                    }
-                    sm={<></>}
-                />
+                <div className="relative flex [flex-basis:min(max(20%,200px),300px)] items-start justify-center max-sm:hidden">
+                    <ClanBannerComponent
+                        id={"lg" + clan.detail.groupId}
+                        data={clan.detail.clanInfo.clanBannerData}
+                        sx={20}
+                    />
+                </div>
                 <div className={styles.about}>
                     <Flex $align="flex-start" $crossAxis="stretch" $padding={0} $wrap>
                         {aggStats && (

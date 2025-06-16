@@ -2,10 +2,10 @@
 
 import { Collection } from "@discordjs/collection"
 import { useMemo, useState } from "react"
-import { useRaidCardContext } from "~/app/(profile)/raids/RaidCardContext"
-import { WeeklyProgress } from "~/app/(profile)/raids/expanded/WeeklyProgress"
 import { CloudflareImage } from "~/components/CloudflareImage"
 import { Loading } from "~/components/Loading"
+import { useRaidCardContext } from "~/components/profile/raids/RaidCardContext"
+import { WeeklyProgress } from "~/components/profile/raids/expanded/WeeklyProgress"
 import { useLocale } from "~/components/providers/LocaleManager"
 import { useRaidHubManifest } from "~/components/providers/RaidHubManifestManager"
 import { useRaidTags } from "~/hooks/profile/useRaidTags"

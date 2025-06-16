@@ -10,7 +10,7 @@ import {
     type TooltipProps
 } from "recharts"
 import styled from "styled-components"
-import { Container } from "~/components/layout/Container"
+import { Container } from "~/components/__deprecated__/layout/Container"
 import { useLocale } from "~/components/providers/LocaleManager"
 import { useRaidHubManifest } from "~/components/providers/RaidHubManifestManager"
 import { type RaidHubMetricsPopulationRollingDayResponse } from "~/services/raidhub/types"

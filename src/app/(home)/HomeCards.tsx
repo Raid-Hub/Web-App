@@ -1,6 +1,6 @@
 "use client"
 
-import { Grid } from "~/components/layout/Grid"
+import { Grid } from "~/components/__deprecated__/layout/Grid"
 import { useRaidHubManifest } from "~/components/providers/RaidHubManifestManager"
 import { HomeCardPantheon } from "./cards/HomeCardPantheon"
 import { HomeCardRaid } from "./cards/HomeCardRaid"

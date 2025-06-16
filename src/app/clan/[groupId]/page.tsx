@@ -1,6 +1,6 @@
 import { type Metadata } from "next"
 import { ClanComponent } from "~/components/__deprecated__/clan/Clan"
-import { PageWrapper } from "~/components/layout/PageWrapper"
+import { PageWrapper } from "~/components/PageWrapper"
 import { baseMetadata } from "~/lib/metadata"
 import { fixClanName } from "~/util/destiny/fixClanName"
 import { getClan, type PageProps } from "../server"

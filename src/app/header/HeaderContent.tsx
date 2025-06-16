@@ -1,7 +1,7 @@
 import Link from "next/link"
 import { Suspense } from "react"
+import { Flex } from "~/components/__deprecated__/layout/Flex"
 import QuestionMark from "~/components/icons/QuestionMark"
-import { Flex } from "~/components/layout/Flex"
 import { HeaderLogo } from "./HeaderLogo"
 import { SearchBar } from "./SearchBar"
 import { AccountIcon } from "./account-button/AccountIcon"

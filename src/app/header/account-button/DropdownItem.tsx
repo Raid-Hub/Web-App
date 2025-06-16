@@ -2,8 +2,8 @@
 
 import Link from "next/link"
 import styled from "styled-components"
+import { Flex } from "~/components/__deprecated__/layout/Flex"
 import RightChevron from "~/components/icons/RightChevron"
-import { Flex } from "~/components/layout/Flex"
 
 export const DropdownLink = (props: { href: string; title: string }) => (
     <Link href={props.href} style={{ width: "100%" }}>

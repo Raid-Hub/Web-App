@@ -1,5 +1,5 @@
 import { type ReactNode } from "react"
-import { BackdropBlur } from "~/components/BackdropBlur"
+import { BackdropBlur } from "~/components/__deprecated__/BackdropBlur"
 
 export const Header = (props: { children: ReactNode }) => {
     return (

@@ -2949,11 +2949,14 @@ export interface components {
     readonly GlobalStat: {
       readonly rank: number;
       readonly value: number;
+      readonly percentile: number;
     };
     readonly PlayerProfileGlobalStats: {
       readonly clears: components["schemas"]["GlobalStat"] | null;
       readonly freshClears: components["schemas"]["GlobalStat"] | null;
       readonly sherpas: components["schemas"]["GlobalStat"] | null;
+      readonly totalTimePlayed: components["schemas"]["GlobalStat"] | null;
+      readonly contest: components["schemas"]["GlobalStat"] | null;
       readonly sumOfBest: components["schemas"]["GlobalStat"] | null;
     };
     readonly WorldFirstEntry: {
@@ -3046,6 +3049,12 @@ export interface components {
       readonly versionsForActivity: {
         [key: string]: readonly number[];
       };
+      readonly rankingTiers: readonly {
+          readonly minPercentile: number;
+          readonly tierName: string;
+          /** @description A tailwindcss color class for the tier */
+          readonly tierColor: string;
+        }[];
     };
     readonly StatusResponse: {
       readonly AtlasPGCR: components["schemas"]["AtlasStatus"];

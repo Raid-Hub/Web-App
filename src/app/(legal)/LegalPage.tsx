@@ -2,7 +2,7 @@
 
 import { type ReactNode } from "react"
 import styled from "styled-components"
-import { PageWrapper } from "~/components/layout/PageWrapper"
+import { PageWrapper } from "~/components/PageWrapper"
 
 const StyledPage = styled(PageWrapper)`
     letter-spacing: 0.05ch;

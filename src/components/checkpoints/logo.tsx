@@ -11,7 +11,7 @@ export const CheckpointLogo = () => {
                     width={70}
                     height={70}
                     priority
-                    className="absolute z-[-1] w-40 opacity-25"
+                    className="absolute -z-1 w-40 opacity-25"
                 />
             </div>
             <h1 className="text-2xl font-bold">Checkpoints</h1>

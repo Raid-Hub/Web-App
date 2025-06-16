@@ -3,7 +3,7 @@
 import { type PGCRReportStatus } from "@prisma/client"
 import { FileWarning, Search } from "lucide-react"
 import { useState } from "react"
-import { AdminPageHeader } from "~/components/admin-page-header"
+import { AdminPageHeader } from "~/components/admin/admin-page-header"
 import { ReportList } from "~/components/admin/reporting/report-list"
 import { ReportPanel } from "~/components/admin/reporting/report-panel"
 import { ReportingTabs } from "~/components/admin/reporting/reporting-tabs"

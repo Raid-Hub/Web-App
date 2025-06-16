@@ -1,7 +1,7 @@
 import { type QueryKey } from "@tanstack/react-query"
 import { Suspense, type ReactNode } from "react"
-import { Flex } from "~/components/layout/Flex"
-import { PageWrapper } from "~/components/layout/PageWrapper"
+import { PageWrapper } from "~/components/PageWrapper"
+import { Flex } from "~/components/__deprecated__/layout/Flex"
 import {
     type PathParamsForLeaderboardURL,
     type RaidHubLeaderboardURL

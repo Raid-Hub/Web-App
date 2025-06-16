@@ -5,8 +5,8 @@ import Link from "next/link"
 import { useState } from "react"
 import { type LeaderboardEntryPlayer } from "~/app/leaderboards/LeaderboardEntries"
 import { OptionalWrapper } from "~/components/OptionalWrapper"
-import { Container } from "~/components/layout/Container"
-import { Flex } from "~/components/layout/Flex"
+import { Container } from "~/components/__deprecated__/layout/Container"
+import { Flex } from "~/components/__deprecated__/layout/Flex"
 import { bungieProfileIconUrl } from "~/util/destiny"
 
 export const LeaderboardEntryPlayerComponent = (player: LeaderboardEntryPlayer) => {
