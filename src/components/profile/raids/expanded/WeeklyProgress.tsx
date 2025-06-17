@@ -2,10 +2,7 @@
 
 import { useMemo } from "react"
 import { usePageProps } from "~/components/PageWrapper"
-import { Container } from "~/components/__deprecated__/layout/Container"
-import { Flex } from "~/components/__deprecated__/layout/Flex"
 import { useRaidHubManifest } from "~/components/providers/RaidHubManifestManager"
-import { H4 } from "~/components/typography/H4"
 import type { ProfileProps } from "~/lib/profile/types"
 import { useProfile } from "~/services/bungie/hooks"
 import { CharacterWeeklyProgress } from "./CharacterWeeklyProgress"
@@ -48,12 +45,12 @@ export const WeeklyProgress = ({ raid }: { raid: number }) => {
     }, [getActivityDefinition, profile, raid, data])
 
     return (
-        <Container>
-            <H4 style={{ marginBlock: "0.5em" }}>Weekly Progress</H4>
+        <div className="relative">
+            <h4 className="my-2">Weekly Progress</h4>
             {typeof state === "string" ? (
                 <div>{state}</div>
             ) : (
-                <Flex $direction="column" $padding={0} $gap={0.25} $crossAxis="flex-start">
+                <div className="flex flex-col justify-start gap-2">
                     {state.data.map(
                         ([characterId, { milestones }]) =>
                             profile?.characters.data?.[characterId] &&
@@ -65,8 +62,8 @@ export const WeeklyProgress = ({ raid }: { raid: number }) => {
                                 />
                             )
                     )}
-                </Flex>
+                </div>
             )}
-        </Container>
+        </div>
     )
 }

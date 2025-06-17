@@ -7,7 +7,7 @@ import { type CloudflareImageId } from "~/components/CloudflareImage"
 import { TooltipContainer, TooltipData } from "~/components/Tooltip"
 import { Panel } from "~/components/__deprecated__/Panel"
 import { Flex } from "~/components/__deprecated__/layout/Flex"
-import { H4 } from "~/components/typography/H4"
+import { H4 } from "~/components/__deprecated__/typography/H4"
 import { $media } from "~/lib/media"
 
 export const Splash = (props: {

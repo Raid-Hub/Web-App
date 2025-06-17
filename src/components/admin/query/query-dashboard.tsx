@@ -90,6 +90,7 @@ export function QueryDashboard() {
             <Flex $align="flex-start" $padding={0.25}>
                 {!!Object.keys(store).length && (
                     <select
+                        className="bg-black"
                         name="Load"
                         id="selector"
                         value={selectedQueryKey ?? "-"}

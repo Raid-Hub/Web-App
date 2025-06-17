@@ -55,12 +55,8 @@ export const InstanceFinder = () => {
     }, [destinyMembershipId, session])
 
     return (
-        <div
-            style={{
-                width: "100%",
-                maxWidth: "100%"
-            }}>
-            <h1>Instance Finder</h1>
+        <div className="w-full max-w-full space-y-4">
+            <h1 className="text-2xl">Instance Finder</h1>
             <p>
                 This tool allows you to search for specific raids which you have participated in.
                 Use the filters below to narrow down your search.
@@ -86,17 +82,8 @@ const InstanceFinderInternal = memo(() => {
                 />
             </div>
             <div>
-                <h2
-                    style={{
-                        marginTop: "2rem",
-                        marginBottom: "0.5rem"
-                    }}>
-                    Results
-                </h2>
-                <div
-                    style={{
-                        overflowX: "auto"
-                    }}>
+                <h2 className="mt-8 mb-2 text-xl font-semibold">Results</h2>
+                <div className="overflow-x-auto">
                     {state.isIdle && <p>Enter your search criteria above to find instances.</p>}
                     {state.isLoading && <p>Loading...</p>}
                     {state.isError && <p>Error: {(state.error as Error).message}</p>}

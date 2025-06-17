@@ -265,6 +265,7 @@ export function ClanComponent(props: { groupId: string; clan: GroupResponse | nu
                         <Flex $padding={0} $gap={0.75}>
                             {"Sort by"}
                             <select
+                                className="bg-black"
                                 value={sortKey}
                                 onChange={e => {
                                     setSortKey(e.target.value as ClanMemberProps["statKey"])

@@ -5,8 +5,6 @@ import type {
     DestinyMilestoneChallengeActivity
 } from "bungie-net-core/models"
 import Image from "next/image"
-import { Container } from "~/components/__deprecated__/layout/Container"
-import { Flex } from "~/components/__deprecated__/layout/Flex"
 import { useRaidHubManifest } from "~/components/providers/RaidHubManifestManager"
 import { useClassDefinition } from "~/hooks/dexie"
 import { bungieIconUrl } from "~/util/destiny"
@@ -19,20 +17,16 @@ export const CharacterWeeklyProgress = ({
     milestone: DestinyMilestone
 }) => {
     const classDefinition = useClassDefinition(character.classHash)
+
     return (
-        <div style={{ border: "1px solid var(--border)", padding: "0.5em" }}>
-            <Flex $padding={0.25} $align="flex-start">
-                <h5 style={{ marginBlock: "1em" }}>{classDefinition?.displayProperties.name}</h5>
-                <Container
-                    $minHeight={30}
-                    $aspectRatio={{
-                        width: 1,
-                        height: 1
-                    }}>
+        <div className="border p-2">
+            <div className="mb-4 flex items-center gap-2">
+                <h5 className="text-lg font-semibold">{classDefinition?.displayProperties.name}</h5>
+                <div className="relative aspect-square min-h-8">
                     <Image src={bungieIconUrl(character.emblemPath)} alt="" fill unoptimized />
-                </Container>
-            </Flex>
-            <div>
+                </div>
+            </div>
+            <div className="flex flex-col gap-4">
                 {milestone.activities.map(a => (
                     <MilestoneActivity key={a.activityHash} activity={a} />
                 ))}
@@ -44,31 +38,31 @@ export const CharacterWeeklyProgress = ({
 function MilestoneActivity({ activity }: { activity: DestinyMilestoneChallengeActivity }) {
     const { getDefinitionFromHash } = useRaidHubManifest()
     const definition = getDefinitionFromHash(activity.activityHash)
+
     if (!definition) return null
+
     return (
-        <Flex $padding={0} $wrap>
-            <h6 style={{ marginBlock: 0 }}>{definition.version.name}</h6>
-            <div
-                style={{
-                    gridTemplateColumns: `repeat(${activity.phases?.length ?? 0}, 30px)`
-                }}>
+        <div className="flex flex-col gap-2">
+            <h6 className="font-semibold">{definition.version.name}</h6>
+            <div className="flex flex-row flex-wrap">
                 {activity.phases?.map(phase => (
                     <EncounterProgress key={phase.phaseHash} phase={phase} />
                 ))}
             </div>
-        </Flex>
+        </div>
     )
 }
 
 function EncounterProgress({ phase }: { phase: DestinyMilestoneActivityPhase }) {
     return (
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" width={30} height={30}>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" className="size-8">
             <rect
                 width={20}
                 height={20}
-                stroke="gray"
+                stroke="#6B7280" // Tailwind's gray-500
                 strokeWidth={2}
                 fill={phase.complete ? "#0CA51240" : "none"}
+                className="rounded"
             />
         </svg>
     )

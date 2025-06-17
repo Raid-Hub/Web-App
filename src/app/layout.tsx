@@ -35,7 +35,9 @@ export default async function RootLayout(params: { children: ReactNode }) {
     const manifest = await prefetchManifest()
 
     return (
-        <html className="dark" suppressHydrationWarning>
+        <html
+            className="dark min-w-75 overflow-y-auto [overscroll-behavior-y:contain]"
+            suppressHydrationWarning>
             <head>
                 <meta name="discord:site" content="https://discord.gg/raidhub" />
 
@@ -45,7 +47,7 @@ export default async function RootLayout(params: { children: ReactNode }) {
                     rel="stylesheet"
                 />
             </head>
-            <body>
+            <body className="relative m-0 flex min-h-[100svh] flex-col font-[Manrope,sans-serif]">
                 <QueryManager>
                     <BungieClientProvider>
                         <TooltipProvider>

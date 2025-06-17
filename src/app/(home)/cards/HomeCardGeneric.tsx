@@ -2,7 +2,7 @@
 
 import { type ReactNode } from "react"
 import { CloudflareImage, type CloudflareImageId } from "~/components/CloudflareImage"
-import { CardTitle } from "~/components/typography/CardTitle"
+import { CardTitle } from "~/components/__deprecated__/typography/CardTitle"
 import { Card, CardContent, CardHeader } from "~/shad/card"
 
 export const HomeCardGeneric = (props: {

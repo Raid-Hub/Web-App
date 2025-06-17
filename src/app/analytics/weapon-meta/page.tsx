@@ -76,6 +76,7 @@ export default function Page() {
                             {"Sort by:"}
                         </label>
                         <select
+                            className="bg-black"
                             id="sort-selector"
                             value={sort}
                             onChange={e => {

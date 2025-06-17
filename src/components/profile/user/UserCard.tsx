@@ -144,8 +144,10 @@ export function UserCard() {
                 </div>
 
                 <UserRanks />
-                <CommunityProfiles />
-                <UserCardSocials />
+                <div className="space-y-4">
+                    <CommunityProfiles />
+                    <UserCardSocials />
+                </div>
             </div>
         </Card>
     )

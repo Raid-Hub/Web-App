@@ -14,8 +14,8 @@ export const UserRanks = () => {
         playerQuery.data && (
             <div className="grid grid-cols-5 gap-3 max-sm:grid-cols-2">
                 <StatCard
-                    title="Contest Score"
-                    value={(playerQuery.data.stats.global.contest?.value ?? 0).toFixed(2)}
+                    title="WFR Score"
+                    value={(playerQuery.data.stats.global.contest?.value ?? 0).toFixed(3)}
                     rank={playerQuery.data.stats.global.contest?.rank ?? -1}
                     percentile={playerQuery.data.stats.global.contest?.percentile ?? 0}
                 />
@@ -84,7 +84,11 @@ const StatCard = ({
 
         if (rank <= 500)
             return {
-                tierName: `#${rank}`,
+                tierName: (
+                    <span>
+                        Rank <b>#{rank}</b>
+                    </span>
+                ),
                 tierColor: "bg-pink-500/80"
             }
 
@@ -100,7 +104,7 @@ const StatCard = ({
         <div className={cn("border-1 bg-black/20 px-3 py-2 text-gray-200 shadow-md", tierColor)}>
             <h3 className="text-sm font-semibold">{title}</h3>
             <p className="text-lg font-light">{tierName}</p>
-            <p className="text-sm">{value}</p>
+            <p className="text-sm font-semibold">{value}</p>
         </div>
     )
 }

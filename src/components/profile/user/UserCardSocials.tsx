@@ -9,24 +9,22 @@ export const UserCardSocials = () => {
 
     return (
         !!socials?.length && (
-            <div className="bg-dark w-min rounded-lg p-2 opacity-60">
-                <div className="jsustify-between flex items-center gap-2">
-                    {socials.map(({ Icon, id, displayName, url }) => (
-                        <OptionalWrapper
-                            key={id}
-                            condition={url}
-                            wrapper={({ children, value }) => (
-                                <Link href={value} className="h-full">
-                                    {children}
-                                </Link>
-                            )}>
-                            <div className="flex items-center gap-2">
-                                <Icon className="size-6" />
-                                {displayName}
-                            </div>
-                        </OptionalWrapper>
-                    ))}
-                </div>
+            <div className="flex flex-wrap items-center gap-4">
+                {socials.map(({ Icon, id, displayName, url }) => (
+                    <OptionalWrapper
+                        key={id}
+                        condition={url}
+                        wrapper={({ children, value }) => (
+                            <Link href={value} className="h-full">
+                                {children}
+                            </Link>
+                        )}>
+                        <div className="text-secondary flex items-center gap-2">
+                            <Icon className="size-6" />
+                            {displayName}
+                        </div>
+                    </OptionalWrapper>
+                ))}
             </div>
         )
     )

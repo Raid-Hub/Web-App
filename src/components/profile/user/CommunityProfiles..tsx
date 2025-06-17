@@ -20,7 +20,7 @@ export function CommunityProfiles() {
         memTypeToString[props.destinyMembershipType] ?? props.destinyMembershipType
 
     return (
-        <div className="flex flex-wrap gap-4 p-2">
+        <div className="flex flex-wrap gap-4">
             <Profile
                 title="Dungeon Report"
                 url={`https://dungeon.report/${membershipTypeS}/${props.destinyMembershipId}`}

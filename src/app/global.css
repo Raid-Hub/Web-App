@@ -9,25 +9,7 @@
     -webkit-box-sizing: border-box;
 }
 
-html,
 body {
-    min-width: 300px;
-}
-
-html {
-    overscroll-behavior-y: contain;
-    overflow-y: auto;
-}
-
-body {
-    font-family: "Manrope", sans-serif;
-    margin: 0;
-    color: white;
-
-    display: flex;
-    min-height: 100svh;
-    flex-direction: column;
-
     background-color: #010011;
     background: linear-gradient(
         90deg,
@@ -38,11 +20,6 @@ body {
         rgba(19, 3, 1, 1) 100%
     );
     background-size: 100% 100%;
-}
-
-img[src=""] {
-    font-size: 0;
-    position: relative;
 }
 
 @theme inline {
@@ -88,6 +65,12 @@ img[src=""] {
     --spacing-header: var(--header-height);
     --spacing-footer: var(--footer-height);
     --spacing-body: var(--min-body-height);
+}
+
+/* fixes radix behavior */
+html body[data-scroll-locked] {
+    overflow: visible !important;
+    margin-right: 0 !important;
 }
 
 :root {

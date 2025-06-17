@@ -2,7 +2,6 @@
 
 import { type Collection } from "@discordjs/collection"
 import { useState } from "react"
-import { Flex } from "~/components/__deprecated__/layout/Flex"
 import { type RaidHubInstanceForPlayer } from "~/services/raidhub/types"
 import { Button } from "~/shad/button"
 import { ActivityHistoryList } from "./ActivityHistoryList"
@@ -17,20 +16,15 @@ export const ActivityHistoryLayout = ({
     const [sections, setSections] = useState(20)
 
     return (
-        <Flex $direction="column" $fullWidth $crossAxis="flex-start" $padding={0}>
+        <div className="flex w-full flex-col justify-start space-y-4">
             <ActivityHistoryList sections={sections} allActivities={activities} />
-            <Flex $fullWidth $padding={1}>
+            <div className="w-full">
                 <Button
                     disabled={isLoading}
-                    onClick={() => !isLoading && setSections(old => old + 20)}
-                    style={{
-                        padding: "1rem",
-                        cursor: "pointer",
-                        color: isLoading ? "gray" : undefined
-                    }}>
+                    onClick={() => !isLoading && setSections(old => old + 20)}>
                     Load More
                 </Button>
-            </Flex>
-        </Flex>
+            </div>
+        </div>
     )
 }

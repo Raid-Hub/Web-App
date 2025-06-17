@@ -260,9 +260,14 @@ function Select<T extends keyof FormState>({
         <InputContainer>
             <Label>{label}</Label>
             <SelectField {...register(field)}>
-                <option value="">Not Selected</option>
+                <option value="" className="bg-black">
+                    Not Selected
+                </option>
                 {options.map(option => (
-                    <option key={String(option.value)} value={String(option.value)}>
+                    <option
+                        key={String(option.value)}
+                        value={String(option.value)}
+                        className="bg-black">
                         {option.label}
                     </option>
                 ))}

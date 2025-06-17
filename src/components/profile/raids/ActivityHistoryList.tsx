@@ -1,19 +1,17 @@
 import { type Collection } from "@discordjs/collection"
 import Link from "next/link"
 import { memo, useMemo } from "react"
-import { CloudflareImage } from "~/components/CloudflareImage"
-import { Flex } from "~/components/__deprecated__/layout/Flex"
-import { Grid } from "~/components/__deprecated__/layout/Grid"
 import Checkmark from "~/components/icons/Checkmark"
 import Xmark from "~/components/icons/Xmark"
 import { useLocale } from "~/components/providers/LocaleManager"
-import { H4 } from "~/components/typography/H4"
 import { useActivitiesByPartition } from "~/hooks/useActivitiesByPartition"
 import { useAttributedRaidName } from "~/hooks/useAttributedRaidName"
-import { getRaidSplash } from "~/lib/activity-images"
 import { type RaidHubInstanceForPlayer } from "~/services/raidhub/types"
-import { Card } from "~/shad/card"
-import { secondsToHMS, toCustomDateString } from "~/util/presentation/formatting"
+import {
+    formattedTimeSince,
+    secondsToHMS,
+    toCustomDateString
+} from "~/util/presentation/formatting"
 
 export const ActivityHistoryList = memo(
     (props: { sections: number; allActivities: Collection<string, RaidHubInstanceForPlayer> }) => {
@@ -25,20 +23,23 @@ export const ActivityHistoryList = memo(
         const { locale } = useLocale()
 
         return (
-            <Grid $fullWidth $minCardWidth={500}>
+            <div className="grid w-full grid-cols-1 gap-4 max-sm:grid-cols-1">
                 {sections.map(([key, partition]) => (
-                    <Card key={key} style={{ padding: "0.5rem" }}>
-                        <H4 style={{ marginTop: 10, marginLeft: 8 }}>
-                            {toCustomDateString(new Date(key), locale)}
-                        </H4>
-                        <Grid $gap={0.85} $minCardWidth={450}>
+                    <div key={key} className="bg-card space-y-4 border-1 p-2">
+                        <span className="inline-flex gap-2">
+                            <h4 className="text-xl">{toCustomDateString(new Date(key), locale)}</h4>
+                            <h5 className="text-secondary text-lg">
+                                {formattedTimeSince(new Date(key), locale)}
+                            </h5>
+                        </span>
+                        <div className="flex flex-col gap-2">
                             {partition.map(a => (
                                 <Activity key={a.instanceId} {...a} />
                             ))}
-                        </Grid>
-                    </Card>
+                        </div>
+                    </div>
                 ))}
-            </Grid>
+            </div>
         )
     }
 )
@@ -54,21 +55,15 @@ const Activity = (activity: RaidHubInstanceForPlayer) => {
 
     const date = new Date(activity.dateCompleted)
     return (
-        <Link href={`/pgcr/${activity.instanceId}`} style={{ color: "unset" }} rel="nofollow">
-            <Flex $direction="row" $padding={0.3} $align="flex-start" $fullWidth $wrap>
-                <div style={{ minWidth: "15%" }}>{date.toLocaleTimeString(locale)}</div>
-                <CloudflareImage
-                    alt=""
-                    width={80}
-                    height={45}
-                    cloudflareId={getRaidSplash(activity.activityId) ?? "pantheonSplash"}
-                />
-                <div>{raidName}</div>
-                <div>
+        <Link href={`/pgcr/${activity.instanceId}`} rel="nofollow">
+            <div className="flex items-center justify-between gap-4 text-sm md:justify-start md:text-lg">
+                <div className="flex-grow-0 basis-40">{date.toLocaleTimeString(locale)}</div>
+                <div className="flex-grow-0 basis-90">{raidName}</div>
+                <div className="inline-flex flex-grow-0 basis-50 gap-1">
+                    {activity.player.completed ? <Checkmark sx={20} /> : <Xmark sx={20} />}
                     <i>{secondsToHMS(activity.duration, false)}</i>
                 </div>
-                {activity.player.completed ? <Checkmark sx={20} /> : <Xmark sx={20} />}
-            </Flex>
+            </div>
         </Link>
     )
 }
