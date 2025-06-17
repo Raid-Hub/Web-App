@@ -962,7 +962,7 @@ export interface paths {
           page?: number;
         };
         path: {
-          category: "clears" | "freshClears" | "sherpas" | "speedrun" | "powerRankings";
+          category: components["schemas"]["IndividualGlobalLeaderboardCategory"];
         };
       };
       responses: {
@@ -2799,6 +2799,8 @@ export interface components {
       readonly count: number;
       readonly entries: readonly components["schemas"]["IndividualLeaderboardEntry"][];
     }]>;
+    /** @enum {string} */
+    readonly IndividualGlobalLeaderboardCategory: "clears" | "full-clears" | "sherpas" | "speedrun" | "world-first-rankings" | "in-raid-time";
     /** @description Pagination parameters for leaderboard data */
     readonly LeaderboardPagination: {
       /** @default 50 */

@@ -1,5 +1,8 @@
 import { getRaidHubApi } from "./common"
-import { type RaidHubLeaderboardPagination } from "./types"
+import {
+    type RaidHubIndividualGlobalLeaderboardCategory,
+    type RaidHubLeaderboardPagination
+} from "./types"
 
 export async function getWorldFirstLeaderboard(raid: string, query: RaidHubLeaderboardPagination) {
     return getRaidHubApi(
@@ -27,7 +30,7 @@ export async function getActivityFirstLeaderboard(
 }
 
 export async function getIndividualGlobalLeaderboard(
-    category: "clears" | "freshClears" | "sherpas" | "speedrun",
+    category: RaidHubIndividualGlobalLeaderboardCategory,
     query: RaidHubLeaderboardPagination
 ) {
     return getRaidHubApi(
