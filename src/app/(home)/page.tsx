@@ -22,7 +22,7 @@ export async function generateMetadata() {
 }
 export default async function Page() {
     return (
-        <PageWrapper>
+        <PageWrapper className="space-y-4">
             <HomeLogo />
             <HomeSearchBar />
             <HomeQuickLinks />

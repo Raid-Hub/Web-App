@@ -12,7 +12,7 @@ export const HomeCardGeneric = (props: {
     children: ReactNode
 }) => (
     <Card>
-        <CardHeader>
+        <CardHeader className="relative p-0 md:p-0">
             <CloudflareImage
                 priority
                 width={640}
@@ -20,7 +20,7 @@ export const HomeCardGeneric = (props: {
                 cloudflareId={props.backgroundImageCloudflareId}
                 alt={props.backgroundImageAltText}
             />
-            <CardTitle>{props.title}</CardTitle>
+            <CardTitle className="absolute bottom-4 left-4">{props.title}</CardTitle>
         </CardHeader>
         <CardContent>{props.children}</CardContent>
     </Card>

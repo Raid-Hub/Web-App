@@ -9,6 +9,7 @@ export const SpeedrunIcon = React.forwardRef<
             viewBox="0 -6.5 102 102"
             fillRule="evenodd"
             shapeRendering="crispEdges"
+            fill="currentColor"
             {...props}
             ref={ref}>
             <path d="M97.235 22.48h4.4v4.4h-4.4zM97.235 18.08h4.4v4.4h-4.4z"></path>

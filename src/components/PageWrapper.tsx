@@ -11,7 +11,7 @@ export const PageWrapper = forwardRef<
         children: ReactNode
         className?: string
         pageProps?: object
-    } & PageWrapperStyleProps
+    }
 >(({ children, pageProps, className, ...props }, ref) => (
     <PropsContext.Provider value={pageProps ?? {}}>
         <div
@@ -34,7 +34,4 @@ export const usePageProps = <T extends object>() => {
     const pageProps = useContext(PropsContext)
     if (pageProps === null) throw new Error("usePageProps must be used within a PageWrapper")
     return pageProps as T
-}
-type PageWrapperStyleProps = {
-    $maxWidth?: number
 }

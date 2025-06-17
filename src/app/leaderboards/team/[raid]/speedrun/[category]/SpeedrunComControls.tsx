@@ -6,7 +6,7 @@ import { Panel } from "~/components/__deprecated__/Panel"
 import { Flex } from "~/components/__deprecated__/layout/Flex"
 import { DiscordIconOld } from "~/components/icons/DiscordIcon"
 import RulesIcon from "~/components/icons/Rules"
-import SpeedrunIcon from "~/components/icons/SpeedrunIcon"
+import { SpeedrunIcon } from "~/components/icons/SpeedrunIcon"
 import UploadIcon from "~/components/icons/Upload"
 import { useRaidHubManifest } from "~/components/providers/RaidHubManifestManager"
 import { SpeedrunVariables, type RTABoardCategory } from "~/lib/speedrun/speedrun-com-mappings"
@@ -53,7 +53,7 @@ export const SpeedrunComControls = (props: {
                 <Flex as="nav" $padding={0} $gap={0.75} style={{ alignSelf: "flex-end" }}>
                     <TooltipWrapper id="src-page" title="Speedrun.com Page">
                         <ExtLink href={getURL()}>
-                            <SpeedrunIcon sx={25} />
+                            <SpeedrunIcon className="size-7" />
                         </ExtLink>
                     </TooltipWrapper>
                     <TooltipWrapper id="src-rules" title="Category Rules">
