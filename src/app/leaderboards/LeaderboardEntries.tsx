@@ -2,7 +2,7 @@
 
 import { useSearchParams } from "next/navigation"
 import { LeaderboardEntryComponent } from "~/app/leaderboards/LeaderboardEntryComponent"
-import { Flex } from "~/components/layout/Flex"
+import { Flex } from "~/components/__deprecated__/layout/Flex"
 
 export type LeaderboardEntryPlayer = {
     id: string

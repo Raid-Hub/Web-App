@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect } from "react"
-import { PageWrapper } from "~/components/layout/PageWrapper"
+import { PageWrapper } from "~/components/PageWrapper"
 import { BungiePlatformError } from "~/models/BungieAPIError"
 import { type ErrorBoundaryProps } from "~/types/generic"
 

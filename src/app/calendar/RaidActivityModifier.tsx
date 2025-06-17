@@ -3,7 +3,7 @@
 import Image from "next/image"
 import styled from "styled-components"
 import { TooltipContainer, TooltipData } from "~/components/Tooltip"
-import { Flex } from "~/components/layout/Flex"
+import { Flex } from "~/components/__deprecated__/layout/Flex"
 import { useActivityModifierDefinition } from "~/hooks/dexie"
 import { bungieIconUrl } from "~/util/destiny"
 

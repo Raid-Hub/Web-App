@@ -1,11 +1,11 @@
-"use client"
+import React from "react"
+import { cn } from "~/lib/tw"
 
-import styled from "styled-components"
-import { Card } from "./Card"
-
-export const ErrorCard = styled(Card).attrs({
-    $fullWidth: true
-})`
-    padding: 1rem;
-    background-color: rgb(184, 66, 66);
-`
+export const ErrorCard = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(
+    ({ className, children, ...props }, ref) => (
+        <div ref={ref} {...props} className={cn("bg-red-400 p-4", className)} role="alert">
+            {children}
+        </div>
+    )
+)
+ErrorCard.displayName = "ErrorCard"

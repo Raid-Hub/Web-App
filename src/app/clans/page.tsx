@@ -1,4 +1,4 @@
-import { PageWrapper } from "~/components/layout/PageWrapper"
+import { PageWrapper } from "~/components/PageWrapper"
 import { baseMetadata } from "~/lib/metadata"
 import { ClanLeaderboards } from "./ClanLeaderboards"
 

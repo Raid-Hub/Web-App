@@ -1,11 +1,9 @@
 "use client"
 
 import { type ReactNode } from "react"
-import styled from "styled-components"
-import { Card } from "~/components/Card"
 import { CloudflareImage, type CloudflareImageId } from "~/components/CloudflareImage"
-import { Flex } from "~/components/layout/Flex"
-import { CardSplash, CardSplashTitleAbsolute } from "./splash/HomeCardSplash"
+import { CardTitle } from "~/components/__deprecated__/typography/CardTitle"
+import { Card, CardContent, CardHeader } from "~/shad/card"
 
 export const HomeCardGeneric = (props: {
     title: string
@@ -14,7 +12,7 @@ export const HomeCardGeneric = (props: {
     children: ReactNode
 }) => (
     <Card>
-        <CardSplash>
+        <CardHeader className="relative p-0 md:p-0">
             <CloudflareImage
                 priority
                 width={640}
@@ -22,17 +20,8 @@ export const HomeCardGeneric = (props: {
                 cloudflareId={props.backgroundImageCloudflareId}
                 alt={props.backgroundImageAltText}
             />
-            <CardSplashTitleAbsolute>{props.title}</CardSplashTitleAbsolute>
-        </CardSplash>
-        <CardContent $direction="column" $gap={0.75} $crossAxis="stretch">
-            {props.children}
-        </CardContent>
+            <CardTitle className="absolute bottom-4 left-4">{props.title}</CardTitle>
+        </CardHeader>
+        <CardContent>{props.children}</CardContent>
     </Card>
 )
-
-const CardContent = styled(Flex)`
-    padding: 0.5em 1em;
-    & hr {
-        border-color: ${({ theme }) => theme.colors.border.medium};
-    }
-`

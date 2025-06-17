@@ -2,48 +2,24 @@
 
 import Image from "next/image"
 import styled from "styled-components"
-import { $media } from "~/app/layout/media"
-import { Flex } from "~/components/layout/Flex"
+import { $media } from "~/lib/media"
 
 export const HomeLogo = () => {
     return (
-        <Container>
-            <BackgroundLogo src="/logo.png" alt="logo" width={70} height={70} />
+        <div className="flex h-24 items-center justify-center lg:h-32 2xl:h-40">
+            <Image
+                src="/logo.png"
+                alt=""
+                className="absolute left-1/2 size-24 -translate-x-1/2 opacity-10 lg:size-32 2xl:size-40"
+                width={70}
+                height={70}
+            />
             <TextLogo>
                 Raid<TextLogoGlow>Hub</TextLogoGlow>
             </TextLogo>
-        </Container>
+        </div>
     )
 }
-
-const Container = styled(Flex)`
-    margin: 1em;
-`
-
-const BackgroundLogo = styled(Image)`
-    position: absolute;
-    z-index: -1;
-    left: 50%;
-    transform: translateX(-50%);
-    opacity: 0.1;
-    width: 10rem;
-    height: 10rem;
-
-    ${$media.max.tablet`
-        width: 8rem;
-        height: 8rem;
-    `}
-
-    ${$media.max.mobile`
-        width: 6rem;
-        height: 6rem;
-    `}
-
-    ${$media.max.tiny`
-        width: 4.5rem;
-        height: 4.5rem;
-    `}
-`
 
 const TextLogo = styled.h1`
     font-family: "Inter", sans-serif;

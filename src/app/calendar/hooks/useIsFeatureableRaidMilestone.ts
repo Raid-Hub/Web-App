@@ -1,5 +1,5 @@
 import { useCallback } from "react"
-import { useRaidHubManifest } from "~/app/layout/wrappers/RaidHubManifestManager"
+import { useRaidHubManifest } from "~/components/providers/RaidHubManifestManager"
 
 export const useIsFeatureableRaidMilestone = () => {
     const { activeRaids, milestoneHashes } = useRaidHubManifest()

@@ -2,25 +2,28 @@ import type { Viewport } from "next"
 import dynamic from "next/dynamic"
 import NextTopLoader from "nextjs-toploader"
 import { type ReactNode } from "react"
+import { DestinyServiceStatusBanner } from "~/components/overlays/DestinyServiceStatusBanner"
+import { DonationBanner } from "~/components/overlays/DonationBanner"
+import { RaidHubStatusBanner } from "~/components/overlays/RaidHubStatusBanner"
+import { SearchModal } from "~/components/overlays/SearchModal"
+import { ClientComponentManager } from "~/components/providers/ClientComponentManager"
+import { LocaleManager } from "~/components/providers/LocaleManager"
+import { QueryManager } from "~/components/providers/QueryManager"
+import { RaidHubManifestManager } from "~/components/providers/RaidHubManifestManager"
+import { BungieClientProvider } from "~/components/providers/session/BungieClientProvider"
+import { SessionManager } from "~/components/providers/session/ServerSessionManager"
 import { prefetchManifest } from "~/services/raidhub/prefetchRaidHubManifest"
 import { Toaster } from "~/shad/sonner"
+import { TooltipProvider } from "~/shad/tooltip"
+import Footer from "./footer"
 import "./global.css"
-import { Footer } from "./layout/footer/Footer"
-import { Header } from "./layout/header/Header"
-import { HeaderContent } from "./layout/header/HeaderContent"
-import { DestinyServiceStatusBanner } from "./layout/overlays/DestinyServiceStatusBanner"
-import { DonationBanner } from "./layout/overlays/DonationBanner"
-import { RaidHubStatusBanner } from "./layout/overlays/RaidHubStatusBanner"
-import { SearchModal } from "./layout/overlays/SearchModal"
-import { ClientComponentManager } from "./layout/wrappers/ClientComponentManager"
-import { LocaleManager } from "./layout/wrappers/LocaleManager"
-import { QueryManager } from "./layout/wrappers/QueryManager"
-import { RaidHubManifestManager } from "./layout/wrappers/RaidHubManifestManager"
-import { BungieClientProvider } from "./layout/wrappers/session/BungieClientProvider"
-import { SessionManager } from "./layout/wrappers/session/ServerSessionManager"
+import { Header } from "./header/Header"
+import { HeaderContent } from "./header/HeaderContent"
 
 // Dynamic import for the dexie DB
-const DestinyManifestManager = dynamic(() => import("./layout/wrappers/DestinyManifestManager"))
+const DestinyManifestManager = dynamic(
+    () => import("~/components/providers/DestinyManifestManager")
+)
 
 export const preferredRegion = ["iad1"] // us-east-1
 export const runtime = "nodejs"
@@ -32,7 +35,9 @@ export default async function RootLayout(params: { children: ReactNode }) {
     const manifest = await prefetchManifest()
 
     return (
-        <html className="dark" suppressHydrationWarning>
+        <html
+            className="dark min-w-75 overflow-y-auto [overscroll-behavior-y:contain]"
+            suppressHydrationWarning>
             <head>
                 <meta name="discord:site" content="https://discord.gg/raidhub" />
 
@@ -42,36 +47,38 @@ export default async function RootLayout(params: { children: ReactNode }) {
                     rel="stylesheet"
                 />
             </head>
-            <body>
+            <body className="relative m-0 flex min-h-[100svh] flex-col font-[Manrope,sans-serif]">
                 <QueryManager>
                     <BungieClientProvider>
-                        <SessionManager>
-                            <LocaleManager>
-                                <ClientComponentManager>
-                                    <DestinyManifestManager>
-                                        <RaidHubManifestManager serverManifest={manifest}>
-                                            <Header>
-                                                <NextTopLoader
-                                                    showSpinner={false}
-                                                    speed={700}
-                                                    height={3}
-                                                    color={"orange"}
-                                                />
-                                                <HeaderContent />
-                                            </Header>
-                                            <DonationBanner />
-                                            {/* <G2GBanner /> */}
-                                            <DestinyServiceStatusBanner />
-                                            <RaidHubStatusBanner />
-                                            <SearchModal />
-                                            {params.children}
-                                            <Footer />
-                                            <Toaster />
-                                        </RaidHubManifestManager>
-                                    </DestinyManifestManager>
-                                </ClientComponentManager>
-                            </LocaleManager>
-                        </SessionManager>
+                        <TooltipProvider>
+                            <SessionManager>
+                                <LocaleManager>
+                                    <ClientComponentManager>
+                                        <DestinyManifestManager>
+                                            <RaidHubManifestManager serverManifest={manifest}>
+                                                <Header>
+                                                    <NextTopLoader
+                                                        showSpinner={false}
+                                                        speed={700}
+                                                        height={3}
+                                                        color={"orange"}
+                                                    />
+                                                    <HeaderContent />
+                                                </Header>
+                                                <DonationBanner />
+                                                {/* <G2GBanner /> */}
+                                                <DestinyServiceStatusBanner />
+                                                <RaidHubStatusBanner />
+                                                <SearchModal />
+                                                {params.children}
+                                                <Footer />
+                                                <Toaster />
+                                            </RaidHubManifestManager>
+                                        </DestinyManifestManager>
+                                    </ClientComponentManager>
+                                </LocaleManager>
+                            </SessionManager>
+                        </TooltipProvider>
                     </BungieClientProvider>
                 </QueryManager>
             </body>

@@ -1,6 +1,6 @@
 import styled from "styled-components"
-import { $media } from "~/app/layout/media"
-import { Flex } from "./layout/Flex"
+import { $media } from "~/lib/media"
+import { Flex } from "./__deprecated__/layout/Flex"
 
 export const TabSelector = styled(Flex)`
     & [aria-selected] {

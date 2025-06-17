@@ -2,17 +2,11 @@
 
 import Link from "next/link"
 import { useEffect, useMemo, useRef } from "react"
-import styled from "styled-components"
-import { $media } from "~/app/layout/media"
-import { useLocale } from "~/app/layout/wrappers/LocaleManager"
 import { OptionalWrapper } from "~/components/OptionalWrapper"
-import { Panel } from "~/components/Panel"
-import { Container } from "~/components/layout/Container"
-import { Flex } from "~/components/layout/Flex"
-import { Grid } from "~/components/layout/Grid"
-import { MobileDesktopSwitch } from "~/components/util/MobileDesktopSwitch"
+import { useLocale } from "~/components/providers/LocaleManager"
 import { useQueryParams } from "~/hooks/util/useQueryParams"
-import { formattedNumber, secondsToHMS, truncatedNumber } from "../../util/presentation/formatting"
+import { cn } from "~/lib/tw"
+import { formattedNumber, secondsToHMS, truncatedNumber } from "~/util/presentation/formatting"
 import { type LeaderboardEntry } from "./LeaderboardEntries"
 import { LeaderboardEntryPlayerComponent } from "./LeaderboardEntryPlayer"
 
@@ -66,93 +60,47 @@ export const LeaderboardEntryComponent = ({
     )
 
     return (
-        <MobileDesktopSwitch
-            sm={
-                <Panel $fullWidth ref={sm} style={targettedStyle}>
-                    <Flex $gap={2} $padding={0.5}>
-                        <Container $flex style={{ fontSize: "1.375rem", minWidth: "20px" }}>
-                            {placementIcon ?? truncatedNumber(entry.rank, locale)}
-                        </Container>
-                        <OptionalWrapper
-                            condition={entry.url}
-                            wrapper={({ children, value }) => (
-                                <Link
-                                    style={{ color: "unset" }}
-                                    href={value}
-                                    target={value.startsWith("/") ? "" : "_blank"}>
-                                    {children}
-                                </Link>
-                            )}>
-                            <Value>{value}</Value>
-                        </OptionalWrapper>
-                    </Flex>
-                    <Flex $padding={0.5}>
-                        {entry.type === "player" ? (
-                            <LeaderboardEntryPlayerComponent {...entry.player} />
-                        ) : (
-                            <Grid $numCols={1} $fullWidth>
-                                {entry.team.map(player => (
-                                    <LeaderboardEntryPlayerComponent key={player.id} {...player} />
-                                ))}
-                            </Grid>
-                        )}
-                    </Flex>
-                </Panel>
-            }
-            lg={
-                <Panel
-                    ref={lg}
-                    $maxWidth={entry.type === "player" ? 450 : undefined}
-                    $fullWidth
-                    $growOnHover
-                    style={targettedStyle}>
-                    <Flex $align={"space-between"}>
-                        <Flex style={{ flex: 1 }} $padding={0} $align="flex-start">
-                            <Container
-                                $flex
-                                style={{
-                                    fontSize: "1.375rem",
-                                    minWidth: "10%"
-                                }}>
-                                {placementIcon ?? truncatedNumber(entry.rank, locale)}
-                            </Container>
-                            {entry.type === "team" ? (
-                                <Grid $minCardWidth={190} $fullWidth>
-                                    {entry.team.map(player => (
-                                        <LeaderboardEntryPlayerComponent
-                                            key={player.id}
-                                            {...player}
-                                        />
-                                    ))}
-                                </Grid>
-                            ) : (
-                                <LeaderboardEntryPlayerComponent {...entry.player} />
-                            )}
-                        </Flex>
-                        <OptionalWrapper
-                            condition={entry.url}
-                            wrapper={({ children, value }) => (
-                                <Link
-                                    style={{ color: "unset" }}
-                                    href={value}
-                                    target={value.startsWith("/") ? "" : "_blank"}>
-                                    {children}
-                                </Link>
-                            )}>
-                            <Value>{value}</Value>
-                        </OptionalWrapper>
-                    </Flex>
-                </Panel>
-            }
-        />
+        <div
+            ref={sm}
+            className={cn(
+                "bg-card flex w-full flex-col items-center rounded border p-2 shadow-md transition-transform hover:scale-105 lg:flex-row lg:justify-between",
+                { "max-w-[450px]": entry.type === "player" }
+            )}
+            style={targettedStyle}>
+            {/* Left side */}
+            <div className="flex-1">
+                {/* Players */}
+                <div className="flex gap-4 p-2">
+                    <div className="flex" style={{ fontSize: "1.375rem", minWidth: "20px" }}>
+                        {placementIcon ?? truncatedNumber(entry.rank, locale)}
+                    </div>
+
+                    {entry.type === "player" ? (
+                        <LeaderboardEntryPlayerComponent {...entry.player} />
+                    ) : (
+                        // team entry
+                        <div className="grid w-full grid-cols-[repeat(auto-fit,minmax(240px,1fr))] gap-2">
+                            {entry.team.map(player => (
+                                <LeaderboardEntryPlayerComponent key={player.id} {...player} />
+                            ))}
+                        </div>
+                    )}
+                </div>
+            </div>
+
+            {/* Right side (link or additional info) */}
+            <OptionalWrapper
+                condition={entry.url}
+                wrapper={({ children, value }) => (
+                    <Link
+                        className="p-2 text-inherit"
+                        href={value}
+                        target={value.startsWith("/") ? undefined : "_blank"}>
+                        {children}
+                    </Link>
+                )}>
+                <div>{value}</div>
+            </OptionalWrapper>
+        </div>
     )
 }
-
-const Value = styled.span`
-    white-space: nowrap;
-    font-size: 1.375rem;
-    ${$media.max.mobile`
-        font-size: 1.125rem;
-    `}
-    color: ${({ theme }) => theme.colors.text.secondary};
-`

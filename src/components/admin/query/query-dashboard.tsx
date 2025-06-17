@@ -2,8 +2,8 @@
 
 import { useEffect, useState, type MouseEventHandler } from "react"
 import styled from "styled-components"
-import { Flex } from "~/components/layout/Flex"
-import { PageWrapper } from "~/components/layout/PageWrapper"
+import { PageWrapper } from "~/components/PageWrapper"
+import { Flex } from "~/components/__deprecated__/layout/Flex"
 import { useLocalStorage } from "~/hooks/util/useLocalStorage"
 import { useRaidHubAdminQuery } from "~/services/raidhub/hooks"
 import { DataView } from "./query-data-view"
@@ -90,6 +90,7 @@ export function QueryDashboard() {
             <Flex $align="flex-start" $padding={0.25}>
                 {!!Object.keys(store).length && (
                     <select
+                        className="bg-black"
                         name="Load"
                         id="selector"
                         value={selectedQueryKey ?? "-"}

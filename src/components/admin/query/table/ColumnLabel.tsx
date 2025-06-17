@@ -1,5 +1,3 @@
-"use client"
-
 import { useEffect, useState } from "react"
 import { useLocalStorageObject } from "~/hooks/util/useLocalStorage"
 import { ColumnFormats } from "./formats"
@@ -66,6 +64,7 @@ export const ColumnLabel = ({
                     />
                     <div>
                         <select
+                            className="bg-black"
                             id="selector"
                             value={editingDataType}
                             onChange={e =>

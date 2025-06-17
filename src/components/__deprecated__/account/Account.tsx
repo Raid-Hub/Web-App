@@ -5,8 +5,8 @@ import { type Session } from "next-auth"
 import { signIn, signOut } from "next-auth/react"
 import Link from "next/link"
 import { useMemo, useRef } from "react"
-import DiscordIcon from "~/components/icons/DiscordIcon"
-import SpeedrunIcon from "~/components/icons/SpeedrunIcon"
+import { DiscordIconOld } from "~/components/icons/DiscordIcon"
+import { SpeedrunIcon } from "~/components/icons/SpeedrunIcon"
 import TwitchIcon from "~/components/icons/TwitchIcon"
 import TwitterIcon from "~/components/icons/TwitterIcon"
 import YoutubeIcon from "~/components/icons/YoutubeIcon"
@@ -116,7 +116,7 @@ const Account = ({ session, providers }: AccountProps) => {
                             link={() => signIn("discord", {}, { prompt: "consent" })}
                             serviceName={discordProvider.name}
                             username={socialNames?.get("discord") ?? null}
-                            Icon={DiscordIcon}
+                            Icon={DiscordIconOld}
                         />
                     )}
                     {twitterProvider && (

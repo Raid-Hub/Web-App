@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect } from "react"
-import { PageWrapper } from "~/components/layout/PageWrapper"
+import { PageWrapper } from "~/components/PageWrapper"
 
 export default function GlobalError({
     error,

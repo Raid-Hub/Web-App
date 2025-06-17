@@ -34,15 +34,6 @@
     gap: 2em;
 }
 
-.overview-left {
-    flex-basis: min(max(20%, 200px), 300px);
-    display: flex;
-
-    justify-content: center;
-    align-items: flex-start;
-    position: relative;
-}
-
 .about {
     flex: 2;
     white-space: pre-line;

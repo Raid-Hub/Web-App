@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query"
 import { getMembershipDataForCurrentUser } from "bungie-net-core/endpoints/User"
 import { type UserMembershipData } from "bungie-net-core/models"
-import { useBungieClient } from "~/app/layout/wrappers/session/BungieClientProvider"
+import { useBungieClient } from "~/components/providers/session/BungieClientProvider"
 
 export const useMembershipDataForCurrentUser = <T = UserMembershipData>(opts?: {
     select: (data: UserMembershipData) => T

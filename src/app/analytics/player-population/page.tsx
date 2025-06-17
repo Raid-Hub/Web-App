@@ -1,6 +1,6 @@
 "use client"
 
-import { useLocale } from "~/app/layout/wrappers/LocaleManager"
+import { useLocale } from "~/components/providers/LocaleManager"
 import { useRaidHubPlayerPopulation } from "~/services/raidhub/useRaidHubPlayerPopulation"
 import { PopulationGraph } from "./PopulationGraph"
 

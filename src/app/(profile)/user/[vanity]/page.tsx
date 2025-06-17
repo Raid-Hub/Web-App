@@ -1,18 +1,18 @@
 import { type Metadata } from "next"
 import { notFound } from "next/navigation"
 import { Suspense } from "react"
-import { getServerSession } from "~/lib/server/auth"
-import { type AppProfile } from "~/types/api"
-import { bungieProfileIconUrl } from "~/util/destiny"
-import { ProfileClientWrapper } from "../../ProfileClientWrapper"
-import { ProfilePage } from "../../ProfilePage"
-import { generatePlayerMetadata } from "../../metadata"
+import { ProfileClientWrapper } from "~/components/profile/ProfileClientWrapper"
+import { ProfilePage } from "~/components/profile/ProfilePage"
+import { generatePlayerMetadata } from "~/lib/profile/metadata"
 import {
     getUniqueProfileByVanity,
     prefetchRaidHubPlayerProfile,
     prefetchRaidHubPlayerProfileAuthenticated
-} from "../../prefetch"
-import { type ProfileProps } from "../../types"
+} from "~/lib/profile/prefetch"
+import { type ProfileProps } from "~/lib/profile/types"
+import { getServerSession } from "~/lib/server/auth"
+import { type AppProfile } from "~/types/api"
+import { bungieProfileIconUrl } from "~/util/destiny"
 
 export const revalidate = 0
 

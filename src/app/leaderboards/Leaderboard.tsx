@@ -1,7 +1,7 @@
 import { type QueryKey } from "@tanstack/react-query"
 import { Suspense, type ReactNode } from "react"
-import { Flex } from "~/components/layout/Flex"
-import { PageWrapper } from "~/components/layout/PageWrapper"
+import { PageWrapper } from "~/components/PageWrapper"
+import { Flex } from "~/components/__deprecated__/layout/Flex"
 import {
     type PathParamsForLeaderboardURL,
     type RaidHubLeaderboardURL
@@ -25,7 +25,7 @@ export const Leaderboard = <T extends RaidHubLeaderboardURL, X extends boolean>(
     pageProps: PageProps<T, X>
 }) => {
     return (
-        <PageWrapper $maxWidth={2000} pageProps={props.pageProps}>
+        <PageWrapper pageProps={props.pageProps} className="max-w-500">
             <Flex $padding={0}>
                 <Flex $direction="column" $padding={0} $gap={1.5}>
                     <div style={{ minWidth: "calc(min(95%, 500px))" }}>

@@ -1,9 +1,9 @@
-import { PageWrapper } from "~/components/layout/PageWrapper"
+import { PageWrapper } from "~/components/PageWrapper"
+import { HomeQuickLinks } from "~/components/home/HomeQuickLinks"
 import { baseMetadata } from "~/lib/metadata"
 import { prefetchManifest } from "~/services/raidhub/prefetchRaidHubManifest"
 import { Cards } from "./HomeCards"
 import { HomeLogo } from "./HomeLogo"
-import { HomeToolButtons } from "./HomeToolButtons"
 import { HomeSearchBar } from "./search/HomeSearchBar"
 
 export const revalidate = 180 // static revalidation (5 minutes in seconds)
@@ -22,10 +22,10 @@ export async function generateMetadata() {
 }
 export default async function Page() {
     return (
-        <PageWrapper>
+        <PageWrapper className="space-y-4">
             <HomeLogo />
             <HomeSearchBar />
-            <HomeToolButtons />
+            <HomeQuickLinks />
             <Cards />
         </PageWrapper>
     )

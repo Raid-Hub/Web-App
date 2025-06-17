@@ -1,5 +1,5 @@
 import { Table } from "~/components/Table"
-import { Container } from "~/components/layout/Container"
+import { Container } from "~/components/__deprecated__/layout/Container"
 import { type RaidHubWeaponMetric } from "~/services/raidhub/types"
 import { WeaponTableRow } from "./WeaponTableRow"
 

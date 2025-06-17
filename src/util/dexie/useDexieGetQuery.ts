@@ -1,7 +1,7 @@
 import { type PromiseExtended } from "dexie"
 import { useLiveQuery } from "dexie-react-hooks"
 import { useMemo } from "react"
-import { useDefinitionsCache } from "~/app/layout/wrappers/DestinyManifestManager"
+import { useDefinitionsCache } from "~/components/providers/DestinyManifestManager"
 import { useDexie, type CustomDexieTable, type CustomDexieTableDefinition } from "./dexie"
 
 /**

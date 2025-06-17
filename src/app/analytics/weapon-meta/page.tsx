@@ -3,9 +3,9 @@
 import Link from "next/link"
 import { useRef } from "react"
 import { z } from "zod"
-import { useLocale } from "~/app/layout/wrappers/LocaleManager"
-import { Container } from "~/components/layout/Container"
-import { Flex } from "~/components/layout/Flex"
+import { Container } from "~/components/__deprecated__/layout/Container"
+import { Flex } from "~/components/__deprecated__/layout/Flex"
+import { useLocale } from "~/components/providers/LocaleManager"
 import { useLocalStorage } from "~/hooks/util/useLocalStorage"
 import { useQueryParams } from "~/hooks/util/useQueryParams"
 import { useSmoothAnchorScroll } from "~/hooks/util/useSmoothAnchorScroll"
@@ -76,6 +76,7 @@ export default function Page() {
                             {"Sort by:"}
                         </label>
                         <select
+                            className="bg-black"
                             id="sort-selector"
                             value={sort}
                             onChange={e => {

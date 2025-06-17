@@ -1,4 +1,4 @@
-import { Card } from "~/components/Card"
+import { Card } from "~/shad/card"
 
 export const StatCard = ({
     icon,

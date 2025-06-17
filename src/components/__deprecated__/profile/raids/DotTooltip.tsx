@@ -1,5 +1,5 @@
 import { useMemo } from "react"
-import { useRaidHubManifest } from "~/app/layout/wrappers/RaidHubManifestManager"
+import { useRaidHubManifest } from "~/components/providers/RaidHubManifestManager"
 import { DotBlacklisted, DotFail, DotFlawless, DotSuccess, DotTaxi } from "~/lib/profile/constants"
 import { Tag } from "~/models/tag"
 import type { RaidHubInstanceForPlayer } from "~/services/raidhub/types"

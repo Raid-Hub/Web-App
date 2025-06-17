@@ -1,6 +1,6 @@
 import { type Collection } from "@discordjs/collection"
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from "react"
-import { useFilterContext } from "~/app/(profile)/raids/FilterContext"
+import { useFilterContext } from "~/components/profile/raids/FilterContext"
 import type { RaidHubInstanceForPlayer } from "~/services/raidhub/types"
 import { median } from "~/util/math"
 import Dot from "./Dot"

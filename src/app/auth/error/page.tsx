@@ -1,4 +1,4 @@
-import { PageWrapper } from "~/components/layout/PageWrapper"
+import { PageWrapper } from "~/components/PageWrapper"
 
 export default function Page() {
     return (

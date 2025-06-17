@@ -4,7 +4,6 @@ import { generateSortScore } from "~/lib/pgcr/riis"
 import { type RaidHubInstanceExtended } from "~/services/raidhub/types"
 import { Card } from "~/shad/card"
 import { Separator } from "~/shad/separator"
-import { TooltipProvider } from "~/shad/tooltip"
 import { PGCRHeader } from "./pgcr-header"
 import { PGCRPlayers } from "./pgcr-players"
 import { PlayerDetailsPanelWrapper } from "./player-details-panel"
@@ -69,25 +68,23 @@ export default function PGCR({ data }: PGCRProps) {
             mvp={mvp}
             scores={Array.from(sortScores.entries())}
             playerStatsMerged={Array.from(playerMergedStats.entries())}>
-            <TooltipProvider>
-                <div className="container mx-auto my-auto w-full max-w-5xl">
-                    <Card className="w-full gap-0 overflow-hidden border border-zinc-800 bg-zinc-950 py-0 shadow-md md:w-[768px] lg:w-[956px] xl:w-[1096px]">
-                        <PGCRHeader data={data} />
+            <div className="container mx-auto my-auto w-full max-w-5xl">
+                <Card className="w-full gap-0 overflow-hidden border border-zinc-800 bg-zinc-950 py-0 shadow-md md:w-[768px] lg:w-[956px] xl:w-[1096px]">
+                    <PGCRHeader data={data} />
 
-                        <Separator className="bg-zinc-800" />
+                    <Separator className="bg-zinc-800" />
 
-                        <PGCRPlayers
-                            data={data}
-                            playerMergedStats={playerMergedStats}
-                            sortScores={sortScores}
-                            mvp={mvp}
-                        />
-                    </Card>
+                    <PGCRPlayers
+                        data={data}
+                        playerMergedStats={playerMergedStats}
+                        sortScores={sortScores}
+                        mvp={mvp}
+                    />
+                </Card>
 
-                    {/*  Player Details Panel */}
-                    <PlayerDetailsPanelWrapper />
-                </div>
-            </TooltipProvider>
+                {/*  Player Details Panel */}
+                <PlayerDetailsPanelWrapper />
+            </div>
         </ClientStateManager>
     )
 }

@@ -9,25 +9,7 @@
     -webkit-box-sizing: border-box;
 }
 
-html,
 body {
-    min-width: 300px;
-}
-
-html {
-    overscroll-behavior-y: contain;
-    overflow-y: auto;
-}
-
-body {
-    font-family: "Manrope", sans-serif;
-    margin: 0;
-    color: white;
-
-    display: flex;
-    min-height: 100svh;
-    flex-direction: column;
-
     background-color: #010011;
     background: linear-gradient(
         90deg,
@@ -38,23 +20,6 @@ body {
         rgba(19, 3, 1, 1) 100%
     );
     background-size: 100% 100%;
-}
-
-img[src=""] {
-    font-size: 0;
-    position: relative;
-}
-
-@media (max-width: 768px) {
-    .switch-lg {
-        display: none !important;
-    }
-}
-
-@media (min-width: 769px) {
-    .switch-sm {
-        display: none !important;
-    }
 }
 
 @theme inline {
@@ -102,18 +67,24 @@ img[src=""] {
     --spacing-body: var(--min-body-height);
 }
 
+/* fixes radix behavior */
+html body[data-scroll-locked] {
+    overflow: visible !important;
+    margin-right: 0 !important;
+}
+
 :root {
     /* main colors */
     --background: oklch(0.145 0 0);
     --foreground: oklch(0.985 0 0);
-    --card: oklch(0.205 0 0);
+    --card: oklch(0.29 0.0015 17.24 / 0.39);
     --card-foreground: oklch(0.985 0 0);
     --popover: oklch(0.205 0 0);
     --popover-foreground: oklch(0.985 0 0);
     /* text colors */
     --primary: oklch(0.922 0 0);
     --primary-foreground: oklch(0.205 0 0);
-    --secondary: oklch(0.269 0 0);
+    --secondary: oklch(0.74 0 none);
     --secondary-foreground: oklch(0.985 0 0);
     /* muted */
     --muted: oklch(0.269 0 0);
@@ -123,9 +94,9 @@ img[src=""] {
     --accent-foreground: oklch(0.985 0 0);
     /* theme colors */
     --destructive: oklch(0.704 0.191 22.216);
-    --border: oklch(0.29 0 none / 0.98);
+    --border: oklch(0.29 0 0 / 0.98);
     --input: oklch(1 0 0 / 15%);
-    --ring: oklch(0.556 0 0);
+    --ring: oklch(0.42 0 none / 0.61);
     --hyperlink: oklch(0.74 0.1485 57.89);
     /* custom colors */
     --raidhub: oklch(0.67 0.1564 54.62);
@@ -146,9 +117,12 @@ img[src=""] {
     /* sizing */
     --radius: 0.5rem;
     --header-height: 4rem;
-    --footer-height: 6rem;
+    --footer-height: 5rem;
     --min-body-height: calc(100svh - (var(--header-height)) - (var(--footer-height)));
 }
+
+/* colors for profile ranks */
+@source inline('bg-{pink,violet,sky,teal,yellow,gray,orange,stone}-{400,500}/80');
 
 @layer base {
     * {

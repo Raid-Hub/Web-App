@@ -22,7 +22,7 @@ export default function Connection({
                 <h3>{serviceName}</h3>
                 <i>{username}</i>
                 <div className={styles["social-icon-container"]}>
-                    <Icon color="white" sx={35} />
+                    <Icon color="white" sx={35} className="size-8 text-white" />
                 </div>
             </div>
             <div className={styles.buttons}>

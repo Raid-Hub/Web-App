@@ -1,4 +1,4 @@
-import { Flex } from "~/components/layout/Flex"
+import { Flex } from "~/components/__deprecated__/layout/Flex"
 import { useRaidHubWeeklyWeaponMeta } from "~/services/raidhub/useRaidHubWeeklyWeaponMeta"
 import { WeaponTable } from "./WeaponTable"
 

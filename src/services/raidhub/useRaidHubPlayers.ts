@@ -52,10 +52,21 @@ export const useRaidHubPlayer = (
     opts?: {
         enabled?: boolean
     }
-) =>
-    useQuery({
+) => {
+    const session = useSession()
+
+    const authHeaders: HeadersInit = session.data?.raidHubAccessToken?.value
+        ? {
+              Authorization: `Bearer ${session.data.raidHubAccessToken.value}`
+          }
+        : {}
+
+    return useQuery({
         queryFn: ({ queryKey }) =>
-            getRaidHubApi("/player/{membershipId}/profile", { membershipId: queryKey[2] }, null),
+            getRaidHubApi("/player/{membershipId}/profile", { membershipId: queryKey[2] }, null, {
+                headers: authHeaders
+            }).then(res => res.response),
         queryKey: ["raidhub", "player", membershipId] as const,
         ...opts
     })
+}

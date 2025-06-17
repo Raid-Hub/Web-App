@@ -1,6 +1,6 @@
 "use client"
 
-import { useRaidHubManifest } from "~/app/layout/wrappers/RaidHubManifestManager"
+import { useRaidHubManifest } from "~/components/providers/RaidHubManifestManager"
 import { getRaidSplash } from "~/lib/activity-images"
 import { SpeedrunVariables, type RTABoardCategory } from "~/lib/speedrun/speedrun-com-mappings"
 import { Splash } from "../../../../LeaderboardSplashComponents"

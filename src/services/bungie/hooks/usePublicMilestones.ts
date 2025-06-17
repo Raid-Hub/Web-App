@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query"
 import { getPublicMilestones } from "bungie-net-core/endpoints/Destiny2"
 import { type DestinyPublicMilestone } from "bungie-net-core/models"
-import { useBungieClient } from "~/app/layout/wrappers/session/BungieClientProvider"
+import { useBungieClient } from "~/components/providers/session/BungieClientProvider"
 
 export const usePublicMilestones = <T = Record<number, DestinyPublicMilestone>>(opts?: {
     suspense?: boolean

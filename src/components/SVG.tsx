@@ -2,8 +2,8 @@
 
 import { forwardRef, type ComponentPropsWithoutRef } from "react"
 import styled, { css, type DefaultTheme } from "styled-components"
-import { $media } from "~/app/layout/media"
-import { type deviceSizes } from "~/app/layout/theme"
+import { $media } from "~/lib/media"
+import { type deviceSizes } from "~/lib/theme"
 import type { AtLeast } from "~/types/generic"
 import { o } from "~/util/o"
 
@@ -74,22 +74,5 @@ export const SVG = forwardRef<SVGSVGElement, AtLeast<SVGWrapperProps, "viewBox">
 )
 
 SVG.displayName = "SVG"
-
-export const DeepFilledSvg = styled(SVG)<{
-    $fill?: string
-    $hoverFill?: string
-}>`
-    ${({ $fill, $hoverFill }) => css`
-        & *:not([data-deep-filled="false"]) {
-            fill: ${$fill};
-        }
-
-        &:hover {
-            & *:not([data-deep-filled="false"]) {
-                fill: ${$hoverFill};
-            }
-        }
-    `}
-`
 
 export type SVGProps = Omit<ComponentPropsWithoutRef<"svg">, "viewBox">

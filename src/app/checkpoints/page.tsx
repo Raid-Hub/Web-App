@@ -1,7 +1,7 @@
 import { Suspense } from "react"
-import { PageWrapper } from "~/components/layout/PageWrapper"
-import { CheckpointLogo } from "./CheckpointLogo"
-import { Checkpoints } from "./Checkpoints"
+import { PageWrapper } from "~/components/PageWrapper"
+import { Checkpoints } from "~/components/checkpoints/checkpoints"
+import { CheckpointLogo } from "~/components/checkpoints/logo"
 
 export const revalidate = false
 

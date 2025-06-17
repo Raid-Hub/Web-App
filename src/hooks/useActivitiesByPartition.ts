@@ -14,7 +14,9 @@ export const useActivitiesByPartition = <T extends RaidHubInstance>(
         let currentKey = ""
         for (const activity of Array.from(allResults.values())) {
             const dateCompleted = new Date(activity.dateCompleted)
-
+            if (dateCompleted.getTime() > Date.now()) {
+                continue
+            }
             if (
                 previousDateCompleted &&
                 previousDateCompleted.getTime() - dateCompleted.getTime() < msBetweenPartitions &&

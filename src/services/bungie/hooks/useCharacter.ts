@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query"
 import { getCharacter } from "bungie-net-core/endpoints/Destiny2"
 import { type BungieMembershipType } from "bungie-net-core/models"
 import type { DestinyCharacterResponse } from "bungie-net-core/models/Destiny/Responses/DestinyCharacterResponse"
-import { useBungieClient } from "~/app/layout/wrappers/session/BungieClientProvider"
+import { useBungieClient } from "~/components/providers/session/BungieClientProvider"
 
 export const useCharacter = <T = DestinyCharacterResponse<[200]>>(
     params: {

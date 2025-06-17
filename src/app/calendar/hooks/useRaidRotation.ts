@@ -3,9 +3,9 @@
 import { type Collection } from "@discordjs/collection"
 import { type DestinyPublicMilestone } from "bungie-net-core/models"
 import { useMemo } from "react"
+import { useRaidHubManifest } from "~/components/providers/RaidHubManifestManager"
 import { type RaidHubActivityDefinition } from "~/services/raidhub/types"
 import { modulo } from "~/util/math"
-import { useRaidHubManifest } from "../../layout/wrappers/RaidHubManifestManager"
 import { useSeasonEndDate } from "./useSeasonEndDate"
 
 export const useRaidRotation = (milestones: Collection<string, DestinyPublicMilestone> | null) => {
