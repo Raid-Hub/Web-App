@@ -8,6 +8,7 @@ import {
     ChartNoAxesCombined,
     ChartSpline,
     HeartHandshake,
+    Hourglass,
     Users
 } from "lucide-react"
 import Link from "next/link"
@@ -20,8 +21,8 @@ const navLinks = [
         icon: Users
     },
     {
-        title: "Contest Power Rankings",
-        href: "/leaderboards/individual/global/contest-power-rankings",
+        title: "World First Rating Rankings",
+        href: "/leaderboards/individual/global/world-first-rankings",
         icon: ChartNoAxesColumnDecreasing
     },
     {
@@ -58,6 +59,11 @@ const navLinks = [
         title: "Sherpa Leaderboard",
         href: "/leaderboards/individual/global/sherpas",
         icon: HeartHandshake
+    },
+    {
+        title: "In Raid Time Leaderboard",
+        href: "/leaderboards/individual/global/in-raid-time",
+        icon: Hourglass
     }
 ]
 

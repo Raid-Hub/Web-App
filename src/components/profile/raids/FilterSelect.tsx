@@ -27,11 +27,11 @@ export const FilterSelect = () => {
                     }
                 }}>
                 <SelectTrigger className="w-[180px]">
-                    <SelectValue placeholder="Select a fruit" />
+                    <SelectValue placeholder="Select a filter" />
                 </SelectTrigger>
                 <SelectContent>
                     <SelectGroup>
-                        <SelectLabel>Fruits</SelectLabel>
+                        <SelectLabel>Filters</SelectLabel>
                         {Object.entries(FilterPresets).map(([id, preset]) => (
                             <SelectItem key={id} value={id}>
                                 {preset.displayName}

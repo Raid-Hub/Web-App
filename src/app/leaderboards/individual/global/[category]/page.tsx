@@ -11,23 +11,23 @@ export const revalidate = 900
 export const dynamic = "force-static"
 export const fetchCache = "default-no-store"
 
-const getCategoryInfo = (
-    category: DynamicParams["params"]["category"]
-): [
-    string,
+type CategoryParam =
     PathParamsForLeaderboardURL<"/leaderboard/individual/global/{category}">["category"]
-] => {
+
+const getCategoryTitle = (category: CategoryParam) => {
     switch (category) {
         case "clears":
-            return ["Clears", "clears"]
+            return "Clears"
         case "full-clears":
-            return ["Full Clears", "freshClears"]
+            return "Full Clears"
         case "sherpas":
-            return ["Sherpas", "sherpas"]
+            return "Sherpas"
         case "speedrun":
-            return ["Speedrun", "speedrun"]
-        case "contest-power-rankings":
-            return ["Contest Power Rankings", "powerRankings"]
+            return "Speedrun"
+        case "world-first-rankings":
+            return "World First Rating"
+        case "in-raid-time":
+            return "In Raid Time"
         default:
             notFound()
     }
@@ -35,15 +35,15 @@ const getCategoryInfo = (
 
 type DynamicParams = {
     params: {
-        category: "clears" | "full-clears" | "sherpas" | "speedrun" | "contest-power-rankings"
+        category: CategoryParam
     }
     searchParams: Record<string, string>
 }
 
 export async function generateMetadata({ params }: DynamicParams): Promise<Metadata> {
-    const [categoryName] = getCategoryInfo(params.category)
+    const categoryName = getCategoryTitle(params.category)
     const title = `${categoryName} Leaderboards`
-    const description = `View the ${categoryName.toLowerCase()} global leaderboard`
+    const description = `View the Destiny 2 raid ${categoryName.toLowerCase()} leaderboard`
 
     return {
         title: title,
@@ -60,10 +60,10 @@ export async function generateMetadata({ params }: DynamicParams): Promise<Metad
 const ENTRIES_PER_PAGE = 50
 
 export default async function Page({ params, searchParams }: DynamicParams) {
-    const [categoryName, category] = getCategoryInfo(params.category)
+    const categoryName = getCategoryTitle(params.category)
 
     const apiParams = {
-        category
+        category: params.category
     }
 
     return (

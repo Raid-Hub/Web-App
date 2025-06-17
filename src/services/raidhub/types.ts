@@ -34,6 +34,8 @@ export type RaidHubAPIErrorResponse<E extends RaidHubErrorCode = RaidHubErrorCod
 // Components
 export type RaidHubErrorCode = Component<"ErrorCode">
 export type RaidHubLeaderboardPagination = Component<"LeaderboardPagination">
+export type RaidHubIndividualGlobalLeaderboardCategory =
+    Component<"IndividualGlobalLeaderboardCategory">
 
 export type RaidHubDestinyMembershipType = Component<"DestinyMembershipType">
 
