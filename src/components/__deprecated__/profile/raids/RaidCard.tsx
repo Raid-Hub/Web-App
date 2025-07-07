@@ -8,7 +8,7 @@ import { useRaidCardContext } from "~/components/profile/raids/RaidCardContext"
 import { WeeklyProgress } from "~/components/profile/raids/expanded/WeeklyProgress"
 import { useLocale } from "~/components/providers/LocaleManager"
 import { useRaidHubManifest } from "~/components/providers/RaidHubManifestManager"
-import { useRaidTags } from "~/hooks/profile/useRaidTags"
+import { basicActivityFilter, useRaidTags } from "~/hooks/profile/useRaidTags"
 import { useTimeout } from "~/hooks/util/useTimeout"
 import { getRaidSplash } from "~/lib/activity-images"
 import {
@@ -80,7 +80,7 @@ export default function RaidCard({
     }, [activities, isReprisedRaid, isChallengeMode, leaderboardEntry, activityDefinition])
 
     const { fastestFullClear, averageClear, stats } = useMemo(() => {
-        const freshFulls = activities?.filter(a => a.player.completed && a.fresh)
+        const freshFulls = activities?.filter(basicActivityFilter).filter(a => a.fresh)
         const fastestFullClear = freshFulls?.size
             ? freshFulls?.reduce<RaidHubInstanceForPlayer>((curr, nxt) =>
                   nxt.duration < curr.duration ? nxt : curr

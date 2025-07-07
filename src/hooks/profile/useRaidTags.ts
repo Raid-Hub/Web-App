@@ -1,7 +1,7 @@
 import type { Collection } from "@discordjs/collection"
 import { useCallback, useMemo } from "react"
 import { useRaidHubManifest } from "~/components/providers/RaidHubManifestManager"
-import { type RaidHubInstance } from "~/services/raidhub/types"
+import { type RaidHubInstance, type RaidHubInstanceForPlayer } from "~/services/raidhub/types"
 import { includedIn } from "~/util/helpers"
 
 const crafteningStartDate = new Date("2023-09-15T17:00:00Z")
@@ -17,12 +17,15 @@ const isDuringOpItemEvent = (activity: RaidHubInstance) => {
     )
 }
 
-export const useRaidTags = (activities: Collection<string, RaidHubInstance>) => {
+export const basicActivityFilter = (activity: RaidHubInstanceForPlayer) =>
+    activity.player.completed && !activity.isBlacklisted && !isDuringOpItemEvent(activity)
+
+export const useRaidTags = (activities: Collection<string, RaidHubInstanceForPlayer>) => {
     const getWeight = useGetWeight()
 
     return useMemo(() => {
         const sortedElligibleTags = activities
-            .filter(a => a.completed && !a.isBlacklisted && !isDuringOpItemEvent(a))
+            .filter(basicActivityFilter)
             .map(activity => ({
                 activity,
                 weight: getWeight(activity)
