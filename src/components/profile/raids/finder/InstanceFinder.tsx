@@ -19,7 +19,9 @@ export const InstanceFinder = () => {
         switch (session.status) {
             case "authenticated":
                 if (
-                    destinyMembershipId === session.data?.primaryDestinyMembershipId ||
+                    session.data.user.profiles.some(
+                        profile => destinyMembershipId === profile.destinyMembershipId
+                    ) ||
                     session.data.user.role === "ADMIN"
                 ) {
                     return <InstanceFinderInternal />
