@@ -120,7 +120,7 @@ export function UserCard() {
                 {/* Profile Picture */}
                 <div className="flex gap-4">
                     <Avatar className="size-20 border-1 md:-mt-16 md:size-28">
-                        <AvatarImage src={icon} alt="profile picture" />
+                        <AvatarImage src={icon} alt="profile picture" className="object-cover" />
                     </Avatar>
 
                     {/* Name and clan */}
