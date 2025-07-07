@@ -166,7 +166,7 @@ export function ActionsTab({
                     <Button
                         variant="destructive"
                         className="mt-4 space-x-1 rounded-sm"
-                        onClick={() => deleteMutation.mutate({ reportId: 1 })}>
+                        onClick={() => deleteMutation.mutate({ reportId: report.reportId })}>
                         <Trash className="size-4" />
                         Delete Report
                     </Button>
