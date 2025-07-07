@@ -11,7 +11,13 @@ export function ProfileBadge(badge: {
     return (
         <Tooltip>
             <TooltipTrigger>
-                <CloudflareIcon path={badge.icon} alt={badge.name} fill objectFit="contain" />
+                <CloudflareIcon
+                    path={badge.icon}
+                    alt={badge.name}
+                    width={32}
+                    height={32}
+                    objectFit="contain"
+                />
             </TooltipTrigger>
             <TooltipContent side="bottom">
                 <p>

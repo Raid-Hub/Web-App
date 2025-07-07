@@ -107,13 +107,13 @@ export function UserCard() {
                 style={{
                     backgroundImage: `url(${emblemBannerUrl})`
                 }}>
-                <div className="absolute top-1/2 left-40 z-20 flex h-full -translate-y-1/2 max-md:left-1/4">
-                    <div className="flex items-stretch">
+                {!!raidHubUser?.badges.length && (
+                    <div className="top-1/2 left-40 z-20 flex gap-4 border-1 bg-zinc-700/30 p-2 max-sm:h-16 md:absolute md:-translate-y-1/2 md:bg-zinc-700/50">
                         {raidHubUser?.badges
                             ?.slice(0, 5)
                             .map(badge => <ProfileBadge key={badge.id} {...badge} size={24} />)}
                     </div>
-                </div>
+                )}
             </CardHeader>
 
             <div className="flex w-full flex-col flex-wrap gap-x-6 gap-y-4 p-3 md:flex-row md:items-center">

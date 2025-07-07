@@ -1,6 +1,6 @@
 "use client"
 
-import Image from "next/image"
+import { CloudflareIcon } from "~/components/CloudflareImage"
 import { trpc } from "~/lib/trpc"
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "~/shad/card"
@@ -38,8 +38,8 @@ export function BadgesDisplay() {
                                     <TableCell>{badge.description}</TableCell>
                                     <TableCell>
                                         <div className="relative h-10 w-10">
-                                            <Image
-                                                src={badge.icon || "/placeholder.svg"}
+                                            <CloudflareIcon
+                                                path={badge.icon || "/placeholder.svg"}
                                                 alt={badge.name}
                                                 fill
                                                 className="object-contain"
