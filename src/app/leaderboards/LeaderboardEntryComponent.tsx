@@ -6,7 +6,7 @@ import { OptionalWrapper } from "~/components/OptionalWrapper"
 import { useLocale } from "~/components/providers/LocaleManager"
 import { useQueryParams } from "~/hooks/util/useQueryParams"
 import { cn } from "~/lib/tw"
-import { formattedNumber, secondsToHMS, truncatedNumber } from "~/util/presentation/formatting"
+import { formattedNumber, secondsToYDHMS, truncatedNumber } from "~/util/presentation/formatting"
 import { type LeaderboardEntry } from "./LeaderboardEntries"
 import { LeaderboardEntryPlayerComponent } from "./LeaderboardEntryPlayer"
 
@@ -25,7 +25,7 @@ export const LeaderboardEntryComponent = ({
     const { locale } = useLocale()
     const value =
         valueFormat === "duration"
-            ? secondsToHMS(entry.value, true)
+            ? secondsToYDHMS(entry.value, 3)
             : formattedNumber(entry.value, locale, 3)
 
     const lg = useRef<HTMLDivElement>(null)

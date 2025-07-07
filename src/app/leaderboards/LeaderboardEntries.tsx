@@ -33,7 +33,7 @@ export const LeaderboardEntries = (props: {
     icons?: Record<number, JSX.Element>
 }) => {
     const params = useSearchParams()
-    params.get("position")
+
     return (
         <Flex
             $direction="row"
