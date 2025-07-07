@@ -1,7 +1,7 @@
 import Image, { type ImageLoader } from "next/image"
 import { type ComponentPropsWithoutRef } from "react"
 import { R2RaidSplash } from "~/lib/activity-images"
-import { G2GEmblems } from "~/lib/g2g-emblems"
+import { VaultEmblems } from "~/lib/bungie-foundation-emblems"
 
 const cloudflareVariants = [
     { name: "tiny", w: 320, h: 180 },
@@ -46,8 +46,16 @@ const CloudflareImages = {
             large: "large.png"
         }
     },
+    bungieFoundation: {
+        path: "bungieFoundation/banner",
+        variants: {
+            tiny: "tiny.png",
+            small: "small.png",
+            medium: "medium.png"
+        }
+    },
     ...R2RaidSplash,
-    ...G2GEmblems
+    ...VaultEmblems
 } as const satisfies Record<
     string,
     { path: string; variants: Partial<Record<(typeof cloudflareVariants)[number]["name"], string>> }
