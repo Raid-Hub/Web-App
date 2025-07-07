@@ -2949,17 +2949,17 @@ export interface components {
       readonly fastestInstance: components["schemas"]["Instance"] | null;
     };
     readonly GlobalStat: {
-      readonly rank: number;
       readonly value: number;
-      readonly percentile: number;
+      readonly rank: number | null;
+      readonly percentile: number | null;
     };
     readonly PlayerProfileGlobalStats: {
-      readonly clears: components["schemas"]["GlobalStat"] | null;
-      readonly freshClears: components["schemas"]["GlobalStat"] | null;
-      readonly sherpas: components["schemas"]["GlobalStat"] | null;
-      readonly totalTimePlayed: components["schemas"]["GlobalStat"] | null;
-      readonly contest: components["schemas"]["GlobalStat"] | null;
-      readonly sumOfBest: components["schemas"]["GlobalStat"] | null;
+      readonly clears: components["schemas"]["GlobalStat"];
+      readonly freshClears: components["schemas"]["GlobalStat"];
+      readonly sherpas: components["schemas"]["GlobalStat"];
+      readonly totalTimePlayed: components["schemas"]["GlobalStat"];
+      readonly contest: components["schemas"]["GlobalStat"];
+      readonly sumOfBest: components["schemas"]["GlobalStat"];
     };
     readonly WorldFirstEntry: {
       readonly activityId: number;
