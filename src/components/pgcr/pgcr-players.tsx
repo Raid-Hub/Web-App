@@ -62,8 +62,7 @@ export const PGCRPlayers = ({ data, mvp, playerMergedStats, sortScores }: PGCRPl
     const totalKd = totals.kills / (totals.deaths || 1)
 
     const _bestKdPlayerStats = playerMergedStats.get(bestKD)!
-    const _bestKd = _bestKdPlayerStats.kills / (_bestKdPlayerStats.deaths || 1)
-    const bestKd = Number.isNaN(_bestKd) ? 0 : _bestKd
+    const bestKd = _bestKdPlayerStats.kills / (_bestKdPlayerStats.deaths || 1)
 
     return (
         <CardContent className="space-y-6 bg-black p-2 md:p-6">
