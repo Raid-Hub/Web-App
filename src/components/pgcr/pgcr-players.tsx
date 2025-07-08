@@ -59,9 +59,10 @@ export const PGCRPlayers = ({ data, mvp, playerMergedStats, sortScores }: PGCRPl
         }
     )
 
-    const totalKd = totals.kills + totals.deaths === 0 ? 0 : totals.kills / totals.deaths
+    const totalKd = totals.kills / (totals.deaths || 1)
 
-    const _bestKd = playerMergedStats.get(bestKD)!.kills / playerMergedStats.get(bestKD)!.deaths
+    const _bestKdPlayerStats = playerMergedStats.get(bestKD)!
+    const _bestKd = _bestKdPlayerStats.kills / (_bestKdPlayerStats.deaths || 1)
     const bestKd = Number.isNaN(_bestKd) ? 0 : _bestKd
 
     return (
