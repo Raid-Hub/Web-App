@@ -45,7 +45,7 @@ export const BungieFoundationBanner = () => {
     if (!shouldShowBanner) return null
 
     return (
-        <div className="border-border-dark bg-background/30 text-primary relative w-full border px-2 py-2 text-sm font-semibold tracking-wide sm:text-base">
+        <aside className="border-border-dark bg-background/30 text-primary relative w-full border px-2 py-2 text-sm font-semibold tracking-wide sm:text-base">
             <div className="mx-auto flex max-w-screen-xl flex-wrap items-center gap-8 px-6">
                 <div className="max-w-150 basis-100">
                     <a href={campaignUrl} target="_blank">
@@ -132,13 +132,14 @@ export const BungieFoundationBanner = () => {
                     className="absolute top-0 right-0 size-8 cursor-pointer rounded p-2 text-white hover:bg-white/10"
                 />
             </div>
-        </div>
+        </aside>
     )
 }
 
 const DonateButton = () => (
     <Link
         href={donateUrl}
+        target="_blank"
         className="bg-blue-600 px-4 py-2 text-lg font-semibold text-white uppercase transition hover:bg-blue-700">
         Donate
     </Link>
