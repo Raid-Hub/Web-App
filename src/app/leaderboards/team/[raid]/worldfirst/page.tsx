@@ -53,7 +53,11 @@ export default async function Page({ params, searchParams }: DynamicParams) {
                 <Splash
                     title={definition.name}
                     subtitle={
-                        manifest.resprisedRaidIds.includes(definition.id) ? "Challenge" : "Normal"
+                        manifest.resprisedRaidIds.includes(definition.id)
+                            ? "Challenge"
+                            : manifest.contestRaidIds.includes(definition.id)
+                              ? "Contest"
+                              : "Normal"
                     }
                     tertiaryTitle="World First Leaderboards"
                     cloudflareImageId={getRaidSplash(definition.path) ?? "pantheonSplash"}

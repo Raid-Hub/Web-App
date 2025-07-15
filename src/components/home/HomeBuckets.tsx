@@ -11,27 +11,27 @@ import { CloudflareImage, type CloudflareImageId } from "../CloudflareImage"
 const BucketData: { title: string; splash: CloudflareImageId; Layout: () => JSX.Element }[] = [
     {
         title: "World First Leaderboards",
-        splash: "lastWishSplash",
+        splash: "worldFirstSplash",
         Layout: WorldFirstLinks
     },
     {
         title: "Clears Leaderboards",
-        splash: "vowOfTheDiscipleSplash",
+        splash: "gardenOfSalvationSplash",
         Layout: ClearsLinks
     },
     {
         title: "Sherpa Leaderboards",
-        splash: "scourgeOfThePastSplash",
+        splash: "raidhubCitySplash",
         Layout: SherpaLinks
     },
     {
         title: "Speedrun Leaderboards",
-        splash: "gardenOfSalvationSplash",
+        splash: "speedrunPanelSplash",
         Layout: SpeedrunLinks
     },
     {
         title: "Misc Race Leaderboards",
-        splash: "lastWishSplash",
+        splash: "scourgeOfThePastSplash",
         Layout: VersionFirstLinks
     },
     {
@@ -69,7 +69,7 @@ function Bucket({ title, splash, Layout }: (typeof BucketData)[number]) {
                     fill
                     cloudflareId={splash}
                     alt=""
-                    className="object-cover object-[50%_35%]"
+                    className="object-cover object-[50%_35%] brightness-75"
                 />
                 <CardTitle className="z-1 text-center text-lg font-extrabold whitespace-nowrap uppercase text-shadow-lg text-shadow-zinc-800 md:text-2xl lg:absolute lg:bottom-4 lg:left-4">
                     {title}
@@ -130,9 +130,10 @@ function SpeedrunLinks() {
                     if (!srcVar)
                         return (
                             <li key={raidId}>
-                                <h3 className="font-bold">{raidDef.name}</h3>
+                                <h3 className="mx-4 inline font-bold">{raidDef.name}</h3>
                                 <Link
                                     href={`/leaderboards/team/${raidDef.path}/speedrun/any`}
+                                    target="_blank"
                                     className="text-raidhub text-lg hover:underline">
                                     Any %
                                 </Link>
@@ -140,8 +141,8 @@ function SpeedrunLinks() {
                         )
 
                     return (
-                        <div key={raidId}>
-                            <h3 className="font-bold">{raidDef.name}</h3>
+                        <li key={raidId}>
+                            <h3 className="mx-4 inline font-bold">{raidDef.name}</h3>
                             {Object.entries(srcVar.values).map(([type, data], idx, arr) => (
                                 <Fragment key={data.id}>
                                     <Link
@@ -154,7 +155,7 @@ function SpeedrunLinks() {
                                     )}
                                 </Fragment>
                             ))}
-                        </div>
+                        </li>
                     )
                 })}
         </ul>
@@ -174,7 +175,7 @@ function ClearsLinks() {
 
                     return (
                         <div key={raidId}>
-                            <h3 className="font-bold">{raidDef.name}</h3>
+                            <h3 className="mx-4 inline font-bold">{raidDef.name}</h3>
                             <Link
                                 href={`/leaderboards/individual/${raidDef.path}/freshClears`}
                                 className="text-raidhub text-lg hover:underline">
@@ -235,12 +236,13 @@ function VersionFirstLinks() {
                         v =>
                             v.id !== 32 &&
                             v.id !== 2 &&
-                            (isReprised ? !v.isChallengeMode : v.id != 1)
+                            !(isReprised && v.isChallengeMode) &&
+                            !(v.id == 1 && v.id < 15)
                     )
 
                     return (
                         <div key={raidId}>
-                            <h3 className="font-bold">{raidDef.name}</h3>
+                            <h3 className="mx-4 inline font-bold">{raidDef.name}</h3>
                             {miscBoards.map((version, idx, arr) => (
                                 <Fragment key={version.id}>
                                     <Link

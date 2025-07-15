@@ -138,5 +138,8 @@ export const SpeedrunVariables: Record<
     },
     salvationsedge: {
         categoryId: "9kvzop8d"
+    },
+    desertPerpetual: {
+        categoryId: "not-implemented"
     }
 }
