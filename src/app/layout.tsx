@@ -6,13 +6,14 @@ import { BungieFoundationBanner } from "~/components/overlays/BungieFoundationBa
 import { DestinyServiceStatusBanner } from "~/components/overlays/DestinyServiceStatusBanner"
 import { DonationBanner } from "~/components/overlays/DonationBanner"
 import { RaidHubStatusBanner } from "~/components/overlays/RaidHubStatusBanner"
-import { SearchModal } from "~/components/overlays/SearchModal"
 import { ClientComponentManager } from "~/components/providers/ClientComponentManager"
 import { LocaleManager } from "~/components/providers/LocaleManager"
 import { QueryManager } from "~/components/providers/QueryManager"
 import { RaidHubManifestManager } from "~/components/providers/RaidHubManifestManager"
 import { BungieClientProvider } from "~/components/providers/session/BungieClientProvider"
 import { SessionManager } from "~/components/providers/session/ServerSessionManager"
+import { SearchCommand } from "~/components/search/search-command"
+import { SearchProvider } from "~/components/search/search-provider"
 import { prefetchManifest } from "~/services/raidhub/prefetchRaidHubManifest"
 import { Toaster } from "~/shad/sonner"
 import { TooltipProvider } from "~/shad/tooltip"
@@ -57,23 +58,25 @@ export default async function RootLayout(params: { children: ReactNode }) {
                                     <ClientComponentManager>
                                         <DestinyManifestManager>
                                             <RaidHubManifestManager serverManifest={manifest}>
-                                                <Header>
-                                                    <NextTopLoader
-                                                        showSpinner={false}
-                                                        speed={700}
-                                                        height={3}
-                                                        color={"orange"}
-                                                    />
-                                                    <HeaderContent />
-                                                </Header>
-                                                <DonationBanner />
-                                                <BungieFoundationBanner />
-                                                <DestinyServiceStatusBanner />
-                                                <RaidHubStatusBanner />
-                                                <SearchModal />
-                                                {params.children}
-                                                <Footer />
-                                                <Toaster />
+                                                <SearchProvider>
+                                                    <Header>
+                                                        <NextTopLoader
+                                                            showSpinner={false}
+                                                            speed={700}
+                                                            height={3}
+                                                            color={"orange"}
+                                                        />
+                                                        <HeaderContent />
+                                                    </Header>
+                                                    <DonationBanner />
+                                                    <BungieFoundationBanner />
+                                                    <DestinyServiceStatusBanner />
+                                                    <RaidHubStatusBanner />
+                                                    {params.children}
+                                                    <Footer />
+                                                    <SearchCommand />
+                                                    <Toaster />
+                                                </SearchProvider>
                                             </RaidHubManifestManager>
                                         </DestinyManifestManager>
                                     </ClientComponentManager>

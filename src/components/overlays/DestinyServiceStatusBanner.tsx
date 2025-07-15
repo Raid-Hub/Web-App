@@ -15,7 +15,11 @@ const commonQueryOptions = {
     refetchOnWindowFocus: true
 }
 
-const offlineSoonTodayAlertKeys = ["D2-OfflineSoonToday", "All-OfflineSoonToday"]
+const offlineSoonTodayAlertKeys = [
+    "D2-OfflineSoonToday",
+    "All-OfflineSoonToday",
+    "D2-OfflineNowNoEndTime"
+]
 const offlineSoonTomorrowAlertKeys = ["D2-OfflineSoonTomorrow", "All-OfflineSoonTomorrow"]
 
 export const DestinyServiceStatusBanner = () => {

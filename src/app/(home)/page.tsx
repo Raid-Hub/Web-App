@@ -2,6 +2,7 @@ import { PageWrapper } from "~/components/PageWrapper"
 import { Buckets } from "~/components/home/HomeBuckets"
 import { HomeLogo } from "~/components/home/HomeLogo"
 import { HomeQuickLinks } from "~/components/home/HomeQuickLinks"
+import { HomeSearchButton } from "~/components/home/HomeSearchButton"
 import { baseMetadata } from "~/lib/metadata"
 import { prefetchManifest } from "~/services/raidhub/prefetchRaidHubManifest"
 
@@ -23,7 +24,7 @@ export default async function Page() {
     return (
         <PageWrapper className="space-y-6">
             <HomeLogo />
-            {/* <HomeSearchBar /> */}
+            <HomeSearchButton />
             <HomeQuickLinks />
             <Buckets />
         </PageWrapper>

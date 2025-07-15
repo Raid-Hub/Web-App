@@ -36,4 +36,5 @@ const IconContainer = styled(Flex)`
     position: relative;
     aspect-ratio: 1/1;
     cursor: pointer;
+    overflow: hidden;
 `

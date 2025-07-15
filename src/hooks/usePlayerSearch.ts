@@ -2,8 +2,7 @@
 
 import { Collection } from "@discordjs/collection"
 import { type UserInfoCard } from "bungie-net-core/models"
-import { useRouter } from "next/navigation"
-import { useCallback, useMemo, useState, type ChangeEvent, type FormEvent } from "react"
+import { useCallback, useMemo, useState } from "react"
 import { useDestinyPlayerByBungieName, useSearchByGlobalName } from "~/services/bungie/hooks"
 import { useRaidHubPlayerSearch } from "~/services/raidhub/hooks"
 import { type RaidHubDestinyMembershipType, type RaidHubPlayerInfo } from "~/services/raidhub/types"
@@ -11,17 +10,11 @@ import { isPrimaryCrossSave } from "~/util/destiny/crossSave"
 import { getBungieDisplayName } from "~/util/destiny/getBungieDisplayName"
 import { useDebounce } from "./util/useDebounce"
 
-export function useSearch(props?: {
-    onRedirect?: (result: RaidHubPlayerInfo) => void
-    navigateOnEnter?: boolean
-}) {
-    const router = useRouter()
-
+export function usePlayerSearch() {
     const [enteredText, setEnteredText] = useState("")
-    const [enterPressed, setEnterPressed] = useState(false)
     const [debouncedQuery, forceUpdateQuery] = useDebounce(
         enteredText,
-        200,
+        175,
         enteredText.length >= 3 || enteredText.includes("#")
     )
 
@@ -90,37 +83,28 @@ export function useSearch(props?: {
         forceUpdateQuery("")
     }, [forceUpdateQuery])
 
-    const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
-        setEnteredText(event.target.value)
-    }
-
-    const handleFormSubmit = (event: FormEvent<HTMLFormElement>) => {
-        event.preventDefault()
-        forceUpdateQuery(enteredText)
-        setEnterPressed(true)
-    }
-
-    /**
-     * Redirect if only one result is found and the user has pressed enter
-     */
-    if (
-        enterPressed &&
-        props?.navigateOnEnter &&
-        !raidHubSearchQuery.isStale &&
-        raidHubSearchQuery.isSuccess &&
-        raidHubSearchQuery.data.length === 1
-    ) {
-        const result = raidHubSearchQuery.data[0]
-        setEnterPressed(false)
-        props.onRedirect?.(result)
-        router.push(`/profile/${result.membershipId}`)
-    }
+    // /**
+    //  * Redirect if only one result is found and the user has pressed enter
+    //  */
+    // if (
+    //     enterPressed &&
+    //     props?.navigateOnEnter &&
+    //     !raidHubSearchQuery.isStale &&
+    //     raidHubSearchQuery.isSuccess &&
+    //     raidHubSearchQuery.data.length === 1
+    // ) {
+    //     const result = raidHubSearchQuery.data[0]
+    //     setEnterPressed(false)
+    //     props.onRedirect?.(result)
+    //     router.push(`/profile/${result.membershipId}`)
+    // }
 
     return {
-        enteredText,
+        value: enteredText,
+        setValue: setEnteredText,
+        debouncedQuery,
         results: filteredResults,
-        handleInputChange,
-        handleFormSubmit,
+        // handleFormSubmit,
         clearQuery,
         isLoading:
             raidHubSearchQuery.isFetching ||
