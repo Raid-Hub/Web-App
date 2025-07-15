@@ -71,7 +71,7 @@ export const LeaderboardEntryComponent = ({
             <div className="flex-1">
                 {/* Players */}
                 <div className="flex gap-4 p-2">
-                    <div className="flex" style={{ fontSize: "1.375rem", minWidth: "20px" }}>
+                    <div className="flex aspect-square min-w-5 flex-col justify-center text-lg">
                         {placementIcon ?? truncatedNumber(entry.rank, locale)}
                     </div>
 

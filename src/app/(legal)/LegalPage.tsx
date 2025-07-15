@@ -1,31 +1,14 @@
 "use client"
 
 import { type ReactNode } from "react"
-import styled from "styled-components"
 import { PageWrapper } from "~/components/PageWrapper"
-
-const StyledPage = styled(PageWrapper)`
-    letter-spacing: 0.05ch;
-
-    border-radius: 10px;
-    padding: 2em;
-    background-color: color-mix(
-        in srgb,
-        ${({ theme }) => theme.colors.background.medium},
-        #0000 70%
-    );
-
-    & section a {
-        text-decoration: underline;
-    }
-`
 
 export const LegalPage = (props: { title: string; effectiveDate: Date; children: ReactNode }) => {
     return (
-        <StyledPage>
+        <PageWrapper className="bg-background-medium/30 rounded-[10px] p-8 tracking-wide">
             <div>
-                <h1>{props.title}</h1>
-                <h4>
+                <h1 className="text-2xl font-bold">{props.title}</h1>
+                <h4 className="mt-2 text-base font-medium">
                     <span>Effective date: </span>
                     <span>
                         {props.effectiveDate.toLocaleDateString("en-US", {
@@ -37,7 +20,9 @@ export const LegalPage = (props: { title: string; effectiveDate: Date; children:
                     </span>
                 </h4>
             </div>
-            <section>{props.children}</section>
-        </StyledPage>
+            <section className="[&>a]:underline [&>h1]:text-2xl [&>h2]:text-xl [&>h3]:text-lg [&>h4]:text-base [&>h5]:text-sm [&>h6]:text-xs [&>p]:mb-4">
+                {props.children}
+            </section>
+        </PageWrapper>
     )
 }

@@ -65,6 +65,9 @@ body {
     --spacing-header: var(--header-height);
     --spacing-footer: var(--footer-height);
     --spacing-body: var(--min-body-height);
+
+    --breakpoint-4xl: 128rem;
+    --breakpoint-6xl: 160rem;
 }
 
 /* fixes radix behavior */

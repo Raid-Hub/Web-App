@@ -1,6 +1,6 @@
 import Image, { type ImageLoader } from "next/image"
 import { type ComponentPropsWithoutRef } from "react"
-import { R2RaidSplash } from "~/lib/activity-images"
+import { HomePageSplash, R2RaidSplash } from "~/lib/activity-images"
 import { VaultEmblems } from "~/lib/bungie-foundation-emblems"
 
 const cloudflareVariants = [
@@ -55,7 +55,8 @@ const CloudflareImages = {
         }
     },
     ...R2RaidSplash,
-    ...VaultEmblems
+    ...VaultEmblems,
+    ...HomePageSplash
 } as const satisfies Record<
     string,
     { path: string; variants: Partial<Record<(typeof cloudflareVariants)[number]["name"], string>> }

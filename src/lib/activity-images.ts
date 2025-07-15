@@ -42,6 +42,9 @@ export const getRaidSplash = (raid: string | number): keyof typeof R2RaidSplash 
         case "salvationsedge":
         case 14:
             return "salvationsEdgeSplash"
+        case "desertperpetual":
+        case 15:
+            return "desertPerpetualSplash"
         case "pantheon":
         case 101:
             return "pantheonSplash"
@@ -176,6 +179,33 @@ export const R2RaidSplash = {
             tiny: "tiny.jpg",
             small: "small.jpg",
             medium: "medium.jpg"
+        }
+    },
+    desertPerpetualSplash: {
+        path: "splash/dp",
+        variants: {
+            small: "small.jpg",
+            medium: "medium.jpg",
+            large: "large.jpg",
+            xlarge: "xlarge.jpg"
+        }
+    }
+}
+
+export const HomePageSplash = {
+    worldFirstSplash: {
+        path: "splash/world-first-belt",
+        variants: {
+            small: "small.jpg",
+            medium: "medium.jpg",
+            large: "large.jpg"
+        }
+    },
+    speedrunPanelSplash: {
+        path: "splash/speedrun-panel",
+        variants: {
+            small: "small.jpg",
+            medium: "medium.webp"
         }
     }
 }

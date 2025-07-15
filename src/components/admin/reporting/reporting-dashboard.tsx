@@ -7,6 +7,7 @@ import { AdminPageHeader } from "~/components/admin/admin-page-header"
 import { ReportList } from "~/components/admin/reporting/report-list"
 import { ReportPanel } from "~/components/admin/reporting/report-panel"
 import { ReportingTabs } from "~/components/admin/reporting/reporting-tabs"
+import { useLocalStorage } from "~/hooks/util/useLocalStorage"
 import { Input } from "~/shad/input"
 import {
     Select,
@@ -20,14 +21,17 @@ import {
 export function ReportingDashboard() {
     const [selectedReportId, setSelectedReportId] = useState<number | null>(null)
     const [selectedInstanceId, setSelectedInstanceId] = useState<string | null>(null)
-    const [activeTab, setActiveTab] = useState<"all" | PGCRReportStatus>("all")
+    const [activeTab, setActiveTab] = useLocalStorage<"all" | PGCRReportStatus>(
+        "admin-report-filter",
+        "all"
+    )
     const [searchQuery, setSearchQuery] = useState("")
-    const [sortBy, setSortBy] = useState<{
+    const [sortBy, setSortBy] = useLocalStorage<{
         key: "createdAt" | "closedAt"
         order: "asc" | "desc"
-    }>({
+    }>("admin-report-sort", {
         key: "createdAt",
-        order: "desc"
+        order: "asc"
     })
     const handleValueChange = (value: string) => {
         switch (value) {

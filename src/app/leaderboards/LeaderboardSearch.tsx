@@ -8,7 +8,7 @@ import { Panel } from "~/components/__deprecated__/Panel"
 import { Flex } from "~/components/__deprecated__/layout/Flex"
 import { Grid } from "~/components/__deprecated__/layout/Grid"
 import { SearchInput } from "~/components/form/SearchInput"
-import { useSearch } from "~/hooks/useSearch"
+import { usePlayerSearch } from "~/hooks/usePlayerSearch"
 import { useClickOutside } from "~/hooks/util/useClickOutside"
 import { type RaidHubLeaderboardData } from "~/services/raidhub/types"
 import { useLeaderboardPlayerSearch } from "./useLeaderboardPlayerSearch"
@@ -19,7 +19,7 @@ export const LeaderboardSearch = (args: {
 }) => {
     const [isShowingResults, setIsShowingResults] = useState(false)
     const ref = useRef<HTMLFormElement>(null)
-    const { enteredText, results, handleFormSubmit, handleInputChange, clearQuery } = useSearch()
+    const { value: enteredText, results, setValue, clearQuery } = usePlayerSearch()
 
     const { mutate: search, reset } = useLeaderboardPlayerSearch(args)
 
@@ -33,12 +33,12 @@ export const LeaderboardSearch = (args: {
             as="form"
             ref={ref}
             $padding={0}
-            onSubmit={handleFormSubmit}
+            onSubmit={e => e.preventDefault()}
             onClick={() => setIsShowingResults(true)}
             style={{ flex: 1 }}>
             <SearchInput
                 value={enteredText}
-                onChange={handleInputChange}
+                onChange={e => setValue(e.target.value)}
                 placeholder="Search the Leaderboard"
                 $size={5}
             />

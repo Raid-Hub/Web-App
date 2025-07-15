@@ -4,7 +4,7 @@ import { SinglePlayerSearchResult } from "~/components/SinglePlayerSearchResult"
 import { Container } from "~/components/__deprecated__/layout/Container"
 import { Grid } from "~/components/__deprecated__/layout/Grid"
 import { SearchInput } from "~/components/form/SearchInput"
-import { useSearch } from "~/hooks/useSearch"
+import { usePlayerSearch } from "~/hooks/usePlayerSearch"
 import { useClickOutside } from "~/hooks/util/useClickOutside"
 import { type RaidHubPlayerInfo } from "~/services/raidhub/types"
 
@@ -12,9 +12,7 @@ export const FinderPlayerSearch = memo(
     ({ onSelect }: { onSelect: (player: RaidHubPlayerInfo) => void }) => {
         const hideResults = useCallback(() => setIsShowingResults(false), [])
 
-        const { enteredText, results, handleInputChange, clearQuery } = useSearch({
-            onRedirect: hideResults
-        })
+        const { value: enteredText, results, setValue, clearQuery } = usePlayerSearch()
         const [isShowingResults, setIsShowingResults] = useState(false)
         const searchContainerRef = useRef<HTMLDivElement>(null)
 
@@ -33,7 +31,7 @@ export const FinderPlayerSearch = memo(
                     value={enteredText}
                     onClick={() => setIsShowingResults(true)}
                     onChange={e => {
-                        handleInputChange(e)
+                        setValue(e.target.value)
                         setIsShowingResults(true)
                     }}
                 />

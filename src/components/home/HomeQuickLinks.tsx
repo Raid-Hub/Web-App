@@ -69,7 +69,7 @@ const navLinks = [
 
 export const HomeQuickLinks = () => {
     return (
-        <div className="mx-auto grid max-w-240 grid-cols-1 justify-center md:grid-cols-[repeat(auto-fit,minmax(10rem,12rem))] md:gap-3 xl:max-w-300">
+        <div className="6xl:max-w-520 mx-auto grid max-w-240 grid-cols-1 justify-center md:grid-cols-[repeat(auto-fit,minmax(10rem,12rem))] md:gap-3 xl:max-w-300">
             {navLinks.map((link, idx) => (
                 <Link
                     key={idx}
