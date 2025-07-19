@@ -236,8 +236,8 @@ function VersionFirstLinks() {
                         v =>
                             v.id !== 32 &&
                             v.id !== 2 &&
-                            !(isReprised && v.isChallengeMode) &&
-                            !(v.id == 1 && v.id < 15)
+                            ((v.id == 1 ? raidId >= 15 : !isReprised) ||
+                                (isReprised && !v.isChallengeMode))
                     )
 
                     return (
