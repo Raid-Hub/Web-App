@@ -79,7 +79,7 @@ export const LeaderboardEntryComponent = ({
                         <LeaderboardEntryPlayerComponent {...entry.player} />
                     ) : (
                         // team entry
-                        <div className="grid w-full grid-cols-[repeat(auto-fit,minmax(240px,1fr))] gap-2">
+                        <div className="grid w-full gap-2 sm:grid-cols-3 2xl:grid-cols-6">
                             {entry.team.map(player => (
                                 <LeaderboardEntryPlayerComponent key={player.id} {...player} />
                             ))}
@@ -93,7 +93,7 @@ export const LeaderboardEntryComponent = ({
                 condition={entry.url}
                 wrapper={({ children, value }) => (
                     <Link
-                        className="p-2 text-inherit"
+                        className="w-28 p-2 text-inherit"
                         href={value}
                         target={value.startsWith("/") ? undefined : "_blank"}>
                         {children}
