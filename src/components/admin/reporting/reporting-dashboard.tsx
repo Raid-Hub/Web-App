@@ -18,6 +18,14 @@ import {
     SelectValue
 } from "~/shad/select"
 
+const defaultSort: {
+    key: "createdAt" | "closedAt"
+    order: "asc" | "desc"
+} = {
+    key: "createdAt",
+    order: "asc"
+}
+
 export function ReportingDashboard() {
     const [selectedReportId, setSelectedReportId] = useState<number | null>(null)
     const [selectedInstanceId, setSelectedInstanceId] = useState<string | null>(null)
@@ -26,13 +34,8 @@ export function ReportingDashboard() {
         "all"
     )
     const [searchQuery, setSearchQuery] = useState("")
-    const [sortBy, setSortBy] = useLocalStorage<{
-        key: "createdAt" | "closedAt"
-        order: "asc" | "desc"
-    }>("admin-report-sort", {
-        key: "createdAt",
-        order: "asc"
-    })
+    const [sortBy, setSortBy] = useLocalStorage("admin-report-sort", defaultSort)
+
     const handleValueChange = (value: string) => {
         switch (value) {
             case "newest":
