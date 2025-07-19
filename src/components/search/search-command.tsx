@@ -1,11 +1,11 @@
 "use client"
 
 import Image from "next/image"
-import { usePlayerSearch } from "~/hooks/usePlayerSearch"
-
 import Link from "next/link"
-import { useEffect } from "react"
+import { useRouter } from "next/navigation"
+import { useCallback, useEffect } from "react"
 import { useLocale } from "~/components/providers/LocaleManager"
+import { usePlayerSearch } from "~/hooks/usePlayerSearch"
 import { useLocalStorage } from "~/hooks/util/useLocalStorage"
 import { useRaidHubResolvePlayer } from "~/services/raidhub/useRaidHubResolvePlayer"
 import {
@@ -30,6 +30,7 @@ export function SearchCommand() {
         "recentPlayerSearches",
         defaultRecentSearchValue
     )
+    const router = useRouter()
 
     useEffect(() => {
         const down = (e: KeyboardEvent) => {
@@ -44,15 +45,19 @@ export function SearchCommand() {
         }
     }, [setOpen])
 
-    const createSelectHandler = (membershipId: string) => () => {
-        setOpen(false)
-        setRecentResults(prev => {
-            const filtered = prev.filter(p => p !== membershipId)
-            filtered.unshift(membershipId)
-            return filtered.slice(0, 6)
-        })
-        clearQuery()
-    }
+    const createSelectHandler = useCallback(
+        (membershipId: string) => () => {
+            router.push(`/profile/${membershipId}`)
+            setOpen(false)
+            setRecentResults(prev => {
+                const filtered = prev.filter(p => p !== membershipId)
+                filtered.unshift(membershipId)
+                return filtered.slice(0, 6)
+            })
+            clearQuery()
+        },
+        [clearQuery, setOpen, setRecentResults, router]
+    )
 
     return (
         <CommandDialog
