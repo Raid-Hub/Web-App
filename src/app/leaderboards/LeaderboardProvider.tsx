@@ -48,7 +48,7 @@ export const LeaderboardProvider = <T extends RaidHubLeaderboardURL>(props: {
                       valueFormat: data.format,
                       team: e.players.map(player => ({
                           id: player.membershipId,
-                          displayName: getBungieDisplayName(player),
+                          displayName: getBungieDisplayName(player, { excludeCode: true }),
                           iconUrl: bungieIconUrl(player.iconPath)
                       }))
                   }))
@@ -61,7 +61,7 @@ export const LeaderboardProvider = <T extends RaidHubLeaderboardURL>(props: {
                       valueFormat: data.format,
                       player: {
                           id: e.playerInfo.membershipId,
-                          displayName: getBungieDisplayName(e.playerInfo),
+                          displayName: getBungieDisplayName(e.playerInfo, { excludeCode: true }),
                           url: `/profile/${e.playerInfo.membershipId}`,
                           iconUrl: bungieIconUrl(e.playerInfo.iconPath)
                       }
