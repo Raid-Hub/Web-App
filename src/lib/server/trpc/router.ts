@@ -1,6 +1,12 @@
 import { createTRPCRouter } from "."
 import { addBadge, createBadge, listBadges, removeBadge } from "./procedures/admin/badges"
-import { closeReport, deleteReport, recentReports, reportDetails } from "./procedures/admin/reports"
+import {
+    closeManyReports,
+    closeReport,
+    deleteReport,
+    recentReports,
+    reportDetails
+} from "./procedures/admin/reports"
 import { createVanity, removeVanity } from "./procedures/admin/vanity"
 import { getProfile } from "./procedures/profile/getProfile"
 import { reportPGCR } from "./procedures/reporting/report-pgcr"
@@ -44,6 +50,7 @@ export const appRouter = createTRPCRouter({
             recent: recentReports,
             details: reportDetails,
             close: closeReport,
+            closeMany: closeManyReports,
             delete: deleteReport
         })
     }),
