@@ -45,6 +45,18 @@ export function ActionsTab({
             })
         }
     })
+    const closeManyMutation = trpc.admin.reporting.closeMany.useMutation({
+        onSuccess: () => {
+            toast.success("Reports closed successfully")
+            void trpcUtils.admin.reporting.details.invalidate({ reportId: report.reportId })
+            void trpcUtils.admin.reporting.recent.invalidate()
+        },
+        onError: err => {
+            toast.error("Failed to close the reports", {
+                description: err.message
+            })
+        }
+    })
     const deleteMutation = trpc.admin.reporting.delete.useMutation({
         onSuccess: () => {
             toast.success("Report deleted successfully")
@@ -153,6 +165,17 @@ export function ActionsTab({
                         }>
                         <Check className="size-4" />
                         Accept Report
+                    </Button>
+                    <Button
+                        className="text-primary-foreground space-x-1 rounded-sm bg-green-400 hover:bg-green-500"
+                        onClick={() =>
+                            closeManyMutation.mutate({
+                                instanceId: report.instanceId,
+                                status: "ACCEPTED"
+                            })
+                        }>
+                        <Check className="size-4" />
+                        Accept All Similar Reports
                     </Button>
                     <Button
                         disabled={report.status === "REJECTED"}

@@ -233,6 +233,38 @@ export const closeReport = adminProcedure
             }
         })
     })
+
+export const closeManyReports = adminProcedure
+    .input(
+        z.object({
+            instanceId: z.string(),
+            status: z.enum(["ACCEPTED", "REJECTED"]),
+            notes: z.string().optional()
+        })
+    )
+    .mutation(async ({ ctx, input }) => {
+        const updated = await ctx.prisma.pgcrReport.updateManyAndReturn({
+            where: {
+                instanceId: input.instanceId,
+                status: "PENDING"
+            },
+            data: {
+                status: input.status,
+                closedById: ctx.session.user.id,
+                closedAt: new Date()
+            }
+        })
+
+        if (updated.length === 0) {
+            throw new TRPCError({
+                code: "NOT_FOUND",
+                message: `No reports found for instance ID ${input.instanceId} with status PENDING`
+            })
+        }
+
+        return updated
+    })
+
 export const deleteReport = adminProcedure
     .input(
         z.object({
