@@ -4,7 +4,7 @@ import NextTopLoader from "nextjs-toploader"
 import { type ReactNode } from "react"
 import { BungieFoundationBanner } from "~/components/overlays/BungieFoundationBanner"
 import { DestinyServiceStatusBanner } from "~/components/overlays/DestinyServiceStatusBanner"
-import { DonationBanner } from "~/components/overlays/DonationBanner"
+// import { DonationBanner } from "~/components/overlays/DonationBanner"
 import { RaidHubStatusBanner } from "~/components/overlays/RaidHubStatusBanner"
 import { ClientComponentManager } from "~/components/providers/ClientComponentManager"
 import { LocaleManager } from "~/components/providers/LocaleManager"
@@ -68,7 +68,7 @@ export default async function RootLayout(params: { children: ReactNode }) {
                                                         />
                                                         <HeaderContent />
                                                     </Header>
-                                                    <DonationBanner />
+                                                    {/*<DonationBanner />*/}
                                                     <BungieFoundationBanner />
                                                     <DestinyServiceStatusBanner />
                                                     <RaidHubStatusBanner />
