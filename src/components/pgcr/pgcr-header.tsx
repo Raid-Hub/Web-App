@@ -77,9 +77,7 @@ export const PGCRHeader = ({ data }: PGCRHeaderProps) => {
                             {data.completed ? "Activity Cleared" : "Activity Not Cleared"}
                         </TooltipContent>
                     </Tooltip>
-                </div>
 
-                <div className="flex flex-wrap items-center gap-3">
                     {/* Checkpoint flag */}
                     {!data.fresh && (
                         <Tooltip>
@@ -101,7 +99,9 @@ export const PGCRHeader = ({ data }: PGCRHeaderProps) => {
                             </TooltipContent>
                         </Tooltip>
                     )}
+                </div>
 
+                <div className="flex flex-wrap items-center gap-3">
                     {/* Difficulty badge */}
                     {data.metadata.isRaid && (
                         <Badge
