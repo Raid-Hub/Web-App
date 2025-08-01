@@ -32,13 +32,13 @@ export default function RaidCard({
     isExpanded?: boolean
 }) {
     const { activities, isLoadingActivities, raidId } = useRaidCardContext()
-    const { getVersionString, reprisedRaids, isChallengeMode, getActivityDefinition } =
+    const { getVersionString, resprisedRaidIds, isChallengeMode, getActivityDefinition } =
         useRaidHubManifest()
     const { locale } = useLocale()
 
     const activityDefinition = getActivityDefinition(raidId)
 
-    const isReprisedRaid = reprisedRaids.includes(raidId)
+    const isReprisedRaid = resprisedRaidIds.includes(raidId)
 
     const [hoveredTag, setHoveredTag] = useState<string | null>(null)
 

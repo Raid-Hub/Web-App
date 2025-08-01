@@ -19,7 +19,7 @@ export const SpeedrunComControls = (props: {
     raidPath: string
     category?: RTABoardCategory
 }) => {
-    const { sunsetRaids, getActivityString } = useRaidHubManifest()
+    const { sunsetRaidIds, getActivityString } = useRaidHubManifest()
     const { Dialog: RulesDialog, open: openRules } = useDialog()
 
     const getURL = () => {
@@ -59,7 +59,7 @@ export const SpeedrunComControls = (props: {
                     <TooltipWrapper id="src-rules" title="Category Rules">
                         <RulesIcon sx={25} onClick={openRules} pointer />
                     </TooltipWrapper>
-                    {!includedIn(sunsetRaids, props.raidId) && (
+                    {!includedIn(sunsetRaidIds, props.raidId) && (
                         <TooltipWrapper id="src-submit" title="Submit Run">
                             <ExtLink href={getSubmitRunURL()}>
                                 <UploadIcon sx={25} />

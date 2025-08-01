@@ -343,7 +343,7 @@ function PlayerBlacklistedInstances({
         readonly instanceId: string
         readonly instanceDate: string
         readonly reason: string
-        readonly individualReason: string
+        readonly individualReason: string | null
         readonly createdAt: string
     }[]
 }) {
@@ -375,7 +375,7 @@ function PlayerBlacklistedInstances({
                                         {new Date(instance.instanceDate).toLocaleDateString()}
                                     </TableCell>
                                     <TableCell className="text-sm">
-                                        {instance.individualReason}
+                                        {instance.individualReason ?? instance.reason}
                                     </TableCell>
                                 </TableRow>
                             ))}

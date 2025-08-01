@@ -77,11 +77,11 @@ export const RaidsWrapper = () => {
         refresh: refreshActivities
     } = useRaidHubActivities(membershipIds)
 
-    const { listedRaids, pantheonIds } = useRaidHubManifest()
+    const { listedRaidIds, pantheonIds } = useRaidHubManifest()
 
     const leaderboardEntriesByRaid = useMemo(() => {
         const raidToData = new Collection<number, RaidHubWorldFirstEntry | null>(
-            listedRaids.map(raid => [raid, null])
+            listedRaidIds.map(raid => [raid, null])
         )
 
         players.forEach(p => {
@@ -94,7 +94,7 @@ export const RaidsWrapper = () => {
         })
 
         return raidToData
-    }, [listedRaids, players])
+    }, [listedRaidIds, players])
 
     const activitiesByRaid = useMemo(() => {
         if (isLoadingActivities) return null
@@ -134,7 +134,7 @@ export const RaidsWrapper = () => {
                         $minCardWidthMobile={300}
                         $fullWidth
                         $relative>
-                        {listedRaids.map(raidId => (
+                        {listedRaidIds.map(raidId => (
                             <RaidCardContext
                                 key={raidId}
                                 activities={activitiesByRaid?.get(raidId)}
@@ -174,7 +174,7 @@ export const RaidsWrapper = () => {
         }
     }, [
         tab,
-        listedRaids,
+        listedRaidIds,
         pantheonIds,
         isLoadingActivities,
         areMembershipsFetched,

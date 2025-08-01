@@ -4,8 +4,8 @@ import { Tag } from "~/models/tag"
 import { usePGCRContext } from "./ClientStateManager"
 
 export const usePGCRTags = () => {
-    const { data: activity } = usePGCRContext()
-    const { isChallengeMode } = useRaidHubManifest()
+    const { data: activity, selectedFeats } = usePGCRContext()
+    const { isChallengeMode, feats } = useRaidHubManifest()
 
     return useMemo(() => {
         if (!activity) return []
@@ -17,13 +17,16 @@ export const usePGCRTags = () => {
                 placement: activity.leaderboardRank
             })
         } else if (activity.isDayOne) {
-            const placement = isChallengeMode(activity.versionId) ? null : activity.leaderboardRank
-            tags.push({ tag: Tag.DAY_ONE, placement })
+            tags.push({ tag: Tag.DAY_ONE, placement: activity.leaderboardRank })
+        } else if (activity.isContest && !!activity.leaderboardRank) {
+            tags.push({ tag: Tag.CONTEST, placement: activity.leaderboardRank })
         }
         if (activity.playerCount === 1) tags.push({ tag: Tag.SOLO })
         else if (activity.playerCount === 2) tags.push({ tag: Tag.DUO })
         else if (activity.playerCount === 3) tags.push({ tag: Tag.TRIO })
         if (activity.flawless) tags.push({ tag: Tag.FLAWLESS })
+        if (selectedFeats.length === feats.length) tags.push({ tag: Tag.ALL_FEATS })
+
         return tags
-    }, [activity, isChallengeMode])
+    }, [activity, feats, selectedFeats, isChallengeMode])
 }

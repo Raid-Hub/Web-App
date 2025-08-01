@@ -9,13 +9,9 @@ import type {
     RaidHubVersionDefinition
 } from "~/services/raidhub/types"
 
-type ManifestContextData = {
-    listedRaids: readonly number[]
+type ManifestContextData = RaidHubManifestResponse & {
     listedVerions: readonly number[]
     activeRaids: readonly number[]
-    sunsetRaids: readonly number[]
-    reprisedRaids: readonly number[]
-    pantheonIds: readonly number[]
     pantheonVersions: readonly number[]
     elevatedDifficulties: readonly number[]
     milestoneHashes: Map<number, RaidHubActivityDefinition>
@@ -30,11 +26,6 @@ type ManifestContextData = {
     getVersionsForActivity(activityId: number): readonly RaidHubVersionDefinition[]
     getActivityDefinition(activityId: number): RaidHubActivityDefinition | null
     isChallengeMode(versionId: number): boolean
-    rankingTiers: readonly {
-        readonly minPercentile: number
-        readonly tierName: string
-        readonly tierColor: string
-    }[]
 }
 
 const ManifestContext = createContext<ManifestContextData | undefined>(undefined)
@@ -52,12 +43,9 @@ export function RaidHubManifestManager(props: {
 
     const value = useMemo((): ManifestContextData => {
         return {
-            listedRaids: data.listedRaidIds,
+            ...data,
             listedVerions: Object.keys(data.versionDefinitions).map(Number),
             activeRaids: data.listedRaidIds.filter(id => !data.sunsetRaidIds.includes(id)),
-            sunsetRaids: data.sunsetRaidIds,
-            reprisedRaids: data.resprisedRaidIds,
-            pantheonIds: data.pantheonIds,
             pantheonVersions: Array.from(
                 new Set(data.pantheonIds.map(id => data.versionsForActivity[id]).flat())
             ),
@@ -98,8 +86,7 @@ export function RaidHubManifestManager(props: {
             },
             isChallengeMode(versionId) {
                 return data.versionDefinitions[versionId]?.isChallengeMode ?? false
-            },
-            rankingTiers: data.rankingTiers
+            }
         }
     }, [data])
 
