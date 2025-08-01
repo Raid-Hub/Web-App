@@ -1,4 +1,4 @@
-import { CheckCircle, Clock, Flag, TriangleAlert, Users, XCircle } from "lucide-react"
+import { CheckCircle, Clock, MapPin, TriangleAlert, Users, XCircle } from "lucide-react"
 import { R2RaidSplash, getRaidSplash } from "~/lib/activity-images"
 import { cn } from "~/lib/tw"
 import { type RaidHubInstanceExtended } from "~/services/raidhub/types"
@@ -7,6 +7,7 @@ import { CardHeader } from "~/shad/card"
 import { Tooltip, TooltipContent, TooltipTrigger } from "~/shad/tooltip"
 import { secondsToHMS } from "~/util/presentation/formatting"
 import { PGCRDate, TimeRangeTooltip } from "./pgcr-date"
+import { PGCRFeats } from "./pgcr-feats"
 import { PGCRMenu } from "./pgcr-menu"
 import { PGCRTags } from "./pgcr-tags"
 
@@ -24,7 +25,7 @@ export const PGCRHeader = ({ data }: PGCRHeaderProps) => {
 
     return (
         <div
-            className="relative min-h-40 overflow-hidden rounded-t-lg bg-cover bg-center md:h-48"
+            className="relative min-h-44 overflow-hidden rounded-t-lg bg-cover bg-center md:h-48"
             style={{
                 backgroundImage: `url(${backgroundImageUrl})`
             }}>
@@ -76,7 +77,9 @@ export const PGCRHeader = ({ data }: PGCRHeaderProps) => {
                             {data.completed ? "Activity Cleared" : "Activity Not Cleared"}
                         </TooltipContent>
                     </Tooltip>
+                </div>
 
+                <div className="flex flex-wrap items-center gap-3">
                     {/* Checkpoint flag */}
                     {!data.fresh && (
                         <Tooltip>
@@ -85,10 +88,10 @@ export const PGCRHeader = ({ data }: PGCRHeaderProps) => {
                                     className={cn(
                                         "rounded-full p-1",
                                         data.fresh === null
-                                            ? "bg-amber-500/30 text-amber-400"
-                                            : "bg-orange-500/30 text-orange-400"
+                                            ? "bg-purple-500/30 text-purple-400"
+                                            : "bg-pink-500/30 text-pink-400"
                                     )}>
-                                    <Flag className="h-7 w-7 p-1" />
+                                    <MapPin className="h-7 w-7 p-1" />
                                 </div>
                             </TooltipTrigger>
                             <TooltipContent>
@@ -98,9 +101,7 @@ export const PGCRHeader = ({ data }: PGCRHeaderProps) => {
                             </TooltipContent>
                         </Tooltip>
                     )}
-                </div>
 
-                <div className="flex flex-wrap items-center gap-3">
                     {/* Difficulty badge */}
                     {data.metadata.isRaid && (
                         <Badge
@@ -110,8 +111,9 @@ export const PGCRHeader = ({ data }: PGCRHeaderProps) => {
                         </Badge>
                     )}
 
-                    {/* Tags */}
+                    {/* Tags & Feats */}
                     <PGCRTags />
+                    <PGCRFeats />
                 </div>
                 <div className="mt-4 flex items-center justify-center gap-4">
                     <Tooltip>

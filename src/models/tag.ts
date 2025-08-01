@@ -12,7 +12,8 @@ export enum Tag {
     FLAWLESS = "Flawless",
     ABILITIES_ONLY = "Abilities Only",
     FRESH = "Full",
-    GUIDEDGAMES = "Guided Games"
+    GUIDEDGAMES = "Guided Games",
+    ALL_FEATS = "Max Feats"
 }
 
 export const TagForLowMan = {

@@ -86,8 +86,9 @@ export const InstanceFinderForm = ({
         name: "players"
     })
 
-    const { listedRaids, listedVerions, getActivityString, getVersionString } = useRaidHubManifest()
-    const activityOptions = listedRaids.map(id => ({
+    const { listedRaidIds, listedVerions, getActivityString, getVersionString } =
+        useRaidHubManifest()
+    const activityOptions = listedRaidIds.map(id => ({
         value: id,
         label: getActivityString(id)
     }))

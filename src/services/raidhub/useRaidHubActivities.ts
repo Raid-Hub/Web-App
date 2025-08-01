@@ -9,7 +9,7 @@ import {
 import { useCallback, useEffect, useMemo, useState } from "react"
 import { useSession } from "~/hooks/app/useSession"
 import { getRaidHubApi } from "./common"
-import { type RaidHubInstanceForPlayer, type RaidHubPlayerActivitiesResponse } from "./types"
+import { type RaidHubInstanceForPlayer, type RaidHubPlayerHistoryResponse } from "./types"
 
 async function getActivities({
     membershipId,
@@ -37,8 +37,8 @@ async function getActivities({
     return response.response
 }
 
-const useCreateQuery = <T = RaidHubPlayerActivitiesResponse>(
-    opts?: UseQueryOptions<RaidHubPlayerActivitiesResponse, Error, T>
+const useCreateQuery = <T = RaidHubPlayerHistoryResponse>(
+    opts?: UseQueryOptions<RaidHubPlayerHistoryResponse, Error, T>
 ) => {
     const session = useSession()
 
@@ -46,8 +46,8 @@ const useCreateQuery = <T = RaidHubPlayerActivitiesResponse>(
         (
             membershipId: string,
             cursor?: string,
-            overrides: UseQueryOptions<RaidHubPlayerActivitiesResponse, Error, T> = {}
-        ): UseQueryOptions<RaidHubPlayerActivitiesResponse, Error, T> => ({
+            overrides: UseQueryOptions<RaidHubPlayerHistoryResponse, Error, T> = {}
+        ): UseQueryOptions<RaidHubPlayerHistoryResponse, Error, T> => ({
             queryKey: ["raidhub", "player", "activities", membershipId, cursor ?? ""] as const,
             queryFn: () =>
                 getActivities({
@@ -65,9 +65,9 @@ const useCreateQuery = <T = RaidHubPlayerActivitiesResponse>(
     )
 }
 
-export const useRaidHubActivtiesFirstPage = <T = RaidHubPlayerActivitiesResponse>(
+export const useRaidHubActivtiesFirstPage = <T = RaidHubPlayerHistoryResponse>(
     membershipId: string,
-    opts?: UseQueryOptions<RaidHubPlayerActivitiesResponse, Error, T>
+    opts?: UseQueryOptions<RaidHubPlayerHistoryResponse, Error, T>
 ) => {
     const createQuery = useCreateQuery(opts)
 
@@ -92,7 +92,7 @@ export const useRaidHubActivities = (
 
     const createQuery = useCreateQuery(opts)
 
-    const handleSuccessfulFirstPage = useCallback((data: RaidHubPlayerActivitiesResponse) => {
+    const handleSuccessfulFirstPage = useCallback((data: RaidHubPlayerHistoryResponse) => {
         setCursors(oldCursors => {
             // TODO: clear query cache for all cursors
             // Clear the old cursors
@@ -103,7 +103,7 @@ export const useRaidHubActivities = (
         })
     }, [])
 
-    const updateCursors = useCallback((data: RaidHubPlayerActivitiesResponse) => {
+    const updateCursors = useCallback((data: RaidHubPlayerHistoryResponse) => {
         const { membershipId, nextCursor } = data
         if (!nextCursor) return
 

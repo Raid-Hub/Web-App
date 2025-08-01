@@ -41,6 +41,7 @@ export type RaidHubDestinyMembershipType = Component<"DestinyMembershipType">
 
 export type RaidHubActivityDefinition = Component<"ActivityDefinition">
 export type RaidHubVersionDefinition = Component<"VersionDefinition">
+export type RaidHubFeatDefinition = Component<"FeatDefinition">
 
 export type RaidHubPlayerInfo = Component<"PlayerInfo">
 export type RaidHubInstance = Component<"Instance">
@@ -94,7 +95,7 @@ export type CheatLevel = Component<"CheatLevel">
 
 // Responses
 export type RaidHubManifestResponse = Component<"ManifestResponse">
-export type RaidHubPlayerActivitiesResponse = Component<"PlayerActivitiesResponse">
+export type RaidHubPlayerHistoryResponse = Component<"PlayerHistoryResponse">
 export type RaidHubPlayerProfileResponse = Component<"PlayerProfileResponse">
 export type RaidHubPlayerSearchResponse = Component<"PlayerSearchResponse">
 export type RaidHubAdminQueryResponse = Component<"AdminQueryResponse">

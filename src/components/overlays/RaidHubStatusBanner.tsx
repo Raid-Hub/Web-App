@@ -86,7 +86,7 @@ export const RaidHubStatusBanner = () => {
                         status: "error",
                         reason: "Invalid API response"
                     }
-                } else if (atlas.medianSecondsBehindNow < 60) {
+                } else if (atlas.medianSecondsBehindNow < 100) {
                     return {
                         status: "ok",
                         lagSeconds: atlas.medianSecondsBehindNow

@@ -8,15 +8,21 @@ import {
     createContext,
     useContext,
     useEffect,
+    useMemo,
     useState,
     type Dispatch,
     type ReactNode,
     type SetStateAction
 } from "react"
 import { z } from "zod"
+import { useRaidHubManifest } from "~/components/providers/RaidHubManifestManager"
 import { useQueryParams, type RaidHubQueryParams } from "~/hooks/util/useQueryParams"
 import { type PGCRPageParams, type PlayerStats } from "~/lib/pgcr/types"
-import { type RaidHubInstanceExtended, type RaidHubPlayerInfo } from "~/services/raidhub/types"
+import {
+    type RaidHubFeatDefinition,
+    type RaidHubInstanceExtended,
+    type RaidHubPlayerInfo
+} from "~/services/raidhub/types"
 import { useDexie } from "~/util/dexie/dexie"
 
 interface ClientStateManagerProps {
@@ -50,6 +56,7 @@ interface PGCRState {
     isReportModalOpen: boolean
     setIsReportModalOpen: Dispatch<SetStateAction<boolean>>
     query: RaidHubQueryParams<PGCRPageParams>
+    selectedFeats: RaidHubFeatDefinition[]
 }
 
 const PGCRContext = createContext<PGCRState | undefined>(undefined)
@@ -104,6 +111,15 @@ export const ClientStateManager = ({
         })
     )
 
+    const { feats } = useRaidHubManifest()
+    const selectedFeats = useMemo(
+        () =>
+            data.skullHashes
+                .map(skullHash => feats.find(f => f.skullHash === skullHash))
+                .filter((def): def is RaidHubFeatDefinition => !!def),
+        [data.skullHashes, feats]
+    )
+
     return (
         <PGCRContext.Provider
             value={{
@@ -114,7 +130,8 @@ export const ClientStateManager = ({
                 scores: new Collection(scores),
                 isReportModalOpen,
                 setIsReportModalOpen,
-                query
+                query,
+                selectedFeats
             }}>
             {children}
         </PGCRContext.Provider>

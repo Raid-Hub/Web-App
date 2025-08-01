@@ -90,11 +90,11 @@ function Bucket({ title, splash, Layout }: (typeof BucketData)[number]) {
 }
 
 function WorldFirstLinks() {
-    const { listedRaids, getActivityDefinition } = useRaidHubManifest()
+    const { listedRaidIds, getActivityDefinition } = useRaidHubManifest()
 
     return (
         <ul className="space-y-1">
-            {listedRaids
+            {listedRaidIds
                 .toSorted((a, b) => b - a)
                 .map(raidId => {
                     const raidDef = getActivityDefinition(raidId)
@@ -115,11 +115,11 @@ function WorldFirstLinks() {
 }
 
 function SpeedrunLinks() {
-    const { listedRaids, getActivityDefinition } = useRaidHubManifest()
+    const { listedRaidIds, getActivityDefinition } = useRaidHubManifest()
 
     return (
         <ul className="space-y-1">
-            {listedRaids
+            {listedRaidIds
                 .toSorted((a, b) => b - a)
                 .map(raidId => {
                     const raidDef = getActivityDefinition(raidId)
@@ -163,11 +163,11 @@ function SpeedrunLinks() {
 }
 
 function ClearsLinks() {
-    const { listedRaids, getActivityDefinition } = useRaidHubManifest()
+    const { listedRaidIds, getActivityDefinition } = useRaidHubManifest()
 
     return (
         <ul className="space-y-1">
-            {listedRaids
+            {listedRaidIds
                 .toSorted((a, b) => b - a)
                 .map(raidId => {
                     const raidDef = getActivityDefinition(raidId)
@@ -195,11 +195,11 @@ function ClearsLinks() {
 }
 
 function SherpaLinks() {
-    const { listedRaids, getActivityDefinition } = useRaidHubManifest()
+    const { listedRaidIds, getActivityDefinition } = useRaidHubManifest()
 
     return (
         <ul className="space-y-1">
-            {listedRaids
+            {listedRaidIds
                 .toSorted((a, b) => b - a)
                 .map(raidId => {
                     const raidDef = getActivityDefinition(raidId)
@@ -220,18 +220,18 @@ function SherpaLinks() {
 }
 
 function VersionFirstLinks() {
-    const { reprisedRaids, getVersionsForActivity, getActivityDefinition, listedRaids } =
+    const { listedRaidIds, resprisedRaidIds, getVersionsForActivity, getActivityDefinition } =
         useRaidHubManifest()
 
     return (
         <ul className="space-y-1">
-            {listedRaids
+            {listedRaidIds
                 .toSorted((a, b) => b - a)
                 .map(raidId => {
                     const raidDef = getActivityDefinition(raidId)
                     if (!raidDef) return null
 
-                    const isReprised = reprisedRaids.includes(raidId)
+                    const isReprised = resprisedRaidIds.includes(raidId)
                     const miscBoards = getVersionsForActivity(raidId).filter(
                         v =>
                             v.id !== 32 &&
