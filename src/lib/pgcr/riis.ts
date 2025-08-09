@@ -1,7 +1,23 @@
-import { type RaidHubInstancePlayerExtended } from "~/services/raidhub/types"
 import { round } from "~/util/math"
 
-export function generateSortScore(d: RaidHubInstancePlayerExtended) {
+export function generateSortScore(
+    d: {
+        characters: readonly {
+            startSeconds: number
+            completed: boolean
+            score: number
+            kills: number
+            deaths: number
+            assists: number
+            precisionKills: number
+            superKills: number
+            grenadeKills: number
+            meleeKills: number
+        }[]
+        timePlayedSeconds: number
+    },
+    options: { capTPS: boolean } = { capTPS: true }
+): number {
     const stats = d.characters.reduce(
         (acc, c) => ({
             kills: acc.kills + c.kills,
@@ -21,7 +37,10 @@ export function generateSortScore(d: RaidHubInstancePlayerExtended) {
         }
     )
 
-    const adjustedTimePlayedSeconds = Math.min(d.timePlayedSeconds || 1, 32767)
+    const adjustedTimePlayedSeconds = Math.min(
+        d.timePlayedSeconds || 1,
+        options.capTPS ? 32767 : Infinity
+    )
     // kills weighted 2x assists, slight diminishing returns
     const killScore =
         (200 * (stats.kills + 0.5 * stats.assists) ** 0.95) /

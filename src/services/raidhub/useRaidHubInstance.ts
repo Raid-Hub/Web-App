@@ -1,8 +1,8 @@
-import { useQuery, useQueryClient } from "@tanstack/react-query"
+import { useQueries, useQuery, useQueryClient } from "@tanstack/react-query"
 import { type RaidHubInstanceExtended, type RaidHubPlayerInfo } from "~/services/raidhub/types"
 import { getRaidHubApi } from "./common"
 
-export const useRaidHubActivity = (
+export const useRaidHubInstance = (
     activityId: string,
     opts?: {
         enabled?: boolean
@@ -14,7 +14,7 @@ export const useRaidHubActivity = (
 ) => {
     const queryClient = useQueryClient()
     return useQuery({
-        queryKey: ["raidhub", "activity", activityId] as const,
+        queryKey: ["raidhub", "instance", activityId] as const,
         queryFn: ({ queryKey }) =>
             getRaidHubApi("/instance/{instanceId}", { instanceId: queryKey[2] }, null).then(
                 res => res.response
@@ -29,5 +29,18 @@ export const useRaidHubActivity = (
             })
         },
         ...opts
+    })
+}
+
+export const useRaidHubInstanceList = (instanceIds: string[]) => {
+    return useQueries({
+        queries: instanceIds.map(id => ({
+            queryKey: ["raidhub", "instance", id] as const,
+            queryFn: () =>
+                getRaidHubApi("/instance/{instanceId}", { instanceId: id }, null).then(
+                    res => res.response
+                ),
+            staleTime: 3600_000
+        }))
     })
 }

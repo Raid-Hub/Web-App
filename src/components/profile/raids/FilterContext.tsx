@@ -11,7 +11,7 @@ import {
     FilterPresets,
     decodeFilters,
     type ActivityFilter
-} from "../../../lib/profile/filters/activityFilters"
+} from "~/lib/profile/filters/activityFilters"
 
 const FilterContext = createContext<
     | {

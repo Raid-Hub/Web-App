@@ -1,3 +1,4 @@
+import { FilterPresets } from "~/lib/profile/filters/activityFilters"
 import {
     Select,
     SelectContent,
@@ -7,7 +8,6 @@ import {
     SelectTrigger,
     SelectValue
 } from "~/shad/select"
-import { FilterPresets } from "../../../lib/profile/filters/activityFilters"
 import { useFilterContext } from "./FilterContext"
 
 export const FilterSelect = () => {
