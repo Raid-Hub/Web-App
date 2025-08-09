@@ -8,6 +8,7 @@ import {
     reportDetails
 } from "./procedures/admin/reports"
 import { createVanity, removeVanity } from "./procedures/admin/vanity"
+import { createMultiPGCR, getMultiPGCR, updateMultiPGCR } from "./procedures/multi/user"
 import { getProfile } from "./procedures/profile/getProfile"
 import { reportPGCR } from "./procedures/reporting/report-pgcr"
 import { createPresignedProfilePicURL } from "./procedures/user/account/createPresignedProfilePicURL"
@@ -57,5 +58,10 @@ export const appRouter = createTRPCRouter({
     // reporting router for reporting PGCRs and players
     reporting: createTRPCRouter({
         reportPGCR: reportPGCR
+    }),
+    multi: createTRPCRouter({
+        create: createMultiPGCR,
+        get: getMultiPGCR,
+        update: updateMultiPGCR
     })
 })
