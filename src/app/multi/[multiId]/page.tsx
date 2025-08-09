@@ -23,10 +23,11 @@ export default async function Page({ params }: PageProps) {
 
     return (
         <PageWrapper>
-            <MultiLoader
-                instances={multi.instances.map(instance => instance.instanceId)}
-                name={multi.name}
-            />
+            <div className="bg-background/50 border-border/50 space-y-2 border p-2">
+                <h2 className="text-lg">PGCR Multi-View</h2>
+                <h1 className="text-2xl font-bold">{multi.name}</h1>
+            </div>
+            <MultiLoader instances={multi.instances.map(instance => instance.instanceId)} />
         </PageWrapper>
     )
 }

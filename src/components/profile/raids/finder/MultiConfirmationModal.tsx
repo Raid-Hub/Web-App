@@ -59,8 +59,11 @@ export const MultiConfirmationModal = ({
                             )}
                         />
                         <DialogFooter>
-                            <Button type="submit" variant="destructive">
-                                Confirm
+                            <Button
+                                type="submit"
+                                variant="constructive"
+                                disabled={createMutation.isLoading}>
+                                {!createMutation.isLoading ? "Create Multi-View" : "Creating..."}
                             </Button>
                             <Button type="button" variant="outline" onClick={onClose}>
                                 Cancel
