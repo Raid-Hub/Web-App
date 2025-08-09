@@ -13,7 +13,7 @@ import Xmark from "~/components/icons/Xmark"
 import { useLocale } from "~/components/providers/LocaleManager"
 import { getRaidSplash } from "~/lib/activity-images"
 import type { ProfileProps } from "~/lib/profile/types"
-import { useRaidHubActivity, useRaidHubActivtiesFirstPage } from "~/services/raidhub/hooks"
+import { useRaidHubActivtiesFirstPage, useRaidHubInstance } from "~/services/raidhub/hooks"
 import { Card } from "~/shad/card"
 import { getBungieDisplayName } from "~/util/destiny/getBungieDisplayName"
 import { formattedTimeSince, secondsToHMS } from "~/util/presentation/formatting"
@@ -28,7 +28,7 @@ export const LatestRaid = () => {
         suspense: true
     })
 
-    const { data: latestActivity } = useRaidHubActivity(rawRecentActivity?.instanceId ?? "", {
+    const { data: latestActivity } = useRaidHubInstance(rawRecentActivity?.instanceId ?? "", {
         enabled: !!rawRecentActivity,
         suspense: true
     })

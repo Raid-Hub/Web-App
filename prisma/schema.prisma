@@ -40,6 +40,7 @@ model User {
   badges             Badge[]             @relation("UserToBadge")
   pgcrReports        PgcrReport[]        @relation("UserToPGCRReport")
   pgcrClosedReports  PgcrReport[]        @relation("UserToPGCRReportCloser")
+  pgcrMultis         PgcrMulti[]         @relation("UserToPgcrMulti")
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
@@ -137,6 +138,32 @@ model PgcrReport {
   @@index([instanceId], name: "pgcr_report_instance_id_idx")
   @@index([reporterId, createdAt(sort: Desc)], name: "pgcr_report_reporter_id_idx")
   @@map("pgcr_report")
+}
+
+model PgcrMulti {
+  id      String @id @default(ulid())
+  ownerId String @map("owner_membership_id")
+  name    String @map("name")
+
+  instances PgcrMultiInstance[] @relation("PgcrMultiToPgcrMultiInstance")
+  owner     User                @relation("UserToPgcrMulti", fields: [ownerId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("pgcr_multi")
+}
+
+model PgcrMultiInstance {
+  multiId    String @map("multi_id")
+  instanceId String @map("instance_id")
+
+  multi PgcrMulti @relation("PgcrMultiToPgcrMultiInstance", fields: [multiId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@unique([instanceId, multiId], name: "uniqueMultiInstance")
+  @@map("pgcr_multi_item")
 }
 
 model Migration {
