@@ -141,12 +141,12 @@ model PgcrReport {
 }
 
 model PgcrMulti {
-  id        String   @id @default(ulid())
-  ownerId   String   @map("owner_membership_id")
-  name      String   @map("name")
+  id      String @id @default(ulid())
+  ownerId String @map("owner_membership_id")
+  name    String @map("name")
 
   instances PgcrMultiInstance[] @relation("PgcrMultiToPgcrMultiInstance")
-  owner     User     @relation("UserToPgcrMulti", fields: [ownerId], references: [id], onDelete: Cascade)
+  owner     User                @relation("UserToPgcrMulti", fields: [ownerId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
@@ -155,10 +155,10 @@ model PgcrMulti {
 }
 
 model PgcrMultiInstance {
-  multiId   String   @map("multi_id")
-  instanceId String   @map("instance_id")
-  
-  multi     PgcrMulti @relation("PgcrMultiToPgcrMultiInstance", fields: [multiId], references: [id], onDelete: Cascade)
+  multiId    String @map("multi_id")
+  instanceId String @map("instance_id")
+
+  multi PgcrMulti @relation("PgcrMultiToPgcrMultiInstance", fields: [multiId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now()) @map("created_at")
 
