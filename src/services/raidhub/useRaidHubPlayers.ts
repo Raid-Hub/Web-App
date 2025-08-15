@@ -1,6 +1,7 @@
 import { useQueries, useQuery } from "@tanstack/react-query"
 import { useSession } from "~/hooks/app/useSession"
 import { getRaidHubApi } from "~/services/raidhub/common"
+import { type RaidHubError } from "./RaidHubError"
 import { type RaidHubPlayerProfileResponse } from "./types"
 
 export function useRaidHubPlayers(
@@ -61,9 +62,9 @@ export const useRaidHubPlayer = (
           }
         : {}
 
-    return useQuery({
-        queryFn: ({ queryKey }) =>
-            getRaidHubApi("/player/{membershipId}/profile", { membershipId: queryKey[2] }, null, {
+    return useQuery<RaidHubPlayerProfileResponse, RaidHubError>({
+        queryFn: () =>
+            getRaidHubApi("/player/{membershipId}/profile", { membershipId: membershipId }, null, {
                 headers: authHeaders
             }).then(res => res.response),
         queryKey: ["raidhub", "player", membershipId] as const,

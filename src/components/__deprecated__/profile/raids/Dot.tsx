@@ -72,6 +72,10 @@ const Dot = ({ centerX, activity, centerY, isTargeted, setTooltip, tooltipData }
     }, [isTargeted])
 
     const { elevatedDifficulties } = useRaidHubManifest()
+    const { feats } = useRaidHubManifest()
+    const selectedFeats = activity.skullHashes.filter(hash => feats.some(f => f.skullHash === hash))
+    const isChallenging =
+        elevatedDifficulties.includes(activity.versionId) || selectedFeats.length >= 3
 
     return (
         <Link
@@ -84,15 +88,15 @@ const Dot = ({ centerX, activity, centerY, isTargeted, setTooltip, tooltipData }
             <circle
                 className="text-blue-400"
                 fill={
-                    activity.isBlacklisted
-                        ? DotBlacklisted
-                        : activity.player.completed
-                          ? activity.flawless
+                    activity.player.completed
+                        ? activity.isBlacklisted
+                            ? DotBlacklisted
+                            : activity.flawless
                               ? DotFlawless
                               : DotSuccess
-                          : activity.completed
-                            ? DotTaxi
-                            : DotFail
+                        : activity.completed
+                          ? DotTaxi
+                          : DotFail
                 }
                 fillOpacity={0.978}
                 r={RADIUS}
@@ -114,7 +118,7 @@ const Dot = ({ centerX, activity, centerY, isTargeted, setTooltip, tooltipData }
                     />
                 )
             )}
-            {elevatedDifficulties.includes(activity.versionId) && (
+            {isChallenging && (
                 <circle
                     fill="none"
                     stroke="white"
