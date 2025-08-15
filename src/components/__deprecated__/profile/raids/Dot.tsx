@@ -84,15 +84,15 @@ const Dot = ({ centerX, activity, centerY, isTargeted, setTooltip, tooltipData }
             <circle
                 className="text-blue-400"
                 fill={
-                    activity.isBlacklisted
-                        ? DotBlacklisted
-                        : activity.player.completed
-                          ? activity.flawless
+                    activity.player.completed
+                        ? activity.isBlacklisted
+                            ? DotBlacklisted
+                            : activity.flawless
                               ? DotFlawless
                               : DotSuccess
-                          : activity.completed
-                            ? DotTaxi
-                            : DotFail
+                        : activity.completed
+                          ? DotTaxi
+                          : DotFail
                 }
                 fillOpacity={0.978}
                 r={RADIUS}
