@@ -72,6 +72,10 @@ const Dot = ({ centerX, activity, centerY, isTargeted, setTooltip, tooltipData }
     }, [isTargeted])
 
     const { elevatedDifficulties } = useRaidHubManifest()
+    const { feats } = useRaidHubManifest()
+    const selectedFeats = activity.skullHashes.filter(hash => feats.some(f => f.skullHash === hash))
+    const isChallenging =
+        elevatedDifficulties.includes(activity.versionId) || selectedFeats.length >= 3
 
     return (
         <Link
@@ -114,7 +118,7 @@ const Dot = ({ centerX, activity, centerY, isTargeted, setTooltip, tooltipData }
                     />
                 )
             )}
-            {elevatedDifficulties.includes(activity.versionId) && (
+            {isChallenging && (
                 <circle
                     fill="none"
                     stroke="white"
