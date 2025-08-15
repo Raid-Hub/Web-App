@@ -8,7 +8,7 @@ export const ProfileError = ({ error }: { error: unknown }) =>
     error instanceof RaidHubError ? (
         <ErrorCard>
             <p>
-                Error loading Profile: <code>{error.errorCode}</code>
+                <code>{error.errorCode}</code>
             </p>
             <p>{getMessage(error.errorCode)}</p>
         </ErrorCard>

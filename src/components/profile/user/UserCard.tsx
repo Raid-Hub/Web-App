@@ -1,15 +1,20 @@
 "use client"
 
+import { type UserInfoCard } from "bungie-net-core/models"
+import { Lock, LockOpen } from "lucide-react"
 import Link from "next/link"
 import { useMemo } from "react"
 import { usePageProps } from "~/components/PageWrapper"
+import { useSession } from "~/hooks/app/useSession"
 import { useItemDefinition } from "~/hooks/dexie"
 import type { ProfileProps } from "~/lib/profile/types"
 import { trpc } from "~/lib/trpc"
 import { useClansForMember, useLinkedProfiles, useProfile } from "~/services/bungie/hooks"
-import { useRaidHubResolvePlayer } from "~/services/raidhub/hooks"
+import { useRaidHubPlayer, useRaidHubResolvePlayer } from "~/services/raidhub/hooks"
+import { type RaidHubPlayerInfo } from "~/services/raidhub/types"
 import { Avatar, AvatarImage } from "~/shad/avatar"
 import { Card, CardHeader } from "~/shad/card"
+import { Tooltip, TooltipContent, TooltipTrigger } from "~/shad/tooltip"
 import { bungieBannerEmblemUrl, bungieProfileIconUrl } from "~/util/destiny"
 import { fixClanName } from "~/util/destiny/fixClanName"
 import { getBungieDisplayName } from "~/util/destiny/getBungieDisplayName"
@@ -52,9 +57,10 @@ export function UserCard() {
         }
     )
 
+    const { data: playerData, isError, error } = useRaidHubPlayer(props.destinyMembershipId)
     const { data: resolvedPlayer } = useRaidHubResolvePlayer(props.destinyMembershipId, {
-        // We don't need to call this endpoint, but if we have the data, we can use it
-        enabled: false
+        // We can use this data if cached, or fetch it if the player is private
+        enabled: isError && error.errorCode === "PlayerPrivateProfileError"
     })
 
     const emblemHash = useMemo(() => {
@@ -67,16 +73,24 @@ export function UserCard() {
 
     const emblemBannerUrl = bungieBannerEmblemUrl(useItemDefinition(emblemHash ?? -1))
 
-    const userInfo =
+    const userInfo:
+        | RaidHubPlayerInfo
+        | UserInfoCard
+        | {
+              membershipId: string
+          } = playerData?.playerInfo ??
+        resolvedPlayer ??
         destinyProfileQuery?.data?.profile.data?.userInfo ??
-        bungieProfileQuery.data ??
-        resolvedPlayer
+        bungieProfileQuery.data ?? {
+            membershipId: props.destinyMembershipId
+        }
 
     const icon =
         // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
         raidHubUser?.image ||
         bungieProfileIconUrl(
             Object.values(destinyProfileQuery?.data?.characters.data ?? {})[0]?.emblemPath ??
+                playerData?.playerInfo.iconPath ??
                 resolvedPlayer?.iconPath
         )
 
@@ -95,10 +109,16 @@ export function UserCard() {
                 : null,
         [clan]
     )
+    const isPrivate = "isPrivate" in userInfo && userInfo.isPrivate
 
-    const [displayName, displayNameCode] = (
-        userInfo ? getBungieDisplayName(userInfo) : "Guardian#0000"
-    ).split("#")
+    const [displayName, displayNameCode] = getBungieDisplayName(userInfo).split("#")
+
+    const { data: session } = useSession()
+    const PrivacyLockIcon =
+        session?.user.role === "ADMIN" ||
+        session?.user.profiles.some(p => p.destinyMembershipId === props.destinyMembershipId)
+            ? LockOpen
+            : Lock
 
     return (
         <Card className="w-full">
@@ -125,17 +145,30 @@ export function UserCard() {
 
                     {/* Name and clan */}
                     <div className="flex flex-col items-start gap-1 p-1">
-                        <h1 className="text-2xl">
-                            {displayName}
-                            {displayNameCode && (
-                                <span className="text-secondary font-normal">
-                                    #{displayNameCode}
-                                </span>
+                        <h1 className="flex items-center gap-2 text-2xl">
+                            {isPrivate && (
+                                <Tooltip>
+                                    <TooltipTrigger asChild>
+                                        <PrivacyLockIcon className="text-raidhub" />
+                                    </TooltipTrigger>
+                                    <TooltipContent>
+                                        The owner of this profile has chosen to keep their activity
+                                        history private.
+                                    </TooltipContent>
+                                </Tooltip>
                             )}
+                            <span>
+                                {displayName}
+                                {displayNameCode && (
+                                    <span className="text-secondary font-normal">
+                                        #{displayNameCode}
+                                    </span>
+                                )}
+                            </span>
                         </h1>
-                        {clanTitle && (
+                        {clan && (
                             <div className="m-0.5 text-lg">
-                                <Link href={`/clan/${clan!.groupId}`} className="text-secondary">
+                                <Link href={`/clan/${clan.groupId}`} className="text-secondary">
                                     {clanTitle}
                                 </Link>
                             </div>
