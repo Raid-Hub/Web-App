@@ -55,7 +55,6 @@ export const getMetaData = (activity: RaidHubInstanceExtended) => {
         year: "numeric",
         hour: "numeric",
         minute: "numeric",
-
         timeZone: "America/Los_Angeles",
         timeZoneName: "short"
     })
