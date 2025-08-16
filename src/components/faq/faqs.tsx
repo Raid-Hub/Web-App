@@ -120,7 +120,7 @@ export const faqs: FAQ[] = [
         answer: (
             <p>
                 Tags marked with diamonds represent the highest achievable variant of a lowman based
-                on number of players, raid version, and fresh vs. checkpoint.
+                onthe raid version, flawless status, and fresh vs. checkpoint.
             </p>
         )
     },
