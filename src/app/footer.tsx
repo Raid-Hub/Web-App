@@ -72,6 +72,7 @@ export default function Footer() {
                     ))}
                 </div>
                 <div className="flex items-center justify-center gap-2">
+                    <Link href="/faq">FAQ</Link>
                     <Link href="/privacy">Privacy</Link>
                     <Link href="/terms">Terms</Link>
                 </div>
