@@ -22,7 +22,7 @@ export const SpeedrunComBanner = (props: {
             title={title}
             subtitle={subtitle}
             tertiaryTitle="Speedrun Leaderboards"
-            cloudflareImageId={getRaidSplash(props.raidId) ?? "pantheonSplash"}
+            cloudflareImageId={getRaidSplash(props.raidId) ?? "genericRaidSplash"}
         />
     )
 }

@@ -44,10 +44,12 @@ export const getRaidSplash = (raid: string | number): keyof typeof R2RaidSplash 
             return "salvationsEdgeSplash"
         case "desertperpetual":
         case 15:
+        case "epicdesertperpetual":
+        case 16:
             return "desertPerpetualSplash"
         case "pantheon":
         case 101:
-            return "pantheonSplash"
+            return "genericRaidSplash"
         default:
             return null
     }
@@ -166,7 +168,7 @@ export const R2RaidSplash = {
             medium: "medium.jpg"
         }
     },
-    pantheonSplash: {
+    genericRaidSplash: {
         path: "splash/pantheon",
         variants: {
             small: "small.png",

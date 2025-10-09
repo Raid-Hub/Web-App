@@ -146,7 +146,7 @@ export default function RaidCard({
                     priority
                     width={960}
                     height={540}
-                    cloudflareId={getRaidSplash(raidId) ?? "pantheonSplash"}
+                    cloudflareId={getRaidSplash(raidId) ?? "genericRaidSplash"}
                     alt={
                         activityDefinition?.isRaid
                             ? activityDefinition.name

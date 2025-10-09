@@ -44,7 +44,7 @@ export default async function Image({ params: { instanceId } }: PGCRPageProps) {
                 <div
                     style={{
                         backgroundImage: `url(${cloudflareImageLoader({
-                            src: getRaidSplash(activity.activityId) ?? "pantheonSplash",
+                            src: getRaidSplash(activity.activityId) ?? "genericRaidSplash",
                             width: size.width,
                             quality: 100
                         })})`,

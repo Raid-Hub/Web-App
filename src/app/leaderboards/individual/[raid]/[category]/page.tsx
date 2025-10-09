@@ -63,7 +63,7 @@ export default async function Page({ params, searchParams }: DynamicParams) {
                     title={categoryName}
                     subtitle={definition.name}
                     tertiaryTitle="Individual Leaderboards"
-                    cloudflareImageId={getRaidSplash(definition.path) ?? "pantheonSplash"}
+                    cloudflareImageId={getRaidSplash(definition.path) ?? "genericRaidSplash"}
                 />
             }
             hasPages

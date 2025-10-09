@@ -60,7 +60,7 @@ export default async function Page({ params, searchParams }: DynamicParams) {
                               : "Normal"
                     }
                     tertiaryTitle="World First Leaderboards"
-                    cloudflareImageId={getRaidSplash(definition.path) ?? "pantheonSplash"}
+                    cloudflareImageId={getRaidSplash(definition.path) ?? "genericRaidSplash"}
                 />
             }
             hasPages

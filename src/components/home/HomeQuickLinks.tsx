@@ -1,7 +1,6 @@
 "use client"
 
 import {
-    CalendarRange,
     ChartBarBig,
     ChartBarDecreasing,
     ChartNoAxesColumnDecreasing,
@@ -39,11 +38,6 @@ const navLinks = [
         title: "Checkpoints",
         href: "/checkpoints",
         icon: D2CheckpointFlag
-    },
-    {
-        title: "Rotator Calendar",
-        href: "/calendar",
-        icon: CalendarRange
     },
     {
         title: "Full Clears Leaderboard",

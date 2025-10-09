@@ -56,7 +56,7 @@ export const LatestRaid = () => {
                     <Container $minHeight={80}>
                         <CloudflareImage
                             cloudflareId={
-                                getRaidSplash(latestActivity.activityId) ?? "pantheonSplash"
+                                getRaidSplash(latestActivity.activityId) ?? "genericRaidSplash"
                             }
                             fill
                             priority

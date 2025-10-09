@@ -67,7 +67,7 @@ export default async function Page({ params, searchParams }: DynamicParams) {
                     title="First Completions Leaderboard"
                     subtitle={`${version.name} ${activity.name}`}
                     tertiaryTitle="First Completion Leaderboards"
-                    cloudflareImageId={getRaidSplash(activity.path) ?? "pantheonSplash"}
+                    cloudflareImageId={getRaidSplash(activity.path) ?? "genericRaidSplash"}
                 />
             }
             hasPages

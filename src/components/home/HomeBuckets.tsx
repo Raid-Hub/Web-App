@@ -36,7 +36,7 @@ const BucketData: { title: string; splash: CloudflareImageId; Layout: () => JSX.
     },
     {
         title: "Pantheon",
-        splash: "pantheonSplash",
+        splash: "genericRaidSplash",
         Layout: PantheonLinks
     }
 ]

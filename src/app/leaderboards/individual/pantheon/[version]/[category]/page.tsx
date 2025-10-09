@@ -82,7 +82,7 @@ export default async function Page({
                     tertiaryTitle="The Pantheon"
                     title={definition.name}
                     subtitle={`${categoryName} Leaderboard`}
-                    cloudflareImageId="pantheonSplash"
+                    cloudflareImageId="genericRaidSplash"
                 />
             }
             hasPages

@@ -16,11 +16,13 @@ interface PGCRHeaderProps {
 }
 
 export const PGCRHeader = ({ data }: PGCRHeaderProps) => {
-    const backgroundImage = getRaidSplash(data.activityId)!
+    // getRaidSplash can return null for unknown activity ids; fall back to genericRaidSplash
+    const backgroundImage = getRaidSplash(data.activityId) ?? "genericRaidSplash"
+    const splashEntry = R2RaidSplash[backgroundImage]
     const backgroundImageUrl = [
         "https://cdn.raidhub.io/content",
-        R2RaidSplash[backgroundImage].path,
-        R2RaidSplash[backgroundImage].variants.small
+        splashEntry.path,
+        splashEntry.variants.small
     ].join("/")
 
     return (
