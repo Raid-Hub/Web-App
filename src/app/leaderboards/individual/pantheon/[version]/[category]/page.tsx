@@ -1,6 +1,7 @@
 import { type Metadata } from "next"
 import { notFound } from "next/navigation"
 import { LeaderboardSSR } from "~/app/leaderboards/LeaderboardSSR"
+import { CloudflareActivitySplash } from "~/components/CloudflareImage"
 import { baseMetadata } from "~/lib/metadata"
 import { prefetchManifest } from "~/services/raidhub/prefetchRaidHubManifest"
 import {
@@ -81,9 +82,9 @@ export default async function Page({
                 <Splash
                     tertiaryTitle="The Pantheon"
                     title={definition.name}
-                    subtitle={`${categoryName} Leaderboard`}
-                    cloudflareImageId="genericRaidSplash"
-                />
+                    subtitle={`${categoryName} Leaderboard`}>
+                    <CloudflareActivitySplash activityId={definition.id} fill className="z-[-1]" />
+                </Splash>
             }
             hasPages
             hasSearch

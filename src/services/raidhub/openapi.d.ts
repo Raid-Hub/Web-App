@@ -2636,7 +2636,8 @@ export interface components {
      *   "dayOneEnd": "2021-05-23T00:00:00.000Z",
      *   "contestEnd": "2021-05-23T00:00:00.000Z",
      *   "weekOneEnd": "2021-05-25T00:00:00.000Z",
-     *   "milestoneHash": 1888320892
+     *   "milestoneHash": 1888320892,
+     *   "splashSlug": "vog"
      * }
      */
     readonly ActivityDefinition: {
@@ -2655,6 +2656,7 @@ export interface components {
       readonly weekOneEnd: string | null;
       /** Format: uint32 */
       readonly milestoneHash: number | null;
+      readonly splashSlug: string;
     };
     readonly FeatDefinition: {
       /** Format: uint32 */
@@ -2667,6 +2669,31 @@ export interface components {
       readonly shortDescription: string;
       readonly iconPath: string;
       readonly modifierPowerContribution: number;
+    };
+    /**
+     * @description The size of a RaidHub CDN hosted image.
+     * @example medium
+     * @enum {string}
+     */
+    readonly ImageSize: "tiny" | "small" | "medium" | "large" | "xlarge";
+    /**
+     * @description A URL to a piece of content hosted on the RaidHub CDN.
+     * @example {
+     *   "slug": "vog",
+     *   "size": "medium",
+     *   "fileName": "medium.jpg",
+     *   "fileFormat": "jpg",
+     *   "path": "content/splash/vog/medium.jpg",
+     *   "url": "https://cdn.raidhub.io/content/splash/vog/medium.jpg"
+     * }
+     */
+    readonly ImageContentData: {
+      readonly slug: string;
+      readonly size: components["schemas"]["ImageSize"];
+      readonly fileName: string;
+      readonly fileFormat: string;
+      readonly path: string;
+      readonly url: string;
     };
     /** @description The definition of a version in the RaidHub database. */
     readonly VersionDefinition: {
@@ -2884,6 +2911,10 @@ export interface components {
           readonly tierColor: string;
         }[];
       readonly feats: readonly components["schemas"]["FeatDefinition"][];
+      /** @description The mapping of each RaidHub activityId to its splash image URLs */
+      readonly splashUrls: {
+        [key: string]: readonly components["schemas"]["ImageContentData"][];
+      };
     };
     readonly StatusResponse: {
       readonly AtlasPGCR: components["schemas"]["AtlasStatus"];

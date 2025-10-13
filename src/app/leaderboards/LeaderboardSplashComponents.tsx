@@ -2,8 +2,6 @@
 
 import Link from "next/link"
 import styled, { css } from "styled-components"
-import { BackgroundImage } from "~/components/BackgroundImage"
-import { type CloudflareImageId } from "~/components/CloudflareImage"
 import { TooltipContainer, TooltipData } from "~/components/Tooltip"
 import { Panel } from "~/components/__deprecated__/Panel"
 import { Flex } from "~/components/__deprecated__/layout/Flex"
@@ -14,7 +12,7 @@ export const Splash = (props: {
     title: string
     subtitle?: string
     tertiaryTitle: string
-    cloudflareImageId: CloudflareImageId
+    children: React.ReactNode
 }) => (
     <Panel $fullWidth style={{ marginBottom: "1rem" }}>
         <Flex $direction="column" $gap={0}>
@@ -22,7 +20,7 @@ export const Splash = (props: {
             <Title>{props.title}</Title>
             {props.subtitle && <Subtitle>{props.subtitle}</Subtitle>}
         </Flex>
-        <BackgroundImage cloudflareId={props.cloudflareImageId} alt={props.title} />
+        {props.children}
     </Panel>
 )
 

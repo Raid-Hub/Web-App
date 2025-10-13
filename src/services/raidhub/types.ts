@@ -93,6 +93,9 @@ export type InstancePlayerStanding = Component<"InstancePlayerStanding">
 export type InstancePlayerFlag = Component<"InstancePlayerFlag">
 export type CheatLevel = Component<"CheatLevel">
 
+export type ImageContentData = Component<"ImageContentData">
+export type ImageSize = Component<"ImageSize">
+
 // Responses
 export type RaidHubManifestResponse = Component<"ManifestResponse">
 export type RaidHubPlayerHistoryResponse = Component<"PlayerHistoryResponse">

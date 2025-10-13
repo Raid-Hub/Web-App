@@ -4,14 +4,14 @@
 import { X } from "lucide-react"
 import Link from "next/link"
 import { useMemo } from "react"
-import { CloudflareImage, type CloudflareImageId } from "~/components/CloudflareImage"
+import { CloudflareStaticImage, type CloudflareStaticImageId } from "~/components/CloudflareImage"
 import { useLocalStorage } from "~/hooks/util/useLocalStorage"
 
 const eventName = "Bungie Day 2025"
 const localStorageKey = "bungieDay2025BannerDismissDate"
 const campaignUrl = "https://tiltify.com/@raidhub/bungie-day-2025"
 const donateUrl = "https://donate.tiltify.com/917cb375-cc2a-4377-9ee6-5e75600b9567/incentives"
-const banner: CloudflareImageId = "bungieFoundation"
+const banner: CloudflareStaticImageId = "bungieFoundation"
 
 // const allG2GEmblems = o.entries(VaultEmblems)
 
@@ -49,7 +49,7 @@ export const BungieFoundationBanner = () => {
             <div className="mx-auto flex max-w-screen-xl flex-wrap items-center gap-8 px-6">
                 <div className="max-w-150 basis-100">
                     <a href={campaignUrl} target="_blank">
-                        <CloudflareImage
+                        <CloudflareStaticImage
                             cloudflareId={banner}
                             priority
                             alt={eventName}

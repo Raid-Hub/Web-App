@@ -2,7 +2,7 @@
 
 import { Collection } from "@discordjs/collection"
 import { useMemo, useState } from "react"
-import { CloudflareImage } from "~/components/CloudflareImage"
+import { CloudflareActivitySplash } from "~/components/CloudflareImage"
 import { Loading } from "~/components/Loading"
 import { useRaidCardContext } from "~/components/profile/raids/RaidCardContext"
 import { WeeklyProgress } from "~/components/profile/raids/expanded/WeeklyProgress"
@@ -10,7 +10,6 @@ import { useLocale } from "~/components/providers/LocaleManager"
 import { useRaidHubManifest } from "~/components/providers/RaidHubManifestManager"
 import { basicActivityFilter, useRaidTags } from "~/hooks/profile/useRaidTags"
 import { useTimeout } from "~/hooks/util/useTimeout"
-import { getRaidSplash } from "~/lib/activity-images"
 import {
     type RaidHubInstanceForPlayer,
     type RaidHubWorldFirstEntry
@@ -141,17 +140,12 @@ export default function RaidCard({
     return (
         <div className={styles.card}>
             <div className={styles["card-img-container"]}>
-                <CloudflareImage
+                <CloudflareActivitySplash
                     className={styles["card-background"]}
                     priority
                     width={960}
                     height={540}
-                    cloudflareId={getRaidSplash(raidId) ?? "genericRaidSplash"}
-                    alt={
-                        activityDefinition?.isRaid
-                            ? activityDefinition.name
-                            : getVersionString(raidId)
-                    }
+                    activityId={raidId}
                 />
                 <div className={styles["card-top"]}>
                     {firstContestClear && (
