@@ -6,40 +6,41 @@ import { useRaidHubManifest } from "~/components/providers/RaidHubManifestManage
 import { SpeedrunVariables } from "~/lib/speedrun/speedrun-com-mappings"
 import { cn } from "~/lib/tw"
 import { Card, CardContent, CardHeader, CardTitle } from "~/shad/card"
-import { CloudflareImage, type CloudflareImageId } from "../CloudflareImage"
+import { CloudflareStaticImage, type CloudflareStaticImageId } from "../CloudflareImage"
 
-const BucketData: { title: string; splash: CloudflareImageId; Layout: () => JSX.Element }[] = [
-    {
-        title: "World First Leaderboards",
-        splash: "worldFirstSplash",
-        Layout: WorldFirstLinks
-    },
-    {
-        title: "Clears Leaderboards",
-        splash: "gardenOfSalvationSplash",
-        Layout: ClearsLinks
-    },
-    {
-        title: "Sherpa Leaderboards",
-        splash: "raidhubCitySplash",
-        Layout: SherpaLinks
-    },
-    {
-        title: "Speedrun Leaderboards",
-        splash: "speedrunPanelSplash",
-        Layout: SpeedrunLinks
-    },
-    {
-        title: "Misc Race Leaderboards",
-        splash: "scourgeOfThePastSplash",
-        Layout: VersionFirstLinks
-    },
-    {
-        title: "Pantheon",
-        splash: "genericRaidSplash",
-        Layout: PantheonLinks
-    }
-]
+const BucketData: { title: string; splash: CloudflareStaticImageId; Layout: () => JSX.Element }[] =
+    [
+        {
+            title: "World First Leaderboards",
+            splash: "worldFirstSplash",
+            Layout: WorldFirstLinks
+        },
+        {
+            title: "Clears Leaderboards",
+            splash: "genericRaidSplash",
+            Layout: ClearsLinks
+        },
+        {
+            title: "Sherpa Leaderboards",
+            splash: "raidhubCitySplash",
+            Layout: SherpaLinks
+        },
+        {
+            title: "Speedrun Leaderboards",
+            splash: "speedrunPanelSplash",
+            Layout: SpeedrunLinks
+        },
+        {
+            title: "Misc Race Leaderboards",
+            splash: "genericRaidSplash",
+            Layout: VersionFirstLinks
+        },
+        {
+            title: "Pantheon",
+            splash: "genericRaidSplash",
+            Layout: PantheonLinks
+        }
+    ]
 
 export const Buckets = () => {
     return (
@@ -64,7 +65,7 @@ function Bucket({ title, splash, Layout }: (typeof BucketData)[number]) {
             <CardHeader
                 className="relative aspect-[5/1] cursor-pointer md:cursor-default"
                 onClick={handleToggle}>
-                <CloudflareImage
+                <CloudflareStaticImage
                     priority
                     fill
                     cloudflareId={splash}

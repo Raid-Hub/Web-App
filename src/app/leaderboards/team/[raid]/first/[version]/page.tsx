@@ -1,7 +1,7 @@
 import { type Metadata } from "next"
 import { notFound } from "next/navigation"
 import { LeaderboardSSR } from "~/app/leaderboards/LeaderboardSSR"
-import { getRaidSplash } from "~/lib/activity-images"
+import { CloudflareActivitySplash } from "~/components/CloudflareImage"
 import { baseMetadata } from "~/lib/metadata"
 import { prefetchManifest } from "~/services/raidhub/prefetchRaidHubManifest"
 import { type RaidHubManifestResponse } from "~/services/raidhub/types"
@@ -66,9 +66,9 @@ export default async function Page({ params, searchParams }: DynamicParams) {
                 <Splash
                     title="First Completions Leaderboard"
                     subtitle={`${version.name} ${activity.name}`}
-                    tertiaryTitle="First Completion Leaderboards"
-                    cloudflareImageId={getRaidSplash(activity.path) ?? "genericRaidSplash"}
-                />
+                    tertiaryTitle="First Completion Leaderboards">
+                    <CloudflareActivitySplash activityId={activity.id} fill className="z-[-1]" />
+                </Splash>
             }
             hasPages
             hasSearch

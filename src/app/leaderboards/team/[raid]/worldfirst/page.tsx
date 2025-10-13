@@ -1,6 +1,6 @@
 import { type Metadata } from "next"
 import { LeaderboardSSR } from "~/app/leaderboards/LeaderboardSSR"
-import { getRaidSplash } from "~/lib/activity-images"
+import { CloudflareActivitySplash } from "~/components/CloudflareImage"
 import { baseMetadata } from "~/lib/metadata"
 import { prefetchManifest } from "~/services/raidhub/prefetchRaidHubManifest"
 import { type PathParamsForLeaderboardURL } from "~/services/raidhub/types"
@@ -59,9 +59,9 @@ export default async function Page({ params, searchParams }: DynamicParams) {
                               ? "Contest"
                               : "Normal"
                     }
-                    tertiaryTitle="World First Leaderboards"
-                    cloudflareImageId={getRaidSplash(definition.path) ?? "genericRaidSplash"}
-                />
+                    tertiaryTitle="World First Leaderboards">
+                    <CloudflareActivitySplash activityId={definition.id} fill className="z-[-1]" />
+                </Splash>
             }
             hasPages
             hasSearch

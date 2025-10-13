@@ -3,7 +3,7 @@
 import Link from "next/link"
 import { useMemo } from "react"
 import styled from "styled-components"
-import { CloudflareImage } from "~/components/CloudflareImage"
+import { CloudflareActivitySplash } from "~/components/CloudflareImage"
 import { usePageProps } from "~/components/PageWrapper"
 import { Container } from "~/components/__deprecated__/layout/Container"
 import { Flex } from "~/components/__deprecated__/layout/Flex"
@@ -11,7 +11,6 @@ import { H4 } from "~/components/__deprecated__/typography/H4"
 import Checkmark from "~/components/icons/Checkmark"
 import Xmark from "~/components/icons/Xmark"
 import { useLocale } from "~/components/providers/LocaleManager"
-import { getRaidSplash } from "~/lib/activity-images"
 import type { ProfileProps } from "~/lib/profile/types"
 import { useRaidHubActivtiesFirstPage, useRaidHubInstance } from "~/services/raidhub/hooks"
 import { Card } from "~/shad/card"
@@ -54,14 +53,12 @@ export const LatestRaid = () => {
                 }}>
                 <Card className="h-full overflow-hidden">
                     <Container $minHeight={80}>
-                        <CloudflareImage
-                            cloudflareId={
-                                getRaidSplash(latestActivity.activityId) ?? "genericRaidSplash"
-                            }
+                        <CloudflareActivitySplash
+                            activityId={latestActivity.activityId}
                             fill
                             priority
                             alt="raid background image"
-                            style={{ objectFit: "cover" }}
+                            className="object-cover"
                         />
                     </Container>
                     <Flex $direction="column" $crossAxis="flex-start">

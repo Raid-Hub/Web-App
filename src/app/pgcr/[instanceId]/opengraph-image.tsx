@@ -1,11 +1,11 @@
 /* eslint-disable @next/next/no-img-element */
 import { notFound } from "next/navigation"
 import { ImageResponse } from "next/og"
-import { cloudflareImageLoader } from "~/components/CloudflareImage"
-import { getRaidSplash } from "~/lib/activity-images"
+import { FallbackSplash } from "~/components/CloudflareImage"
 import { getMetaData, prefetchActivity } from "~/lib/pgcr/server"
 import { type PGCRPageProps } from "~/lib/pgcr/types"
 import { baseUrl } from "~/lib/server/utils"
+import { prefetchManifest } from "~/services/raidhub/prefetchRaidHubManifest"
 import { bungieIconUrl, getBungieDisplayName } from "~/util/destiny"
 import { secondsToHMS } from "~/util/presentation/formatting"
 
@@ -20,12 +20,22 @@ export const runtime = "edge"
 export default async function Image({ params: { instanceId } }: PGCRPageProps) {
     const interSemiBold = fetch(baseUrl + "/Inter-SemiBold.ttf").then(res => res.arrayBuffer())
 
-    const activity = await prefetchActivity(instanceId)
+    const [activity, manifest] = await Promise.all([
+        prefetchActivity(instanceId),
+        prefetchManifest()
+    ])
     if (!activity) {
         notFound()
     }
 
     const { ogTitle, dateString } = getMetaData(activity)
+    const imageVariants = manifest.splashUrls[activity.activityId]
+    const backgroundImageUrl =
+        imageVariants?.find(v => v.size === "medium")?.url ??
+        imageVariants?.find(v => v.size === "small")?.url ??
+        imageVariants?.find(v => v.size === "large")?.url ??
+        imageVariants?.[0]?.url ??
+        FallbackSplash
 
     return new ImageResponse(
         (
@@ -43,11 +53,7 @@ export default async function Image({ params: { instanceId } }: PGCRPageProps) {
                 }}>
                 <div
                     style={{
-                        backgroundImage: `url(${cloudflareImageLoader({
-                            src: getRaidSplash(activity.activityId) ?? "genericRaidSplash",
-                            width: size.width,
-                            quality: 100
-                        })})`,
+                        backgroundImage: `url(${backgroundImageUrl})`,
                         backgroundSize: "100% 100%",
                         filter: "blur(2px) brightness(0.7)",
                         width: "100%",

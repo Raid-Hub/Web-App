@@ -1,7 +1,7 @@
 "use client"
 
+import { CloudflareActivitySplash } from "~/components/CloudflareImage"
 import { useRaidHubManifest } from "~/components/providers/RaidHubManifestManager"
-import { getRaidSplash } from "~/lib/activity-images"
 import { SpeedrunVariables, type RTABoardCategory } from "~/lib/speedrun/speedrun-com-mappings"
 import { Splash } from "../../../../LeaderboardSplashComponents"
 
@@ -18,11 +18,8 @@ export const SpeedrunComBanner = (props: {
         : undefined
 
     return (
-        <Splash
-            title={title}
-            subtitle={subtitle}
-            tertiaryTitle="Speedrun Leaderboards"
-            cloudflareImageId={getRaidSplash(props.raidId) ?? "genericRaidSplash"}
-        />
+        <Splash title={title} subtitle={subtitle} tertiaryTitle="Speedrun Leaderboards">
+            <CloudflareActivitySplash activityId={props.raidId} fill className="z-[-1]" />
+        </Splash>
     )
 }

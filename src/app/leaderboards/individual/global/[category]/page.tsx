@@ -1,5 +1,6 @@
 import { type Metadata } from "next"
 import { notFound } from "next/navigation"
+import { CloudflareStaticImage } from "~/components/CloudflareImage"
 import { baseMetadata } from "~/lib/metadata"
 import { type PathParamsForLeaderboardURL } from "~/services/raidhub/types"
 import { Leaderboard } from "../../../Leaderboard"
@@ -79,11 +80,13 @@ export default async function Page({ params, searchParams }: DynamicParams) {
             hasPages
             external={false}
             heading={
-                <Splash
-                    title={categoryName}
-                    tertiaryTitle="Global Leaderboards"
-                    cloudflareImageId="raidhubCitySplash"
-                />
+                <Splash title={categoryName} tertiaryTitle="Global Leaderboards">
+                    <CloudflareStaticImage
+                        cloudflareId="raidhubCitySplash"
+                        className="z-[-1]"
+                        fill
+                    />
+                </Splash>
             }
             entries={
                 <LeaderboardSSR

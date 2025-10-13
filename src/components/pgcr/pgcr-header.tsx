@@ -1,5 +1,4 @@
 import { CheckCircle, Clock, MapPin, TriangleAlert, Users, XCircle } from "lucide-react"
-import { R2RaidSplash, getRaidSplash } from "~/lib/activity-images"
 import { cn } from "~/lib/tw"
 import { type RaidHubInstanceExtended } from "~/services/raidhub/types"
 import { Badge } from "~/shad/badge"
@@ -8,6 +7,7 @@ import { Tooltip, TooltipContent, TooltipTrigger } from "~/shad/tooltip"
 import { secondsToHMS } from "~/util/presentation/formatting"
 import { PGCRDate, TimeRangeTooltip } from "./pgcr-date"
 import { PGCRFeats } from "./pgcr-feats"
+import { PGCRHeaderBackground } from "./pgcr-header-bg"
 import { PGCRMenu } from "./pgcr-menu"
 import { PGCRTags } from "./pgcr-tags"
 
@@ -16,21 +16,8 @@ interface PGCRHeaderProps {
 }
 
 export const PGCRHeader = ({ data }: PGCRHeaderProps) => {
-    // getRaidSplash can return null for unknown activity ids; fall back to genericRaidSplash
-    const backgroundImage = getRaidSplash(data.activityId) ?? "genericRaidSplash"
-    const splashEntry = R2RaidSplash[backgroundImage]
-    const backgroundImageUrl = [
-        "https://cdn.raidhub.io/content",
-        splashEntry.path,
-        splashEntry.variants.small
-    ].join("/")
-
     return (
-        <div
-            className="relative min-h-44 overflow-hidden rounded-t-lg bg-cover bg-center md:h-48"
-            style={{
-                backgroundImage: `url(${backgroundImageUrl})`
-            }}>
+        <PGCRHeaderBackground activityId={data.activityId}>
             <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/50 to-black/30 backdrop-blur-[2px]" />
             <CardHeader className="absolute inset-0 flex flex-col gap-2 p-2 md:p-6">
                 <div className="inline-flex gap-4">
@@ -156,6 +143,6 @@ export const PGCRHeader = ({ data }: PGCRHeaderProps) => {
                     <PGCRMenu />
                 </div>
             </CardHeader>
-        </div>
+        </PGCRHeaderBackground>
     )
 }
