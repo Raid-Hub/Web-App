@@ -4,21 +4,27 @@ import { useRaidHubManifest } from "~/components/providers/RaidHubManifestManage
 import { type RaidHubInstance, type RaidHubInstanceForPlayer } from "~/services/raidhub/types"
 import { includedIn } from "~/util/helpers"
 
-const crafteningStartDate = new Date("2023-09-15T17:00:00Z")
-const crafteningEndDate = new Date("2023-09-21T17:00:00Z")
-const horsemanStartDate = new Date("2023-04-26T17:00:00Z")
-const horsemanEndDate = new Date("2023-04-28T17:00:00Z")
+const opItemEvents: Record<
+    string,
+    {
+        start: Date
+        end: Date
+    }
+> = {
+    craftening: { start: new Date("2023-09-15T17:00:00Z"), end: new Date("2023-09-21T17:00:00Z") },
+    horseman: { start: new Date("2023-04-26T17:00:00Z"), end: new Date("2023-04-28T17:00:00Z") },
+    quickfang: { start: new Date("2025-09-16T17:00:00Z"), end: new Date("2025-09-23T17:00:00Z") }
+}
 
-const isDuringOpItemEvent = (activity: RaidHubInstance) => {
-    const date = new Date(activity.dateStarted)
-    return (
-        (date > crafteningStartDate && date < crafteningEndDate) ||
-        (date > horsemanStartDate && date < horsemanEndDate)
-    )
+const isDuringOpItemEvent = (dateStr: string) => {
+    const date = new Date(dateStr)
+    return Object.entries(opItemEvents).some(([_, { start, end }]) => date >= start && date <= end)
 }
 
 export const basicActivityFilter = (activity: RaidHubInstanceForPlayer) =>
-    activity.player.completed && !activity.isBlacklisted && !isDuringOpItemEvent(activity)
+    activity.player.completed &&
+    !activity.isBlacklisted &&
+    !isDuringOpItemEvent(activity.dateStarted)
 
 export const useRaidTags = (activities: Collection<string, RaidHubInstanceForPlayer>) => {
     const getWeight = useGetWeight()
