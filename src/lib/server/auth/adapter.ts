@@ -23,8 +23,15 @@ export const PrismaAdapter = (prisma: PrismaClientWithExtensions): Adapter => ({
          * want to use the Bungie membership ID as the primary key.
          */
         delete input.id
-        const user = await prisma.user.create({
-            data: {
+        const user = await prisma.user.upsert({
+            where: {
+                id: input.userMembershipData.bnetMembership.membershipId
+            },
+            update: {
+                name: input.name,
+                image: input.image
+            },
+            create: {
                 id: input.userMembershipData.bnetMembership.membershipId,
                 name: input.name,
                 image: input.image,
