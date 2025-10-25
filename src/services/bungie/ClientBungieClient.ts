@@ -9,7 +9,7 @@ export default class ClientBungieClient extends BaseBungieClient {
     private readonly emitter = new EventEmitter()
 
     constructor() {
-        super(fetch)
+        super(globalThis.fetch.bind(globalThis))
     }
 
     protected generatePayload(config: BungieFetchConfig): { headers: Headers } {

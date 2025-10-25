@@ -16,7 +16,7 @@ export default class ServerBungieClient extends BaseBungieClient {
         timeout,
         cache
     }: { next?: NextFetchRequestConfig; timeout?: number; cache?: RequestCache } = {}) {
-        super(saferFetch)
+        super(saferFetch.bind(globalThis))
         this.next = next ?? {}
         this.timeout = timeout
         this.cache = cache
