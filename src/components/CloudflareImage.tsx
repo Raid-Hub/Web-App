@@ -137,8 +137,6 @@ export const CloudflareActivitySplash = ({
                 return FallbackSplash
             }
 
-            console.log("Activity variants", activityVariants)
-
             const availableSizes = new Set(activityVariants.map(c => c.size))
 
             const variants = cloudflareVariants.filter(item => availableSizes.has(item.name))
