@@ -102,7 +102,7 @@ export function SearchCommand() {
                                 <PlayerCommandItem
                                     key={player.membershipId}
                                     player={player}
-                                    date={new Date(player.lastSeen)}
+                                    date={player.lastSeen ? new Date(player.lastSeen) : null}
                                     handleSelect={createSelectHandler(player)}
                                 />
                             )
@@ -120,7 +120,7 @@ const PlayerCommandItem = ({
     handleSelect
 }: {
     player: Omit<RaidHubPlayerInfo, "lastSeen">
-    date: Date
+    date: Date | null
     handleSelect: () => void
 }) => {
     const { locale } = useLocale()
@@ -150,9 +150,11 @@ const PlayerCommandItem = ({
                             #{player.bungieGlobalDisplayNameCode}
                         </span>
                     </div>
-                    <div className="text-muted-foreground text-xs">
-                        {formattedTimeSince(new Date(date), locale)}
-                    </div>
+                    {date && (
+                        <div className="text-muted-foreground text-xs">
+                            {formattedTimeSince(date, locale)}
+                        </div>
+                    )}
                 </div>
             </Link>
         </CommandItem>

@@ -60,12 +60,31 @@ export default function RaidCard({
         }
 
         const elligibleActs = activities?.filter(a => !a.isBlacklisted && a.player.completed)
+        if (!elligibleActs || elligibleActs.size === 0) return null
 
-        const instance =
-            (isReprisedRaid &&
-                // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
-                elligibleActs?.find(a => isChallengeMode(a.versionId))) ||
-            elligibleActs?.find(a => a.isContest || a.isWeekOne)
+        const getEarliest = (col?: Collection<string, RaidHubInstanceForPlayer>) => {
+            if (!col || col.size === 0) return null
+            const arr = Array.from(col.values())
+            return arr.reduce((min, curr) =>
+                new Date(curr.dateCompleted) < new Date(min.dateCompleted) ? curr : min
+            )
+        }
+
+        // Priority: challenge (for reprised raids) -> contest day one -> contest -> day one -> week one
+        let instance = null
+
+        if (isReprisedRaid) {
+            instance = getEarliest(elligibleActs.filter(a => isChallengeMode(a.versionId)))
+        }
+
+        if (!instance) {
+            instance =
+                getEarliest(elligibleActs.filter(a => a.isContest && a.isDayOne)) ??
+                getEarliest(elligibleActs.filter(a => a.isContest)) ??
+                getEarliest(elligibleActs.filter(a => a.isDayOne)) ??
+                getEarliest(elligibleActs.filter(a => a.isWeekOne))
+        }
+
         if (!instance) return null
 
         return {
