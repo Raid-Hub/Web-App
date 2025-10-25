@@ -41,7 +41,8 @@ export function withRetries<F extends (...args: any[]) => Promise<unknown>>(
 
     return (async (...args: Parameters<F>): Promise<ReturnType<F>> => {
         const errs: unknown[] = []
-        for (let attempt = 1; attempt <= attempts; attempt++) {
+        let attempt = 1
+        for (attempt; attempt <= attempts; attempt++) {
             try {
                 return (await fn(...args)) as ReturnType<F>
             } catch (err) {
@@ -60,6 +61,6 @@ export function withRetries<F extends (...args: any[]) => Promise<unknown>>(
                 await new Promise(resolve => setTimeout(resolve, waitMs))
             }
         }
-        throw new RetryError(`Operation failed after ${attempts} attempts`, attempts, errs)
+        throw new RetryError(`Operation failed after ${attempt} attempts`, attempt, errs)
     }) as F
 }

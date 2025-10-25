@@ -1,9 +1,9 @@
-import { errors } from "undici"
 import { withRetries } from "./retry"
 
 const retriableErrorCauseStrings = [
     "socket disconnected before secure TLS connection was established",
-    "connect ETIMEDOUT"
+    "connect ETIMEDOUT",
+    "other side closed"
 ]
 
 // WeakMap to hold buffered request bodies for Requests we've seen before.
@@ -67,11 +67,10 @@ export const saferFetch = withRetries(
                 const cause = err.cause
                 if (!cause) return false
 
-                if (cause instanceof errors.SocketError) {
-                    return true
-                } else if (cause instanceof Error) {
-                    return retriableErrorCauseStrings.some(str => cause.message.includes(str))
-                }
+                return (
+                    cause instanceof Error &&
+                    retriableErrorCauseStrings.some(str => cause.message.includes(str))
+                )
             }
 
             return false
