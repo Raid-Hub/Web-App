@@ -1,5 +1,6 @@
 /* eslint-disable jsx-a11y/alt-text, @next/next/no-img-element */
 import { ImageResponse } from "next/og"
+import { saferFetch } from "~/lib/server/saferFetch"
 import { bungieClanBannerBannerLayerUrl } from "~/util/destiny"
 import { RGBAToHex } from "~/util/destiny/rgba"
 import { getClan, getClanBannerDefinitions, type PageProps } from "../server"
@@ -181,7 +182,7 @@ export default async function Image({ params: { groupId } }: PageProps) {
 }
 
 async function imageToBase64(imageUrl: string) {
-    const response = await fetch(imageUrl, {
+    const response = await saferFetch(imageUrl, {
         cache: "force-cache"
     })
     const buffer = await response.arrayBuffer()

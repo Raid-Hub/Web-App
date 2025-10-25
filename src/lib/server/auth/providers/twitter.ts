@@ -1,6 +1,8 @@
 import "server-only"
+import { saferFetch } from "~/lib/server/saferFetch"
+
 export async function getTwitterProfile(access_token: string) {
-    const res = await fetch("https://api.twitter.com/2/users/me?user.fields=url", {
+    const res = await saferFetch("https://api.twitter.com/2/users/me?user.fields=url", {
         headers: {
             Authorization: `Bearer ${access_token}`
         }

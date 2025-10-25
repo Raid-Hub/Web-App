@@ -1,3 +1,4 @@
+import { saferFetch } from "~/lib/server/saferFetch"
 import { type CheckpointResponse } from "./types"
 
 export type Checkpoint = {
@@ -15,7 +16,7 @@ const checkpointsURL = "https://d2cp.io/platform/checkpoints"
 
 export const getCheckpoints = async () => {
     try {
-        const response = await fetch(checkpointsURL, {
+        const response = await saferFetch(checkpointsURL, {
             cache: "no-cache"
         }).then(res => {
             if (!res.ok) {

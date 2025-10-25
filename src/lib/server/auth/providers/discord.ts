@@ -1,8 +1,9 @@
 import type { DiscordProfile } from "next-auth/providers/discord"
 import "server-only"
+import { saferFetch } from "~/lib/server/saferFetch"
 
 export async function getDiscordProfile(access_token: string) {
-    const res = await fetch("https://discord.com/api/users/@me", {
+    const res = await saferFetch("https://discord.com/api/users/@me", {
         headers: {
             Authorization: `Bearer ${access_token}`
         }

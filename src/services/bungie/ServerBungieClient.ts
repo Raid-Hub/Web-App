@@ -1,6 +1,7 @@
 import "server-only"
 
 import type { BungieFetchConfig } from "bungie-net-core"
+import { saferFetch } from "~/lib/server/saferFetch"
 import { baseUrl } from "~/lib/server/utils"
 import { BungiePlatformError } from "~/models/BungieAPIError"
 import BaseBungieClient from "~/services/bungie/BungieClient"
@@ -15,7 +16,7 @@ export default class ServerBungieClient extends BaseBungieClient {
         timeout,
         cache
     }: { next?: NextFetchRequestConfig; timeout?: number; cache?: RequestCache } = {}) {
-        super()
+        super(saferFetch)
         this.next = next ?? {}
         this.timeout = timeout
         this.cache = cache

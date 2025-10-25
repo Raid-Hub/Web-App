@@ -1,5 +1,6 @@
 import { TRPCError } from "@trpc/server"
 import { z } from "zod"
+import { saferFetch } from "~/lib/server/saferFetch"
 import { protectedProcedure } from "../../../.."
 
 export const addByAPIKey = protectedProcedure
@@ -15,7 +16,7 @@ export const addByAPIKey = protectedProcedure
             "X-API-Key": input.apiKey
         }
 
-        const data = await fetch(url, {
+        const data = await saferFetch(url, {
             method: "GET",
             headers: headers
         }).then(async res => {

@@ -8,6 +8,10 @@ export default class ClientBungieClient extends BaseBungieClient {
 
     private readonly emitter = new EventEmitter()
 
+    constructor() {
+        super(fetch)
+    }
+
     protected generatePayload(config: BungieFetchConfig): { headers: Headers } {
         const apiKey = process.env.BUNGIE_API_KEY
         if (!apiKey) {

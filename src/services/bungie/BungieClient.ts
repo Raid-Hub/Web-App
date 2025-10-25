@@ -12,6 +12,7 @@ import {
  * Represents a client for interacting with the Bungie API.
  */
 export default abstract class BaseBungieClient implements BungieClientProtocol {
+    constructor(private fetchFn: typeof fetch) {}
     /**
      * Makes a fetch request to the Bungie API.
      * @param config The fetch configuration.
@@ -29,7 +30,7 @@ export default abstract class BaseBungieClient implements BungieClientProtocol {
      * @returns A promise that resolves to the response data.
      */
     protected readonly request = async <T>(url: URL, payload: RequestInit): Promise<T> => {
-        const res = await fetch(url, payload)
+        const res = await this.fetchFn(url, payload)
 
         const text = await res.text()
         const contentType = res.headers.get("Content-Type")

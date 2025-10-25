@@ -4,6 +4,7 @@ import { ImageResponse } from "next/og"
 import { FallbackSplash } from "~/components/CloudflareImage"
 import { getMetaData, prefetchActivity } from "~/lib/pgcr/server"
 import { type PGCRPageProps } from "~/lib/pgcr/types"
+import { saferFetch } from "~/lib/server/saferFetch"
 import { baseUrl } from "~/lib/server/utils"
 import { prefetchManifest } from "~/services/raidhub/prefetchRaidHubManifest"
 import { bungieIconUrl, getBungieDisplayName } from "~/util/destiny"
@@ -18,7 +19,7 @@ export const runtime = "edge"
 
 // Image generation
 export default async function Image({ params: { instanceId } }: PGCRPageProps) {
-    const interSemiBold = fetch(baseUrl + "/Inter-SemiBold.ttf").then(res => res.arrayBuffer())
+    const interSemiBold = saferFetch(baseUrl + "/Inter-SemiBold.ttf").then(res => res.arrayBuffer())
 
     const [activity, manifest] = await Promise.all([
         prefetchActivity(instanceId),

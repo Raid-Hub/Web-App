@@ -4,6 +4,7 @@ import "server-only"
 import { trpcServer } from "~/lib/server/trpc/rpc"
 import { BungiePlatformError } from "~/models/BungieAPIError"
 
+import { saferFetch } from "~/lib/server/saferFetch"
 import ServerBungieClient from "~/services/bungie/ServerBungieClient"
 import { getRaidHubApi } from "~/services/raidhub/common"
 import { reactRequestDedupe } from "~/util/react-cache"
@@ -48,10 +49,12 @@ export const prefetchRaidHubPlayerProfileAuthenticated = reactRequestDedupe(
             null,
             {
                 headers: {
+                    "X-API-KEY": process.env.RAIDHUB_API_KEY!,
                     Authorization: `Bearer ${bearerToken}`
                 },
                 cache: "no-store"
-            }
+            },
+            saferFetch
         )
             .then(res => res.response)
             .catch(() => null)
@@ -66,7 +69,8 @@ export const prefetchRaidHubPlayerProfile = reactRequestDedupe((membershipId: st
         null,
         {
             cache: "no-store"
-        }
+        },
+        saferFetch
     )
         .then(res => res.response)
         .catch(() => null)
@@ -84,7 +88,8 @@ export const prefetchRaidHubPlayerBasic = reactRequestDedupe(async (membershipId
             next: {
                 revalidate: 6 * 3600
             }
-        }
+        },
+        saferFetch
     )
         .then(res => res.response)
         .catch(() => null)

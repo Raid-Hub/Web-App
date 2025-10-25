@@ -1,4 +1,5 @@
 import type { PresignedPost } from "@aws-sdk/s3-presigned-post"
+import { saferFetch } from "~/lib/server/saferFetch"
 
 export const uploadProfileIcon = async (file: File, signedURL: PresignedPost) => {
     const formData = new FormData()
@@ -7,7 +8,7 @@ export const uploadProfileIcon = async (file: File, signedURL: PresignedPost) =>
     })
     formData.append("file", file)
 
-    const res = await fetch(signedURL.url, {
+    const res = await saferFetch(signedURL.url, {
         method: "POST",
         body: formData
     })

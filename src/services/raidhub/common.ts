@@ -19,7 +19,8 @@ export async function getRaidHubApi<
     path: T,
     pathParams: "path" extends keyof P ? P["path"] : null,
     queryParams: "query" extends keyof P ? P["query"] : null,
-    config?: Omit<RequestInit, "method" | "body">
+    config?: Omit<RequestInit, "method" | "body">,
+    fetchFn?: typeof fetch
 ): Promise<RaidHubAPISuccessResponse<R>> {
     const url = new URL(
         path.replace(/{([^}]+)}/g, (_, paramName) => {
@@ -33,11 +34,15 @@ export async function getRaidHubApi<
         if (value !== undefined) url.searchParams.set(key, String(value))
     })
 
-    return fetchRaidHub<R>(url, {
-        ...config,
-        headers: createHeaders(config?.headers),
-        method: "GET"
-    })
+    return fetchRaidHub<R>(
+        url,
+        {
+            ...config,
+            headers: createHeaders(config?.headers),
+            method: "GET"
+        },
+        fetchFn
+    )
 }
 
 export async function postRaidHubApi<
@@ -69,7 +74,8 @@ export async function postRaidHubApi<
         : never,
     pathParams: "path" extends keyof P ? P["path"] : null,
     queryParams?: "query" extends keyof P ? P["query"] : null,
-    config?: Omit<RequestInit, "method" | "body">
+    config?: Omit<RequestInit, "method" | "body">,
+    fetchFn?: typeof fetch
 ): Promise<RaidHubAPISuccessResponse<R>> {
     const url = new URL(
         path.replace(/{([^}]+)}/g, (_, paramName) => {
@@ -83,12 +89,16 @@ export async function postRaidHubApi<
         url.searchParams.set(key, String(value))
     })
 
-    return fetchRaidHub<R>(url, {
-        ...config,
-        headers: createHeaders({ "Content-Type": "application/json", ...config?.headers }),
-        method: method.toUpperCase(),
-        body: JSON.stringify(body)
-    })
+    return fetchRaidHub<R>(
+        url,
+        {
+            ...config,
+            headers: createHeaders({ "Content-Type": "application/json", ...config?.headers }),
+            method: method.toUpperCase(),
+            body: JSON.stringify(body)
+        },
+        fetchFn
+    )
 }
 
 function createHeaders(init?: HeadersInit) {
@@ -111,8 +121,12 @@ function createHeaders(init?: HeadersInit) {
     return headers
 }
 
-async function fetchRaidHub<R>(url: URL, init: RequestInit): Promise<RaidHubAPISuccessResponse<R>> {
-    const res = await fetch(url, init)
+async function fetchRaidHub<R>(
+    url: URL,
+    init: RequestInit,
+    fetchFn = fetch
+): Promise<RaidHubAPISuccessResponse<R>> {
+    const res = await fetchFn(url, init)
 
     let data: RaidHubAPIResponse<R>
     try {

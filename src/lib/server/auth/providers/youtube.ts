@@ -1,5 +1,6 @@
 import { type OIDCConfig } from "next-auth/providers"
 import "server-only"
+import { saferFetch } from "../../saferFetch"
 
 export function YouTubeProvider({
     clientId,
@@ -28,7 +29,7 @@ export async function getYoutubeProfile(access_token: string) {
     url.searchParams.set("part", "snippet")
     url.searchParams.set("mine", "true")
 
-    const res = await fetch(url, {
+    const res = await saferFetch(url, {
         headers: {
             Authorization: `Bearer ${access_token}`
         }

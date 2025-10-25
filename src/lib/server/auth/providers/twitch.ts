@@ -1,6 +1,8 @@
 import "server-only"
+import { saferFetch } from "~/lib/server/saferFetch"
+
 export async function getTwitchProfile(access_token: string) {
-    const res = await fetch("https://api.twitch.tv/helix/users", {
+    const res = await saferFetch("https://api.twitch.tv/helix/users", {
         headers: {
             "Client-ID": process.env.TWITCH_CLIENT_ID!,
             Authorization: `Bearer ${access_token}`

@@ -1,4 +1,5 @@
 import "server-only"
+import { saferFetch } from "~/lib/server/saferFetch"
 
 export interface DiscordWebhookData {
     embeds: [
@@ -20,7 +21,7 @@ export enum DiscordColors {
 }
 
 export const sendDiscordWebhook = async (url: string, data: DiscordWebhookData) => {
-    const webhookResponse = await fetch(url, {
+    const webhookResponse = await saferFetch(url, {
         method: "POST",
         headers: {
             "Content-Type": "application/json"
