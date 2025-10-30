@@ -22,6 +22,7 @@ export const useProfile = <T = UseProfileQueryData>(
     >
 ) => {
     const bungieClient = useBungieClient()
+    const isClient = typeof window !== "undefined"
 
     return useQuery<UseProfileQueryData, Error, T, ReturnType<typeof getUseProfileQueryKey>>({
         queryKey: getUseProfileQueryKey(params.destinyMembershipId, params.membershipType),
@@ -36,6 +37,7 @@ export const useProfile = <T = UseProfileQueryData>(
             ...old,
             ...current
         }),
-        ...opts
+        ...opts,
+        enabled: isClient && (opts?.enabled ?? true)
     })
 }

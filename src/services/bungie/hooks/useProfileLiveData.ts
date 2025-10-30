@@ -25,6 +25,7 @@ export const useProfileLiveData = <T = UseLiveProfileQueryData>(
     >
 ) => {
     const bungieClient = useBungieClient()
+    const isClient = typeof window !== "undefined"
 
     return useQuery<UseLiveProfileQueryData, Error, T, ReturnType<typeof getUseProfileQueryKey>>({
         queryKey: getUseProfileQueryKey(params.destinyMembershipId, params.membershipType),
@@ -36,6 +37,7 @@ export const useProfileLiveData = <T = UseLiveProfileQueryData>(
                     204 /*CharacterActivities*/, 205 /*CharacterEquipment*/, 305 /*ItemSockets*/
                 ]
             }).then(res => res.Response),
-        ...opts
+        ...opts,
+        enabled: isClient && (opts?.enabled ?? true)
     })
 }

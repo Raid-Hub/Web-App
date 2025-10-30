@@ -12,6 +12,7 @@ export const useProfileTransitory = <T = DestinyProfileResponse<[1000]>>(
     opts?: UseQueryOptions<DestinyProfileResponse<[1000]>, Error, T>
 ) => {
     const bungieClient = useBungieClient()
+    const isClient = typeof window !== "undefined"
 
     return useQuery<DestinyProfileResponse<[1000]>, Error, T>({
         queryKey: ["bungie", "profile", "transitory", params],
@@ -20,6 +21,7 @@ export const useProfileTransitory = <T = DestinyProfileResponse<[1000]>>(
                 ...params,
                 components: [1000]
             }).then(res => res.Response),
-        ...opts
+        ...opts,
+        enabled: isClient && (opts?.enabled ?? true)
     })
 }
