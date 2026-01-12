@@ -29,7 +29,7 @@ export function CommunityProfiles() {
             <Profile
                 title="GM Report"
                 url={`https://gm.report/${props.destinyMembershipId}`}
-                icon="https://gm.report/apple-icon-180x180.png"
+                icon="https://legacy.gm.report/apple-icon-180x180.png"
             />
             <Profile
                 title="Trials Report"
