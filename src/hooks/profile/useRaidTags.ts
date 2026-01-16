@@ -126,12 +126,22 @@ const useGetWeight = () => {
 }
 
 const soloTaniksFirst = new Date("2024-09-12T17:00:00Z")
+const trioFreshSalvationsEdgeAllowed = new Date("2025-01-01T00:00:00Z")
 
 function isIllegalTag({ activityId, dateCompleted }: RaidHubInstance, weight: number): boolean {
     switch (activityId) {
+        case 16:
+            // epic desert perpetual - allow solo epic tags
+            return false
+        case 15:
+            // normal desert perpetual - don't allow solo tags
+            return bitfieldMatches(weight, Solo)
         case 14:
-            // trio fresh
-            return bitfieldMatches(weight, Trio | Fresh)
+            // trio fresh - allow after 1/1/25
+            return (
+                bitfieldMatches(weight, Trio | Fresh) &&
+                new Date(dateCompleted) < trioFreshSalvationsEdgeAllowed
+            )
         case 13:
             // any crota lowman cp, or solo fresh
             return (
