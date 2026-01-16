@@ -39,6 +39,7 @@ export const useRaidTags = (activities: Collection<string, RaidHubInstanceForPla
             .filter(a => !isIllegalTag(a.activity, a.weight))
             .sort(
                 (a, b) =>
+                    a.activity.playerCount - b.activity.playerCount ||
                     b.weight - a.weight ||
                     (new Date(a.activity.dateCompleted) < new Date(b.activity.dateCompleted)
                         ? -1
@@ -188,6 +189,13 @@ function isBestTag(
     weight: number
 ): boolean {
     switch (activityId) {
+        case 16:
+            // epic desert perpetual - solo or trio flawless
+            return bitfieldMatches(weight, Solo)
+
+        case 15:
+            // normal desert perpetual - trio flawless
+            return bitfieldMatches(weight, Trio | Flawless)
         case 14:
             // master flawless or duo master witness or solo witness
             return (
