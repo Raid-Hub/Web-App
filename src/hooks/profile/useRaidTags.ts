@@ -11,9 +11,10 @@ const opItemEvents: Record<
         end: Date
     }
 > = {
-    craftening: { start: new Date("2023-09-15T17:00:00Z"), end: new Date("2023-09-21T17:00:00Z") },
     horseman: { start: new Date("2023-04-26T17:00:00Z"), end: new Date("2023-04-28T17:00:00Z") },
-    quickfang: { start: new Date("2025-09-16T17:00:00Z"), end: new Date("2025-09-23T17:00:00Z") }
+    craftening: { start: new Date("2023-09-15T17:00:00Z"), end: new Date("2023-09-21T17:00:00Z") },
+    quickfang: { start: new Date("2025-09-16T17:00:00Z"), end: new Date("2025-09-23T17:00:00Z") },
+    shattershafts: { start: new Date("2026-01-27T17:00:00Z"), end: new Date("2025-02-03T17:00:00Z") },
 }
 
 const isDuringOpItemEvent = (dateStr: string) => {
