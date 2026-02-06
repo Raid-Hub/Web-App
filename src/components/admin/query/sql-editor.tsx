@@ -2,7 +2,7 @@
 
 import { sql } from "@codemirror/lang-sql"
 import { EditorState } from "@codemirror/state"
-import { EditorView, keymap } from "@codemirror/view"
+import { EditorView } from "@codemirror/view"
 import { basicSetup } from "codemirror"
 import { vscodeLight } from "@uiw/codemirror-theme-vscode"
 import { useEffect, useRef } from "react"
@@ -10,10 +10,9 @@ import { useEffect, useRef } from "react"
 interface SqlEditorProps {
     value: string
     onChange: (value: string) => void
-    placeholder?: string
 }
 
-export function SqlEditor({ value, onChange, placeholder }: SqlEditorProps) {
+export function SqlEditor({ value, onChange }: SqlEditorProps) {
     const editorRef = useRef<HTMLDivElement>(null)
     const viewRef = useRef<EditorView | null>(null)
 

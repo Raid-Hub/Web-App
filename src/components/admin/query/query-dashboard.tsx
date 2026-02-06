@@ -171,11 +171,7 @@ export function QueryDashboard() {
 
             {/* SQL Editor */}
             <form onSubmit={e => e.preventDefault()} className="mb-6 w-full space-y-4">
-                <SqlEditor
-                    value={queryText}
-                    onChange={setQueryText}
-                    placeholder="Enter SQL query here"
-                />
+                <SqlEditor value={queryText} onChange={setQueryText} />
                 <div className="flex flex-wrap items-center gap-2">
                     <Button onClick={handleSubmit} type="submit" disabled={submitBtnsDisabled}>
                         Submit

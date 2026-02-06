@@ -2,9 +2,7 @@
 
 import { type UseMutationResult } from "@tanstack/react-query"
 import Link from "next/link"
-import { Badge } from "~/shad/badge"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "~/shad/card"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/shad/tabs"
+import { Card, CardContent, CardHeader, CardTitle } from "~/shad/card"
 import { RaidHubError } from "~/services/raidhub/RaidHubError"
 import {
     type RaidHubAdminQueryBody,
