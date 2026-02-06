@@ -254,17 +254,17 @@ function PlayerInfoCard({
                                     "border-red-400/30 bg-red-900/20 text-red-400":
                                         selectedCheatLevel >= 3,
                                     "border-orange-400/30 bg-orange-800/20 text-orange-500":
-                                        selectedCheatLevel == 2,
+                                        selectedCheatLevel === 2,
                                     "border-yellow-400/30 bg-yellow-900/20 text-yellow-400":
-                                        selectedCheatLevel == 1,
+                                        selectedCheatLevel === 1,
                                     "border-green-400/30 bg-green-900/20 text-green-400":
-                                        selectedCheatLevel == 0
+                                        selectedCheatLevel === 0
                                 })}
                                 chevronClassName={cn({
                                     "text-red-400": selectedCheatLevel >= 3,
-                                    "text-orange-400": selectedCheatLevel == 2,
-                                    "text-yellow-400": selectedCheatLevel == 1,
-                                    "text-green-400": selectedCheatLevel == 0
+                                    "text-orange-400": selectedCheatLevel === 2,
+                                    "text-yellow-400": selectedCheatLevel === 1,
+                                    "text-green-400": selectedCheatLevel === 0
                                 })}>
                                 Cheat Level: {cheatLevelStrings[selectedCheatLevel]}
                             </SelectTrigger>
