@@ -8,3 +8,5 @@ Sentry.init({
     integrations: [Sentry.replayIntegration()],
     environment: process.env.NEXT_PUBLIC_APP_ENV ?? "development"
 })
+
+export const onRouterTransitionStart = Sentry.captureRouterTransitionStart

@@ -62,6 +62,10 @@ module.exports = withSentryConfig(withBundleAnalyzer(nextConfig), {
     widenClientFileUpload: true,
     tunnelRoute: "/monitoring",
     hideSourceMaps: true,
-    disableLogger: true,
-    automaticVercelMonitors: true
+    webpack: {
+        treeshake: {
+            removeDebugLogging: true
+        },
+        automaticVercelMonitors: true
+    }
 })
