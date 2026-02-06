@@ -1,3 +1,4 @@
+import { TableCell } from "~/shad/table"
 import { type ColumnFormats } from "./formats"
 
 export const Cell = ({
@@ -8,13 +9,13 @@ export const Cell = ({
     Formatter: (typeof ColumnFormats)[keyof typeof ColumnFormats]
 }) => {
     return (
-        <td>
+        <TableCell>
             {value !== null ? (
                 <Formatter
                     // @ts-expect-error Unkown type assigned to never
                     value={value}
                 />
             ) : null}
-        </td>
+        </TableCell>
     )
 }

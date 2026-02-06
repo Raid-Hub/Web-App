@@ -2,8 +2,9 @@
 
 import { type UseMutationResult } from "@tanstack/react-query"
 import Link from "next/link"
-import styled from "styled-components"
-import { Panel } from "~/components/__deprecated__/Panel"
+import { Badge } from "~/shad/badge"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "~/shad/card"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/shad/tabs"
 import { RaidHubError } from "~/services/raidhub/RaidHubError"
 import {
     type RaidHubAdminQueryBody,
@@ -22,73 +23,115 @@ export const DataView = ({
     mutation: UseMutationResult<RaidHubAdminQueryResponse, unknown, RaidHubAdminQueryBody>
 }) => {
     if (mutation.isLoading) {
-        return <div>Loading...</div>
+        return (
+            <Card>
+                <CardContent className="py-12 text-center">
+                    <div className="text-sm text-white/60">Loading...</div>
+                </CardContent>
+            </Card>
+        )
     }
     if (mutation.isError) {
         if (mutation.error instanceof RaidHubError) {
             if (mutation.error.errorCode === "AdminQuerySyntaxError") {
                 const cause = mutation.error.cause as RaidHubErrorSchema<"AdminQuerySyntaxError">
                 return (
-                    <ErrorMessage>
-                        <h3>SQL Error</h3>
-                        <p>
-                            <strong>Name:</strong> {cause.name}
-                        </p>
-                        {cause.code && (
-                            <p>
-                                <strong>Code: </strong>
-                                <Link
-                                    href={`https://www.postgresql.org/docs/current/errcodes-appendix.html#:~:text=${cause.code}`}
-                                    target="_blank"
-                                    style={{
-                                        color: "unset"
-                                    }}>
-                                    <u>{cause.code}</u>
-                                </Link>
-                            </p>
-                        )}
-                        {cause.line && cause.position && (
-                            <p>
-                                <strong>Line:</strong> {cause.line.slice(0, cause.position - 1)}
-                                <span
-                                    style={{
-                                        fontWeight: "bold",
-                                        backgroundColor: "yellow"
-                                    }}>
-                                    {cause.line[cause.position - 1]}
-                                </span>
-                                {cause.line.slice(cause.position)}
-                            </p>
-                        )}
-                    </ErrorMessage>
+                    <Card className="border-red-500/50 bg-red-500/10">
+                        <CardHeader>
+                            <CardTitle className="text-red-400">SQL Error</CardTitle>
+                        </CardHeader>
+                        <CardContent className="space-y-2 text-sm">
+                            <div>
+                                <strong className="text-white/80">Name:</strong>{" "}
+                                <span className="text-white/60">{cause.name}</span>
+                            </div>
+                            {cause.code && (
+                                <div>
+                                    <strong className="text-white/80">Code: </strong>
+                                    <Link
+                                        href={`https://www.postgresql.org/docs/current/errcodes-appendix.html#:~:text=${cause.code}`}
+                                        target="_blank"
+                                        className="text-hyperlink underline">
+                                        {cause.code}
+                                    </Link>
+                                </div>
+                            )}
+                            {cause.line && cause.position && (
+                                <div>
+                                    <strong className="text-white/80">Line:</strong>{" "}
+                                    <span className="text-white/60">
+                                        {cause.line.slice(0, cause.position - 1)}
+                                    </span>
+                                    <span className="bg-yellow-500 font-bold text-black">
+                                        {cause.line[cause.position - 1]}
+                                    </span>
+                                    <span className="text-white/60">
+                                        {cause.line.slice(cause.position)}
+                                    </span>
+                                </div>
+                            )}
+                        </CardContent>
+                    </Card>
                 )
             } else {
-                return <ErrorMessage>{mutation.error.errorCode}</ErrorMessage>
+                return (
+                    <Card className="border-red-500/50 bg-red-500/10">
+                        <CardContent className="py-4">
+                            <div className="text-red-400">{mutation.error.errorCode}</div>
+                        </CardContent>
+                    </Card>
+                )
             }
         }
         return (
-            <ErrorMessage>
-                {"An error occurred"} {(mutation.error as Error).message}
-            </ErrorMessage>
+            <Card className="border-red-500/50 bg-red-500/10">
+                <CardContent className="py-4">
+                    <div className="text-red-400">
+                        An error occurred: {(mutation.error as Error).message}
+                    </div>
+                </CardContent>
+            </Card>
         )
     }
     if (mutation.isSuccess) {
         if (mutation.data.type === "HIGH COST") {
             return (
-                <WarningMessage>
-                    <div>Warning: High Query Cost</div>Estimated Query duration:{" "}
-                    <b>{secondsToHMS(mutation.data.estimatedDuration, false)}</b>
-                </WarningMessage>
+                <Card className="border-yellow-500/50 bg-yellow-500/10">
+                    <CardHeader>
+                        <CardTitle className="text-yellow-500">Warning: High Query Cost</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                        <div className="text-sm">
+                            Estimated Query duration:{" "}
+                            <strong className="text-yellow-400">
+                                {secondsToHMS(mutation.data.estimatedDuration, false)}
+                            </strong>
+                        </div>
+                    </CardContent>
+                </Card>
             )
         }
         if (mutation.data.type === "EXPLAIN") {
             return (
-                <Panel>
-                    <pre>{mutation.data.data.join("\n")}</pre>
-                </Panel>
+                <Card>
+                    <CardHeader>
+                        <CardTitle>Explain Plan</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                        <pre className="overflow-auto rounded-md bg-black/40 p-4 text-sm">
+                            {mutation.data.data.join("\n")}
+                        </pre>
+                    </CardContent>
+                </Card>
             )
         } else if (!mutation.data.data.length) {
-            return <Panel>{"No rows :("}</Panel>
+            return (
+                <Card>
+                    <CardContent className="py-12 text-center">
+                        <div className="text-sm text-white/60">No rows :(</div>
+                    </CardContent>
+                </Card>
+            )
         } else {
             return (
                 <SQLTable
@@ -101,13 +144,3 @@ export const DataView = ({
     }
     return null
 }
-
-const ErrorMessage = styled.div`
-    color: #721c24;
-    background-color: #f8d7da;
-    padding: 0.75rem 1.25rem;
-`
-
-const WarningMessage = styled.div`
-    color: yellow;
-`
