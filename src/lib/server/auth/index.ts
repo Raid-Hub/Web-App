@@ -1,5 +1,6 @@
 import "server-only"
 
+import * as Sentry from "@sentry/nextjs"
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library"
 import NextAuth from "next-auth"
 import DiscordProvider from "next-auth/providers/discord"
@@ -37,6 +38,7 @@ const {
     },
     logger: {
         error(err) {
+            Sentry.captureException(err)
             console.error(err)
             if (err.cause instanceof PrismaClientKnownRequestError) {
                 console.error("Error Metadata", JSON.stringify(err.cause.meta, null, 2))

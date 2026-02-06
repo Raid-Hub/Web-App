@@ -1,5 +1,6 @@
 "use client"
 
+import * as Sentry from "@sentry/nextjs"
 import { useEffect } from "react"
 import { PageWrapper } from "~/components/PageWrapper"
 
@@ -11,6 +12,7 @@ export default function GlobalError({
     reset: () => void
 }) {
     useEffect(() => {
+        Sentry.captureException(error)
         console.error(error)
     }, [error])
 

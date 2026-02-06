@@ -1,5 +1,6 @@
 "use client" // Error components must be Client Components
 
+import * as Sentry from "@sentry/nextjs"
 import { useParams, usePathname, useSearchParams } from "next/navigation"
 import { useEffect } from "react"
 import { type ErrorBoundaryProps } from "~/types/generic"
@@ -22,6 +23,7 @@ export default function ErrorBoundary({ error, reset }: ErrorBoundaryProps) {
                 stack: error.stack
             }
         }
+        Sentry.captureException(error)
         console.error(err)
     }, [error, params, pathname, searchParams])
 
