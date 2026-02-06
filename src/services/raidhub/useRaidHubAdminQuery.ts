@@ -23,14 +23,13 @@ export const useRaidHubAdminQuery = () => {
         onError: error => {
             if (error instanceof Error && error.name === "AbortError") {
                 toast.info("Query cancelled")
-                // Reset the abort controller for the next query
-                abortController.current = new AbortController()
             }
         }
     })
 
     const cancel = useCallback(() => {
         abortController.current.abort()
+        // Create a new AbortController for the next query
         abortController.current = new AbortController()
     }, [abortController])
 

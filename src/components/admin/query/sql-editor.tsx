@@ -4,7 +4,6 @@ import { sql } from "@codemirror/lang-sql"
 import { EditorState } from "@codemirror/state"
 import { EditorView } from "@codemirror/view"
 import { basicSetup } from "codemirror"
-import { vscodeLight } from "@uiw/codemirror-theme-vscode"
 import { useEffect, useRef } from "react"
 
 interface SqlEditorProps {
@@ -24,7 +23,6 @@ export function SqlEditor({ value, onChange }: SqlEditorProps) {
             extensions: [
                 basicSetup,
                 sql(),
-                vscodeLight,
                 EditorView.updateListener.of(update => {
                     if (update.docChanged) {
                         onChange(update.state.doc.toString())
