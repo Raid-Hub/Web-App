@@ -1,9 +1,11 @@
 // eslint-disable-next-line @typescript-eslint/no-var-requires
+const { withSentryConfig } = require("@sentry/nextjs")
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const withBundleAnalyzer = require("@next/bundle-analyzer")({
     enabled: process.env.ANALYZE === "true"
 })
 
-module.exports = withBundleAnalyzer({
+const nextConfig = {
     experimental: {
         ppr: true
     },
@@ -16,7 +18,9 @@ module.exports = withBundleAnalyzer({
         APP_VERSION: process.env.APP_VERSION,
         BUNGIE_API_KEY: process.env.BUNGIE_API_KEY,
         RAIDHUB_API_URL: process.env.RAIDHUB_API_URL ?? "https://api.raidhub.io",
-        RAIDHUB_API_KEY: process.env.RAIDHUB_API_KEY
+        RAIDHUB_API_KEY: process.env.RAIDHUB_API_KEY,
+        NEXT_PUBLIC_SENTRY_DSN: process.env.NEXT_PUBLIC_SENTRY_DSN,
+        NEXT_PUBLIC_APP_ENV: process.env.APP_ENV
     },
     images: {
         remotePatterns: [
@@ -49,4 +53,15 @@ module.exports = withBundleAnalyzer({
             source: "/:vanity([a-zA-Z0-9]+)"
         }
     ]
+}
+
+module.exports = withSentryConfig(withBundleAnalyzer(nextConfig), {
+    org: process.env.SENTRY_ORG,
+    project: process.env.SENTRY_PROJECT,
+    silent: !process.env.CI,
+    widenClientFileUpload: true,
+    tunnelRoute: "/monitoring",
+    hideSourceMaps: true,
+    disableLogger: true,
+    automaticVercelMonitors: true
 })
