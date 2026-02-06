@@ -285,7 +285,7 @@ function PlayerInfoCard({
                                 size="sm"
                                 onClick={handleSave}
                                 className="h-8 text-sm"
-                                disabled={updatePlayer.isPending}>
+                                disabled={updatePlayer.isLoading}>
                                 <TriangleAlert className="size-4" />
                                 Save Cheat Level
                             </Button>
