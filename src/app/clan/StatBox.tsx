@@ -29,9 +29,7 @@ export const StatBox = ({
                         <span>{aggLabel}</span>
                     )}
                 </div>
-                {rank != null && (
-                    <div className="stat-box-rank">Rank #{rank.toLocaleString()}</div>
-                )}
+                {rank != null && <div className="stat-box-rank">Rank #{rank.toLocaleString()}</div>}
             </div>
         </StyledStatBox>
     )
