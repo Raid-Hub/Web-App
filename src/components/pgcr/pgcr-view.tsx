@@ -1,3 +1,5 @@
+"use client"
+
 import { Collection } from "@discordjs/collection"
 import { ClientStateManager } from "~/hooks/pgcr/ClientStateManager"
 import { type MultiInstanceTimelineSegment } from "~/lib/multi/multi-types"

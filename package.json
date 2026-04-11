@@ -15,7 +15,10 @@
         "format": "prettier --write \"src/**/*.{ts,tsx,json}\" && prisma format",
         "format:check": "prettier --check \"src/**/*.{ts,tsx,json}\"",
         "build": "bun prisma generate && next build",
-        "deploy": "./vercel/dev-deploy.sh"
+        "deploy": "./vercel/dev-deploy.sh",
+        "dev:e2e": "next dev -p 3000",
+        "test:e2e": "bun prisma migrate deploy && bun run scripts/e2e-seed.ts && playwright test",
+        "test:e2e:ui": "playwright test --ui"
     },
     "dependencies": {
         "@auth/core": "0.32.0",
@@ -79,6 +82,7 @@
         "@libsql/linux-x64-gnu": "0.5.5",
         "@next/bundle-analyzer": "14.2.0-canary.26",
         "@next/eslint-plugin-next": "14.2.0-canary.26",
+        "@playwright/test": "^1.59.1",
         "@tanstack/react-query-devtools": "4.36",
         "@types/node": "20",
         "@types/react": "18.3.0",
