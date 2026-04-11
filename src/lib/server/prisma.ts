@@ -15,7 +15,7 @@ const globalForPrisma = globalThis as unknown as GlobalThisWithPrisma
 const createPrismaWithExtension = () => {
     const libSQL = createClient(
         process.env.APP_ENV === "local"
-            ? { url: "file:./prisma/raidhub-sqlite.db" }
+            ? { url: "file:prisma/raidhub-sqlite.db" }
             : {
                   url: process.env.TURSO_DATABASE_URL!,
                   authToken: process.env.TURSO_AUTH_TOKEN,
