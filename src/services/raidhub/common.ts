@@ -7,6 +7,16 @@ import type {
 import { RaidHubError } from "./RaidHubError"
 import type { paths } from "./openapi"
 
+const getLocalE2EBaseUrl = () => {
+    if (typeof window !== "undefined") {
+        return window.location.origin
+    }
+
+    return process.env.PLAYWRIGHT_BASE_URL ?? `http://127.0.0.1:${process.env.PORT ?? 3000}`
+}
+
+const isLocalNoApiKey = () => process.env.APP_ENV === "local" && !process.env.RAIDHUB_API_KEY
+
 export async function getRaidHubApi<
     T extends RaidHubGetPath,
     P = "parameters" extends keyof paths[T]["get"] ? paths[T]["get"]["parameters"] : null,
@@ -22,14 +32,20 @@ export async function getRaidHubApi<
     config?: Omit<RequestInit, "method" | "body">,
     fetchFn?: typeof fetch
 ): Promise<RaidHubAPISuccessResponse<R>> {
-    const url = new URL(
-        path.replace(/{([^}]+)}/g, (_, paramName) => {
-            // @ts-expect-error types don't really work here
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-member-access
-            return pathParams[paramName]
-        }),
-        process.env.RAIDHUB_API_URL
-    )
+    const resolvedPath = path.replace(/{([^}]+)}/g, (_, paramName) => {
+        // @ts-expect-error types don't really work here
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-member-access
+        return pathParams[paramName]
+    })
+
+    const url =
+        isLocalNoApiKey() && path === "/instance/{instanceId}"
+            ? new URL(
+                  `/api/e2e/raidhub/instance/${resolvedPath.split("/").at(-1)}`,
+                  getLocalE2EBaseUrl()
+              )
+            : new URL(resolvedPath, process.env.RAIDHUB_API_URL)
+
     Object.entries(queryParams ?? {}).forEach(([key, value]) => {
         if (value !== undefined) url.searchParams.set(key, String(value))
     })

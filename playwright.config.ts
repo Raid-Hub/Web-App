@@ -21,7 +21,11 @@ export default defineConfig({
         command: "bun run dev:e2e",
         env: {
             ...process.env,
-            APP_ENV: process.env.APP_ENV ?? "local"
+            APP_ENV: process.env.APP_ENV ?? "local",
+            AUTH_SECRET:
+                process.env.AUTH_SECRET || process.env.NEXTAUTH_SECRET || "e2e-auth-secret",
+            NEXTAUTH_SECRET:
+                process.env.NEXTAUTH_SECRET || process.env.AUTH_SECRET || "e2e-auth-secret"
         },
         url: "http://127.0.0.1:3000",
         reuseExistingServer: !process.env.CI,

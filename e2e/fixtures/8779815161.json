@@ -1,0 +1,486 @@
+{
+  "instanceId": "8779815161",
+  "hash": 1681562271,
+  "activityId": 9,
+  "versionId": 4,
+  "completed": true,
+  "playerCount": 6,
+  "score": 0,
+  "fresh": null,
+  "flawless": false,
+  "skullHashes": [],
+  "dateStarted": "2021-07-06T17:10:04.000Z",
+  "dateCompleted": "2021-07-06T17:46:58.000Z",
+  "season": 14,
+  "duration": 2214,
+  "platformType": 3,
+  "isDayOne": false,
+  "isContest": false,
+  "isWeekOne": false,
+  "isBlacklisted": false,
+  "leaderboardRank": 1,
+  "metadata": {
+    "activityName": "Vault of Glass",
+    "versionName": "Master",
+    "isRaid": true
+  },
+  "players": [
+    {
+      "completed": true,
+      "isFirstClear": false,
+      "sherpas": 0,
+      "timePlayedSeconds": 2214,
+      "playerInfo": {
+        "iconPath": "/common/destiny2_content/icons/d55829b357cade6477878058ef11eeae.jpg",
+        "lastSeen": "2022-08-25T21:27:53.000Z",
+        "isPrivate": false,
+        "cheatLevel": 0,
+        "displayName": "vPoots",
+        "membershipId": "4611686018453262663",
+        "membershipType": 1,
+        "bungieGlobalDisplayName": "poots",
+        "bungieGlobalDisplayNameCode": "2264"
+      },
+      "characters": [
+        {
+          "kills": 225,
+          "score": 0,
+          "deaths": 3,
+          "assists": 102,
+          "weapons": [
+            {
+              "kills": 52,
+              "weaponHash": 2376481550,
+              "precisionKills": 0
+            },
+            {
+              "kills": 19,
+              "weaponHash": 1097616550,
+              "precisionKills": 4
+            },
+            {
+              "kills": 18,
+              "weaponHash": 2222560548,
+              "precisionKills": 7
+            },
+            {
+              "kills": 9,
+              "weaponHash": 1395261499,
+              "precisionKills": 0
+            },
+            {
+              "kills": 5,
+              "weaponHash": 2990047042,
+              "precisionKills": 3
+            },
+            {
+              "kills": 4,
+              "weaponHash": 821154603,
+              "precisionKills": 2
+            },
+            {
+              "kills": 3,
+              "weaponHash": 2060863616,
+              "precisionKills": 0
+            }
+          ],
+          "classHash": 2271682572,
+          "completed": true,
+          "emblemHash": 2133500855,
+          "meleeKills": 5,
+          "superKills": 66,
+          "characterId": "2305843009467534048",
+          "grenadeKills": 22,
+          "startSeconds": 0,
+          "precisionKills": 16,
+          "timePlayedSeconds": 2214
+        }
+      ]
+    },
+    {
+      "completed": true,
+      "isFirstClear": false,
+      "sherpas": 0,
+      "timePlayedSeconds": 2213,
+      "playerInfo": {
+        "iconPath": "/common/destiny2_content/icons/8f4020df5dd0ee175360576354eda082.jpg",
+        "lastSeen": "2026-02-07T23:38:35.000Z",
+        "isPrivate": false,
+        "cheatLevel": 0,
+        "displayName": "Praeyx",
+        "membershipId": "4611686018437165105",
+        "membershipType": 1,
+        "bungieGlobalDisplayName": "Prae",
+        "bungieGlobalDisplayNameCode": "2221"
+      },
+      "characters": [
+        {
+          "kills": 158,
+          "score": 0,
+          "deaths": 4,
+          "assists": 77,
+          "weapons": [
+            {
+              "kills": 20,
+              "weaponHash": 2171478765,
+              "precisionKills": 6
+            },
+            {
+              "kills": 18,
+              "weaponHash": 2376481550,
+              "precisionKills": 0
+            },
+            {
+              "kills": 14,
+              "weaponHash": 1946491241,
+              "precisionKills": 0
+            },
+            {
+              "kills": 12,
+              "weaponHash": 1395261499,
+              "precisionKills": 0
+            },
+            {
+              "kills": 5,
+              "weaponHash": 2060863616,
+              "precisionKills": 0
+            },
+            {
+              "kills": 3,
+              "weaponHash": 2990047042,
+              "precisionKills": 3
+            },
+            {
+              "kills": 1,
+              "weaponHash": 2448907086,
+              "precisionKills": 0
+            },
+            {
+              "kills": 1,
+              "weaponHash": 2807687156,
+              "precisionKills": 1
+            },
+            {
+              "kills": 1,
+              "weaponHash": 981718087,
+              "precisionKills": 0
+            }
+          ],
+          "classHash": 2271682572,
+          "completed": true,
+          "emblemHash": 3605490914,
+          "meleeKills": 0,
+          "superKills": 63,
+          "characterId": "2305843009267088647",
+          "grenadeKills": 11,
+          "startSeconds": 1,
+          "precisionKills": 20,
+          "timePlayedSeconds": 2213
+        }
+      ]
+    },
+    {
+      "completed": true,
+      "isFirstClear": false,
+      "sherpas": 0,
+      "timePlayedSeconds": 2213,
+      "playerInfo": {
+        "iconPath": "/common/destiny2_content/icons/70038c6d33c095f109a9df3f2bfc28de.jpg",
+        "lastSeen": "2022-10-19T21:42:11.000Z",
+        "isPrivate": false,
+        "cheatLevel": 0,
+        "displayName": "iAmShuffles",
+        "membershipId": "4611686018451336648",
+        "membershipType": 2,
+        "bungieGlobalDisplayName": "Shuffles",
+        "bungieGlobalDisplayNameCode": "9737"
+      },
+      "characters": [
+        {
+          "kills": 150,
+          "score": 0,
+          "deaths": 3,
+          "assists": 86,
+          "weapons": [
+            {
+              "kills": 27,
+              "weaponHash": 2222560548,
+              "precisionKills": 14
+            },
+            {
+              "kills": 18,
+              "weaponHash": 2376481550,
+              "precisionKills": 0
+            },
+            {
+              "kills": 17,
+              "weaponHash": 4230965989,
+              "precisionKills": 6
+            },
+            {
+              "kills": 10,
+              "weaponHash": 2990047042,
+              "precisionKills": 8
+            },
+            {
+              "kills": 9,
+              "weaponHash": 2060863616,
+              "precisionKills": 0
+            },
+            {
+              "kills": 6,
+              "weaponHash": 4248569242,
+              "precisionKills": 3
+            },
+            {
+              "kills": 3,
+              "weaponHash": 3211806999,
+              "precisionKills": 2
+            },
+            {
+              "kills": 3,
+              "weaponHash": 614426548,
+              "precisionKills": 0
+            }
+          ],
+          "classHash": 671679327,
+          "completed": true,
+          "emblemHash": 4182480224,
+          "meleeKills": 0,
+          "superKills": 31,
+          "characterId": "2305843009686254957",
+          "grenadeKills": 15,
+          "startSeconds": 1,
+          "precisionKills": 44,
+          "timePlayedSeconds": 2213
+        }
+      ]
+    },
+    {
+      "completed": true,
+      "isFirstClear": false,
+      "sherpas": 0,
+      "timePlayedSeconds": 2213,
+      "playerInfo": {
+        "iconPath": "/common/destiny2_content/icons/97d1647338c17bdddc79bfac4ed01519.jpg",
+        "lastSeen": "2024-09-11T19:52:13.000Z",
+        "isPrivate": false,
+        "cheatLevel": 0,
+        "displayName": "Maso",
+        "membershipId": "4611686018467289542",
+        "membershipType": 3,
+        "bungieGlobalDisplayName": "Maso",
+        "bungieGlobalDisplayNameCode": "9958"
+      },
+      "characters": [
+        {
+          "kills": 264,
+          "score": 0,
+          "deaths": 3,
+          "assists": 99,
+          "weapons": [
+            {
+              "kills": 92,
+              "weaponHash": 2376481550,
+              "precisionKills": 0
+            },
+            {
+              "kills": 54,
+              "weaponHash": 2222560548,
+              "precisionKills": 18
+            },
+            {
+              "kills": 14,
+              "weaponHash": 1395261499,
+              "precisionKills": 0
+            },
+            {
+              "kills": 9,
+              "weaponHash": 4248569242,
+              "precisionKills": 4
+            },
+            {
+              "kills": 8,
+              "weaponHash": 821154603,
+              "precisionKills": 4
+            },
+            {
+              "kills": 6,
+              "weaponHash": 2990047042,
+              "precisionKills": 6
+            },
+            {
+              "kills": 5,
+              "weaponHash": 2060863616,
+              "precisionKills": 0
+            }
+          ],
+          "classHash": 3655393761,
+          "completed": true,
+          "emblemHash": 1907674139,
+          "meleeKills": 2,
+          "superKills": 10,
+          "characterId": "2305843009836114017",
+          "grenadeKills": 17,
+          "startSeconds": 1,
+          "precisionKills": 32,
+          "timePlayedSeconds": 2213
+        }
+      ]
+    },
+    {
+      "completed": true,
+      "isFirstClear": false,
+      "sherpas": 0,
+      "timePlayedSeconds": 2213,
+      "playerInfo": {
+        "iconPath": "/common/destiny2_content/icons/7fb53db4f4074e73b790c9277d75a75c.jpg",
+        "lastSeen": "2023-09-03T11:41:35.000Z",
+        "isPrivate": false,
+        "cheatLevel": 0,
+        "displayName": "Hizxr",
+        "membershipId": "4611686018471330827",
+        "membershipType": 3,
+        "bungieGlobalDisplayName": "Hizxr",
+        "bungieGlobalDisplayNameCode": "5854"
+      },
+      "characters": [
+        {
+          "kills": 227,
+          "score": 0,
+          "deaths": 5,
+          "assists": 120,
+          "weapons": [
+            {
+              "kills": 23,
+              "weaponHash": 2376481550,
+              "precisionKills": 0
+            },
+            {
+              "kills": 17,
+              "weaponHash": 2222560548,
+              "precisionKills": 2
+            },
+            {
+              "kills": 14,
+              "weaponHash": 3186018373,
+              "precisionKills": 10
+            },
+            {
+              "kills": 11,
+              "weaponHash": 304659313,
+              "precisionKills": 0
+            },
+            {
+              "kills": 9,
+              "weaponHash": 4248569242,
+              "precisionKills": 4
+            },
+            {
+              "kills": 7,
+              "weaponHash": 1395261499,
+              "precisionKills": 0
+            },
+            {
+              "kills": 4,
+              "weaponHash": 370712896,
+              "precisionKills": 0
+            },
+            {
+              "kills": 3,
+              "weaponHash": 2990047042,
+              "precisionKills": 3
+            },
+            {
+              "kills": 2,
+              "weaponHash": 1481892490,
+              "precisionKills": 0
+            }
+          ],
+          "classHash": 2271682572,
+          "completed": true,
+          "emblemHash": 3970180843,
+          "meleeKills": 1,
+          "superKills": 91,
+          "characterId": "2305843009607965794",
+          "grenadeKills": 26,
+          "startSeconds": 1,
+          "precisionKills": 20,
+          "timePlayedSeconds": 2213
+        }
+      ]
+    },
+    {
+      "completed": true,
+      "isFirstClear": false,
+      "sherpas": 0,
+      "timePlayedSeconds": 2212,
+      "playerInfo": {
+        "iconPath": "/common/destiny2_content/icons/517e5ab20f9372aa2eb4a1b2bfdb6fe3.jpg",
+        "lastSeen": "2026-04-04T10:20:46.000Z",
+        "isPrivate": false,
+        "cheatLevel": 0,
+        "displayName": "Panora",
+        "membershipId": "4611686018472402376",
+        "membershipType": 3,
+        "bungieGlobalDisplayName": "Panora",
+        "bungieGlobalDisplayNameCode": "8240"
+      },
+      "characters": [
+        {
+          "kills": 198,
+          "score": 0,
+          "deaths": 3,
+          "assists": 91,
+          "weapons": [
+            {
+              "kills": 51,
+              "weaponHash": 2376481550,
+              "precisionKills": 0
+            },
+            {
+              "kills": 21,
+              "weaponHash": 3682803680,
+              "precisionKills": 8
+            },
+            {
+              "kills": 19,
+              "weaponHash": 304659313,
+              "precisionKills": 0
+            },
+            {
+              "kills": 7,
+              "weaponHash": 2222560548,
+              "precisionKills": 2
+            },
+            {
+              "kills": 7,
+              "weaponHash": 3717177717,
+              "precisionKills": 2
+            },
+            {
+              "kills": 6,
+              "weaponHash": 821154603,
+              "precisionKills": 3
+            },
+            {
+              "kills": 3,
+              "weaponHash": 1395261499,
+              "precisionKills": 0
+            }
+          ],
+          "classHash": 2271682572,
+          "completed": true,
+          "emblemHash": 2133500854,
+          "meleeKills": 3,
+          "superKills": 56,
+          "characterId": "2305843009349344641",
+          "grenadeKills": 17,
+          "startSeconds": 2,
+          "precisionKills": 20,
+          "timePlayedSeconds": 2212
+        }
+      ]
+    }
+  ]
+}
