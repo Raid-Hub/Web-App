@@ -4,6 +4,7 @@ import { createClient } from "@libsql/client"
 import { PrismaLibSQL } from "@prisma/adapter-libsql"
 import { PrismaClient } from "@prisma/client"
 import path from "node:path"
+import { pathToFileURL } from "node:url"
 import { saferFetch } from "./saferFetch"
 
 export type PrismaClientWithExtensions = ReturnType<typeof createPrismaWithExtension>
@@ -13,7 +14,9 @@ interface GlobalThisWithPrisma {
 }
 const globalForPrisma = globalThis as unknown as GlobalThisWithPrisma
 
-const localSqliteUrl = `file:${path.resolve(process.cwd(), "prisma", "raidhub-sqlite.db")}`
+const localSqliteUrl = pathToFileURL(
+    path.resolve(process.cwd(), "prisma", "raidhub-sqlite.db")
+).toString()
 
 const createPrismaWithExtension = () => {
     const libSQL = createClient(
