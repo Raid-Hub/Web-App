@@ -18,10 +18,7 @@ export const PGCRMultiTimeline = ({ segments }: { segments: MultiInstanceTimelin
                 (min, d) => (d.start < min ? d.start : min),
                 segments[0].start
             ),
-            overallEnd: segments.reduce(
-                (max, d) => (d.end > max ? d.end : max),
-                segments[0].end
-            )
+            overallEnd: segments.reduce((max, d) => (d.end > max ? d.end : max), segments[0].end)
         }
     }, [segments])
 

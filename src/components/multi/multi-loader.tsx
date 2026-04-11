@@ -4,13 +4,7 @@ import PGCR from "~/components/pgcr/pgcr-view"
 import { mergeRaidHubInstances } from "~/lib/multi/merge-instances"
 import { useRaidHubInstanceList } from "~/services/raidhub/useRaidHubInstance"
 
-export const MultiLoader = ({
-    multiId,
-    instances
-}: {
-    multiId: string
-    instances: string[]
-}) => {
+export const MultiLoader = ({ multiId, instances }: { multiId: string; instances: string[] }) => {
     const queries = useRaidHubInstanceList(instances)
 
     const isLoading = queries.some(q => q.isLoading)

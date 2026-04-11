@@ -37,7 +37,7 @@ jobs:
               run: bunx playwright install chromium --with-deps
 
             - name: Run Playwright tests
-              run: playwright test
+              run: bunx playwright test
               env:
                   CI: true
                   APP_ENV: local
