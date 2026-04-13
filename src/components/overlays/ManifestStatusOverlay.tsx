@@ -87,6 +87,7 @@ export const ManifestStatusOverlay = (
                                     <Link
                                         href="https://discord.raidhub.io"
                                         target="_blank"
+                                        rel="noopener noreferrer"
                                         style={{ color: "lightblue" }}>
                                         discord.raidhub.io
                                     </Link>
