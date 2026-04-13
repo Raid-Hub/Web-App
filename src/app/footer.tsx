@@ -25,7 +25,7 @@ const contactIcons = [
         Icon: KofiIcon
     },
     {
-        url: `https://discord.gg/raidhub`,
+        url: `https://discord.raidhub.io`,
         Icon: DiscordIcon
     },
     {

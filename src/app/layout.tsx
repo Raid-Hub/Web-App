@@ -41,7 +41,7 @@ export default async function RootLayout(params: { children: ReactNode }) {
             className="dark min-w-75 overflow-y-auto [overscroll-behavior-y:contain]"
             suppressHydrationWarning>
             <head>
-                <meta name="discord:site" content="https://discord.gg/raidhub" />
+                <meta name="discord:site" content="https://discord.raidhub.io" />
 
                 <link rel="preconnect" href="https://fonts.googleapis.com" />
                 <link
