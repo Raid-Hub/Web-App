@@ -243,7 +243,7 @@ const RaidHubAtlasBannerInner = (state: AtlasState) => {
                 <StyledRaidHubStatsBanner $alertLevel="error">
                     {`An error occurred while checking RaidHub's status: ${state.reason}. Activity crawling may be paused. Please let us know in our `}
                     <Link
-                        href="https://discord.gg/raidhub"
+                        href="https://discord.raidhub.io"
                         style={{
                             color: "unset",
                             textDecoration: "underline"
