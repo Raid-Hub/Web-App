@@ -5,10 +5,6 @@
 
 # testing
 /coverage
-/playwright-report/
-/test-results/
-/blob-report/
-/playwright/.cache/
 
 # next.js
 /.next/
@@ -55,5 +51,3 @@ src/app/test
 
 # certs
 certificates
-
-raidhub-sqlite.db

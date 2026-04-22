@@ -13,27 +13,24 @@ interface GlobalThisWithPrisma {
 const globalForPrisma = globalThis as unknown as GlobalThisWithPrisma
 
 const createPrismaWithExtension = () => {
-    const baseClient =
+    const libSQL = createClient(
         process.env.APP_ENV === "local"
-            ? new PrismaClient({
-                  log: ["query", "error", "warn"]
-              })
-            : new PrismaClient({
-                  log: ["error"],
-                  adapter: new PrismaLibSQL(
-                      createClient({
-                          url: process.env.TURSO_DATABASE_URL!,
-                          authToken: process.env.TURSO_AUTH_TOKEN,
-                          fetch: async (request: Request) => {
-                              return await saferFetch(request, {
-                                  cache: "no-store"
-                              })
-                          }
+            ? { url: "file:./prisma/raidhub-sqlite.db" }
+            : {
+                  url: process.env.TURSO_DATABASE_URL!,
+                  authToken: process.env.TURSO_AUTH_TOKEN,
+                  fetch: async (request: Request) => {
+                      return await saferFetch(request, {
+                          cache: "no-store"
                       })
-                  )
-              })
+                  }
+              }
+    )
 
-    return baseClient.$extends({
+    return new PrismaClient({
+        log: process.env.APP_ENV === "local" ? ["query", "error", "warn"] : ["error"],
+        adapter: new PrismaLibSQL(libSQL)
+    }).$extends({
         name: "roleEnum",
         result: {
             user: {
