@@ -1,5 +1,6 @@
 import { useMutation } from "@tanstack/react-query"
 import { useCallback, useRef } from "react"
+import { toast } from "sonner"
 import { useSession } from "~/hooks/app/useSession"
 import type { RaidHubAdminQueryBody } from "~/services/raidhub/types"
 import { postRaidHubApi } from "./common"
@@ -18,16 +19,18 @@ export const useRaidHubAdminQuery = () => {
                       }
                     : {},
                 signal: abortController.current.signal
-            }).then(res => res.response)
+            }).then(res => res.response),
+        onError: error => {
+            if (error instanceof Error && error.name === "AbortError") {
+                toast.info("Query cancelled")
+            }
+        }
     })
-
-    if (mutation.error instanceof Error && mutation.error.name === "AbortError") {
-        mutation.reset()
-        abortController.current = new AbortController()
-    }
 
     const cancel = useCallback(() => {
         abortController.current.abort()
+        // Create a new AbortController for the next query
+        abortController.current = new AbortController()
     }, [abortController])
 
     return { mutation, cancel }
