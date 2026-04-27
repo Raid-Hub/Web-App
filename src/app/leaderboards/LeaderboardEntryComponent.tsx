@@ -2,7 +2,6 @@
 
 import Link from "next/link"
 import { useEffect, useMemo, useRef } from "react"
-import { OptionalWrapper } from "~/components/OptionalWrapper"
 import { useLocale } from "~/components/providers/LocaleManager"
 import { useQueryParams } from "~/hooks/util/useQueryParams"
 import { cn } from "~/lib/tw"
@@ -63,12 +62,21 @@ export const LeaderboardEntryComponent = ({
         <div
             ref={sm}
             className={cn(
-                "bg-card flex w-full flex-col items-center rounded border p-2 shadow-md transition-transform hover:scale-105 lg:flex-row lg:justify-between",
+                "bg-card relative flex w-full flex-col items-center rounded border p-2 shadow-md transition-transform hover:scale-105 lg:flex-row lg:justify-between",
                 { "max-w-[450px]": entry.type === "player" }
             )}
             style={targettedStyle}>
+            {entry.url && (
+                <Link
+                    href={entry.url}
+                    target={entry.url.startsWith("/") ? undefined : "_blank"}
+                    aria-label={`View details for ${value}`}
+                    className="absolute inset-0 rounded"
+                />
+            )}
+
             {/* Left side */}
-            <div className="flex-1">
+            <div className="pointer-events-none relative z-10 flex-1">
                 {/* Players */}
                 <div className="flex gap-4 p-2">
                     <div className="flex aspect-square min-w-5 flex-col justify-center text-lg">
@@ -88,19 +96,8 @@ export const LeaderboardEntryComponent = ({
                 </div>
             </div>
 
-            {/* Right side (link or additional info) */}
-            <OptionalWrapper
-                condition={entry.url}
-                wrapper={({ children, value }) => (
-                    <Link
-                        className="w-28 p-2 text-inherit"
-                        href={value}
-                        target={value.startsWith("/") ? undefined : "_blank"}>
-                        {children}
-                    </Link>
-                )}>
-                <div>{value}</div>
-            </OptionalWrapper>
+            {/* Right side (timestamp / value) */}
+            <div className="w-28 p-2">{value}</div>
         </div>
     )
 }
