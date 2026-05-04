@@ -1,17 +1,14 @@
 /**
- * Sentry env helpers — align with RaidHub-API (`SENTRY_DSN`, `SENTRY_ENVIRONMENT`) on the server.
- * Client bundles only receive `NEXT_PUBLIC_*` (and `next.config` `env` keys); use `NEXT_PUBLIC_SENTRY_DSN` for browser reporting.
+ * Sentry env helpers — same variable names as RaidHub-API (`SENTRY_DSN`, `SENTRY_ENVIRONMENT`, `SENTRY_RELEASE`).
+ * For the browser, `next.config.js` `env` inlines these at build time (same pattern as `APP_VERSION`), not `NEXT_PUBLIC_*`.
  */
 export function getSentryDsnForServer(): string | undefined {
-    const primary = process.env.SENTRY_DSN?.trim()
-    if (primary) return primary
-    const fallback = process.env.NEXT_PUBLIC_SENTRY_DSN?.trim()
-    return fallback && fallback.length > 0 ? fallback : undefined
+    const dsn = process.env.SENTRY_DSN?.trim()
+    return dsn && dsn.length > 0 ? dsn : undefined
 }
 
 export function getSentryDsnForClient(): string | undefined {
-    const dsn = process.env.NEXT_PUBLIC_SENTRY_DSN?.trim()
-    return dsn && dsn.length > 0 ? dsn : undefined
+    return getSentryDsnForServer()
 }
 
 export function getSentryEnvironment(): string {
