@@ -1,11 +1,16 @@
 // eslint-disable-next-line @typescript-eslint/no-var-requires
+const { withSentryConfig } = require("@sentry/nextjs")
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const withBundleAnalyzer = require("@next/bundle-analyzer")({
     enabled: process.env.ANALYZE === "true"
 })
 
-module.exports = withBundleAnalyzer({
+/** @type {import('next').NextConfig} */
+const nextConfig = {
     experimental: {
-        ppr: true
+        ppr: true,
+        // Quiets Sentry → OpenTelemetry → debug → supports-color optional peer resolution noise during webpack
+        serverComponentsExternalPackages: ["supports-color"]
     },
     reactStrictMode: false,
     compiler: {
@@ -49,4 +54,9 @@ module.exports = withBundleAnalyzer({
             source: "/:vanity([a-zA-Z0-9]+)"
         }
     ]
+}
+
+module.exports = withSentryConfig(withBundleAnalyzer(nextConfig), {
+    silent: !process.env.CI,
+    widenClientFileUpload: true
 })

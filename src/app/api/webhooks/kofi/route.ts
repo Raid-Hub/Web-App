@@ -1,3 +1,4 @@
+import * as Sentry from "@sentry/nextjs"
 import { NextResponse, type NextRequest } from "next/server"
 
 export const runtime = "edge"
@@ -49,10 +50,15 @@ export async function POST(request: NextRequest) {
             })
         }).catch(e => {
             console.error(e)
+            Sentry.captureException(e, {
+                tags: { webhook: "kofi" },
+                extra: { stage: "discord_forward" }
+            })
             return NextResponse.json({ status: "discord error" }, { status: 500 })
         })
     } catch (e) {
         console.error(e)
+        Sentry.captureException(e, { tags: { webhook: "kofi" }, extra: { stage: "handler" } })
         return NextResponse.json({ status: "error" }, { status: 400 })
     }
 }
