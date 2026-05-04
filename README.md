@@ -19,7 +19,6 @@ TBD
 -   CDN: AWS S3, Cloudflare
 -   ORM: Prisma
 -   Database Provider: Turso
--   Discord Linked Roles: [spec + ship checklist](./docs/DISCORD_LINKED_ROLES.md) · [execution plan (PR order)](./docs/LINKED_ROLES_EXECUTION.md)
 
 # Developer Guidelines
 

@@ -15,7 +15,9 @@ import { createPresignedProfilePicURL } from "./procedures/user/account/createPr
 import { removeProvider } from "./procedures/user/account/removeProvider"
 import { addByAPIKey } from "./procedures/user/account/speedrun-com/addByAPIKey"
 import { deleteUser } from "./procedures/user/delete"
+import { discordLinkedRolesStatus } from "./procedures/user/discordLinkedRolesStatus"
 import { getConnections } from "./procedures/user/getConnections"
+import { pushDiscordLinkedRoles } from "./procedures/user/pushDiscordLinkedRoles"
 import { getPrimaryAuthenticatedProfile } from "./procedures/user/getPrimaryAuthenticatedProfile"
 import { updateProfile } from "./procedures/user/updateProfile"
 import { updateUser } from "./procedures/user/updateUser"
@@ -27,6 +29,8 @@ export const appRouter = createTRPCRouter({
 
         getConnections: getConnections,
         getPrimaryProfile: getPrimaryAuthenticatedProfile,
+        discordLinkedRolesStatus,
+        pushDiscordLinkedRoles,
 
         update: updateUser,
         updateProfile: updateProfile,

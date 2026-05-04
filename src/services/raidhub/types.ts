@@ -45,8 +45,9 @@ export type RaidHubFeatDefinition = Component<"FeatDefinition">
 
 export type RaidHubPlayerInfo = Component<"PlayerInfo">
 export type RaidHubInstance = Component<"Instance">
-export type RaidHubInstanceExtended = Component<"InstanceExtended">
-export type RaidHubInstanceWithPlayers = Component<"InstanceWithPlayers">
+export type RaidHubInstanceExtended = Component<"InstanceResponse">
+/** One row from GET /player/{membershipId}/instances — `Instance` plus roster `players`. */
+export type RaidHubInstanceWithPlayers = components["schemas"]["PlayerInstancesResponse"][number]
 export type RaidHubInstancePlayerExtended = Component<"InstancePlayerExtended">
 export type RaidHubInstanceCharacter = Component<"InstanceCharacter">
 export type RaidHubInstanceForPlayer = Component<"InstanceForPlayer">
@@ -55,7 +56,13 @@ export type RaidHubClanMemberStats = Component<"ClanMemberStats">
 
 export type RaidHubWeaponMetric = Component<"WeaponMetric">
 
-export type RaidHubLeaderboardData = Component<"LeaderboardData">
+/** Union of leaderboard GET responses that use team vs individual entries (excludes clan-only shape). */
+export type RaidHubLeaderboardData =
+    | components["schemas"]["LeaderboardIndividualGlobalResponse"]
+    | components["schemas"]["LeaderboardIndividualRaidResponse"]
+    | components["schemas"]["LeaderboardIndividualPantheonResponse"]
+    | components["schemas"]["LeaderboardTeamFirstResponse"]
+    | components["schemas"]["LeaderboardTeamContestResponse"]
 export type RaidHubIndividualLeaderboardEntry = Component<"IndividualLeaderboardEntry">
 
 export type RaidHubLeaderboardURL = RaidHubGetPath &
@@ -128,9 +135,10 @@ interface GetSchema {
 }
 
 interface PostSchema {
-    requestBody?: {
-        content: {
-            "application/json": unknown
+    /** openapi-ts marks `requestBody` readonly; must match for `RaidHubPostPath` / `KeysWhichValuesExtend`. */
+    readonly requestBody?: {
+        readonly content: {
+            readonly "application/json": unknown
         }
     }
     parameters?: {
@@ -139,7 +147,7 @@ interface PostSchema {
     }
     responses: {
         200: {
-            content: {
+            readonly content: {
                 readonly "application/json": unknown
             }
         }

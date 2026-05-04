@@ -7,6 +7,26 @@ import type {
 import { RaidHubError } from "./RaidHubError"
 import type { paths } from "./openapi"
 
+/** openapi-typescript uses `readonly` on `requestBody` / `application/json`. */
+type RequestJsonBody<
+    T extends keyof paths,
+    M extends keyof paths[T]
+> = paths[T][M] extends { readonly requestBody: infer RB }
+    ? RB extends { readonly content: infer C }
+        ? C extends { readonly "application/json": infer B }
+            ? B
+            : C extends { "application/json": infer B }
+              ? B
+              : never
+        : RB extends { content: infer C }
+          ? C extends { readonly "application/json": infer B }
+              ? B
+              : C extends { "application/json": infer B }
+                ? B
+                : never
+          : never
+    : never
+
 export async function getRaidHubApi<
     T extends RaidHubGetPath,
     P = "parameters" extends keyof paths[T]["get"] ? paths[T]["get"]["parameters"] : null,
@@ -65,13 +85,7 @@ export async function postRaidHubApi<
 >(
     path: T,
     method: M,
-    body: "requestBody" extends keyof paths[T][M]
-        ? "content" extends keyof paths[T][M]["requestBody"]
-            ? "application/json" extends keyof paths[T][M]["requestBody"]["content"]
-                ? paths[T][M]["requestBody"]["content"]["application/json"]
-                : never
-            : never
-        : never,
+    body: "requestBody" extends keyof paths[T][M] ? RequestJsonBody<T, M> : never,
     pathParams: "path" extends keyof P ? P["path"] : null,
     queryParams?: "query" extends keyof P ? P["query"] : null,
     config?: Omit<RequestInit, "method" | "body">,

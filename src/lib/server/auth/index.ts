@@ -8,6 +8,7 @@ import TwitterProvider from "next-auth/providers/twitter"
 import { prisma } from "~/lib/server/prisma"
 import { reactRequestDedupe } from "~/util/react-cache"
 import { PrismaAdapter } from "./adapter"
+import { authEvents } from "./authEvents"
 import BungieProvider from "./providers/bungie"
 import { YouTubeProvider } from "./providers/youtube"
 import { sessionCallback } from "./sessionCallback"
@@ -35,6 +36,7 @@ const {
         session: sessionCallback,
         signIn: signInCallback
     },
+    events: authEvents,
     logger: {
         error(err) {
             console.error(err)
@@ -80,7 +82,8 @@ export function getProviders(): ProviderType[] {
             clientId: process.env.DISCORD_CLIENT_ID,
             clientSecret: process.env.DISCORD_CLIENT_SECRET,
             // removes the email scope
-            authorization: "https://discord.com/api/oauth2/authorize?scope=identify"
+            authorization:
+                "https://discord.com/api/oauth2/authorize?scope=identify%20role_connections.write"
         })
         providers.push(discordProvider)
     }
