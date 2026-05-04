@@ -48,17 +48,19 @@ export async function POST(request: NextRequest) {
                     }
                 ]
             })
-        }).catch(e => {
+        }).catch(async e => {
             console.error(e)
             Sentry.captureException(e, {
                 tags: { webhook: "kofi" },
                 extra: { stage: "discord_forward" }
             })
+            await Sentry.flush(2000)
             return NextResponse.json({ status: "discord error" }, { status: 500 })
         })
     } catch (e) {
         console.error(e)
         Sentry.captureException(e, { tags: { webhook: "kofi" }, extra: { stage: "handler" } })
+        await Sentry.flush(2000)
         return NextResponse.json({ status: "error" }, { status: 400 })
     }
 }
