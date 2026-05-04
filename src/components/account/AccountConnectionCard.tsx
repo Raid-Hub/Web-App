@@ -26,10 +26,9 @@ export function AccountConnectionCard({
     const linked = Boolean(username)
 
     return (
-        <Card className={cn("rounded-xl border-border/60 shadow-sm")}>
+        <Card className={cn("border-border/60 rounded-xl shadow-sm")}>
             <CardHeader className="flex flex-row items-start gap-3 pb-2">
-                <div
-                    className="bg-muted/50 flex size-11 shrink-0 items-center justify-center rounded-lg border border-border/50">
+                <div className="bg-muted/50 border-border/50 flex size-11 shrink-0 items-center justify-center rounded-lg border">
                     <Icon sx={22} className="text-foreground size-6" />
                 </div>
                 <div className="min-w-0 flex-1 space-y-1">
@@ -37,7 +36,8 @@ export function AccountConnectionCard({
                     <CardDescription className="truncate">
                         {linked ? (
                             <>
-                                Linked as <span className="text-foreground font-medium">{username}</span>
+                                Linked as{" "}
+                                <span className="text-foreground font-medium">{username}</span>
                             </>
                         ) : (
                             "Not connected"
@@ -47,10 +47,20 @@ export function AccountConnectionCard({
             </CardHeader>
             <CardContent className="flex flex-col gap-3 pt-0">
                 <div className="flex flex-wrap gap-2">
-                    <Button type="button" variant="default" size="sm" disabled={linked} onClick={link}>
+                    <Button
+                        type="button"
+                        variant="default"
+                        size="sm"
+                        disabled={linked}
+                        onClick={link}>
                         Connect
                     </Button>
-                    <Button type="button" variant="outline" size="sm" disabled={!linked} onClick={unlink}>
+                    <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        disabled={!linked}
+                        onClick={unlink}>
                         Disconnect
                     </Button>
                 </div>

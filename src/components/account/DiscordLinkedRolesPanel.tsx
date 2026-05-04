@@ -1,8 +1,8 @@
 "use client"
 
+import { Button } from "~/components/ui/button"
 import { trpc } from "~/lib/trpc"
 import { cn } from "~/lib/tw"
-import { Button } from "~/components/ui/button"
 import type { DiscordLinkedRoleSyncHealth } from "~/types/api"
 
 type DiscordLinkedRolesPanelProps = {
@@ -10,7 +10,9 @@ type DiscordLinkedRolesPanelProps = {
     variant?: "standalone" | "embedded"
 }
 
-function syncHealthBanner(health: DiscordLinkedRoleSyncHealth): { tone: "muted" | "amber" | "destructive"; text: string } | null {
+function syncHealthBanner(
+    health: DiscordLinkedRoleSyncHealth
+): { tone: "muted" | "amber" | "destructive"; text: string } | null {
     switch (health) {
         case "not_linked":
             return null
@@ -70,14 +72,19 @@ export function DiscordLinkedRolesPanel({ variant = "standalone" }: DiscordLinke
             className={cn(
                 embedded
                     ? "border-border/50 mt-4 border-t pt-4"
-                    : "bg-card text-card-foreground mt-3 rounded-xl border border-border/60 p-4 shadow-sm"
+                    : "bg-card text-card-foreground border-border/60 mt-3 rounded-xl border p-4 shadow-sm"
             )}>
-            <h3 className="text-foreground text-base font-semibold tracking-tight">Discord linked roles</h3>
+            <h3 className="text-foreground text-base font-semibold tracking-tight">
+                Discord linked roles
+            </h3>
             <p className="text-muted-foreground mt-2 text-sm leading-relaxed">
-                RaidHub sends your linked-role metadata (for example clear totals) to Discord. Server admins map those
-                fields to roles in Discord; RaidHub does not assign Discord roles directly.
+                RaidHub sends your linked-role metadata (for example clear totals) to Discord.
+                Server admins map those fields to roles in Discord; RaidHub does not assign Discord
+                roles directly.
             </p>
-            {banner ? <p className={cn("mt-3 text-sm leading-relaxed", bannerClass)}>{banner.text}</p> : null}
+            {banner ? (
+                <p className={cn("mt-3 text-sm leading-relaxed", bannerClass)}>{banner.text}</p>
+            ) : null}
             {data.lastSyncedAt ? (
                 <p className="text-muted-foreground mt-2 text-xs">
                     Last synced: {new Date(data.lastSyncedAt).toLocaleString()}

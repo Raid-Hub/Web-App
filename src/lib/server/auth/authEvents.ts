@@ -1,7 +1,7 @@
 import "server-only"
 
-import type { Account, User } from "@auth/core/types"
 import type { AdapterUser } from "@auth/core/adapters"
+import type { Account, User } from "@auth/core/types"
 import { pushLinkedRoleMetadataForUser } from "~/lib/server/discord/pushLinkedRoleMetadata"
 
 /**

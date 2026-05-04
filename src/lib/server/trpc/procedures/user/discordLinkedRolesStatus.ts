@@ -1,13 +1,7 @@
 import { sanitizeLinkedRoleSyncErrorCode } from "~/lib/server/discord/linkedRoleSyncError"
 import { protectedProcedure } from "../.."
 
-type SyncHealth =
-    | "not_linked"
-    | "needs_scope"
-    | "needs_reconnect"
-    | "pending"
-    | "ok"
-    | "error"
+type SyncHealth = "not_linked" | "needs_scope" | "needs_reconnect" | "pending" | "ok" | "error"
 
 function deriveSyncHealth(input: {
     linked: boolean

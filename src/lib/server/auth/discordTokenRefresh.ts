@@ -13,13 +13,20 @@ type DiscordTokenResponse = {
 
 const refreshInflight = new Map<string, Promise<boolean>>()
 
-function needsAccessRefresh(expiresAt: number | null, accessToken: string | null, nowSec: number, skewSec: number): boolean {
+function needsAccessRefresh(
+    expiresAt: number | null,
+    accessToken: string | null,
+    nowSec: number,
+    skewSec: number
+): boolean {
     if (!accessToken) return true
     if (expiresAt == null) return true
     return expiresAt - skewSec <= nowSec
 }
 
-async function runRefreshDiscordAccountTokensIfNeeded(bungieMembershipId: string): Promise<boolean> {
+async function runRefreshDiscordAccountTokensIfNeeded(
+    bungieMembershipId: string
+): Promise<boolean> {
     const account = await prisma.account.findFirst({
         where: { userId: bungieMembershipId, provider: "discord" },
         select: {
@@ -62,7 +69,10 @@ async function runRefreshDiscordAccountTokensIfNeeded(bungieMembershipId: string
         body
     })
 
-    const raw = (await res.json()) as DiscordTokenResponse & { error?: string; error_description?: string }
+    const raw = (await res.json()) as DiscordTokenResponse & {
+        error?: string
+        error_description?: string
+    }
     if (!res.ok) {
         const code = typeof raw.error === "string" ? raw.error : "unknown"
         console.warn("[DISCORD_TOKEN_REFRESH_HTTP_ERROR]", { status: res.status, error_code: code })
@@ -93,7 +103,9 @@ async function runRefreshDiscordAccountTokensIfNeeded(bungieMembershipId: string
 }
 
 /** Refreshes the Discord OAuth row for this Bungie user when near expiry. Returns false if a refresh was required but could not be completed. */
-export async function refreshDiscordAccountTokensIfNeeded(bungieMembershipId: string): Promise<boolean> {
+export async function refreshDiscordAccountTokensIfNeeded(
+    bungieMembershipId: string
+): Promise<boolean> {
     const existing = refreshInflight.get(bungieMembershipId)
     if (existing) {
         return existing

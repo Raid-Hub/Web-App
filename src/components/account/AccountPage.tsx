@@ -1,10 +1,10 @@
 "use client"
 
 import { type Collection } from "@discordjs/collection"
-import Link from "next/link"
-import { useMemo, useRef } from "react"
 import { type Session } from "next-auth"
 import { signIn, signOut } from "next-auth/react"
+import Link from "next/link"
+import { useMemo, useRef } from "react"
 import { DiscordIconOld } from "~/components/icons/DiscordIcon"
 import { SpeedrunIcon } from "~/components/icons/SpeedrunIcon"
 import TwitchIcon from "~/components/icons/TwitchIcon"
@@ -86,14 +86,16 @@ export function AccountPage({ session, providers }: AccountPageProps) {
         <div className="mx-auto max-w-3xl space-y-10 pb-16">
             <SpeedrunAPIKeyDialog ref={speedrunDialogRef} refetchSocials={refreshConnections} />
 
-            <Card className="rounded-xl border-border/60 shadow-sm">
+            <Card className="border-border/60 rounded-xl shadow-sm">
                 <CardHeader className="gap-4">
                     <div className="flex flex-col gap-4 sm:flex-row sm:items-start">
                         <Avatar className="border-border/50 size-20 border-2 shadow-md">
                             {session.user.image ? (
                                 <AvatarImage src={session.user.image} alt="" />
                             ) : null}
-                            <AvatarFallback className="text-lg font-semibold">{initial}</AvatarFallback>
+                            <AvatarFallback className="text-lg font-semibold">
+                                {initial}
+                            </AvatarFallback>
                         </Avatar>
                         <div className="min-w-0 flex-1 space-y-2">
                             <div>
@@ -101,8 +103,8 @@ export function AccountPage({ session, providers }: AccountPageProps) {
                                     {session.user.name}
                                 </CardTitle>
                                 <CardDescription className="mt-1.5 text-pretty">
-                                    Signed in with Bungie. Open a profile, tweak your icon, and link social
-                                    accounts below.
+                                    Signed in with Bungie. Open a profile, tweak your icon, and link
+                                    social accounts below.
                                 </CardDescription>
                             </div>
                             <div className="flex flex-wrap gap-2">
@@ -111,10 +113,16 @@ export function AccountPage({ session, providers }: AccountPageProps) {
                                         bungieMembershipTypeLabel[profile.destinyMembershipType] ??
                                         "Profile"
                                     return (
-                                        <Button key={profile.destinyMembershipId} variant="outline" size="sm" asChild>
+                                        <Button
+                                            key={profile.destinyMembershipId}
+                                            variant="outline"
+                                            size="sm"
+                                            asChild>
                                             <Link href={`/profile/${profile.destinyMembershipId}`}>
                                                 View profile
-                                                <Badge variant="secondary" className="ml-1.5 font-normal">
+                                                <Badge
+                                                    variant="secondary"
+                                                    className="ml-1.5 font-normal">
                                                     {label}
                                                 </Badge>
                                             </Link>
@@ -159,7 +167,8 @@ export function AccountPage({ session, providers }: AccountPageProps) {
                     <p className="text-muted-foreground mt-1 text-sm">
                         Connect services for your profile. For Discord role sync, use{" "}
                         <strong className="text-foreground">Connect</strong> and approve{" "}
-                        <span className="font-mono text-xs">role_connections.write</span> when prompted.
+                        <span className="font-mono text-xs">role_connections.write</span> when
+                        prompted.
                     </p>
                 </div>
                 <div className="grid gap-4 sm:grid-cols-1 md:grid-cols-2">
@@ -214,12 +223,15 @@ export function AccountPage({ session, providers }: AccountPageProps) {
 
             <section className="space-y-3">
                 <div>
-                    <h2 className="text-destructive text-lg font-semibold tracking-tight">Danger zone</h2>
+                    <h2 className="text-destructive text-lg font-semibold tracking-tight">
+                        Danger zone
+                    </h2>
                     <p className="text-muted-foreground mt-1 text-sm text-pretty">
-                        Permanently delete your RaidHub account and associated data. This cannot be undone.
+                        Permanently delete your RaidHub account and associated data. This cannot be
+                        undone.
                     </p>
                 </div>
-                <Card className="rounded-xl border-destructive/30 bg-card shadow-sm">
+                <Card className="border-destructive/30 bg-card rounded-xl shadow-sm">
                     <CardContent className="flex flex-col gap-3 pt-6 sm:flex-row sm:items-center sm:justify-between">
                         <p className="text-muted-foreground text-sm">Delete your RaidHub account</p>
                         <Button

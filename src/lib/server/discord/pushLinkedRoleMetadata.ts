@@ -1,7 +1,7 @@
 import "server-only"
 
-import { prisma } from "~/lib/server/prisma"
 import { refreshDiscordAccountTokensIfNeeded } from "~/lib/server/auth/discordTokenRefresh"
+import { prisma } from "~/lib/server/prisma"
 import { postRaidHubApi } from "~/services/raidhub/common"
 import { RAIDHUB_INTERNAL_PATHS } from "~/services/raidhub/internalPaths"
 import { getRaidHubErrorEnvelopeMessage, RaidHubError } from "~/services/raidhub/RaidHubError"
@@ -10,17 +10,14 @@ export type PushLinkedRoleMetadataResult =
     | { ok: true }
     | {
           ok: false
-          code:
-              | "not_linked"
-              | "missing_env"
-              | "refresh_failed"
-              | "no_profile"
-              | "enqueue_failed"
+          code: "not_linked" | "missing_env" | "refresh_failed" | "no_profile" | "enqueue_failed"
           detail?: string
       }
 
 /** Validates Discord link, loads all Destiny profiles in Prisma, refreshes OAuth, then enqueues sync via api.raidhub.io → Rabbit → Hermes. */
-export async function pushLinkedRoleMetadataForUser(bungieMembershipId: string): Promise<PushLinkedRoleMetadataResult> {
+export async function pushLinkedRoleMetadataForUser(
+    bungieMembershipId: string
+): Promise<PushLinkedRoleMetadataResult> {
     const apiUrl = process.env.RAIDHUB_API_URL?.trim()
     const clientSecret = process.env.RAIDHUB_CLIENT_SECRET?.trim()
     if (!apiUrl || !clientSecret) {

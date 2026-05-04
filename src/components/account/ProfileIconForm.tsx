@@ -3,13 +3,13 @@
 import { useState, type ChangeEventHandler } from "react"
 import { useForm, type SubmitHandler } from "react-hook-form"
 import { toast } from "sonner"
-import { useSession } from "~/hooks/app/useSession"
-import { trpc } from "~/lib/trpc"
-import { uploadProfileIcon } from "~/services/s3/uploadProfileIcon"
 import { Button } from "~/components/ui/button"
 import { Card, CardContent } from "~/components/ui/card"
 import { Input } from "~/components/ui/input"
 import { Label } from "~/components/ui/label"
+import { useSession } from "~/hooks/app/useSession"
+import { trpc } from "~/lib/trpc"
+import { uploadProfileIcon } from "~/services/s3/uploadProfileIcon"
 
 type FormValues = {
     image: File
@@ -87,13 +87,19 @@ export function ProfileIconForm() {
     }
 
     return (
-        <Card className="rounded-xl border-border/60 shadow-sm">
+        <Card className="border-border/60 rounded-xl shadow-sm">
             <CardContent className="pt-6">
-                <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4 sm:flex-row sm:flex-wrap sm:items-end">
+                <form
+                    onSubmit={handleSubmit(onSubmit)}
+                    className="flex flex-col gap-4 sm:flex-row sm:flex-wrap sm:items-end">
                     {imageSrc ? (
                         <div className="border-border/60 size-14 shrink-0 overflow-hidden rounded-lg border">
                             {/* eslint-disable-next-line @next/next/no-img-element -- local object URL preview */}
-                            <img src={imageSrc} alt="Selected icon preview" className="size-full object-cover" />
+                            <img
+                                src={imageSrc}
+                                alt="Selected icon preview"
+                                className="size-full object-cover"
+                            />
                         </div>
                     ) : null}
                     <div className="flex min-w-0 flex-1 flex-col gap-2">

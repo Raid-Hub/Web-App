@@ -5,10 +5,10 @@ import Link from "next/link"
 import React from "react"
 import { useForm, type SubmitHandler } from "react-hook-form"
 import { z } from "zod"
-import { trpc } from "~/lib/trpc"
 import { Button } from "~/components/ui/button"
 import { Input } from "~/components/ui/input"
 import { Label } from "~/components/ui/label"
+import { trpc } from "~/lib/trpc"
 
 const errMsg = "Invalid API key format: "
 const zFormSchema = z.object({
@@ -59,7 +59,7 @@ export const SpeedrunAPIKeyDialog = React.forwardRef<
     return (
         <dialog
             ref={ref}
-            className="fixed top-1/2 left-1/2 z-50 max-h-[min(90vh,40rem)] w-[min(100%-1.5rem,36rem)] -translate-x-1/2 -translate-y-1/2 overflow-y-auto rounded-xl border border-border bg-popover p-6 text-popover-foreground shadow-xl backdrop:bg-black/50 open:backdrop:bg-black/50 [&::backdrop]:bg-black/60">
+            className="border-border bg-popover text-popover-foreground fixed top-1/2 left-1/2 z-50 max-h-[min(90vh,40rem)] w-[min(100%-1.5rem,36rem)] -translate-x-1/2 -translate-y-1/2 overflow-y-auto rounded-xl border p-6 shadow-xl backdrop:bg-black/50 open:backdrop:bg-black/50 [&::backdrop]:bg-black/60">
             <Button
                 type="button"
                 variant="ghost"
@@ -83,14 +83,18 @@ export const SpeedrunAPIKeyDialog = React.forwardRef<
                     .
                 </p>
                 <p>
-                    We will not ask for your username or password. We only use the key once to verify
-                    you own the account, then discard it.
+                    We will not ask for your username or password. We only use the key once to
+                    verify you own the account, then discard it.
                 </p>
                 <h4 className="text-foreground font-medium">Steps</h4>
                 <ol className="list-decimal space-y-1.5 pl-5">
                     <li>
                         Log in to{" "}
-                        <Link href="https://www.speedrun.com/" target="_blank" rel="noopener noreferrer" className="text-hyperlink hover:underline">
+                        <Link
+                            href="https://www.speedrun.com/"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-hyperlink hover:underline">
                             speedrun.com
                         </Link>
                     </li>
@@ -99,11 +103,13 @@ export const SpeedrunAPIKeyDialog = React.forwardRef<
                     <li>Copy the key and paste it here, then submit</li>
                 </ol>
                 <p>
-                    You may regenerate the key on speedrun.com afterward if you prefer. We do not store
-                    the key on our servers after verification.
+                    You may regenerate the key on speedrun.com afterward if you prefer. We do not
+                    store the key on our servers after verification.
                 </p>
             </div>
-            <form onSubmit={handleSubmit(onSubmit)} className="mt-6 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-end">
+            <form
+                onSubmit={handleSubmit(onSubmit)}
+                className="mt-6 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-end">
                 <div className="min-w-0 flex-1 space-y-2">
                     <Label htmlFor="speedrun-api-key">API key</Label>
                     <Input
@@ -120,7 +126,9 @@ export const SpeedrunAPIKeyDialog = React.forwardRef<
             </form>
             {err ? (
                 <p className="text-destructive mt-3 text-sm" role="alert">
-                    {"message" in err && typeof err.message === "string" ? err.message : "Request failed"}
+                    {"message" in err && typeof err.message === "string"
+                        ? err.message
+                        : "Request failed"}
                 </p>
             ) : null}
         </dialog>

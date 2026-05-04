@@ -8,10 +8,9 @@ import { RaidHubError } from "./RaidHubError"
 import type { paths } from "./openapi"
 
 /** openapi-typescript uses `readonly` on `requestBody` / `application/json`. */
-type RequestJsonBody<
-    T extends keyof paths,
-    M extends keyof paths[T]
-> = paths[T][M] extends { readonly requestBody: infer RB }
+type RequestJsonBody<T extends keyof paths, M extends keyof paths[T]> = paths[T][M] extends {
+    readonly requestBody: infer RB
+}
     ? RB extends { readonly content: infer C }
         ? C extends { readonly "application/json": infer B }
             ? B

@@ -76,26 +76,26 @@ model Session {
 }
 
 model Account {
-  id                String  @id @default(uuid())
-  userId            String  @map("bungie_membership_id")
-  type              String
-  provider          String
-  providerAccountId String  @map("provider_account_id")
-  displayName       String? @map("display_name")
-  url               String? @map("url")
-  refreshToken      String? @map("refresh_token")
-  accessToken       String? @map("access_token")
-  expiresAt         Int?    @map("expires_at")
-  refreshExpiresAt  Int?    @map("refresh_expires_at")
-  tokenType         String? @map("token_type")
-  scope             String?
-  idToken           String? @map("id_token")
-  sessionState      String? @map("session_state")
+  id                           String    @id @default(uuid())
+  userId                       String    @map("bungie_membership_id")
+  type                         String
+  provider                     String
+  providerAccountId            String    @map("provider_account_id")
+  displayName                  String?   @map("display_name")
+  url                          String?   @map("url")
+  refreshToken                 String?   @map("refresh_token")
+  accessToken                  String?   @map("access_token")
+  expiresAt                    Int?      @map("expires_at")
+  refreshExpiresAt             Int?      @map("refresh_expires_at")
+  tokenType                    String?   @map("token_type")
+  scope                        String?
+  idToken                      String?   @map("id_token")
+  sessionState                 String?   @map("session_state")
   /// Last successful push of Discord linked-role metadata (Hermes or BFF).
-  discordRoleMetadataSyncedAt   DateTime? @map("discord_role_metadata_synced_at")
+  discordRoleMetadataSyncedAt  DateTime? @map("discord_role_metadata_synced_at")
   /// Short machine-readable error from last failed push (if any).
-  discordRoleMetadataSyncError String? @map("discord_role_metadata_sync_error")
-  user              User    @relation("UserToAccount", fields: [userId], references: [id], onDelete: Cascade)
+  discordRoleMetadataSyncError String?   @map("discord_role_metadata_sync_error")
+  user                         User      @relation("UserToAccount", fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerAccountId], name: "uniqueProviderAccountId")
   @@unique([provider, userId], name: "uniqueProviderUser")
