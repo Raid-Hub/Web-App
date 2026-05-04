@@ -7,6 +7,7 @@ import { prisma } from "~/lib/server/prisma"
 import { BungieServiceError } from "~/models/BungieAPIError"
 import ServerBungieClient from "~/services/bungie/ServerBungieClient"
 import { postRaidHubApi } from "~/services/raidhub/common"
+import { refreshDiscordAccountTokensIfNeeded } from "./discordTokenRefresh"
 import { type AuthError, type BungieAccount } from "./types"
 import { updateBungieAccessTokens } from "./updateBungieAccessTokens"
 
@@ -16,22 +17,29 @@ export const sessionCallback = (async ({
     session,
     user: { raidHubAccessToken, bungieAccount, ...user }
 }: NonNullable<Awaited<ReturnType<Required<Adapter>["getSessionAndUser"]>>>) => {
-    const [bungieToken, raidhubToken] = await Promise.all([
+    const [bungieToken, raidhubToken, discordRefreshOk] = await Promise.all([
         refreshBungieAuth(bungieAccount, user.id),
         refreshRaidHubBearer({
             userId: user.id,
             token: raidHubAccessToken,
             role: user.role,
             profiles: user.profiles
-        })
+        }),
+        refreshDiscordAccountTokensIfNeeded(user.id)
     ])
+
+    const errors: AuthError[] = [
+        ...(raidhubToken?.errors ?? []),
+        ...bungieToken.errors,
+        ...(discordRefreshOk ? [] : (["DiscordTokenRefreshError"] as const))
+    ]
 
     return {
         user,
         primaryDestinyMembershipId: user.profiles.find(p => p.isPrimary)?.destinyMembershipId,
         bungieAccessToken: bungieToken.token,
         raidHubAccessToken: raidhubToken?.token ?? undefined,
-        errors: Array.from(new Set([...(raidhubToken?.errors ?? []), ...bungieToken.errors])),
+        errors: Array.from(new Set(errors)),
         expires: session.expires
     }
 }) as unknown as Required<AuthConfig>["callbacks"]["session"]

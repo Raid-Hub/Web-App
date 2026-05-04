@@ -91,6 +91,10 @@ model Account {
   scope             String?
   idToken           String? @map("id_token")
   sessionState      String? @map("session_state")
+  /// Last successful push of Discord linked-role metadata (Hermes or BFF).
+  discordRoleMetadataSyncedAt   DateTime? @map("discord_role_metadata_synced_at")
+  /// Short machine-readable error from last failed push (if any).
+  discordRoleMetadataSyncError String? @map("discord_role_metadata_sync_error")
   user              User    @relation("UserToAccount", fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerAccountId], name: "uniqueProviderAccountId")
