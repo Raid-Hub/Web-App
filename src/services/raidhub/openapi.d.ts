@@ -2033,6 +2033,78 @@ export interface paths {
       };
     };
   };
+  "/admin/reporting/player-standing/{membershipId}": {
+    /**
+     * /admin/reporting/player-standing/{membershipId}
+     * @description Get player standing information including recent flags and blacklisted instances. Requires authentication.
+     */
+    get: {
+      parameters: {
+        path: {
+          membershipId: string;
+        };
+      };
+      responses: {
+        /** @description Success */
+        200: {
+          content: {
+            readonly "application/json": {
+              /** Format: date-time */
+              readonly minted: string;
+              /** @enum {boolean} */
+              readonly success: true;
+              readonly response: components["schemas"]["AdminPlayerStandingResponse"];
+            };
+          };
+        };
+        /** @description Unauthorized */
+        401: {
+          content: {
+            readonly "application/json": {
+              /** Format: date-time */
+              readonly minted: string;
+              /** @enum {boolean} */
+              readonly success: false;
+              /** @enum {string} */
+              readonly code: "ApiKeyError";
+              readonly error: components["schemas"]["ApiKeyError"];
+            };
+          };
+        };
+        /** @description Not found */
+        404: {
+          content: {
+            readonly "application/json": {
+              /** Format: date-time */
+              readonly minted: string;
+              /** @enum {boolean} */
+              readonly success: false;
+              /** @enum {string} */
+              readonly code: "PlayerNotFoundError";
+              readonly error: components["schemas"]["PlayerNotFoundError"] & {
+                /** Format: int64 */
+                readonly membershipId?: string;
+              };
+            };
+          };
+        };
+        /** @description Internal Server Error */
+        500: {
+          content: {
+            readonly "application/json": {
+              /** Format: date-time */
+              readonly minted: string;
+              /** @enum {boolean} */
+              readonly success: false;
+              /** @enum {string} */
+              readonly code: "InternalServerError";
+              readonly error: components["schemas"]["InternalServerError"];
+            };
+          };
+        };
+      };
+    };
+  };
   "/authorize/admin": {
     /**
      * /authorize/admin
@@ -3222,6 +3294,23 @@ export interface components {
       readonly blacklist: components["schemas"]["InstanceBlacklist"] | null;
       readonly flags: readonly components["schemas"]["InstanceFlag"][];
       readonly players: readonly components["schemas"]["InstancePlayerStanding"][];
+    };
+    readonly AdminPlayerStandingResponse: {
+      readonly playerInfo: components["schemas"]["PlayerInfo"];
+      readonly recentFlags: readonly (components["schemas"]["InstancePlayerFlag"] & {
+          /** Format: date-time */
+          readonly instanceDate: string;
+        })[];
+      readonly blacklistedInstances: readonly ({
+          /** Format: int64 */
+          readonly instanceId: string;
+          /** Format: date-time */
+          readonly instanceDate: string;
+          readonly reason: string;
+          readonly individualReason: string | null;
+          /** Format: date-time */
+          readonly createdAt: string;
+        })[];
     };
     readonly AdminReportingBlacklistResponse: {
       readonly blacklisted: boolean;
