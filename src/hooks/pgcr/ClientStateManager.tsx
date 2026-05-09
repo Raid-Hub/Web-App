@@ -38,6 +38,8 @@ interface ClientStateManagerProps {
             }
         ]
     >
+    /** When false (e.g. merged multi-instance PGCR), hide reporting — no single RaidHub instance applies. */
+    allowsReporting?: boolean
     children: ReactNode
 }
 
@@ -57,6 +59,7 @@ interface PGCRState {
     setIsReportModalOpen: Dispatch<SetStateAction<boolean>>
     query: RaidHubQueryParams<PGCRPageParams>
     selectedFeats: RaidHubFeatDefinition[]
+    allowsReporting: boolean
 }
 
 const PGCRContext = createContext<PGCRState | undefined>(undefined)
@@ -73,6 +76,7 @@ export const ClientStateManager = ({
     playerStatsMerged,
     mvp,
     scores,
+    allowsReporting = true,
     children
 }: ClientStateManagerProps) => {
     const queryClient = useQueryClient()
@@ -131,7 +135,8 @@ export const ClientStateManager = ({
                 isReportModalOpen,
                 setIsReportModalOpen,
                 query,
-                selectedFeats
+                selectedFeats,
+                allowsReporting
             }}>
             {children}
         </PGCRContext.Provider>

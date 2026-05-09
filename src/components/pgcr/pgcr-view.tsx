@@ -1,24 +1,37 @@
+"use client"
+
 import { Collection } from "@discordjs/collection"
 import { ClientStateManager } from "~/hooks/pgcr/ClientStateManager"
+import { type MultiInstanceTimelineSegment } from "~/lib/multi/multi-types"
 import { generateSortScore } from "~/lib/pgcr/riis"
 import { type RaidHubInstanceExtended } from "~/services/raidhub/types"
 import { Card } from "~/shad/card"
 import { Separator } from "~/shad/separator"
 import { PGCRHeader } from "./pgcr-header"
+import { PGCRMultiTimeline } from "./pgcr-multi-timeline"
 import { PGCRPlayers } from "./pgcr-players"
 import { PlayerDetailsPanelWrapper } from "./player-details-panel"
 
 interface PGCRProps {
     data: RaidHubInstanceExtended
+    /** Merged multi-instance sessions use uncapped time in RIIS (matches legacy multi combinator). */
+    sortScoreOptions?: { capTPS: boolean }
+    multiTimeline?: MultiInstanceTimelineSegment[]
+    allowsReporting?: boolean
 }
 
-export default function PGCR({ data }: PGCRProps) {
+export default function PGCR({
+    data,
+    sortScoreOptions = { capTPS: true },
+    multiTimeline,
+    allowsReporting = true
+}: PGCRProps) {
     const sortScores = new Collection(
         data.players.map(p => [
             p.playerInfo.membershipId,
             {
                 completed: p.completed,
-                score: generateSortScore(p)
+                score: generateSortScore(p, sortScoreOptions)
             }
         ])
     ).toSorted((a, b) => {
@@ -67,12 +80,20 @@ export default function PGCR({ data }: PGCRProps) {
             data={data}
             mvp={mvp}
             scores={Array.from(sortScores.entries())}
-            playerStatsMerged={Array.from(playerMergedStats.entries())}>
+            playerStatsMerged={Array.from(playerMergedStats.entries())}
+            allowsReporting={allowsReporting}>
             <div className="container mx-auto my-auto w-full max-w-5xl">
                 <Card className="w-full gap-0 overflow-hidden border border-zinc-800 bg-zinc-950 py-0 shadow-md md:w-[768px] lg:w-[956px] xl:w-[1096px]">
                     <PGCRHeader data={data} />
 
                     <Separator className="bg-zinc-800" />
+
+                    {multiTimeline && multiTimeline.length > 1 && (
+                        <>
+                            <PGCRMultiTimeline segments={multiTimeline} />
+                            <Separator className="bg-zinc-800" />
+                        </>
+                    )}
 
                     <PGCRPlayers
                         data={data}

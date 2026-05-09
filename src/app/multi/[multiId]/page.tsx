@@ -29,7 +29,10 @@ export default async function Page({ params }: PageProps) {
                 <h1 className="text-2xl font-bold">{multi.name}</h1>
             </div>
             <Suspense>
-                <MultiLoader instances={multi.instances.map(instance => instance.instanceId)} />
+                <MultiLoader
+                    multiId={params.multiId}
+                    instances={multi.instances.map(instance => instance.instanceId)}
+                />
             </Suspense>
         </PageWrapper>
     )

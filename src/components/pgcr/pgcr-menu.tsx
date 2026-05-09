@@ -4,6 +4,7 @@ import { AlertTriangle, MoreVertical, Share2 } from "lucide-react"
 import { useState } from "react"
 import { toast } from "sonner"
 import { useSession } from "~/hooks/app/useSession"
+import { usePGCRContext } from "~/hooks/pgcr/ClientStateManager"
 import { Button } from "~/shad/button"
 import {
     DropdownMenu,
@@ -16,6 +17,7 @@ import { ReportModal } from "./pgcr-report-modal"
 
 export const PGCRMenu = () => {
     const session = useSession()
+    const { allowsReporting } = usePGCRContext()
     const [isMenuOpen, setIsMenuOpen] = useState(false)
     const [isReportModalOpen, setIsReportModalOpen] = useState(false)
 
@@ -44,7 +46,7 @@ export const PGCRMenu = () => {
                     <Share2 className="mr-2 h-4 w-4" />
                     <span>Share</span>
                 </DropdownMenuItem>
-                {session.status === "authenticated" && (
+                {session.status === "authenticated" && allowsReporting && (
                     <>
                         <DropdownMenuSeparator />
 
