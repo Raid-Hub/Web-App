@@ -16,7 +16,7 @@ export const findPantheonVersionByPath = (
     }
 
     if (matches.length === 1) {
-        return matches[0]!
+        return matches[0]
     }
 
     return matches.sort((a, b) => {
@@ -26,7 +26,7 @@ export const findPantheonVersionByPath = (
             return activityA.isSunset ? 1 : -1
         }
         return b.associatedActivityId! - a.associatedActivityId!
-    })[0]!
+    })[0]
 }
 
 export const isPantheonVersionSunset = (
