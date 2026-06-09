@@ -264,14 +264,23 @@ function VersionFirstLinks() {
     )
 }
 
-function PantheonLinks() {
-    const { pantheonVersions, getVersionString, getUrlPathForVersion } = useRaidHubManifest()
+function PantheonModeLinks({
+    versions,
+    keyPrefix
+}: {
+    versions: readonly number[]
+    keyPrefix: string
+}) {
+    const { getVersionString, getUrlPathForVersion } = useRaidHubManifest()
+
+    if (!versions.length) return null
+
     return (
-        <div>
+        <>
             <h3 className="mb-2 text-lg font-bold">First Completions</h3>
             <ul>
-                {pantheonVersions.map(version => (
-                    <li key={`first-${version}`}>
+                {versions.map(version => (
+                    <li key={`${keyPrefix}-first-${version}`}>
                         <Link
                             href={`/leaderboards/team/pantheon/first/${getUrlPathForVersion(version)}`}
                             className="text-raidhub text-lg hover:underline">
@@ -282,8 +291,8 @@ function PantheonLinks() {
             </ul>
             <h3 className="mt-4 mb-2 text-lg font-bold">Full Clears</h3>
             <ul>
-                {pantheonVersions.map(version => (
-                    <li key={`clears-${version}`}>
+                {versions.map(version => (
+                    <li key={`${keyPrefix}-clears-${version}`}>
                         <Link
                             href={`/leaderboards/individual/pantheon/${getUrlPathForVersion(
                                 version
@@ -294,6 +303,22 @@ function PantheonLinks() {
                     </li>
                 ))}
             </ul>
+        </>
+    )
+}
+
+function PantheonLinks() {
+    const { activePantheonBossVersions, activeGauntletVersions } = useRaidHubManifest()
+
+    return (
+        <div>
+            <PantheonModeLinks versions={activePantheonBossVersions} keyPrefix="boss" />
+            {activeGauntletVersions.length > 0 && (
+                <div className="mt-4">
+                    <h3 className="mb-2 text-lg font-bold">Gauntlet</h3>
+                    <PantheonModeLinks versions={activeGauntletVersions} keyPrefix="gauntlet" />
+                </div>
+            )}
         </div>
     )
 }
