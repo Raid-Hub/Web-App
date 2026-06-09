@@ -2897,6 +2897,8 @@ export interface components {
       readonly resprisedChallengeVersionIds: readonly number[];
       /** @description The list of activityId for Pantheon */
       readonly pantheonIds: readonly number[];
+      /** @description The list of versionId for Pantheon gauntlet modes (full boss lineup) */
+      readonly gauntletVersionIds: readonly number[];
       /** @description The set of versionId for each activityId */
       readonly versionsForActivity: {
         [key: string]: readonly number[];
