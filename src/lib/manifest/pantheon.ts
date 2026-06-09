@@ -47,5 +47,4 @@ export const getActivePantheonIds = (manifest: RaidHubManifestResponse) =>
 export const getPantheonVersionsForActivities = (
     manifest: RaidHubManifestResponse,
     activityIds: readonly number[]
-) =>
-    Array.from(new Set(activityIds.flatMap(id => manifest.versionsForActivity[id] ?? [])))
+) => Array.from(new Set(activityIds.flatMap(id => manifest.versionsForActivity[id] ?? [])))

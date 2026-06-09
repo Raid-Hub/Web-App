@@ -24,8 +24,6 @@ type ManifestContextData = RaidHubManifestResponse & {
     activePantheonVersions: readonly number[]
     pantheonBossVersions: readonly number[]
     activePantheonBossVersions: readonly number[]
-    gauntletVersions: readonly number[]
-    activeGauntletVersions: readonly number[]
     elevatedDifficulties: readonly number[]
     milestoneHashes: Map<number, RaidHubActivityDefinition>
     getVersionString(versionId: number): string
@@ -33,7 +31,6 @@ type ManifestContextData = RaidHubManifestResponse & {
     getUrlPathForActivity(activityId: number): string | null
     getUrlPathForVersion(versionId: number): string | null
     getActivePantheonActivityId(): number | null
-    isGauntletVersion(versionId: number): boolean
     isPantheonVersionSunset(versionId: number): boolean
     getDefinitionFromHash(hash: string | number): {
         activity: RaidHubActivityDefinition
@@ -63,15 +60,8 @@ export function RaidHubManifestManager(props: {
         const activePantheonIds = getActivePantheonIds(data)
         const pantheonVersions = getPantheonVersionsForActivities(data, data.pantheonIds)
         const activePantheonVersions = getPantheonVersionsForActivities(data, activePantheonIds)
-        const gauntletVersions = data.gauntletVersionIds ?? []
-        const gauntletVersionSet = new Set(gauntletVersions)
-        const pantheonBossVersions = pantheonVersions.filter(id => !gauntletVersionSet.has(id))
-        const activeGauntletVersions = gauntletVersions.filter(
-            id => !isPantheonVersionSunsetInManifest(data, id)
-        )
-        const activePantheonBossVersions = activePantheonVersions.filter(
-            id => !gauntletVersionSet.has(id)
-        )
+        const pantheonBossVersions = pantheonVersions
+        const activePantheonBossVersions = activePantheonVersions
 
         return {
             ...data,
@@ -82,8 +72,6 @@ export function RaidHubManifestManager(props: {
             activePantheonVersions,
             pantheonBossVersions,
             activePantheonBossVersions,
-            gauntletVersions,
-            activeGauntletVersions,
             elevatedDifficulties: [3, 4],
             milestoneHashes: new Map(
                 Object.entries(data.activityDefinitions)
@@ -104,9 +92,6 @@ export function RaidHubManifestManager(props: {
             },
             getActivePantheonActivityId() {
                 return activePantheonIds[0] ?? null
-            },
-            isGauntletVersion(versionId) {
-                return gauntletVersionSet.has(versionId)
             },
             isPantheonVersionSunset(versionId) {
                 return isPantheonVersionSunsetInManifest(data, versionId)
