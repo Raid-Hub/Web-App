@@ -30,11 +30,12 @@ export default function RaidCard({
     leaderboardEntry: RaidHubWorldFirstEntry | null
     isExpanded?: boolean
 }) {
-    const { activities, isLoadingActivities, raidId } = useRaidCardContext()
+    const { activities, isLoadingActivities, raidId, versionId } = useRaidCardContext()
     const { getVersionString, resprisedRaidIds, isChallengeMode, getActivityDefinition } =
         useRaidHubManifest()
     const { locale } = useLocale()
 
+    const displayVersionId = versionId ?? raidId
     const activityDefinition = getActivityDefinition(raidId)
 
     const isReprisedRaid = resprisedRaidIds.includes(raidId)
@@ -165,6 +166,7 @@ export default function RaidCard({
                     width={960}
                     height={540}
                     activityId={raidId}
+                    versionId={versionId}
                 />
                 <div className={styles["card-top"]}>
                     {firstContestClear && (
@@ -200,7 +202,7 @@ export default function RaidCard({
                     <span className={styles["card-title"]}>
                         {activityDefinition?.isRaid
                             ? activityDefinition.name
-                            : getVersionString(raidId)}
+                            : getVersionString(displayVersionId)}
                     </span>
                 </div>
             </div>

@@ -308,17 +308,11 @@ function PantheonModeLinks({
 }
 
 function PantheonLinks() {
-    const { activePantheonBossVersions, activeGauntletVersions } = useRaidHubManifest()
+    const { activePantheonVersions } = useRaidHubManifest()
 
     return (
         <div>
-            <PantheonModeLinks versions={activePantheonBossVersions} keyPrefix="boss" />
-            {activeGauntletVersions.length > 0 && (
-                <div className="mt-4">
-                    <h3 className="mb-2 text-lg font-bold">Gauntlet</h3>
-                    <PantheonModeLinks versions={activeGauntletVersions} keyPrefix="gauntlet" />
-                </div>
-            )}
+            <PantheonModeLinks versions={activePantheonVersions} keyPrefix="pantheon" />
         </div>
     )
 }

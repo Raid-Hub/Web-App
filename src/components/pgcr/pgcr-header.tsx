@@ -99,6 +99,13 @@ export const PGCRHeader = ({ data }: PGCRHeaderProps) => {
                             {data.isContest ? "Contest" : data.metadata.versionName}
                         </Badge>
                     )}
+                    {data.difficultyTier === "adventure" && (
+                        <Badge
+                            variant="secondary"
+                            className="bg-amber-600/90 text-sm text-amber-50">
+                            Adventure
+                        </Badge>
+                    )}
 
                     {/* Tags & Feats */}
                     <PGCRTags />

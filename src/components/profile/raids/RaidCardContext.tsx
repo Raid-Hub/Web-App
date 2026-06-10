@@ -7,10 +7,11 @@ import { type RaidHubInstanceForPlayer } from "~/services/raidhub/types"
 const RaidContext = createContext<
     | {
           raidId: number
+          versionId?: number
           isLoadingActivities: false
           activities: Collection<string, RaidHubInstanceForPlayer>
       }
-    | { raidId: number; isLoadingActivities: true; activities: null }
+    | { raidId: number; versionId?: number; isLoadingActivities: true; activities: null }
     | null
 >(null)
 
@@ -24,12 +25,15 @@ export const RaidCardContext = ({
     children,
     activities = new Collection(),
     isLoadingActivities,
-    raidId
+    raidId,
+    versionId
 }: {
     children: ReactNode
     activities: Collection<string, RaidHubInstanceForPlayer> | undefined
     isLoadingActivities: boolean
     raidId: number
+    /** Pantheon cards pass the encounter version separately from the parent activity id. */
+    versionId?: number
 }) => {
     const memoizedSortedActivities = useMemo(
         () =>
@@ -43,6 +47,7 @@ export const RaidCardContext = ({
         <RaidContext.Provider
             value={{
                 raidId,
+                versionId,
                 ...(isLoadingActivities
                     ? { isLoadingActivities: true, activities: null }
                     : {

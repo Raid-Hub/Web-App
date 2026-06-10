@@ -35,7 +35,7 @@ const cloudflareVariants: {
     }
 ]
 
-export const FallbackSplash = "https://cdn.raidhub.io/content/splash/pantheon/medium.png"
+export const FallbackSplash = "https://cdn.raidhub.io/content/splash/pantheon/large.png"
 
 const CloudflareStaticImages = {
     raidhubCitySplash: {
@@ -121,9 +121,10 @@ export const CloudflareIcon = ({
 
 export const CloudflareActivitySplash = ({
     activityId,
+    versionId,
     alt,
     ...props
-}: { activityId: number } & StrippedImageProps) => {
+}: { activityId: number; versionId?: number } & StrippedImageProps) => {
     const { getImageVariantsForActivity, getActivityDefinition, getVersionString } =
         useRaidHubManifest()
 
@@ -156,7 +157,7 @@ export const CloudflareActivitySplash = ({
         alt ??
         (activityDefinition?.isRaid
             ? activityDefinition.name
-            : (getVersionString(activityId) + getActivityDefinition(activityId)?.name ?? ""))
+            : getVersionString(versionId ?? activityId))
 
     return <Image loader={loader} {...props} src="placeholder" alt={altText} />
 }
