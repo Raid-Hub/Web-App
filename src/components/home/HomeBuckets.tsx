@@ -308,11 +308,22 @@ function PantheonModeLinks({
 }
 
 function PantheonLinks() {
-    const { activePantheonVersions } = useRaidHubManifest()
+    const { activePantheonVersions, pantheonSunsetVersions } = useRaidHubManifest()
 
     return (
         <div>
-            <PantheonModeLinks versions={activePantheonVersions} keyPrefix="pantheon" />
+            <PantheonModeLinks versions={activePantheonVersions} keyPrefix="pantheon-active" />
+            {pantheonSunsetVersions.length > 0 && (
+                <div className="mt-6">
+                    <h3 className="text-secondary mb-3 text-sm font-semibold tracking-wide uppercase">
+                        Historical Modes
+                    </h3>
+                    <PantheonModeLinks
+                        versions={pantheonSunsetVersions}
+                        keyPrefix="pantheon-historical"
+                    />
+                </div>
+            )}
         </div>
     )
 }
