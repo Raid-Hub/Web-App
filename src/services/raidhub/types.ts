@@ -45,8 +45,8 @@ export type RaidHubFeatDefinition = Component<"FeatDefinition">
 
 export type RaidHubPlayerInfo = Component<"PlayerInfo">
 export type RaidHubInstance = Component<"Instance">
-export type RaidHubInstanceExtended = Component<"InstanceExtended">
-export type RaidHubInstanceWithPlayers = Component<"InstanceWithPlayers">
+export type RaidHubInstanceExtended = Component<"InstanceResponse">
+export type RaidHubInstanceWithPlayers = Component<"PlayerInstancesResponse">[number]
 export type RaidHubInstancePlayerExtended = Component<"InstancePlayerExtended">
 export type RaidHubInstanceCharacter = Component<"InstanceCharacter">
 export type RaidHubInstanceForPlayer = Component<"InstanceForPlayer">
@@ -55,7 +55,7 @@ export type RaidHubClanMemberStats = Component<"ClanMemberStats">
 
 export type RaidHubWeaponMetric = Component<"WeaponMetric">
 
-export type RaidHubLeaderboardData = Component<"LeaderboardData">
+export type RaidHubLeaderboardData = Component<"LeaderboardIndividualGlobalResponse">
 export type RaidHubIndividualLeaderboardEntry = Component<"IndividualLeaderboardEntry">
 
 export type RaidHubLeaderboardURL = RaidHubGetPath &

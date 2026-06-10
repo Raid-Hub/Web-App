@@ -56,8 +56,8 @@ export function RaidHubManifestManager(props: {
 
     const value = useMemo((): ManifestContextData => {
         const activePantheonIds = getActivePantheonIds(data)
-        const activePantheonVersions = data.pantheonVersionIds
-        const pantheonSunsetVersions = data.pantheonSunsetVersionIds
+        const activePantheonVersions = data.pantheonVersionIds ?? []
+        const pantheonSunsetVersions = data.pantheonSunsetVersionIds ?? []
         const pantheonVersions = [...activePantheonVersions, ...pantheonSunsetVersions]
 
         return {

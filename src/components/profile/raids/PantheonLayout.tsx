@@ -44,8 +44,12 @@ export const PantheonLayout = ({
     isExpanded: boolean
     isLoading: boolean
 }) => {
-    const { activePantheonVersions, pantheonSunsetVersions, versionDefinitions, activePantheonIds } =
-        useRaidHubManifest()
+    const {
+        activePantheonVersions,
+        pantheonSunsetVersions,
+        versionDefinitions,
+        activePantheonIds
+    } = useRaidHubManifest()
 
     const getActivityIdForVersion = useCallback(
         (versionId: number) =>
