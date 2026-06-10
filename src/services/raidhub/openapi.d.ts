@@ -2741,6 +2741,11 @@ export interface components {
     readonly QueryValidationError: {
       readonly issues: readonly components["schemas"]["ZodIssue"][];
     };
+    /**
+     * @description MotT difficulty tier derived from PGCR skull hashes. Adventure uses fixed skulls; Custom has selected feats; Standard is Custom with no feats.
+     * @enum {string}
+     */
+    readonly DifficultyTier: "adventure" | "standard" | "custom";
     /** @enum {integer} */
     readonly DestinyMembershipType: 0 | 1 | 2 | 3 | 4 | 5 | 6 | -1;
     readonly Instance: {
@@ -2753,6 +2758,7 @@ export interface components {
       readonly fresh: boolean | null;
       readonly playerCount: number;
       readonly skullHashes: readonly number[];
+      readonly difficultyTier: components["schemas"]["DifficultyTier"];
       readonly score: number;
       /** Format: date-time */
       readonly dateStarted: string;
@@ -2783,6 +2789,7 @@ export interface components {
       readonly fresh: boolean | null;
       readonly playerCount: number;
       readonly skullHashes: readonly number[];
+      readonly difficultyTier: components["schemas"]["DifficultyTier"];
       readonly score: number;
       /** Format: date-time */
       readonly dateStarted: string;
