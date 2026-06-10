@@ -25,8 +25,7 @@ type DynamicParams = {
 const getDefinitions = (params: DynamicParams["params"], manifest: RaidHubManifestResponse) => {
     if (params.raid === "pantheon") {
         const version = findPantheonVersionByPath(manifest, params.version) ?? notFound()
-        const activity =
-            manifest.activityDefinitions[version.associatedActivityId!] ?? notFound()
+        const activity = manifest.activityDefinitions[version.associatedActivityId!] ?? notFound()
 
         return { version, activity, isPantheon: true as const }
     }
@@ -78,12 +77,12 @@ export default async function Page({ params, searchParams }: DynamicParams) {
         <Leaderboard
             heading={
                 <Splash
-                    tertiaryTitle={
-                        isPantheon ? activity.name : "First Completion Leaderboards"
-                    }
+                    tertiaryTitle={isPantheon ? activity.name : "First Completion Leaderboards"}
                     title={isPantheon ? version.name : "First Completions Leaderboard"}
                     subtitle={
-                        isPantheon ? "First Completions Leaderboard" : `${version.name} ${activity.name}`
+                        isPantheon
+                            ? "First Completions Leaderboard"
+                            : `${version.name} ${activity.name}`
                     }>
                     <CloudflareActivitySplash
                         activityId={isPantheon ? version.associatedActivityId! : activity.id}
