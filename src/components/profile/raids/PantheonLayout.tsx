@@ -41,18 +41,7 @@ export const PantheonLayout = ({
     isExpanded: boolean
     isLoading: boolean
 }) => {
-    const {
-        activeGauntletVersions,
-        activePantheonBossVersions,
-        gauntletVersions,
-        pantheonBossVersions,
-        isPantheonVersionSunset
-    } = useRaidHubManifest()
-
-    const activeModes = [...activeGauntletVersions, ...activePantheonBossVersions]
-    const historicalModes = [...gauntletVersions, ...pantheonBossVersions].filter(id =>
-        isPantheonVersionSunset(id)
-    )
+    const { activePantheonVersions, pantheonSunsetVersions } = useRaidHubManifest()
 
     const instancesByMode = useMemo(() => {
         if (isLoading) return null
@@ -70,18 +59,18 @@ export const PantheonLayout = ({
     return (
         <div className="flex w-full flex-col gap-6">
             <PantheonModeGrid
-                modes={activeModes}
+                modes={activePantheonVersions}
                 instancesByMode={instancesByMode}
                 isLoading={isLoading}
                 isExpanded={isExpanded}
             />
-            {historicalModes.length > 0 && (
+            {pantheonSunsetVersions.length > 0 && (
                 <div>
                     <h3 className="text-secondary mb-3 text-sm font-semibold tracking-wide uppercase">
                         Historical Modes
                     </h3>
                     <PantheonModeGrid
-                        modes={historicalModes}
+                        modes={pantheonSunsetVersions}
                         instancesByMode={instancesByMode}
                         isLoading={isLoading}
                         isExpanded={isExpanded}
