@@ -15,7 +15,7 @@ export const PGCRHeaderBackground = ({
     const imageVariants = getImageVariantsForActivity(activityId)
     const variant = imageVariants.find(v => v.size === "small") ?? imageVariants[0]
 
-    const backgroundImageUrl = variant.url ?? FallbackSplash
+    const backgroundImageUrl = variant?.url ?? FallbackSplash
     return (
         <div
             className="relative min-h-44 overflow-hidden rounded-t-lg bg-cover bg-center md:h-48"
