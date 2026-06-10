@@ -2,6 +2,7 @@ import { type Metadata } from "next"
 import { notFound } from "next/navigation"
 import { LeaderboardSSR } from "~/app/leaderboards/LeaderboardSSR"
 import { CloudflareActivitySplash } from "~/components/CloudflareImage"
+import { findPantheonVersionByPath } from "~/lib/manifest/pantheon"
 import { baseMetadata } from "~/lib/metadata"
 import { prefetchManifest } from "~/services/raidhub/prefetchRaidHubManifest"
 import { type RaidHubManifestResponse } from "~/services/raidhub/types"
@@ -22,22 +23,35 @@ type DynamicParams = {
 }
 
 const getDefinitions = (params: DynamicParams["params"], manifest: RaidHubManifestResponse) => {
+    if (params.raid === "pantheon") {
+        const version = findPantheonVersionByPath(manifest, params.version) ?? notFound()
+        const activity =
+            manifest.activityDefinitions[version.associatedActivityId!] ?? notFound()
+
+        return { version, activity, isPantheon: true as const }
+    }
+
     return {
         version:
             Object.values(manifest.versionDefinitions).find(def => def.path === params.version) ??
             notFound(),
         activity:
             Object.values(manifest.activityDefinitions).find(def => def.path === params.raid) ??
-            notFound()
+            notFound(),
+        isPantheon: false as const
     }
 }
 
 export async function generateMetadata({ params }: DynamicParams): Promise<Metadata> {
     const manifest = await prefetchManifest()
-    const { version, activity } = getDefinitions(params, manifest)
+    const { version, activity, isPantheon } = getDefinitions(params, manifest)
 
-    const title = `${version.name} ${activity.name} First Completions Leaderboard`
-    const description = `View the first completions for ${version.name} ${activity.name}`
+    const title = isPantheon
+        ? `${activity.name}: ${version.name} First Completions Leaderboard`
+        : `${version.name} ${activity.name} First Completions Leaderboard`
+    const description = isPantheon
+        ? `View the first completions for ${version.name} in ${activity.name}`
+        : `View the first completions for ${version.name} ${activity.name}`
 
     return {
         title: title,
@@ -59,15 +73,24 @@ export async function generateMetadata({ params }: DynamicParams): Promise<Metad
 
 export default async function Page({ params, searchParams }: DynamicParams) {
     const manifest = await prefetchManifest()
-    const { version, activity } = getDefinitions(params, manifest)
+    const { version, activity, isPantheon } = getDefinitions(params, manifest)
     return (
         <Leaderboard
             heading={
                 <Splash
-                    title="First Completions Leaderboard"
-                    subtitle={`${version.name} ${activity.name}`}
-                    tertiaryTitle="First Completion Leaderboards">
-                    <CloudflareActivitySplash activityId={activity.id} fill className="z-[-1]" />
+                    tertiaryTitle={
+                        isPantheon ? activity.name : "First Completion Leaderboards"
+                    }
+                    title={isPantheon ? version.name : "First Completions Leaderboard"}
+                    subtitle={
+                        isPantheon ? "First Completions Leaderboard" : `${version.name} ${activity.name}`
+                    }>
+                    <CloudflareActivitySplash
+                        activityId={isPantheon ? version.associatedActivityId! : activity.id}
+                        versionId={isPantheon ? version.id : undefined}
+                        fill
+                        className="z-[-1]"
+                    />
                 </Splash>
             }
             hasPages
