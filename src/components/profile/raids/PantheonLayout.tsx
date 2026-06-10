@@ -1,5 +1,5 @@
 import { Collection } from "@discordjs/collection"
-import { useMemo } from "react"
+import { useCallback, useMemo } from "react"
 import { Grid } from "~/components/__deprecated__/layout/Grid"
 import RaidCard from "~/components/__deprecated__/profile/raids/RaidCard"
 import { useRaidHubManifest } from "~/components/providers/RaidHubManifestManager"
@@ -10,12 +10,14 @@ const PantheonModeGrid = ({
     modes,
     instancesByMode,
     isLoading,
-    isExpanded
+    isExpanded,
+    getActivityIdForVersion
 }: {
     modes: readonly number[]
     instancesByMode: Collection<number, Collection<string, RaidHubInstanceForPlayer>> | null
     isLoading: boolean
     isExpanded: boolean
+    getActivityIdForVersion: (versionId: number) => number
 }) => (
     <Grid as="section" $minCardWidth={325} $minCardWidthMobile={300} $fullWidth $relative>
         {modes
@@ -25,7 +27,8 @@ const PantheonModeGrid = ({
                     key={mode}
                     activities={instancesByMode?.get(mode)}
                     isLoadingActivities={isLoading}
-                    raidId={mode}>
+                    raidId={getActivityIdForVersion(mode)}
+                    versionId={mode}>
                     <RaidCard leaderboardEntry={null} isExpanded={isExpanded} />
                 </RaidCardContext>
             ))}
@@ -41,7 +44,14 @@ export const PantheonLayout = ({
     isExpanded: boolean
     isLoading: boolean
 }) => {
-    const { activePantheonVersions, pantheonSunsetVersions } = useRaidHubManifest()
+    const { activePantheonVersions, pantheonSunsetVersions, versionDefinitions, activePantheonIds } =
+        useRaidHubManifest()
+
+    const getActivityIdForVersion = useCallback(
+        (versionId: number) =>
+            versionDefinitions[versionId]?.associatedActivityId ?? activePantheonIds[0] ?? 102,
+        [activePantheonIds, versionDefinitions]
+    )
 
     const instancesByMode = useMemo(() => {
         if (isLoading) return null
@@ -63,6 +73,7 @@ export const PantheonLayout = ({
                 instancesByMode={instancesByMode}
                 isLoading={isLoading}
                 isExpanded={isExpanded}
+                getActivityIdForVersion={getActivityIdForVersion}
             />
             {pantheonSunsetVersions.length > 0 && (
                 <div>
@@ -74,6 +85,7 @@ export const PantheonLayout = ({
                         instancesByMode={instancesByMode}
                         isLoading={isLoading}
                         isExpanded={isExpanded}
+                        getActivityIdForVersion={getActivityIdForVersion}
                     />
                 </div>
             )}
