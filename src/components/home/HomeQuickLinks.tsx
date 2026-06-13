@@ -8,71 +8,79 @@ import {
     ChartSpline,
     HeartHandshake,
     Hourglass,
-    Users
+    Users,
+    type LucideIcon
 } from "lucide-react"
 import Link from "next/link"
 import D2CheckpointFlag from "~/components/icons/D2CP"
+import { cn } from "~/lib/tw"
 
-const navLinks = [
+const navLinks: { title: string; href: string; icon: LucideIcon }[] = [
+    { title: "Clans", href: "/clans", icon: Users },
     {
-        title: "Clan Leaderboards",
-        href: "/clans",
-        icon: Users
-    },
-    {
-        title: "World First Rating Rankings",
+        title: "WF Rankings",
         href: "/leaderboards/individual/global/world-first-rankings",
         icon: ChartNoAxesColumnDecreasing
     },
+    { title: "Weapon Meta", href: "/analytics/weapon-meta", icon: ChartNoAxesCombined },
+    { title: "Population", href: "/analytics/player-population", icon: ChartSpline },
+    { title: "Checkpoints", href: "/checkpoints", icon: D2CheckpointFlag },
     {
-        title: "Weapon Meta",
-        href: "/analytics/weapon-meta",
-        icon: ChartNoAxesCombined
-    },
-    {
-        title: "Player Population",
-        href: "/analytics/player-population",
-        icon: ChartSpline
-    },
-    {
-        title: "Checkpoints",
-        href: "/checkpoints",
-        icon: D2CheckpointFlag
-    },
-    {
-        title: "Full Clears Leaderboard",
+        title: "Full Clears",
         href: "/leaderboards/individual/global/full-clears",
         icon: ChartBarBig
     },
     {
-        title: "Clears Leaderboard",
+        title: "Clears",
         href: "/leaderboards/individual/global/clears",
         icon: ChartBarDecreasing
     },
     {
-        title: "Sherpa Leaderboard",
+        title: "Sherpas",
         href: "/leaderboards/individual/global/sherpas",
         icon: HeartHandshake
     },
     {
-        title: "In Raid Time Leaderboard",
+        title: "In Raid Time",
         href: "/leaderboards/individual/global/in-raid-time",
         icon: Hourglass
     }
 ]
 
+const mobileTileClass =
+    "border-border/50 bg-card/40 text-muted-foreground hover:border-raidhub/30 hover:text-raidhub flex flex-col items-center justify-center gap-1.5 rounded-lg border px-2 py-3 text-center text-xs transition-colors"
+
+const desktopLinkClass =
+    "text-muted-foreground hover:text-raidhub inline-flex items-center gap-1.5 text-sm transition-colors"
+
 export const HomeQuickLinks = () => {
     return (
-        <div className="6xl:max-w-520 mx-auto grid max-w-240 grid-cols-1 justify-center md:grid-cols-[repeat(auto-fit,minmax(10rem,12rem))] md:gap-3 xl:max-w-300">
-            {navLinks.map((link, idx) => (
-                <Link
-                    key={idx}
-                    href={link.href}
-                    className="border-muted bg-background/60 text-muted-foreground hover:bg-raidhub/50 flex items-center gap-2 border p-2 text-center transition-colors duration-150 md:flex-col md:justify-center">
-                    <link.icon className="text-primary size-8" />
-                    <div className="text-sm">{link.title}</div>
-                </Link>
-            ))}
-        </div>
+        <nav aria-label="Quick access">
+            <ul className="grid grid-cols-3 gap-2 min-[960px]:grid-cols-5 md:grid-cols-4 lg:hidden">
+                {navLinks.map(link => (
+                    <li key={link.href}>
+                        <Link href={link.href} className={mobileTileClass}>
+                            <link.icon className="size-5 shrink-0" />
+                            <span>{link.title}</span>
+                        </Link>
+                    </li>
+                ))}
+            </ul>
+
+            <ul
+                className={cn(
+                    "border-border/40 hidden flex-wrap justify-center gap-x-5 gap-y-2 border-y py-3",
+                    "lg:flex"
+                )}>
+                {navLinks.map(link => (
+                    <li key={link.href}>
+                        <Link href={link.href} className={desktopLinkClass}>
+                            <link.icon className="size-4 shrink-0" />
+                            {link.title}
+                        </Link>
+                    </li>
+                ))}
+            </ul>
+        </nav>
     )
 }

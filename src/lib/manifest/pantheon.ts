@@ -1,5 +1,7 @@
 import type { RaidHubManifestResponse, RaidHubVersionDefinition } from "~/services/raidhub/types"
 
+export const PANTHEON_COMMUNITY_RACE_VERSION_ID = 134
+
 export const findPantheonVersionByPath = (
     manifest: RaidHubManifestResponse,
     versionPath: string

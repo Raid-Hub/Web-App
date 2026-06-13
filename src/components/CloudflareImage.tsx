@@ -4,6 +4,7 @@ import Image, { type ImageLoader } from "next/image"
 import { useCallback, type ComponentPropsWithoutRef } from "react"
 import { HomePageSplash } from "~/lib/activity-images"
 import { VaultEmblems } from "~/lib/bungie-foundation-emblems"
+import { cn } from "~/lib/tw"
 import { type ImageSize } from "~/services/raidhub/types"
 import { useRaidHubManifest } from "./providers/RaidHubManifestManager"
 
@@ -125,31 +126,38 @@ export const CloudflareActivitySplash = ({
     alt,
     ...props
 }: { activityId: number; versionId?: number } & StrippedImageProps) => {
-    const { getImageVariantsForActivity, getActivityDefinition, getVersionString } =
-        useRaidHubManifest()
+    const {
+        getImageVariantsForActivity,
+        getImageVariantsForVersion,
+        getActivityDefinition,
+        getVersionString
+    } = useRaidHubManifest()
 
     const loader = useCallback<ImageLoader>(
         ({ width, quality }) => {
             // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
             const minWidth = (width * (quality || 75)) / 100
 
-            const activityVariants = getImageVariantsForActivity(activityId)
-            if (!activityVariants?.length) {
+            const splashVariants =
+                versionId != null
+                    ? getImageVariantsForVersion(versionId)
+                    : getImageVariantsForActivity(activityId)
+            if (!splashVariants.length) {
                 return FallbackSplash
             }
 
-            const availableSizes = new Set(activityVariants.map(c => c.size))
+            const availableSizes = new Set(splashVariants.map(c => c.size))
 
             const variants = cloudflareVariants.filter(item => availableSizes.has(item.name))
             const size = (
                 variants.find(item => item.w >= minWidth && availableSizes.has(item.name)) ??
                 variants[variants.length - 1]
             ).name
-            const content = activityVariants.find(c => c.size === size)!
+            const content = splashVariants.find(c => c.size === size)!
 
             return content.url
         },
-        [activityId, getImageVariantsForActivity]
+        [activityId, versionId, getImageVariantsForActivity, getImageVariantsForVersion]
     )
 
     const activityDefinition = getActivityDefinition(activityId)
@@ -159,5 +167,13 @@ export const CloudflareActivitySplash = ({
             ? activityDefinition.name
             : getVersionString(versionId ?? activityId))
 
-    return <Image loader={loader} {...props} src="placeholder" alt={altText} />
+    return (
+        <Image
+            loader={loader}
+            {...props}
+            className={cn(props.fill && "object-cover object-[center_30%]", props.className)}
+            src="placeholder"
+            alt={altText}
+        />
+    )
 }
