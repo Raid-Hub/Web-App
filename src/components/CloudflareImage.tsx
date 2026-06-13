@@ -4,6 +4,7 @@ import Image, { type ImageLoader } from "next/image"
 import { useCallback, type ComponentPropsWithoutRef } from "react"
 import { HomePageSplash } from "~/lib/activity-images"
 import { VaultEmblems } from "~/lib/bungie-foundation-emblems"
+import { cn } from "~/lib/tw"
 import { type ImageSize } from "~/services/raidhub/types"
 import { useRaidHubManifest } from "./providers/RaidHubManifestManager"
 
@@ -159,5 +160,13 @@ export const CloudflareActivitySplash = ({
             ? activityDefinition.name
             : getVersionString(versionId ?? activityId))
 
-    return <Image loader={loader} {...props} src="placeholder" alt={altText} />
+    return (
+        <Image
+            loader={loader}
+            {...props}
+            className={cn(props.fill && "object-cover object-[center_30%]", props.className)}
+            src="placeholder"
+            alt={altText}
+        />
+    )
 }

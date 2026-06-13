@@ -1289,6 +1289,91 @@ export interface paths {
       };
     };
   };
+  "/leaderboard/team/custom/pantheon-community-race": {
+    /**
+     * /leaderboard/team/custom/pantheon-community-race
+     * @description Ranking of teams that completed the 5-feat Insurrection Prime Revolutionary pantheon version during the community-hosted raid race window (first 24 hours from 2026-06-13 17:00 UTC).
+     */
+    get: {
+      parameters: {
+        query?: {
+          count?: number;
+          search?: string;
+          page?: number;
+        };
+      };
+      responses: {
+        /** @description Success */
+        200: {
+          content: {
+            readonly "application/json": {
+              /** Format: date-time */
+              readonly minted: string;
+              /** @enum {boolean} */
+              readonly success: true;
+              readonly response: components["schemas"]["LeaderboardTeamCustomPantheonCommunityRaceResponse"];
+            };
+          };
+        };
+        /** @description Bad request */
+        400: {
+          content: {
+            readonly "application/json": {
+              /** Format: date-time */
+              readonly minted: string;
+              /** @enum {boolean} */
+              readonly success: false;
+              /** @enum {string} */
+              readonly code: "QueryValidationError";
+              readonly error: components["schemas"]["QueryValidationError"];
+            };
+          };
+        };
+        /** @description Unauthorized */
+        401: {
+          content: {
+            readonly "application/json": {
+              /** Format: date-time */
+              readonly minted: string;
+              /** @enum {boolean} */
+              readonly success: false;
+              /** @enum {string} */
+              readonly code: "ApiKeyError";
+              readonly error: components["schemas"]["ApiKeyError"];
+            };
+          };
+        };
+        /** @description PlayerNotOnLeaderboardError */
+        404: {
+          content: {
+            readonly "application/json": {
+              /** Format: date-time */
+              readonly minted: string;
+              /** @enum {boolean} */
+              readonly success: false;
+              /** @enum {string} */
+              readonly code: "PlayerNotOnLeaderboardError";
+              readonly error: components["schemas"]["PlayerNotOnLeaderboardError"];
+            };
+          };
+        };
+        /** @description Internal Server Error */
+        500: {
+          content: {
+            readonly "application/json": {
+              /** Format: date-time */
+              readonly minted: string;
+              /** @enum {boolean} */
+              readonly success: false;
+              /** @enum {string} */
+              readonly code: "InternalServerError";
+              readonly error: components["schemas"]["InternalServerError"];
+            };
+          };
+        };
+      };
+    };
+  };
   "/leaderboard/clan": {
     /**
      * /leaderboard/clan
@@ -2742,7 +2827,7 @@ export interface components {
       readonly issues: readonly components["schemas"]["ZodIssue"][];
     };
     /**
-     * @description MotT difficulty tier derived from PGCR skull hashes. Adventure uses fixed skulls; Custom has selected feats; Standard is Custom with no feats.
+     * @description MotT difficulty tier derived at read time from instance skull_hashes and activity_feat_definition. Adventure uses fixed skulls; Custom has selected feats; Standard is Custom with no feats.
      * @enum {string}
      */
     readonly DifficultyTier: "adventure" | "standard" | "custom";
@@ -3370,6 +3455,10 @@ export interface components {
       readonly splashUrls: {
         [key: string]: readonly components["schemas"]["ImageContentData"][];
       };
+      /** @description The mapping of each RaidHub versionId to its splash image URLs */
+      readonly versionSplashUrls: {
+        [key: string]: readonly components["schemas"]["ImageContentData"][];
+      };
     };
     readonly StatusResponse: {
       readonly AtlasPGCR: components["schemas"]["AtlasStatus"];
@@ -3544,6 +3633,23 @@ export interface components {
       readonly version: string;
     };
     readonly LeaderboardTeamContestResponse: OneOf<[{
+      /** @enum {string} */
+      readonly type: "team";
+      /** @enum {string} */
+      readonly format: "duration" | "numerical";
+      readonly page: number;
+      readonly count: number;
+      readonly entries: readonly components["schemas"]["TeamLeaderboardEntry"][];
+    }, {
+      /** @enum {string} */
+      readonly type: "individual";
+      /** @enum {string} */
+      readonly format: "duration" | "numerical";
+      readonly page: number;
+      readonly count: number;
+      readonly entries: readonly components["schemas"]["IndividualLeaderboardEntry"][];
+    }]>;
+    readonly LeaderboardTeamCustomPantheonCommunityRaceResponse: OneOf<[{
       /** @enum {string} */
       readonly type: "team";
       /** @enum {string} */

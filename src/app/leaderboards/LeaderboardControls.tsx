@@ -41,6 +41,7 @@ export const LeaderboardControls = (props: { hasPages: boolean; hasSearch: boole
                 throw new Error("This function should not be called when search is enabled")
             }
 
+            // @ts-expect-error generic hell
             return await getRaidHubApi(apiUrl, params, {
                 search: membershipId,
                 count: entriesPerPage

@@ -22,9 +22,11 @@ export async function generateMetadata() {
 }
 export default async function Page() {
     return (
-        <PageWrapper className="space-y-6">
-            <HomeLogo />
-            <HomeSearchButton />
+        <PageWrapper className="mx-auto flex max-w-[120rem] flex-col gap-6 py-2">
+            <div className="flex flex-col items-center gap-4">
+                <HomeLogo />
+                <HomeSearchButton />
+            </div>
             <HomeQuickLinks />
             <Buckets />
         </PageWrapper>

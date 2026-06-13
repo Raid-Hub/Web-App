@@ -64,11 +64,16 @@ export type RaidHubLeaderboardURL = RaidHubGetPath &
         | "/leaderboard/individual/pantheon/{version}/{category}"
         | "/leaderboard/individual/raid/{raid}/{category}"
         | "/leaderboard/team/contest/{raid}"
+        | "/leaderboard/team/custom/pantheon-community-race"
         | "/leaderboard/team/first/{activity}/{version}"
     )
 
 export type PathParamsForLeaderboardURL<T extends RaidHubLeaderboardURL> =
-    paths[T]["get"]["parameters"]["path"]
+    T extends "/leaderboard/team/custom/pantheon-community-race"
+        ? null
+        : paths[T]["get"]["parameters"] extends { path: infer P }
+          ? P
+          : never
 export type ResponseForLeaderboardURL<T extends RaidHubLeaderboardURL> =
     paths[T]["get"]["responses"][200]["content"]["application/json"]
 
