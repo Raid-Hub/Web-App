@@ -12,15 +12,13 @@ export const revalidate = 900
 export const dynamic = "force-static"
 export const fetchCache = "default-no-store"
 
-const COMMUNITY_RACE_VERSION_ID = 134
-
 export async function generateMetadata(): Promise<Metadata> {
     const manifest = await prefetchManifest()
     const activityId = getActivePantheonIds(manifest)[0]
     const activity = activityId != null ? manifest.activityDefinitions[activityId] : undefined
     const version = manifest.versionDefinitions[PANTHEON_COMMUNITY_RACE_VERSION_ID]
 
-    if (!activity || !version || version.associatedActivityId == null) {
+    if (!activity || version?.associatedActivityId == null) {
         notFound()
     }
 
@@ -51,7 +49,7 @@ export default async function Page({ searchParams }: { searchParams: Record<stri
     const activity = activityId != null ? manifest.activityDefinitions[activityId] : undefined
     const version = manifest.versionDefinitions[PANTHEON_COMMUNITY_RACE_VERSION_ID]
 
-    if (!activity || !version || version.associatedActivityId == null) {
+    if (!activity || version?.associatedActivityId == null) {
         notFound()
     }
 
