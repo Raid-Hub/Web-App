@@ -2,7 +2,7 @@ import { type Metadata } from "next"
 import { notFound } from "next/navigation"
 import { LeaderboardSSR } from "~/app/leaderboards/LeaderboardSSR"
 import { CloudflareActivitySplash } from "~/components/CloudflareImage"
-import { getActivePantheonIds } from "~/lib/manifest/pantheon"
+import { getActivePantheonIds, PANTHEON_COMMUNITY_RACE_VERSION_ID } from "~/lib/manifest/pantheon"
 import { baseMetadata } from "~/lib/metadata"
 import { prefetchManifest } from "~/services/raidhub/prefetchRaidHubManifest"
 import { Leaderboard } from "../../../Leaderboard"
@@ -17,11 +17,10 @@ const COMMUNITY_RACE_VERSION_ID = 134
 export async function generateMetadata(): Promise<Metadata> {
     const manifest = await prefetchManifest()
     const activityId = getActivePantheonIds(manifest)[0]
-    const activity =
-        activityId != null ? manifest.activityDefinitions[activityId] : undefined
-    const version = manifest.versionDefinitions[COMMUNITY_RACE_VERSION_ID]
+    const activity = activityId != null ? manifest.activityDefinitions[activityId] : undefined
+    const version = manifest.versionDefinitions[PANTHEON_COMMUNITY_RACE_VERSION_ID]
 
-    if (!activity || !version) {
+    if (!activity || !version || version.associatedActivityId == null) {
         notFound()
     }
 
@@ -31,7 +30,13 @@ export async function generateMetadata(): Promise<Metadata> {
     return {
         title,
         description,
-        keywords: [activity.name, version.name, "community race", "pantheon", ...baseMetadata.keywords],
+        keywords: [
+            activity.name,
+            version.name,
+            "community race",
+            "pantheon",
+            ...baseMetadata.keywords
+        ],
         openGraph: {
             ...baseMetadata.openGraph,
             title,
@@ -40,18 +45,13 @@ export async function generateMetadata(): Promise<Metadata> {
     }
 }
 
-export default async function Page({
-    searchParams
-}: {
-    searchParams: Record<string, string>
-}) {
+export default async function Page({ searchParams }: { searchParams: Record<string, string> }) {
     const manifest = await prefetchManifest()
     const activityId = getActivePantheonIds(manifest)[0]
-    const activity =
-        activityId != null ? manifest.activityDefinitions[activityId] : undefined
-    const version = manifest.versionDefinitions[COMMUNITY_RACE_VERSION_ID]
+    const activity = activityId != null ? manifest.activityDefinitions[activityId] : undefined
+    const version = manifest.versionDefinitions[PANTHEON_COMMUNITY_RACE_VERSION_ID]
 
-    if (!activity || !version) {
+    if (!activity || !version || version.associatedActivityId == null) {
         notFound()
     }
 
@@ -63,7 +63,7 @@ export default async function Page({
                     title={version.name}
                     subtitle="Community Race Leaderboard">
                     <CloudflareActivitySplash
-                        activityId={version.associatedActivityId!}
+                        activityId={version.associatedActivityId}
                         versionId={version.id}
                         fill
                         className="z-[-1]"

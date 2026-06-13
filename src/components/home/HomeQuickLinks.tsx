@@ -56,7 +56,7 @@ const desktopLinkClass =
 export const HomeQuickLinks = () => {
     return (
         <nav aria-label="Quick access">
-            <ul className="grid grid-cols-3 gap-2 md:grid-cols-4 min-[960px]:grid-cols-5 lg:hidden">
+            <ul className="grid grid-cols-3 gap-2 min-[960px]:grid-cols-5 md:grid-cols-4 lg:hidden">
                 {navLinks.map(link => (
                     <li key={link.href}>
                         <Link href={link.href} className={mobileTileClass}>

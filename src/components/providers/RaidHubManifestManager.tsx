@@ -39,6 +39,7 @@ type ManifestContextData = RaidHubManifestResponse & {
     getActivityDefinition(activityId: number): RaidHubActivityDefinition | null
     isChallengeMode(versionId: number): boolean
     getImageVariantsForActivity(activityId: number | string): readonly ImageContentData[]
+    getImageVariantsForVersion(versionId: number | string): readonly ImageContentData[]
 }
 
 const ManifestContext = createContext<ManifestContextData | undefined>(undefined)
@@ -117,6 +118,10 @@ export function RaidHubManifestManager(props: {
             },
             getImageVariantsForActivity(activityId) {
                 const variants = data.splashUrls[activityId]
+                return variants ?? []
+            },
+            getImageVariantsForVersion(versionId) {
+                const variants = data.versionSplashUrls[versionId]
                 return variants ?? []
             }
         }

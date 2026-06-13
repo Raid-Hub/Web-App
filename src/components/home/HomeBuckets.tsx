@@ -4,6 +4,7 @@ import { ChevronRight } from "lucide-react"
 import Link from "next/link"
 import { useMemo, useState } from "react"
 import { useRaidHubManifest } from "~/components/providers/RaidHubManifestManager"
+import { PANTHEON_COMMUNITY_RACE_VERSION_ID } from "~/lib/manifest/pantheon"
 import { SpeedrunVariables } from "~/lib/speedrun/speedrun-com-mappings"
 import { cn } from "~/lib/tw"
 import type { RaidHubActivityDefinition } from "~/services/raidhub/types"
@@ -51,7 +52,7 @@ export const Buckets = () => {
     )
 
     return (
-        <div className="grid items-stretch gap-3 sm:gap-4 [grid-template-columns:repeat(auto-fill,minmax(min(100%,22rem),1fr))]">
+        <div className="grid [grid-template-columns:repeat(auto-fill,minmax(min(100%,22rem),1fr))] items-stretch gap-3 sm:gap-4">
             {raidsBeforeEpic.map(raid => (
                 <RaidCard key={raid.id} raid={raid} />
             ))}
@@ -204,8 +205,6 @@ function RaidCard({ raid }: { raid: RaidHubActivityDefinition }) {
     )
 }
 
-const PANTHEON_COMMUNITY_RACE_VERSION_PATH = "insurrection-revolutionary"
-
 const PANTHEON_COMMUNITY_RACE_LINK: LinkItem = {
     href: "/leaderboards/team/custom/pantheon-community-race",
     label: "Community Race",
@@ -225,8 +224,7 @@ function PantheonCard({
     const [expanded, setExpanded] = useState(false)
     const title =
         (activityId != null ? getActivityDefinition(activityId)?.name : null) ?? "The Pantheon"
-    const releaseDate =
-        activityId != null ? getActivityDefinition(activityId)?.releaseDate : null
+    const releaseDate = activityId != null ? getActivityDefinition(activityId)?.releaseDate : null
 
     const versionGroups = useMemo(
         () =>
@@ -239,7 +237,8 @@ function PantheonCard({
                     return {
                         title: getVersionString(version),
                         links: [
-                            ...(includeCommunityRace && path === PANTHEON_COMMUNITY_RACE_VERSION_PATH
+                            ...(includeCommunityRace &&
+                            version === PANTHEON_COMMUNITY_RACE_VERSION_ID
                                 ? [PANTHEON_COMMUNITY_RACE_LINK]
                                 : []),
                             {
