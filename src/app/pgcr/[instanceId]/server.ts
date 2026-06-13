@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation"
+import { getPgcrShortActivityName } from "~/lib/pgcr/formatting"
 import { Tag } from "~/models/tag"
 import { RaidHubError } from "~/services/raidhub/RaidHubError"
 import { getRaidHubApi } from "~/services/raidhub/common"
@@ -37,7 +38,9 @@ export const getMetaData = (activity: RaidHubInstanceExtended) => {
 
     const versionPrefix = activity.versionId === 1 ? null : activity.metadata.versionName
 
-    const activityName = activity.metadata.activityName
+    const activityName = activity.metadata.isRaid
+        ? activity.metadata.activityName
+        : getPgcrShortActivityName(activity.metadata.activityName)
 
     const resultSuffix = activity.completed
         ? activity.fresh === false
@@ -59,7 +62,7 @@ export const getMetaData = (activity: RaidHubInstanceExtended) => {
         timeZoneName: "short"
     })
 
-    const idTitle = [activity.metadata.activityName, activity.instanceId].filter(Boolean).join(" ")
+    const idTitle = [activityName, activity.instanceId].filter(Boolean).join(" ")
 
     const ogTitle = [
         lowmanPrefix,

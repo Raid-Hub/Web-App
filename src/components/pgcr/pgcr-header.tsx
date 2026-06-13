@@ -1,4 +1,5 @@
 import { CheckCircle, Clock, MapPin, TriangleAlert, Users, XCircle } from "lucide-react"
+import { getPgcrDisplayTitle } from "~/lib/pgcr/formatting"
 import { cn } from "~/lib/tw"
 import { type RaidHubInstanceExtended } from "~/services/raidhub/types"
 import { Badge } from "~/shad/badge"
@@ -40,9 +41,7 @@ export const PGCRHeader = ({ data }: PGCRHeaderProps) => {
                 </div>
                 <div className="flex flex-wrap items-center gap-2">
                     <h1 className="text-2xl font-bold tracking-tight text-white md:text-4xl">
-                        {data.metadata.isRaid
-                            ? data.metadata.activityName
-                            : `${data.metadata.activityName}: ${data.metadata.versionName}`}
+                        {getPgcrDisplayTitle(data.metadata)}
                     </h1>
 
                     {/* Cleared status badge */}
