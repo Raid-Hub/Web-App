@@ -80,9 +80,7 @@ export const PGCRMenu = () => {
                                     })
                                 }}>
                                 <Ban className="mr-2 h-4 w-4" />
-                                <span>
-                                    {isBlacklisted ? "Blacklisted" : "Blacklist Instance"}
-                                </span>
+                                <span>{isBlacklisted ? "Blacklisted" : "Blacklist Instance"}</span>
                             </DropdownMenuItem>
                         )}
                     </>
