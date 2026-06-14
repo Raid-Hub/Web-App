@@ -15,10 +15,10 @@ type LinkItem = { href: string; label: string; accent?: "gold" }
 type LinkSection = { title: string; links: LinkItem[] }
 
 const cardClass =
-    "border-border/50 bg-card/40 flex h-full flex-col gap-0 overflow-hidden rounded-lg py-0 shadow-sm"
+    "border-border/60 bg-card/65 flex h-full flex-col gap-0 overflow-hidden rounded-lg py-0 shadow-sm"
 const headerClass = "relative h-28 cursor-pointer p-0 md:cursor-default"
 const contentClass =
-    "divide-border/40 bg-background/20 divide-y overflow-hidden p-0 transition-all duration-200 md:block"
+    "divide-border/50 bg-muted/15 divide-y overflow-hidden p-0 transition-all duration-200 md:block"
 const rowClass =
     "hover:bg-raidhub/5 group flex items-center justify-between gap-3 px-4 py-2 transition-colors"
 
@@ -105,15 +105,15 @@ function SplashHeader({
                     activityId={activityId}
                     alt=""
                     fill
-                    className="object-cover object-[center_30%] brightness-[0.7]"
+                    className="object-cover object-[center_30%] brightness-[0.8]"
                 />
             ) : (
                 <div className="bg-muted h-full w-full" />
             )}
-            <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/60 to-black/20" />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/45 to-black/15" />
             <div className="absolute right-10 bottom-3 left-4 z-1 flex min-w-0 flex-col gap-0.5">
                 {formattedReleaseDate ? (
-                    <span className="text-[10px] font-normal tracking-wide text-white/30 uppercase tabular-nums drop-shadow-md">
+                    <span className="text-[10px] font-normal tracking-wide text-white/50 uppercase tabular-nums drop-shadow-md">
                         {formattedReleaseDate}
                     </span>
                 ) : null}
@@ -140,8 +140,8 @@ function LinkRow({ href, label, accent }: LinkItem) {
                 className={cn(
                     "min-w-0 text-sm transition-colors",
                     isGold
-                        ? "text-raidhub/65 group-hover:text-raidhub"
-                        : "text-muted-foreground group-hover:text-raidhub"
+                        ? "text-raidhub/80 group-hover:text-raidhub"
+                        : "text-foreground/75 group-hover:text-raidhub"
                 )}>
                 {label}
             </span>
@@ -149,8 +149,8 @@ function LinkRow({ href, label, accent }: LinkItem) {
                 className={cn(
                     "size-3.5 shrink-0 transition-colors",
                     isGold
-                        ? "text-raidhub/45 group-hover:text-raidhub"
-                        : "text-muted-foreground/50 group-hover:text-raidhub"
+                        ? "text-raidhub/60 group-hover:text-raidhub"
+                        : "text-muted-foreground/70 group-hover:text-raidhub"
                 )}
             />
         </Link>
@@ -159,11 +159,11 @@ function LinkRow({ href, label, accent }: LinkItem) {
 
 function SplitLinkSection({ title, links }: LinkSection) {
     return (
-        <div className="border-border/40 flex border-b last:border-b-0">
-            <div className="border-border/40 bg-muted/15 text-secondary flex w-[42%] shrink-0 items-center border-r px-4 py-2 text-sm leading-snug">
+        <div className="border-border/50 flex border-b last:border-b-0">
+            <div className="border-border/50 bg-muted/25 text-foreground/85 flex w-[42%] shrink-0 items-center border-r px-4 py-2 text-sm leading-snug">
                 {title}
             </div>
-            <div className="divide-border/40 bg-background/10 flex min-w-0 flex-1 flex-col divide-y">
+            <div className="divide-border/50 bg-background/25 flex min-w-0 flex-1 flex-col divide-y">
                 {links.map(link => (
                     <LinkRow key={link.href} {...link} />
                 ))}
