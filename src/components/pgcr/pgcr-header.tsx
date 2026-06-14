@@ -18,7 +18,7 @@ interface PGCRHeaderProps {
 
 export const PGCRHeader = ({ data }: PGCRHeaderProps) => {
     return (
-        <PGCRHeaderBackground activityId={data.activityId}>
+        <PGCRHeaderBackground activityId={data.activityId} versionId={data.versionId}>
             <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/50 to-black/30 backdrop-blur-[2px]" />
             <CardHeader className="absolute inset-0 flex flex-col gap-2 p-2 md:p-6">
                 <div className="inline-flex gap-4">

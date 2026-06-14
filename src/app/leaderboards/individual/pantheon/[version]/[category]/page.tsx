@@ -88,6 +88,7 @@ export default async function Page({
                     subtitle={`${categoryName} Leaderboard`}>
                     <CloudflareActivitySplash
                         activityId={definition.associatedActivityId!}
+                        versionId={definition.id}
                         fill
                         className="z-[-1]"
                     />
