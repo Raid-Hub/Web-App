@@ -4,18 +4,17 @@ import { Collection } from "@discordjs/collection"
 import { CheckCircle, LinkIcon, X } from "lucide-react"
 import Link from "next/link"
 import { useEffect, useMemo } from "react"
-import { ActivityPieChart } from "~/components/pgcr/activity-pie-chart"
 import { useItemDefinition } from "~/hooks/dexie"
 import { usePGCRContext } from "~/hooks/pgcr/ClientStateManager"
 import { useGetCharacterClass } from "~/hooks/pgcr/useCharacterClass"
+import { getActivityParticipationPercentage } from "~/lib/pgcr/formatting"
 import { cn } from "~/lib/tw"
 import { type RaidHubInstancePlayerExtended } from "~/services/raidhub/types"
 import { Avatar, AvatarFallback, AvatarImage } from "~/shad/avatar"
 import { Button } from "~/shad/button"
 import { Card, CardContent, CardHeader } from "~/shad/card"
 import { Tooltip, TooltipContent, TooltipTrigger } from "~/shad/tooltip"
-import { bungieIconUrl, getBungieDisplayName } from "~/util/destiny"
-import { getActivityParticipationPercentage } from "~/lib/pgcr/formatting"
+import { bungieBannerEmblemUrl, bungieIconUrl, getBungieDisplayName } from "~/util/destiny"
 import { round } from "~/util/math"
 import { secondsToHMS } from "~/util/presentation/formatting"
 import { WeaponTable } from "./pgcr-weapons"
@@ -87,12 +86,14 @@ const PlayerDetailsPanel = ({ player, onClose }: PlayerDetailsPanelProps) => {
     const activeCharacter = selectedCharacter
         ? player.characters.find(c => c.characterId === selectedCharacter)
         : null
+    const selectedStats = activeCharacter ?? playerStatsMerged.get(player.playerInfo.membershipId)!
     const activityPercentage = getActivityParticipationPercentage(
-        player.timePlayedSeconds,
+        selectedStats.timePlayedSeconds,
         data.duration
     )
-
-    const selectedStats = activeCharacter ?? playerStatsMerged.get(player.playerInfo.membershipId)!
+    const timePlayed = Math.min(selectedStats.timePlayedSeconds, data.duration)
+    const kdRatio = round(selectedStats.kills / Math.max(selectedStats.deaths, 1), 2)
+    const riisScore = scores.get(player.playerInfo.membershipId)?.score
 
     const bungieName = getBungieDisplayName(player.playerInfo).split("#")
     const displayName = bungieName[0]
@@ -158,95 +159,83 @@ const PlayerDetailsPanel = ({ player, onClose }: PlayerDetailsPanelProps) => {
 
     return (
         <div className="flex flex-col">
-            <div className="relative flex items-center gap-3 p-3 md:gap-4 md:p-6">
-                <div className="absolute inset-0 bg-black/70 backdrop-blur-[1px]" />
-                <div className="relative z-10 flex w-full items-center justify-between">
-                    <div className="flex items-center gap-3 md:gap-4">
-                        <Avatar className="size-12 rounded-none border-1 border-zinc-800 md:size-16">
-                            <AvatarImage
-                                src={bungieIconUrl(emblemDefinition?.displayProperties.icon)}
-                                alt={displayName}
-                            />
-                            <AvatarFallback className="rounded-md bg-zinc-800">
-                                {displayName.charAt(0)}
-                            </AvatarFallback>
-                        </Avatar>
-                        <div>
-                            <div className="flex items-center gap-2">
-                                <h2>
-                                    <span className="text-xl font-bold text-white md:text-2xl">
-                                        {displayName}
-                                    </span>
-                                    {bungieNumbers && (
-                                        <span className="text-sm text-zinc-400">
-                                            {`#${bungieNumbers}`}
+            <div className="relative overflow-hidden border-b border-zinc-800">
+                {emblemDefinition && (
+                    <div
+                        className="absolute inset-0 bg-[left_15%_center] opacity-20"
+                        style={{
+                            backgroundImage: `url(${bungieBannerEmblemUrl(emblemDefinition)})`
+                        }}
+                    />
+                )}
+                <div className="absolute inset-0 bg-gradient-to-r from-black via-black/95 to-black/80" />
+                <div className="relative z-10 flex items-center gap-3 p-3 md:gap-4 md:p-5">
+                    <div className="flex w-full items-center justify-between">
+                        <div className="flex items-center gap-3 md:gap-4">
+                            <Avatar className="size-12 rounded-sm border border-zinc-800 md:size-14">
+                                <AvatarImage
+                                    src={bungieIconUrl(emblemDefinition?.displayProperties.icon)}
+                                    alt={displayName}
+                                />
+                                <AvatarFallback className="rounded-sm bg-zinc-800">
+                                    {displayName.charAt(0)}
+                                </AvatarFallback>
+                            </Avatar>
+                            <div>
+                                <div className="flex items-center gap-2">
+                                    <h2>
+                                        <span className="text-xl font-bold text-white md:text-2xl">
+                                            {displayName}
                                         </span>
-                                    )}
-                                </h2>
-                                <Tooltip>
-                                    <TooltipTrigger asChild>
-                                        <Button
-                                            variant="ghost"
-                                            size="icon"
-                                            className="size-6 rounded-full hover:bg-zinc-700"
-                                            asChild>
-                                            <Link
-                                                href={`/profile/${player.playerInfo.membershipId}`}>
-                                                <LinkIcon className="size-6" />
-                                            </Link>
-                                        </Button>
-                                    </TooltipTrigger>
-                                    <TooltipContent>View Profile</TooltipContent>
-                                </Tooltip>
-                            </div>
-                            <div className="mt-1 flex items-center gap-2">
-                                {mvp === player.playerInfo.membershipId && (
-                                    <PlayerBadge variant="mvp" />
-                                )}
-                                {player.sherpas > 0 && (
-                                    <PlayerBadge
-                                        variant="sherpa"
-                                        titleOverride={`Sherpa x${player.sherpas}`}
-                                    />
-                                )}
-                                {player.isFirstClear && <PlayerBadge variant="firstClear" />}
-
-                                {activityPercentage != null && (
+                                        {bungieNumbers && (
+                                            <span className="text-sm text-zinc-400">
+                                                {`#${bungieNumbers}`}
+                                            </span>
+                                        )}
+                                    </h2>
                                     <Tooltip>
                                         <TooltipTrigger asChild>
-                                            <div className="ml-1 flex items-center gap-1">
-                                                <ActivityPieChart
-                                                    percentage={activityPercentage}
-                                                    size={18}
-                                                    color={player.completed ? "green" : "orange"}
-                                                />
-                                                <span className="text-xs text-zinc-400">
-                                                    {activityPercentage}% participation
-                                                </span>
-                                            </div>
+                                            <Button
+                                                variant="ghost"
+                                                size="icon"
+                                                className="size-6 rounded-full hover:bg-zinc-800"
+                                                asChild>
+                                                <Link
+                                                    href={`/profile/${player.playerInfo.membershipId}`}>
+                                                    <LinkIcon className="size-4" />
+                                                </Link>
+                                            </Button>
                                         </TooltipTrigger>
-                                        <TooltipContent side="bottom" align="start">
-                                            This player participated in {activityPercentage}% of the
-                                            activity
-                                        </TooltipContent>
+                                        <TooltipContent>View Profile</TooltipContent>
                                     </Tooltip>
-                                )}
+                                </div>
+                                <div className="mt-1.5 flex flex-wrap items-center gap-1.5">
+                                    {mvp === player.playerInfo.membershipId && (
+                                        <PlayerBadge variant="mvp" />
+                                    )}
+                                    {player.sherpas > 0 && (
+                                        <PlayerBadge
+                                            variant="sherpa"
+                                            titleOverride={`Sherpa x${player.sherpas}`}
+                                        />
+                                    )}
+                                    {player.isFirstClear && <PlayerBadge variant="firstClear" />}
+                                    {!player.completed && <PlayerBadge variant="dnf" />}
+                                </div>
                             </div>
                         </div>
+                        <Button
+                            variant="ghost"
+                            size="icon"
+                            className="cursor-pointer rounded-full hover:bg-zinc-800"
+                            onClick={onClose}>
+                            <X className="size-6 md:size-7" />
+                        </Button>
                     </div>
-                    <Button
-                        variant="ghost"
-                        size="icon"
-                        className="cursor-pointer rounded-full"
-                        onClick={onClose}>
-                        <X className="size-7 p-1 md:size-10" />
-                    </Button>
                 </div>
             </div>
 
-            <div className="border-b border-zinc-800 bg-zinc-950" />
-
-            <div className="space-y-4 p-6">
+            <div className="space-y-4 p-4 md:p-6">
                 {player.characters.length > 1 && (
                     <div className="scrollbar-none flex items-center gap-1 overflow-x-auto pb-2 md:gap-2">
                         <Button
@@ -281,7 +270,8 @@ const PlayerDetailsPanel = ({ player, onClose }: PlayerDetailsPanelProps) => {
                                                 size="sm"
                                                 className="border-muted-foreground cursor-pointer items-center gap-1 rounded-full text-xs whitespace-nowrap md:gap-2"
                                                 onClick={() => set("character", characterId)}>
-                                                <CharacterIcon className="size-4 md:size-4" />
+                                                <CharacterIcon className="size-4" />
+                                                <span className="hidden sm:inline">{characterName}</span>
                                                 {completed && (
                                                     <CheckCircle className="ml-1 size-3 text-green-500" />
                                                 )}
@@ -296,26 +286,45 @@ const PlayerDetailsPanel = ({ player, onClose }: PlayerDetailsPanelProps) => {
                     </div>
                 )}
                 {/* Performance Stats */}
-                <Card className="gap-2 rounded-none border-zinc-800 bg-zinc-950">
-                    <CardHeader className="pb-0">
-                        <h3 className="text-lg font-medium">Performance</h3>
+                <Card className="gap-3 rounded-lg border-zinc-800 bg-zinc-950 py-0">
+                    <CardHeader className="px-4 pt-4 pb-0">
+                        <h3 className="text-sm font-medium tracking-wider text-zinc-400 uppercase">
+                            Performance
+                        </h3>
                     </CardHeader>
-                    <CardContent>
-                        <div className="mb-3 grid grid-cols-2 gap-3 md:grid-cols-4">
+                    <CardContent className="px-4 pb-4">
+                        <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-5">
                             {player.characters.length === 1 && (
                                 <StatCard
                                     label="Class"
                                     value={getCharacterIcon(player.characters[0].classHash)[1]}
                                 />
                             )}
-                            <StatCard
-                                label="Time Played"
-                                value={secondsToHMS(
-                                    Math.min(selectedStats.timePlayedSeconds, data.duration),
-                                    false
+                            <Tooltip>
+                                <TooltipTrigger asChild>
+                                    <div className="contents">
+                                        <StatCard
+                                            label="Time Played"
+                                            value={secondsToHMS(timePlayed, false)}
+                                            detail={
+                                                activityPercentage != null
+                                                    ? `${activityPercentage}% of activity`
+                                                    : undefined
+                                            }
+                                        />
+                                    </div>
+                                </TooltipTrigger>
+                                {activityPercentage != null && (
+                                    <TooltipContent>
+                                        Present for {activityPercentage}% of the activity
+                                    </TooltipContent>
                                 )}
+                            </Tooltip>
+                            <StatCard label="K/D" value={kdRatio.toLocaleString()} />
+                            <StatCard
+                                label="Kills"
+                                value={selectedStats.kills.toLocaleString()}
                             />
-                            <StatCard label="Kills" value={selectedStats.kills.toLocaleString()} />
                             <StatCard
                                 label="Deaths"
                                 value={selectedStats.deaths.toLocaleString()}
@@ -325,38 +334,29 @@ const PlayerDetailsPanel = ({ player, onClose }: PlayerDetailsPanelProps) => {
                                 value={selectedStats.assists.toLocaleString()}
                             />
                             <StatCard
-                                label="K/D Ratio"
-                                value={round(
-                                    selectedStats.kills / Math.max(selectedStats.deaths, 1),
-                                    2
-                                ).toLocaleString()}
+                                label="Precision"
+                                value={selectedStats.precisionKills.toLocaleString()}
                             />
                             <StatCard
-                                label="Melee Kills"
+                                label="Melee"
                                 value={selectedStats.meleeKills.toLocaleString()}
                             />
                             <StatCard
-                                label="Grenade Kills"
+                                label="Grenade"
                                 value={selectedStats.grenadeKills.toLocaleString()}
                             />
                             <StatCard
-                                label="Super Kills"
+                                label="Super"
                                 value={selectedStats.superKills.toLocaleString()}
                             />
-                            <StatCard
-                                label="Precision Kills"
-                                value={selectedStats.precisionKills.toLocaleString()}
-                            />
                             <Tooltip>
-                                <TooltipTrigger>
-                                    <StatCard
-                                        label="RIIS"
-                                        value={
-                                            scores
-                                                .get(player.playerInfo.membershipId)
-                                                ?.score.toFixed(3) ?? "0"
-                                        }
-                                    />
+                                <TooltipTrigger asChild>
+                                    <div className="contents">
+                                        <StatCard
+                                            label="RIIS"
+                                            value={riisScore?.toFixed(1) ?? "0.0"}
+                                        />
+                                    </div>
                                 </TooltipTrigger>
                                 <TooltipContent>
                                     <p className="text-sm">
