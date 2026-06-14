@@ -127,7 +127,7 @@ export const InstanceFinderForm = ({
     }, [parsedActivityId, getVersionsForActivity, getVersionString])
 
     useEffect(() => {
-        form.setValue("versionId", undefined)
+        form.setValue("versionId", "")
     }, [parsedActivityId, form])
 
     const seasonsOptions =
