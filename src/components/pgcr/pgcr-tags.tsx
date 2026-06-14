@@ -9,13 +9,13 @@ export const PGCRTags = () => {
     return (
         !!tags.length && (
             <div className="flex gap-1 md:gap-2">
-                {tags.map(({ tag, placement }) => (
+                {tags.map(({ tag, placement, key }) => (
                     <Badge
-                        key={tag}
+                        key={key}
                         variant="secondary"
                         className="bg-raidhub/90 text-sm text-gray-200">
                         {tag}
-                        {placement && (
+                        {placement != null && (
                             <span className="text text-foreground text-sm font-medium">{` #${placement}`}</span>
                         )}
                     </Badge>

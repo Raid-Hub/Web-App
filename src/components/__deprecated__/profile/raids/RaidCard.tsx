@@ -27,7 +27,12 @@ export default function RaidCard({
     leaderboardEntry,
     isExpanded
 }: {
-    leaderboardEntry: RaidHubWorldFirstEntry | null
+    leaderboardEntry:
+        | (Omit<RaidHubWorldFirstEntry, "rank"> & {
+              rank: number | null
+              versionLabel?: string | null
+          })
+        | null
     isExpanded?: boolean
 }) {
     const { activities, isLoadingActivities, raidId, versionId } = useRaidCardContext()
@@ -90,6 +95,7 @@ export default function RaidCard({
 
         return {
             instanceId: instance.instanceId,
+            isGauntletRace: false,
             isDayOne: instance.isDayOne,
             isWeekOne: instance.isWeekOne,
             isContest: instance.isContest,
@@ -173,6 +179,12 @@ export default function RaidCard({
                         <RaceTagLabel
                             rank={firstContestClear.rank}
                             instanceId={firstContestClear.instanceId}
+                            isGauntletRace={firstContestClear.isGauntletRace}
+                            versionLabel={
+                                "versionLabel" in firstContestClear
+                                    ? firstContestClear.versionLabel
+                                    : null
+                            }
                             isChallenge={firstContestClear.isChallengeMode}
                             isDayOne={firstContestClear.isDayOne}
                             isContest={firstContestClear.isContest}

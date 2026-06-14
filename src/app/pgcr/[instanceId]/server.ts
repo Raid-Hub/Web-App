@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation"
+import { formatLeaderboardRaceLabel } from "~/lib/pgcr/leaderboard-tag"
 import { getPgcrShortActivityName } from "~/lib/pgcr/formatting"
 import { Tag } from "~/models/tag"
 import { RaidHubError } from "~/services/raidhub/RaidHubError"
@@ -48,7 +49,21 @@ export const getMetaData = (activity: RaidHubInstanceExtended) => {
             : "completed on"
         : "attempted on"
 
-    const placementSuffix = activity.leaderboardRank ? `#${activity.leaderboardRank}` : null
+    const raceLabel = formatLeaderboardRaceLabel(
+        {
+            isGauntletRace: activity.isGauntletRace,
+            isDayOne: activity.isDayOne,
+            isContest: activity.isContest,
+            isPantheon: activity.isPantheon,
+            versionId: activity.versionId,
+            leaderboardRank: activity.leaderboardRank,
+            versionName: activity.metadata.versionName
+        },
+        () => false
+    )
+
+    const placementSuffix =
+        raceLabel ?? (activity.leaderboardRank ? `#${activity.leaderboardRank}` : null)
 
     const dateCompleted = new Date(activity.dateCompleted)
 

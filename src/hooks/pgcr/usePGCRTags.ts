@@ -1,5 +1,6 @@
 import { useMemo } from "react"
 import { useRaidHubManifest } from "~/components/providers/RaidHubManifestManager"
+import { getLeaderboardRaceBadges } from "~/lib/pgcr/leaderboard-tag"
 import { Tag } from "~/models/tag"
 import { usePGCRContext } from "./ClientStateManager"
 
@@ -10,22 +11,32 @@ export const usePGCRTags = () => {
     return useMemo(() => {
         if (!activity) return []
 
-        const tags = new Array<{ tag: Tag; placement?: number | null }>()
-        if (isChallengeMode(activity.versionId)) {
+        const tags = new Array<{ tag: Tag | string; placement?: number | null; key: string }>()
+
+        getLeaderboardRaceBadges(
+            {
+                isGauntletRace: activity.isGauntletRace,
+                isDayOne: activity.isDayOne,
+                isContest: activity.isContest,
+                isPantheon: activity.isPantheon,
+                versionId: activity.versionId,
+                leaderboardRank: activity.leaderboardRank,
+                versionName: activity.metadata.versionName
+            },
+            isChallengeMode
+        ).forEach(badge => {
             tags.push({
-                tag: Tag.CHALLENGE,
-                placement: activity.leaderboardRank
+                tag: badge.label,
+                placement: badge.placement,
+                key: badge.key
             })
-        } else if (activity.isDayOne) {
-            tags.push({ tag: Tag.DAY_ONE, placement: activity.leaderboardRank })
-        } else if (activity.isContest && !!activity.leaderboardRank) {
-            tags.push({ tag: Tag.CONTEST, placement: activity.leaderboardRank })
-        }
-        if (activity.playerCount === 1) tags.push({ tag: Tag.SOLO })
-        else if (activity.playerCount === 2) tags.push({ tag: Tag.DUO })
-        else if (activity.playerCount === 3) tags.push({ tag: Tag.TRIO })
-        if (activity.flawless) tags.push({ tag: Tag.FLAWLESS })
-        if (selectedFeats.length === feats.length) tags.push({ tag: Tag.ALL_FEATS })
+        })
+
+        if (activity.playerCount === 1) tags.push({ tag: Tag.SOLO, key: "solo" })
+        else if (activity.playerCount === 2) tags.push({ tag: Tag.DUO, key: "duo" })
+        else if (activity.playerCount === 3) tags.push({ tag: Tag.TRIO, key: "trio" })
+        if (activity.flawless) tags.push({ tag: Tag.FLAWLESS, key: "flawless" })
+        if (selectedFeats.length === feats.length) tags.push({ tag: Tag.ALL_FEATS, key: "all-feats" })
 
         return tags
     }, [activity, feats, selectedFeats, isChallengeMode])

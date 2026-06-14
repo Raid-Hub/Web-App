@@ -5,6 +5,7 @@ export enum Tag {
     TRIO = "Trio",
     CHALLENGE = "Challenge",
     DAY_ONE = "Day One",
+    GAUNTLET_RACE = "Gauntlet Race",
     CONTEST = "Contest",
     WEEK_ONE = "Week One",
     MASTER = "Master",

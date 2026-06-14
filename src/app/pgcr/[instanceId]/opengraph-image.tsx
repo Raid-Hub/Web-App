@@ -2,6 +2,7 @@
 import { notFound } from "next/navigation"
 import { ImageResponse } from "next/og"
 import { FallbackSplash } from "~/components/CloudflareImage"
+import { formatLeaderboardRaceLabel } from "~/lib/pgcr/leaderboard-tag"
 import { getMetaData, prefetchActivity } from "~/lib/pgcr/server"
 import { type PGCRPageProps } from "~/lib/pgcr/types"
 import { saferFetch } from "~/lib/server/saferFetch"
@@ -30,6 +31,18 @@ export default async function Image({ params: { instanceId } }: PGCRPageProps) {
     }
 
     const { ogTitle, dateString } = getMetaData(activity)
+    const raceLabel = formatLeaderboardRaceLabel(
+        {
+            isGauntletRace: activity.isGauntletRace,
+            isDayOne: activity.isDayOne,
+            isContest: activity.isContest,
+            isPantheon: activity.isPantheon,
+            versionId: activity.versionId,
+            leaderboardRank: activity.leaderboardRank,
+            versionName: activity.metadata.versionName
+        },
+        versionId => manifest.versionDefinitions[versionId]?.isChallengeMode ?? false
+    )
     const imageVariants = manifest.splashUrls[activity.activityId]
     const backgroundImageUrl =
         imageVariants?.find(v => v.size === "medium")?.url ??
@@ -225,7 +238,7 @@ export default async function Image({ params: { instanceId } }: PGCRPageProps) {
                         justifyContent: "center",
                         alignItems: "center"
                     }}>
-                    {activity.leaderboardRank && (
+                    {raceLabel && (
                         <div
                             style={{
                                 backgroundColor: "rgb(201, 125, 2)",
@@ -233,7 +246,7 @@ export default async function Image({ params: { instanceId } }: PGCRPageProps) {
                                 padding: 4,
                                 borderRadius: 4
                             }}>
-                            {activity.metadata.versionName + " #" + activity.leaderboardRank}
+                            {raceLabel}
                         </div>
                     )}
                 </div>

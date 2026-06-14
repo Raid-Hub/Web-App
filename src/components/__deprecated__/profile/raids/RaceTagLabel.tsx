@@ -7,6 +7,8 @@ import styles from "./raids.module.css"
 /** @deprecated */
 const RaceTagLabel = ({
     rank,
+    isGauntletRace,
+    versionLabel,
     isChallenge,
     isDayOne,
     isContest,
@@ -16,6 +18,8 @@ const RaceTagLabel = ({
 }: {
     rank: number | null
     instanceId: string
+    isGauntletRace?: boolean
+    versionLabel?: string | null
     isChallenge: boolean
     isDayOne: boolean
     isContest: boolean
@@ -24,6 +28,8 @@ const RaceTagLabel = ({
 }) => {
     const label = useRaceLabel({
         rank,
+        isGauntletRace,
+        versionLabel,
         isChallenge,
         isDayOne,
         isContest,
@@ -49,13 +55,17 @@ const RaceTagLabel = ({
 
 const useRaceLabel = (props: {
     rank: number | null
+    isGauntletRace?: boolean
+    versionLabel?: string | null
     isChallenge: boolean
     isDayOne: boolean
     isContest: boolean
     isWeekOne: boolean
 }): string | null => {
     const tag = useMemo(() => {
-        if (props.isChallenge) {
+        if (props.isGauntletRace) {
+            return Tag.GAUNTLET_RACE
+        } else if (props.isChallenge) {
             return Tag.CHALLENGE
         } else if (props.isDayOne) {
             return Tag.DAY_ONE
@@ -63,10 +73,19 @@ const useRaceLabel = (props: {
             return Tag.CONTEST
         } else if (props.isWeekOne) {
             return Tag.WEEK_ONE
+        } else if (props.versionLabel) {
+            return props.versionLabel
         } else {
             return null
         }
-    }, [props.isChallenge, props.isDayOne, props.isContest, props.isWeekOne])
+    }, [
+        props.isGauntletRace,
+        props.versionLabel,
+        props.isChallenge,
+        props.isDayOne,
+        props.isContest,
+        props.isWeekOne
+    ])
 
     if (tag) {
         return `${tag}${props.rank ? ` #${props.rank}` : ""}`

@@ -51,6 +51,8 @@ export type RaidHubInstancePlayerExtended = Component<"InstancePlayerExtended">
 export type RaidHubInstanceCharacter = Component<"InstanceCharacter">
 export type RaidHubInstanceForPlayer = Component<"InstanceForPlayer">
 export type RaidHubWorldFirstEntry = Component<"WorldFirstEntry">
+export type RaidHubGauntletRaceEntry = Component<"GauntletRaceEntry">
+export type RaidHubPantheonVersionFirstEntry = Component<"PantheonVersionFirstEntry">
 export type RaidHubClanMemberStats = Component<"ClanMemberStats">
 
 export type RaidHubWeaponMetric = Component<"WeaponMetric">
