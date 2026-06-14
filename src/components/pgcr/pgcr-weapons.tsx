@@ -6,6 +6,7 @@ import Link from "next/link"
 import { useMemo } from "react"
 import { usePGCRContext } from "~/hooks/pgcr/ClientStateManager"
 import { type PlayerStats } from "~/lib/pgcr/types"
+import { cn } from "~/lib/tw"
 import { Tooltip, TooltipContent, TooltipTrigger } from "~/shad/tooltip"
 import { bungieItemUrl, getBungieDisplayName } from "~/util/destiny"
 
@@ -24,13 +25,15 @@ export const WeaponTable = ({
     energyWeapons,
     powerWeapons,
     stats,
-    showUsers
+    showUsers,
+    compact = false
 }: {
     kineticWeapons: Collection<number, WeaponData>
     energyWeapons: Collection<number, WeaponData>
     powerWeapons: Collection<number, WeaponData>
     stats: PlayerStats
     showUsers: boolean
+    compact?: boolean
 }) => {
     const { weaponsMap } = usePGCRContext()
 
@@ -45,10 +48,16 @@ export const WeaponTable = ({
     }
 
     return (
-        <div className="overflow-x-auto rounded-lg border border-zinc-800 bg-zinc-950">
+        <div
+            className={cn(
+                "overflow-x-auto bg-zinc-950",
+                !compact && "rounded-lg border border-zinc-800"
+            )}>
             <div
                 className="grid min-w-max divide-x divide-zinc-800"
-                style={{ gridTemplateColumns: `repeat(${slots.length}, minmax(11rem, 1fr))` }}>
+                style={{
+                    gridTemplateColumns: `repeat(${slots.length}, minmax(${compact ? "9rem" : "11rem"}, 1fr))`
+                }}>
                 {slots.map(slot => (
                     <WeaponSlot
                         key={slot.label}
@@ -57,6 +66,7 @@ export const WeaponTable = ({
                         weaponsMap={weaponsMap}
                         totalKills={stats.kills}
                         showUsers={showUsers}
+                        compact={compact}
                     />
                 ))}
             </div>
@@ -69,22 +79,25 @@ const WeaponSlot = ({
     weapons,
     weaponsMap,
     totalKills,
-    showUsers
+    showUsers,
+    compact = false
 }: {
     label: string
     weapons: Collection<number, WeaponData>
     weaponsMap: ReturnType<typeof usePGCRContext>["weaponsMap"]
     totalKills: number
     showUsers: boolean
+    compact?: boolean
 }) => (
-    <div className="min-w-[11rem]">
-        <div className="border-b border-zinc-800 px-3 py-2 text-center text-[10px] font-medium tracking-wider text-zinc-500 uppercase">
+    <div className={compact ? "min-w-[9rem]" : "min-w-[11rem]"}>
+        <div className="border-b border-zinc-800 px-2 py-1.5 text-center text-[10px] font-medium tracking-wider text-zinc-500 uppercase">
             {label}
         </div>
         <div className="divide-y divide-zinc-800">
             {weapons.map((weapon, hash) => (
                 <WeaponRow
                     key={hash}
+                    compact={compact}
                     weaponHash={hash}
                     kills={weapon.kills}
                     precisionKills={weapon.precisionKills}
@@ -118,16 +131,21 @@ const WeaponRow = ({
     icon,
     users,
     showUsers,
-    weaponHash
-}: WeaponRowProps) => {
+    weaponHash,
+    compact = false
+}: WeaponRowProps & { compact?: boolean }) => {
     const { data } = usePGCRContext()
     const imageUrl = bungieItemUrl(icon ?? "")
     const sharePct = totalKills > 0 ? (kills / totalKills) * 100 : 0
     const precisionPct = kills > 0 ? (100 * precisionKills) / kills : 0
 
     return (
-        <div className="flex items-center gap-2 px-2 py-2 md:gap-3 md:px-3">
-            <div className="flex size-8 shrink-0 items-center justify-center overflow-hidden bg-zinc-800 md:size-9">
+        <div className={cn("flex items-center gap-2 px-2 py-1.5", !compact && "md:gap-3 md:px-3 md:py-2")}>
+            <div
+                className={cn(
+                    "flex shrink-0 items-center justify-center overflow-hidden bg-zinc-800",
+                    compact ? "size-7" : "size-8 md:size-9"
+                )}>
                 {imageUrl && (
                     <Image
                         unoptimized
