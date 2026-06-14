@@ -3,21 +3,98 @@ import { useCallback, useMemo } from "react"
 import { Grid } from "~/components/__deprecated__/layout/Grid"
 import RaidCard from "~/components/__deprecated__/profile/raids/RaidCard"
 import { useRaidHubManifest } from "~/components/providers/RaidHubManifestManager"
-import { type RaidHubInstanceForPlayer } from "~/services/raidhub/types"
+import { suppressesDayOnePlacement } from "~/lib/pgcr/leaderboard-tag"
+import {
+    type RaidHubGauntletRaceEntry,
+    type RaidHubInstanceForPlayer,
+    type RaidHubPantheonVersionFirstEntry,
+    type RaidHubWorldFirstEntry
+} from "~/services/raidhub/types"
 import { RaidCardContext } from "./RaidCardContext"
+
+const toGauntletRaceLeaderboardEntry = (
+    entry: RaidHubGauntletRaceEntry,
+    activityId: number
+): RaidHubWorldFirstEntry => ({
+    activityId,
+    instanceId: entry.instanceId,
+    timeAfterLaunch: 0,
+    rank: entry.rank,
+    isDayOne: false,
+    isContest: false,
+    isWeekOne: false,
+    isChallengeMode: false,
+    isGauntletRace: true
+})
+
+const toPantheonVersionFirstLeaderboardEntry = (
+    entry: RaidHubPantheonVersionFirstEntry,
+    activityId: number,
+    versionLabel: string
+): Omit<RaidHubWorldFirstEntry, "rank"> & {
+    rank: number | null
+    versionLabel?: string | null
+} => ({
+    activityId,
+    instanceId: entry.instanceId,
+    timeAfterLaunch: 0,
+    rank: entry.isDayOne && suppressesDayOnePlacement(entry.versionId) ? null : entry.rank,
+    isDayOne: entry.isDayOne,
+    isContest: false,
+    isWeekOne: false,
+    isChallengeMode: false,
+    isGauntletRace: false,
+    versionLabel: entry.isDayOne ? null : versionLabel
+})
+
+const resolvePantheonLeaderboardEntry = (
+    mode: number,
+    activityId: number,
+    gauntletRaceEntry: RaidHubGauntletRaceEntry | null,
+    pantheonVersionFirstEntries: Collection<number, RaidHubPantheonVersionFirstEntry>,
+    getVersionString: (versionId: number) => string
+):
+    | (Omit<RaidHubWorldFirstEntry, "rank"> & {
+          rank: number | null
+          versionLabel?: string | null
+      })
+    | null => {
+    const versionFirst = pantheonVersionFirstEntries.get(mode) ?? null
+    const gauntlet = gauntletRaceEntry?.versionId === mode ? gauntletRaceEntry : null
+
+    if (gauntlet) {
+        return toGauntletRaceLeaderboardEntry(gauntlet, activityId)
+    }
+
+    if (versionFirst) {
+        return toPantheonVersionFirstLeaderboardEntry(
+            versionFirst,
+            activityId,
+            getVersionString(mode)
+        )
+    }
+
+    return null
+}
 
 const PantheonModeGrid = ({
     modes,
     instancesByMode,
     isLoading,
     isExpanded,
-    getActivityIdForVersion
+    getActivityIdForVersion,
+    gauntletRaceEntry,
+    pantheonVersionFirstEntries,
+    getVersionString
 }: {
     modes: readonly number[]
     instancesByMode: Collection<number, Collection<string, RaidHubInstanceForPlayer>> | null
     isLoading: boolean
     isExpanded: boolean
     getActivityIdForVersion: (versionId: number) => number
+    gauntletRaceEntry: RaidHubGauntletRaceEntry | null
+    pantheonVersionFirstEntries: Collection<number, RaidHubPantheonVersionFirstEntry>
+    getVersionString: (versionId: number) => string
 }) => (
     <Grid as="section" $minCardWidth={325} $minCardWidthMobile={300} $fullWidth $relative>
         {modes
@@ -29,7 +106,16 @@ const PantheonModeGrid = ({
                     isLoadingActivities={isLoading}
                     raidId={getActivityIdForVersion(mode)}
                     versionId={mode}>
-                    <RaidCard leaderboardEntry={null} isExpanded={isExpanded} />
+                    <RaidCard
+                        leaderboardEntry={resolvePantheonLeaderboardEntry(
+                            mode,
+                            getActivityIdForVersion(mode),
+                            gauntletRaceEntry,
+                            pantheonVersionFirstEntries,
+                            getVersionString
+                        )}
+                        isExpanded={isExpanded}
+                    />
                 </RaidCardContext>
             ))}
     </Grid>
@@ -38,17 +124,22 @@ const PantheonModeGrid = ({
 export const PantheonLayout = ({
     instances,
     isLoading,
-    isExpanded
+    isExpanded,
+    gauntletRaceEntry,
+    pantheonVersionFirstEntries
 }: {
     instances: Collection<string, RaidHubInstanceForPlayer>[]
     isExpanded: boolean
     isLoading: boolean
+    gauntletRaceEntry: RaidHubGauntletRaceEntry | null
+    pantheonVersionFirstEntries: Collection<number, RaidHubPantheonVersionFirstEntry>
 }) => {
     const {
         activePantheonVersions,
         pantheonSunsetVersions,
         versionDefinitions,
-        activePantheonIds
+        activePantheonIds,
+        getVersionString
     } = useRaidHubManifest()
 
     const getActivityIdForVersion = useCallback(
@@ -78,6 +169,9 @@ export const PantheonLayout = ({
                 isLoading={isLoading}
                 isExpanded={isExpanded}
                 getActivityIdForVersion={getActivityIdForVersion}
+                gauntletRaceEntry={gauntletRaceEntry}
+                pantheonVersionFirstEntries={pantheonVersionFirstEntries}
+                getVersionString={getVersionString}
             />
             {pantheonSunsetVersions.length > 0 && (
                 <div>
@@ -90,6 +184,9 @@ export const PantheonLayout = ({
                         isLoading={isLoading}
                         isExpanded={isExpanded}
                         getActivityIdForVersion={getActivityIdForVersion}
+                        gauntletRaceEntry={gauntletRaceEntry}
+                        pantheonVersionFirstEntries={pantheonVersionFirstEntries}
+                        getVersionString={getVersionString}
                     />
                 </div>
             )}

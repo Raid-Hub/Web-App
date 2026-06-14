@@ -20,7 +20,9 @@ import { useLinkedProfiles } from "~/services/bungie/hooks"
 import { RaidHubError } from "~/services/raidhub/RaidHubError"
 import { useRaidHubActivities, useRaidHubPlayers } from "~/services/raidhub/hooks"
 import {
+    type RaidHubGauntletRaceEntry,
     type RaidHubInstanceForPlayer,
+    type RaidHubPantheonVersionFirstEntry,
     type RaidHubWorldFirstEntry
 } from "~/services/raidhub/types"
 import { ActivityHistoryLayout } from "./ActivityHistoryLayout"
@@ -96,6 +98,36 @@ export const RaidsWrapper = () => {
         return raidToData
     }, [listedRaidIds, players])
 
+    const gauntletRaceEntry = useMemo(() => {
+        let best: RaidHubGauntletRaceEntry | null = null
+
+        players.forEach(p => {
+            const entry = p.gauntletRaceEntry
+            if (!entry) return
+            if (!best || entry.rank < best.rank) {
+                best = entry
+            }
+        })
+
+        return best
+    }, [players])
+
+    const pantheonVersionFirstEntries = useMemo(() => {
+        const entries = new Collection<number, RaidHubPantheonVersionFirstEntry>()
+
+        players.forEach(p => {
+            Object.values(p.pantheonVersionFirstEntries ?? {}).forEach(entry => {
+                if (!entry) return
+                const curr = entries.get(entry.versionId)
+                if (!curr || entry.rank < curr.rank) {
+                    entries.set(entry.versionId, entry)
+                }
+            })
+        })
+
+        return entries
+    }, [players])
+
     const activitiesByRaid = useMemo(() => {
         if (isLoadingActivities) return null
 
@@ -156,6 +188,8 @@ export const RaidsWrapper = () => {
                         )}
                         isLoading={isLoadingActivities || !areMembershipsFetched}
                         isExpanded={isExpanded}
+                        gauntletRaceEntry={gauntletRaceEntry}
+                        pantheonVersionFirstEntries={pantheonVersionFirstEntries}
                     />
                 )
             case "history":
@@ -181,6 +215,8 @@ export const RaidsWrapper = () => {
         activities,
         activitiesByRaid,
         leaderboardEntriesByRaid,
+        gauntletRaceEntry,
+        pantheonVersionFirstEntries,
         isExpanded
     ])
 

@@ -2855,12 +2855,14 @@ export interface components {
       readonly platformType: components["schemas"]["DestinyMembershipType"];
       readonly activityId: number;
       readonly versionId: number;
-      /** @description If the instance was completed before the day one end date */
+      /** @description If the instance was completed within 24 hours of release. For pantheon modes, uses the version release date (release_date_override when set); otherwise uses the activity day_one_end. */
       readonly isDayOne: boolean;
       /** @description If this clear was contest mode: when the activity exposes version_id 32 (contest) on activity_version, true only for that version while still before contest_end; otherwise true when completed before contest_end (legacy raids). */
       readonly isContest: boolean;
       /** @description If the instance was completed before the week one end date */
       readonly isWeekOne: boolean;
+      /** @description If the instance is a pantheon activity mode */
+      readonly isPantheon: boolean;
       /** @description If the instance is blacklisted from leaderboards */
       readonly isBlacklisted: boolean;
     };
@@ -3300,6 +3302,20 @@ export interface components {
       readonly isContest: boolean;
       readonly isWeekOne: boolean;
       readonly isChallengeMode: boolean;
+      readonly isGauntletRace?: boolean;
+    };
+    readonly GauntletRaceEntry: {
+      /** Format: int64 */
+      readonly instanceId: string;
+      readonly rank: number;
+      readonly versionId: number;
+    };
+    readonly PantheonVersionFirstEntry: {
+      readonly versionId: number;
+      /** Format: int64 */
+      readonly instanceId: string;
+      readonly rank: number;
+      readonly isDayOne: boolean;
     };
     readonly Teammate: {
       readonly estimatedTimePlayedSeconds: number;
@@ -3531,6 +3547,10 @@ export interface components {
       readonly worldFirstEntries: {
         [key: string]: components["schemas"]["WorldFirstEntry"];
       };
+      readonly gauntletRaceEntry: components["schemas"]["GauntletRaceEntry"];
+      readonly pantheonVersionFirstEntries: {
+        [key: string]: components["schemas"]["PantheonVersionFirstEntry"];
+      };
     };
     readonly PlayerTeammatesResponse: readonly components["schemas"]["Teammate"][];
     readonly PlayerInstancesResponse: readonly (components["schemas"]["Instance"] & {
@@ -3543,6 +3563,7 @@ export interface components {
     };
     readonly InstanceResponse: components["schemas"]["Instance"] & ({
       readonly leaderboardRank: number | null;
+      readonly isGauntletRace: boolean;
       readonly metadata: components["schemas"]["InstanceMetadata"];
       readonly players: readonly components["schemas"]["InstancePlayerExtended"][];
     });

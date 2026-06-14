@@ -22,8 +22,8 @@ export async function generateMetadata(): Promise<Metadata> {
         notFound()
     }
 
-    const title = `${activity.name}: ${version.name} Community Race Leaderboard`
-    const description = `View community race placements for ${version.name} in ${activity.name}`
+    const title = `${activity.name}: ${version.name} Gauntlet Race Leaderboard`
+    const description = `View gauntlet race placements for ${version.name} in ${activity.name}`
 
     return {
         title,
@@ -31,7 +31,7 @@ export async function generateMetadata(): Promise<Metadata> {
         keywords: [
             activity.name,
             version.name,
-            "community race",
+            "gauntlet race",
             "pantheon",
             ...baseMetadata.keywords
         ],
@@ -59,7 +59,7 @@ export default async function Page({ searchParams }: { searchParams: Record<stri
                 <Splash
                     tertiaryTitle={activity.name}
                     title={version.name}
-                    subtitle="Community Race Leaderboard">
+                    subtitle="Gauntlet Race Leaderboard">
                     <CloudflareActivitySplash
                         activityId={version.associatedActivityId}
                         versionId={version.id}

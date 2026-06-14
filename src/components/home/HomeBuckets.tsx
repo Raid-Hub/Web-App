@@ -210,7 +210,7 @@ function RaidCard({ raid }: { raid: RaidHubActivityDefinition }) {
 
 const PANTHEON_COMMUNITY_RACE_LINK: LinkItem = {
     href: "/leaderboards/team/custom/pantheon-community-race",
-    label: "Community Race",
+    label: "Gauntlet Race",
     accent: "gold"
 }
 
