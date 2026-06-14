@@ -1,5 +1,5 @@
-import { formatActivityDisplayParts } from "~/lib/activity/display"
 import { useActivityDisplayParts } from "~/hooks/useActivityDisplayParts"
+import { formatActivityDisplayParts } from "~/lib/activity/display"
 
 export const useAttributedRaidName = (
     tag: {

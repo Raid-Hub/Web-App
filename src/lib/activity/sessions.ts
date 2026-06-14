@@ -40,10 +40,7 @@ const isSameCalendarDay = (a: Date, b: Date) =>
 const sortNewestFirst = (activities: readonly RaidHubInstanceForPlayer[]) =>
     [...activities]
         .filter(a => new Date(a.dateCompleted).getTime() <= Date.now())
-        .sort(
-            (a, b) =>
-                new Date(b.dateCompleted).getTime() - new Date(a.dateCompleted).getTime()
-        )
+        .sort((a, b) => new Date(b.dateCompleted).getTime() - new Date(a.dateCompleted).getTime())
 
 const clusterWithinSession = (
     sessionActivities: RaidHubInstanceForPlayer[],
@@ -158,8 +155,7 @@ export const getActivityClusterStats = (cluster: ActivityCluster): ActivityClust
 export const getPlaySessionSpanSeconds = (session: PlaySession) => {
     const newestEnd = session.startedAt.getTime()
     const oldestEnd = session.endedAt.getTime()
-    const oldestDuration =
-        session.activities[session.activities.length - 1]?.duration ?? 0
+    const oldestDuration = session.activities[session.activities.length - 1]?.duration ?? 0
     const spanMs = newestEnd - oldestEnd + oldestDuration * 1000
     return Math.max(0, Math.round(spanMs / 1000))
 }

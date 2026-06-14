@@ -1,8 +1,8 @@
 "use client"
 
-import { type PlaySession, getPlaySessionSpanSeconds } from "~/lib/activity/sessions"
-import { ActivityClusterBlock } from "./ActivityClusterBlock"
+import { getPlaySessionSpanSeconds, type PlaySession } from "~/lib/activity/sessions"
 import { secondsToHMS } from "~/util/presentation/formatting"
+import { ActivityClusterBlock } from "./ActivityClusterBlock"
 
 export const PlaySessionBlock = ({ session }: { session: PlaySession }) => {
     const spanSeconds = getPlaySessionSpanSeconds(session)
@@ -18,7 +18,8 @@ export const PlaySessionBlock = ({ session }: { session: PlaySession }) => {
                     Session
                 </div>
                 <div className="text-muted-foreground text-xs tabular-nums sm:text-sm">
-                    {timeFormatter.format(session.endedAt)} – {timeFormatter.format(session.startedAt)}
+                    {timeFormatter.format(session.endedAt)} –{" "}
+                    {timeFormatter.format(session.startedAt)}
                     {spanSeconds > 0 ? ` · ${secondsToHMS(spanSeconds, false)}` : ""}
                 </div>
             </header>

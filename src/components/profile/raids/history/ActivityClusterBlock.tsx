@@ -4,7 +4,7 @@ import { ChevronDown } from "lucide-react"
 import { useState } from "react"
 import { CloudflareActivitySplash } from "~/components/CloudflareImage"
 import { useActivityDisplayParts } from "~/hooks/useActivityDisplayParts"
-import { type ActivityCluster, getActivityClusterStats } from "~/lib/activity/sessions"
+import { getActivityClusterStats, type ActivityCluster } from "~/lib/activity/sessions"
 import { cn } from "~/lib/tw"
 import { secondsToHMS } from "~/util/presentation/formatting"
 import { ActivityAttemptRow } from "./ActivityAttemptRow"
@@ -38,10 +38,7 @@ export const ActivityClusterBlock = ({ cluster }: { cluster: ActivityCluster }) 
         return (
             <div className="border-border/40 bg-background/20 overflow-hidden rounded-md border">
                 <div className="flex items-center gap-2 border-b px-3 py-2">
-                    <ClusterThumb
-                        activityId={cluster.activityId}
-                        versionId={cluster.versionId}
-                    />
+                    <ClusterThumb activityId={cluster.activityId} versionId={cluster.versionId} />
                     <span className="truncate text-sm font-medium sm:text-base">
                         {display?.title ?? "Unknown Activity"}
                     </span>
@@ -83,7 +80,7 @@ export const ActivityClusterBlock = ({ cluster }: { cluster: ActivityCluster }) 
             </button>
 
             {expanded && (
-                <div className="border-border/40 divide-border/30 border-t divide-y">
+                <div className="border-border/40 divide-border/30 divide-y border-t">
                     {cluster.activities.map(activity => (
                         <ActivityAttemptRow key={activity.instanceId} activity={activity} compact />
                     ))}
@@ -93,13 +90,7 @@ export const ActivityClusterBlock = ({ cluster }: { cluster: ActivityCluster }) 
     )
 }
 
-const ClusterThumb = ({
-    activityId,
-    versionId
-}: {
-    activityId: number
-    versionId: number
-}) => (
+const ClusterThumb = ({ activityId, versionId }: { activityId: number; versionId: number }) => (
     <div className="relative size-10 shrink-0 overflow-hidden rounded-md sm:size-11">
         <CloudflareActivitySplash
             activityId={activityId}

@@ -1,9 +1,9 @@
 import { useMemo } from "react"
 import { useRaidHubManifest } from "~/components/providers/RaidHubManifestManager"
 import {
+    getActivityDisplayParts,
     type ActivityDisplayInput,
-    type ActivityDisplayParts,
-    getActivityDisplayParts
+    type ActivityDisplayParts
 } from "~/lib/activity/display"
 
 export const useActivityDisplayParts = (
