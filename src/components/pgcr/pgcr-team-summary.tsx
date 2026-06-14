@@ -11,7 +11,6 @@ export interface ColumnLeaderEntry {
     value: string
     shareLabel?: string
     caption?: string
-    accent?: "deaths"
 }
 
 export interface TeamSummaryColumn {
@@ -102,7 +101,6 @@ const ColumnLeader = ({
     value,
     shareLabel,
     caption,
-    accent,
     bordered
 }: ColumnLeaderEntry & { bordered?: boolean }) => {
     const { query } = usePGCRContext()
@@ -114,8 +112,7 @@ const ColumnLeader = ({
             onClick={() => query.set("player", player.playerInfo.membershipId)}
             className={cn(
                 "group flex flex-1 flex-col items-center gap-1.5 px-2 py-2.5 text-center transition-colors hover:bg-zinc-900/80 md:gap-2 md:px-3 md:py-3",
-                bordered && "border-t border-zinc-800",
-                accent === "deaths" && "bg-zinc-900/40"
+                bordered && "border-t border-zinc-800"
             )}>
             <Avatar className="size-6 flex-shrink-0 rounded-sm md:size-7">
                 <AvatarImage
@@ -135,11 +132,7 @@ const ColumnLeader = ({
                         {caption}
                     </div>
                 )}
-                <div
-                    className={cn(
-                        "mt-0.5 text-lg font-semibold tabular-nums md:text-xl",
-                        accent === "deaths" ? "text-zinc-400" : "text-primary/90"
-                    )}>
+                <div className="text-primary/90 mt-0.5 text-lg font-semibold tabular-nums md:text-xl">
                     {value}
                 </div>
                 {shareLabel && (

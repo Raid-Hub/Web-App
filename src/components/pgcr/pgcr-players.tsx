@@ -104,8 +104,7 @@ export const PGCRPlayers = ({ data, mvp, playerMergedStats, sortScores }: PGCRPl
                     player: mostDeathsPlayer,
                     value: mostDeathsValue.toLocaleString(),
                     shareLabel:
-                        formatTeamSharePercentage(mostDeathsValue, totals.deaths) ?? undefined,
-                    accent: totals.deaths > 0 ? ("deaths" as const) : undefined
+                        formatTeamSharePercentage(mostDeathsValue, totals.deaths) ?? undefined
                 }
             ]
         },
