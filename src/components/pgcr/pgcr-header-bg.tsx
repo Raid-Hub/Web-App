@@ -22,7 +22,7 @@ export const PGCRHeaderBackground = ({
     const backgroundImageUrl = variant?.url ?? FallbackSplash
     return (
         <div
-            className="relative min-h-44 overflow-hidden rounded-t-lg bg-cover bg-center md:h-48"
+            className="relative min-h-44 rounded-t-lg bg-cover bg-center md:min-h-48"
             style={{
                 backgroundImage: `url(${backgroundImageUrl})`
             }}>
