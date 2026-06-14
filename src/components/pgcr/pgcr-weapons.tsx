@@ -1,15 +1,11 @@
 "use client"
 
 import { Collection } from "@discordjs/collection"
-import { Crosshair, Swords } from "lucide-react"
 import Image from "next/image"
 import Link from "next/link"
 import { useMemo } from "react"
 import { usePGCRContext } from "~/hooks/pgcr/ClientStateManager"
 import { type PlayerStats } from "~/lib/pgcr/types"
-import { Badge } from "~/shad/badge"
-import { Card, CardContent, CardHeader } from "~/shad/card"
-import { Progress } from "~/shad/progress"
 import { Tooltip, TooltipContent, TooltipTrigger } from "~/shad/tooltip"
 import { bungieItemUrl, getBungieDisplayName } from "~/util/destiny"
 
@@ -18,6 +14,11 @@ interface WeaponData {
     precisionKills: number
     users: Set<string>
 }
+
+const KINETIC_BUCKET = 1498876634
+const ENERGY_BUCKET = 2465295065
+const POWER_BUCKET = 953998645
+
 export const WeaponTable = ({
     kineticWeapons,
     energyWeapons,
@@ -32,107 +33,76 @@ export const WeaponTable = ({
     showUsers: boolean
 }) => {
     const { weaponsMap } = usePGCRContext()
+
+    const slots = [
+        { label: "Kinetic", weapons: kineticWeapons },
+        { label: "Energy", weapons: energyWeapons },
+        { label: "Power", weapons: powerWeapons }
+    ].filter(slot => slot.weapons.size > 0)
+
+    if (slots.length === 0) {
+        return null
+    }
+
     return (
-        <Card className="gap-2 rounded-none border-zinc-800 bg-zinc-950">
-            <CardHeader className="pb-0">
-                <h3 className="flex items-center gap-2 text-base font-medium md:text-lg">
-                    <Swords className="text-raidhub h-4 w-4 md:h-5 md:w-5" />
-                    Weapons
-                </h3>
-            </CardHeader>
-            <CardContent>
-                <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-                    {/* Kinetic Weapons */}
-                    <div>
-                        <div className="mb-3 flex items-center">
-                            <Badge
-                                variant="outline"
-                                className="border-zinc-200/20 bg-zinc-200/10 text-zinc-200">
-                                Kinetic
-                            </Badge>
-                        </div>
-                        <div className="space-y-3">
-                            {kineticWeapons.map((weapon, hash) => (
-                                <WeaponCard
-                                    weaponHash={hash}
-                                    key={hash}
-                                    kills={weapon.kills}
-                                    precisionKills={weapon.precisionKills}
-                                    characterKills={stats.kills}
-                                    weaponName={
-                                        weaponsMap.get(hash)?.displayProperties.name ?? "Unknown"
-                                    }
-                                    icon={weaponsMap.get(hash)?.displayProperties.icon ?? ""}
-                                    users={weapon.users}
-                                    showUsers={showUsers}
-                                />
-                            ))}
-                        </div>
-                    </div>
-                    {/* Energy Weapons */}
-                    <div>
-                        <div className="mb-3 flex items-center">
-                            <Badge
-                                variant="outline"
-                                className="border-green-400/20 bg-green-400/10 text-green-400">
-                                Energy
-                            </Badge>
-                        </div>
-                        <div className="space-y-3">
-                            {energyWeapons.map((weapon, hash) => (
-                                <WeaponCard
-                                    weaponHash={hash}
-                                    key={hash}
-                                    kills={weapon.kills}
-                                    precisionKills={weapon.precisionKills}
-                                    characterKills={stats.kills}
-                                    weaponName={
-                                        weaponsMap.get(hash)?.displayProperties.name ?? "Unknown"
-                                    }
-                                    icon={weaponsMap.get(hash)?.displayProperties.icon ?? ""}
-                                    users={weapon.users}
-                                    showUsers={showUsers}
-                                />
-                            ))}
-                        </div>
-                    </div>
-                    {/* Power Weapons */}
-                    <div>
-                        <div className="mb-3 flex items-center">
-                            <Badge
-                                variant="outline"
-                                className="border-purple-400/20 bg-purple-400/10 text-purple-400">
-                                Power
-                            </Badge>
-                        </div>
-                        <div className="space-y-3">
-                            {powerWeapons.map((weapon, hash) => (
-                                <WeaponCard
-                                    key={hash}
-                                    weaponHash={hash}
-                                    kills={weapon.kills}
-                                    precisionKills={weapon.precisionKills}
-                                    characterKills={stats.kills}
-                                    weaponName={
-                                        weaponsMap.get(hash)?.displayProperties.name ?? "Unknown"
-                                    }
-                                    icon={weaponsMap.get(hash)?.displayProperties.icon ?? ""}
-                                    users={weapon.users}
-                                    showUsers={showUsers}
-                                />
-                            ))}
-                        </div>
-                    </div>
-                </div>
-            </CardContent>
-        </Card>
+        <div className="overflow-x-auto rounded-lg border border-zinc-800 bg-zinc-950">
+            <div
+                className="grid min-w-max divide-x divide-zinc-800"
+                style={{ gridTemplateColumns: `repeat(${slots.length}, minmax(11rem, 1fr))` }}>
+                {slots.map(slot => (
+                    <WeaponSlot
+                        key={slot.label}
+                        label={slot.label}
+                        weapons={slot.weapons}
+                        weaponsMap={weaponsMap}
+                        totalKills={stats.kills}
+                        showUsers={showUsers}
+                    />
+                ))}
+            </div>
+        </div>
     )
 }
 
-interface WeaponCardProps {
+const WeaponSlot = ({
+    label,
+    weapons,
+    weaponsMap,
+    totalKills,
+    showUsers
+}: {
+    label: string
+    weapons: Collection<number, WeaponData>
+    weaponsMap: ReturnType<typeof usePGCRContext>["weaponsMap"]
+    totalKills: number
+    showUsers: boolean
+}) => (
+    <div className="min-w-[11rem]">
+        <div className="border-b border-zinc-800 px-3 py-2 text-center text-[10px] font-medium tracking-wider text-zinc-500 uppercase">
+            {label}
+        </div>
+        <div className="divide-y divide-zinc-800">
+            {weapons.map((weapon, hash) => (
+                <WeaponRow
+                    key={hash}
+                    weaponHash={hash}
+                    kills={weapon.kills}
+                    precisionKills={weapon.precisionKills}
+                    totalKills={totalKills}
+                    weaponName={weaponsMap.get(hash)?.displayProperties.name ?? "Unknown"}
+                    icon={weaponsMap.get(hash)?.displayProperties.icon ?? ""}
+                    users={weapon.users}
+                    showUsers={showUsers}
+                />
+            ))}
+        </div>
+    </div>
+)
+
+interface WeaponRowProps {
     kills: number
     precisionKills: number
-    characterKills: number
+    totalKills: number
     weaponHash: number
     icon: string
     weaponName: string
@@ -140,83 +110,73 @@ interface WeaponCardProps {
     showUsers: boolean
 }
 
-export const WeaponCard = ({
+const WeaponRow = ({
     kills,
     precisionKills,
-    characterKills: totalPlayerKills,
+    totalKills,
     weaponName,
     icon,
     users,
     showUsers,
     weaponHash
-}: WeaponCardProps) => {
+}: WeaponRowProps) => {
     const { data } = usePGCRContext()
-    const getName = (id: string) => {
-        return getBungieDisplayName(
-            data.players.find(player => player.playerInfo.membershipId === id)!.playerInfo,
-            { excludeCode: true }
-        )
-    }
     const imageUrl = bungieItemUrl(icon ?? "")
+    const sharePct = totalKills > 0 ? (kills / totalKills) * 100 : 0
+    const precisionPct = kills > 0 ? (100 * precisionKills) / kills : 0
+
     return (
-        <Card className="overflow-hidden rounded-none border-zinc-800 bg-zinc-950 py-0">
-            <CardContent className="p-0">
-                <div className="flex items-center">
-                    <div className="flex size-12 flex-shrink-0 items-center justify-center overflow-hidden bg-zinc-800 md:size-16">
-                        {imageUrl && (
-                            <Image
-                                unoptimized
-                                src={imageUrl}
-                                alt={weaponName}
-                                className="h-full w-full object-contain"
-                                width={96}
-                                height={96}
-                            />
-                        )}
-                    </div>
-                    <div className="flex-1 space-y-1 p-3">
-                        <div className="flex items-center justify-between gap-1">
-                            <Link
-                                className="text-primary text-xs font-medium md:text-sm"
-                                target="_blank"
-                                rel="noopener"
-                                href={`https://d2foundry.gg/w/${weaponHash}`}>
-                                {weaponName}
-                            </Link>
-                            <div className="text-lg font-medium">{kills}</div>
-                        </div>
-                        <div className="hidden items-center gap-2 md:flex">
-                            <Progress
-                                value={(kills / totalPlayerKills) * 100}
-                                className="h-1.5 flex-1"
-                            />
-                            <span className="text-xs whitespace-nowrap text-zinc-500">
-                                {((kills / totalPlayerKills) * 100).toFixed(1)}%
+        <div className="flex items-center gap-2 px-2 py-2 md:gap-3 md:px-3">
+            <div className="flex size-8 shrink-0 items-center justify-center overflow-hidden bg-zinc-800 md:size-9">
+                {imageUrl && (
+                    <Image
+                        unoptimized
+                        src={imageUrl}
+                        alt={weaponName}
+                        className="h-full w-full object-contain"
+                        width={72}
+                        height={72}
+                    />
+                )}
+            </div>
+            <div className="min-w-0 flex-1">
+                <Link
+                    className="block truncate text-xs font-medium hover:text-white md:text-sm"
+                    target="_blank"
+                    rel="noopener"
+                    href={`https://d2foundry.gg/w/${weaponHash}`}>
+                    {weaponName}
+                </Link>
+                {showUsers ? (
+                    <Tooltip>
+                        <TooltipTrigger asChild>
+                            <span className="text-[10px] text-zinc-500">
+                                {users.size} player{users.size !== 1 ? "s" : ""}
                             </span>
-                        </div>
-                        <div className="hidden justify-end md:flex">
-                            <Tooltip>
-                                <TooltipTrigger asChild>
-                                    <span className="flex items-center gap-1 text-xs text-zinc-400">
-                                        {showUsers
-                                            ? `${users.size} player${users.size !== 1 ? "s" : ""}`
-                                            : `${((100 * precisionKills) / kills).toFixed(0)}% precision`}
-                                        {!showUsers && <Crosshair className="h-3 w-3" />}
-                                    </span>
-                                </TooltipTrigger>
-                                {showUsers && (
-                                    <TooltipContent>
-                                        {Array.from(users).map(user => (
-                                            <div key={user}>{getName(user)}</div>
-                                        ))}
-                                    </TooltipContent>
-                                )}
-                            </Tooltip>
-                        </div>
-                    </div>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                            {Array.from(users).map(id => (
+                                <div key={id}>{getBungieDisplayName(
+                                    data.players.find(player => player.playerInfo.membershipId === id)!
+                                        .playerInfo,
+                                    { excludeCode: true }
+                                )}</div>
+                            ))}
+                        </TooltipContent>
+                    </Tooltip>
+                ) : (
+                    <span className="text-[10px] text-zinc-500">
+                        {precisionPct.toFixed(0)}% precision
+                    </span>
+                )}
+            </div>
+            <div className="shrink-0 text-right">
+                <div className="text-primary/90 text-sm font-semibold tabular-nums md:text-base">
+                    {kills.toLocaleString()}
                 </div>
-            </CardContent>
-        </Card>
+                <div className="text-[10px] tabular-nums text-zinc-500">{sharePct.toFixed(1)}%</div>
+            </div>
+        </div>
     )
 }
 
@@ -225,7 +185,6 @@ export const AllPgcrWeaponsWrapper = (stats: PlayerStats) => {
     const { kineticWeapons, energyWeapons, powerWeapons } = useMemo(() => {
         const weaponStats = new Collection<number, WeaponData>()
         data.players.forEach(player => {
-            const weaponSet = new Set<number>()
             player.characters.forEach(character => {
                 character.weapons.forEach(weapon => {
                     const prev = weaponStats.get(weapon.weaponHash)
@@ -236,30 +195,19 @@ export const AllPgcrWeaponsWrapper = (stats: PlayerStats) => {
                             player.playerInfo.membershipId
                         )
                     })
-                    weaponSet.add(weapon.weaponHash)
                 })
             })
         })
 
         weaponStats.sort((a, b) => b.kills - a.kills)
 
-        const kineticWeapons = weaponStats.filter((_, key) => {
-            const weapon = weaponsMap.get(key)
-            return weapon?.inventory?.bucketTypeHash === 1498876634
-        })
-        const energyWeapons = weaponStats.filter((_, key) => {
-            const weapon = weaponsMap.get(key)
-            return weapon?.inventory?.bucketTypeHash === 2465295065
-        })
+        const byBucket = (bucketHash: number) =>
+            weaponStats.filter((_, key) => weaponsMap.get(key)?.inventory?.bucketTypeHash === bucketHash)
 
-        const powerWeapons = weaponStats.filter((_, key) => {
-            const weapon = weaponsMap.get(key)
-            return weapon?.inventory?.bucketTypeHash === 953998645
-        })
         return {
-            kineticWeapons,
-            energyWeapons,
-            powerWeapons
+            kineticWeapons: byBucket(KINETIC_BUCKET),
+            energyWeapons: byBucket(ENERGY_BUCKET),
+            powerWeapons: byBucket(POWER_BUCKET)
         }
     }, [data, weaponsMap])
 
