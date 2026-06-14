@@ -76,7 +76,7 @@ export const LeaderboardEntryComponent = ({
             )}
 
             {/* Left side */}
-            <div className="pointer-events-none relative z-10 flex-1">
+            <div className="pointer-events-none flex-1">
                 {/* Players */}
                 <div className="flex gap-4 p-2">
                     <div className="flex aspect-square min-w-5 flex-col justify-center text-lg">
