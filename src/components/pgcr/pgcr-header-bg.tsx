@@ -5,14 +5,18 @@ import { useRaidHubManifest } from "../providers/RaidHubManifestManager"
 
 export const PGCRHeaderBackground = ({
     activityId,
+    versionId,
     children
 }: {
     activityId: number
+    versionId?: number
     children: React.ReactNode
 }) => {
-    // getRaidSplash can return null for unknown activity ids; fall back to genericRaidSplash
-    const { getImageVariantsForActivity } = useRaidHubManifest()
-    const imageVariants = getImageVariantsForActivity(activityId)
+    const { getImageVariantsForActivity, getImageVariantsForVersion } = useRaidHubManifest()
+    const imageVariants =
+        versionId != null
+            ? getImageVariantsForVersion(versionId)
+            : getImageVariantsForActivity(activityId)
     const variant = imageVariants.find(v => v.size === "small") ?? imageVariants[0]
 
     const backgroundImageUrl = variant?.url ?? FallbackSplash
