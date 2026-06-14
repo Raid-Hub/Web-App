@@ -32,7 +32,7 @@ export const formatTeamSharePercentage = (
     return `${((playerValue / teamTotal) * 100).toFixed(fractionDigits)}%`
 }
 
-/** Player K/D as a percentage of the team average K/D (100% = average). */
+/** Player K/D lift relative to the team average K/D (0% = average). */
 export const formatKdRelativeToAveragePercentage = (
     playerKd: number,
     teamAverageKd: number
@@ -41,7 +41,9 @@ export const formatKdRelativeToAveragePercentage = (
         return null
     }
 
-    return `${((playerKd / teamAverageKd) * 100).toFixed(0)}%`
+    const lift = ((playerKd / teamAverageKd) - 1) * 100
+    const rounded = lift.toFixed(0)
+    return lift >= 0 ? `+${rounded}%` : `${rounded}%`
 }
 
 type PgcrTitleMetadata = {
