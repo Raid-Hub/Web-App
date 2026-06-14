@@ -87,8 +87,13 @@ export const InstanceFinderForm = ({
         name: "players"
     })
 
-    const { listedRaidIds, pantheonIds, getActivityString, getVersionString, getVersionsForActivity } =
-        useRaidHubManifest()
+    const {
+        listedRaidIds,
+        pantheonIds,
+        getActivityString,
+        getVersionString,
+        getVersionsForActivity
+    } = useRaidHubManifest()
 
     const activityOptions = useMemo(() => {
         const ids = [...listedRaidIds]
@@ -113,10 +118,12 @@ export const InstanceFinderForm = ({
         if (parsedActivityId === undefined || Number.isNaN(parsedActivityId)) {
             return []
         }
-        return getVersionsForActivity(parsedActivityId).map(version => ({
-            value: version.id,
-            label: getVersionString(version.id)
-        }))
+        return getVersionsForActivity(parsedActivityId)
+            .filter(version => version !== undefined)
+            .map(version => ({
+                value: version.id,
+                label: getVersionString(version.id)
+            }))
     }, [parsedActivityId, getVersionsForActivity, getVersionString])
 
     useEffect(() => {
