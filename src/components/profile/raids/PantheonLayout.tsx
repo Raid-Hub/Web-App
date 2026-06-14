@@ -38,8 +38,7 @@ const toPantheonVersionFirstLeaderboardEntry = (
     activityId,
     instanceId: entry.instanceId,
     timeAfterLaunch: 0,
-    rank:
-        entry.isDayOne && suppressesDayOnePlacement(entry.versionId) ? null : entry.rank,
+    rank: entry.isDayOne && suppressesDayOnePlacement(entry.versionId) ? null : entry.rank,
     isDayOne: entry.isDayOne,
     isContest: false,
     isWeekOne: false,
@@ -54,10 +53,12 @@ const resolvePantheonLeaderboardEntry = (
     gauntletRaceEntry: RaidHubGauntletRaceEntry | null,
     pantheonVersionFirstEntries: Collection<number, RaidHubPantheonVersionFirstEntry>,
     getVersionString: (versionId: number) => string
-): (Omit<RaidHubWorldFirstEntry, "rank"> & {
-    rank: number | null
-    versionLabel?: string | null
-}) | null => {
+):
+    | (Omit<RaidHubWorldFirstEntry, "rank"> & {
+          rank: number | null
+          versionLabel?: string | null
+      })
+    | null => {
     const versionFirst = pantheonVersionFirstEntries.get(mode) ?? null
     const gauntlet = gauntletRaceEntry?.versionId === mode ? gauntletRaceEntry : null
 

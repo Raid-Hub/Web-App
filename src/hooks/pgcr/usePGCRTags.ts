@@ -36,7 +36,8 @@ export const usePGCRTags = () => {
         else if (activity.playerCount === 2) tags.push({ tag: Tag.DUO, key: "duo" })
         else if (activity.playerCount === 3) tags.push({ tag: Tag.TRIO, key: "trio" })
         if (activity.flawless) tags.push({ tag: Tag.FLAWLESS, key: "flawless" })
-        if (selectedFeats.length === feats.length) tags.push({ tag: Tag.ALL_FEATS, key: "all-feats" })
+        if (selectedFeats.length === feats.length)
+            tags.push({ tag: Tag.ALL_FEATS, key: "all-feats" })
 
         return tags
     }, [activity, feats, selectedFeats, isChallengeMode])

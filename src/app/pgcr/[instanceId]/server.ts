@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation"
-import { formatLeaderboardRaceLabel } from "~/lib/pgcr/leaderboard-tag"
 import { getPgcrShortActivityName } from "~/lib/pgcr/formatting"
+import { formatLeaderboardRaceLabel } from "~/lib/pgcr/leaderboard-tag"
 import { Tag } from "~/models/tag"
 import { RaidHubError } from "~/services/raidhub/RaidHubError"
 import { getRaidHubApi } from "~/services/raidhub/common"
