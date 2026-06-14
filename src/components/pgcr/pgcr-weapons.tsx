@@ -162,7 +162,7 @@ const WeaponRow = ({
                     className="block truncate text-xs font-medium hover:text-white md:text-sm"
                     target="_blank"
                     rel="noopener"
-                    href={`https://d2foundry.gg/w/${weaponHash}`}>
+                    href={`https://destiny.report/w/${weaponHash}`}>
                     {weaponName}
                 </Link>
                 {showUsers ? (
