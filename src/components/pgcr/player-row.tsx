@@ -178,7 +178,10 @@ export default function PlayerRow({ player }: PlayerRowProps) {
                         <TooltipTrigger asChild>
                             <span>{killSharePct.toFixed(1)}%</span>
                         </TooltipTrigger>
-                        <TooltipContent>Kill share: (kills + assists) / team kills</TooltipContent>
+                        <TooltipContent>
+                            (Kills + assists) / team kills. Participation rate, not a share that
+                            sums to 100%.
+                        </TooltipContent>
                     </Tooltip>
                 </div>
                 <div
