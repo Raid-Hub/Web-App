@@ -36,7 +36,7 @@ const cloudflareVariants: {
     }
 ]
 
-export const FallbackSplash = "https://cdn.raidhub.io/content/splash/pantheon/large.png"
+export const FallbackSplash = "https://cdn.raidhub.io/content/splash/pantheon/large.jpg"
 
 const CloudflareStaticImages = {
     raidhubCitySplash: {
@@ -68,8 +68,10 @@ const CloudflareStaticImages = {
     genericRaidSplash: {
         path: "splash/pantheon",
         variants: {
-            small: "small.png",
-            large: "large.png"
+            tiny: "tiny.jpg",
+            small: "small.jpg",
+            medium: "medium.jpg",
+            large: "large.jpg"
         }
     },
     ...VaultEmblems,

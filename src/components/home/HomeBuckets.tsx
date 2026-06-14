@@ -228,7 +228,6 @@ function PantheonCard({
     const title =
         (activityId != null ? getActivityDefinition(activityId)?.name : null) ?? "The Pantheon"
     const releaseDate = activityId != null ? getActivityDefinition(activityId)?.releaseDate : null
-    const headerVersionId = versions.length > 0 ? Math.max(...versions) : null
 
     const versionGroups = useMemo(
         () =>
@@ -265,7 +264,6 @@ function PantheonCard({
             <SplashHeader
                 title={title}
                 activityId={activityId}
-                versionId={headerVersionId}
                 releaseDate={releaseDate}
                 expanded={expanded}
                 onToggle={() => setExpanded(e => !e)}
