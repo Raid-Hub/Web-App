@@ -55,10 +55,13 @@ export const getPgcrShortActivityName = (activityName: string) => {
     return colonIndex === -1 ? activityName : activityName.slice(0, colonIndex).trim()
 }
 
+export const getPantheonDisplayName = (activityName: string, versionName: string) =>
+    `${getPgcrShortActivityName(activityName)}: ${versionName}`
+
 export const getPgcrDisplayTitle = ({ isRaid, activityName, versionName }: PgcrTitleMetadata) => {
     if (isRaid) {
         return activityName
     }
 
-    return `${getPgcrShortActivityName(activityName)}: ${versionName}`
+    return getPantheonDisplayName(activityName, versionName)
 }
