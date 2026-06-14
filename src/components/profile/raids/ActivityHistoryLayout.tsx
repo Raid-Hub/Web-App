@@ -3,8 +3,10 @@
 import { type Collection } from "@discordjs/collection"
 import { useState } from "react"
 import { type RaidHubInstanceForPlayer } from "~/services/raidhub/types"
-import { Button } from "~/shad/button"
-import { ActivityHistoryList } from "./ActivityHistoryList"
+import { ActivityHistoryView } from "./history/ActivityHistoryView"
+
+const INITIAL_SESSION_COUNT = 12
+const SESSION_PAGE_SIZE = 8
 
 export const ActivityHistoryLayout = ({
     activities,
@@ -13,18 +15,14 @@ export const ActivityHistoryLayout = ({
     activities: Collection<string, RaidHubInstanceForPlayer>
     isLoading: boolean
 }) => {
-    const [sections, setSections] = useState(20)
+    const [visibleSessions, setVisibleSessions] = useState(INITIAL_SESSION_COUNT)
 
     return (
-        <div className="flex w-full flex-col justify-start space-y-4">
-            <ActivityHistoryList sections={sections} allActivities={activities} />
-            <div className="w-full">
-                <Button
-                    disabled={isLoading}
-                    onClick={() => !isLoading && setSections(old => old + 20)}>
-                    Load More
-                </Button>
-            </div>
-        </div>
+        <ActivityHistoryView
+            activities={activities}
+            visibleSessionCount={visibleSessions}
+            isLoading={isLoading}
+            onLoadMore={() => setVisibleSessions(count => count + SESSION_PAGE_SIZE)}
+        />
     )
 }
