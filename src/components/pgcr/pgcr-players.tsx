@@ -2,6 +2,10 @@ import { type Collection } from "@discordjs/collection"
 import { Fragment } from "react"
 import { PGCRTeamSummary } from "~/components/pgcr/pgcr-team-summary"
 import PlayerRow from "~/components/pgcr/player-row"
+import {
+    formatKdRelativeToAveragePercentage,
+    formatTeamSharePercentage
+} from "~/lib/pgcr/formatting"
 import { type PlayerStats } from "~/lib/pgcr/types"
 import { type RaidHubInstanceExtended } from "~/services/raidhub/types"
 import { CardContent } from "~/shad/card"
@@ -73,6 +77,13 @@ export const PGCRPlayers = ({ data, mvp, playerMergedStats, sortScores }: PGCRPl
     const _bestKdPlayerStats = playerMergedStats.get(bestKD)!
     const bestKd = _bestKdPlayerStats.kills / (_bestKdPlayerStats.deaths || 1)
 
+    const mostKillsValue = playerMergedStats.get(mostKills)!.kills
+    const mostDeathsValue = playerMergedStats.get(mostDeaths)!.deaths
+    const mostAssistsValue = playerMergedStats.get(mostAssists)!.assists
+    const mostMeleeValue = playerMergedStats.get(mostMelee)!.meleeKills
+    const mostGrenadesValue = playerMergedStats.get(mostGrenades)!.grenadeKills
+    const mostSuperKillsValue = playerMergedStats.get(mostSuperKills)!.superKills
+
     const teamSummaryColumns = [
         {
             label: "Kills",
@@ -80,7 +91,8 @@ export const PGCRPlayers = ({ data, mvp, playerMergedStats, sortScores }: PGCRPl
             leaders: [
                 {
                     player: mostKillsPlayer,
-                    value: playerMergedStats.get(mostKills)!.kills.toLocaleString()
+                    value: mostKillsValue.toLocaleString(),
+                    shareLabel: formatTeamSharePercentage(mostKillsValue, totals.kills) ?? undefined
                 }
             ]
         },
@@ -90,7 +102,9 @@ export const PGCRPlayers = ({ data, mvp, playerMergedStats, sortScores }: PGCRPl
             leaders: [
                 {
                     player: mostDeathsPlayer,
-                    value: playerMergedStats.get(mostDeaths)!.deaths.toLocaleString(),
+                    value: mostDeathsValue.toLocaleString(),
+                    shareLabel:
+                        formatTeamSharePercentage(mostDeathsValue, totals.deaths) ?? undefined,
                     accent: totals.deaths > 0 ? ("deaths" as const) : undefined
                 }
             ]
@@ -101,7 +115,9 @@ export const PGCRPlayers = ({ data, mvp, playerMergedStats, sortScores }: PGCRPl
             leaders: [
                 {
                     player: mostAssistsPlayer,
-                    value: playerMergedStats.get(mostAssists)!.assists.toLocaleString()
+                    value: mostAssistsValue.toLocaleString(),
+                    shareLabel:
+                        formatTeamSharePercentage(mostAssistsValue, totals.assists) ?? undefined
                 }
             ]
         },
@@ -111,7 +127,8 @@ export const PGCRPlayers = ({ data, mvp, playerMergedStats, sortScores }: PGCRPl
             leaders: [
                 {
                     player: bestKDPlayer,
-                    value: bestKd.toFixed(2)
+                    value: bestKd.toFixed(2),
+                    shareLabel: formatKdRelativeToAveragePercentage(bestKd, totalKd) ?? undefined
                 }
             ]
         },
@@ -121,7 +138,9 @@ export const PGCRPlayers = ({ data, mvp, playerMergedStats, sortScores }: PGCRPl
             leaders: [
                 {
                     player: mostMeleePlayer,
-                    value: playerMergedStats.get(mostMelee)!.meleeKills.toLocaleString()
+                    value: mostMeleeValue.toLocaleString(),
+                    shareLabel:
+                        formatTeamSharePercentage(mostMeleeValue, totals.meleeKills) ?? undefined
                 }
             ]
         },
@@ -131,7 +150,10 @@ export const PGCRPlayers = ({ data, mvp, playerMergedStats, sortScores }: PGCRPl
             leaders: [
                 {
                     player: mostGrenadesPlayer,
-                    value: playerMergedStats.get(mostGrenades)!.grenadeKills.toLocaleString()
+                    value: mostGrenadesValue.toLocaleString(),
+                    shareLabel:
+                        formatTeamSharePercentage(mostGrenadesValue, totals.grenadeKills) ??
+                        undefined
                 }
             ]
         },
@@ -141,7 +163,10 @@ export const PGCRPlayers = ({ data, mvp, playerMergedStats, sortScores }: PGCRPl
             leaders: [
                 {
                     player: mostSuperKillsPlayer,
-                    value: playerMergedStats.get(mostSuperKills)!.superKills.toLocaleString()
+                    value: mostSuperKillsValue.toLocaleString(),
+                    shareLabel:
+                        formatTeamSharePercentage(mostSuperKillsValue, totals.superKills) ??
+                        undefined
                 }
             ]
         }

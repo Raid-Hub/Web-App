@@ -9,6 +9,7 @@ import { bungieProfileIconUrl, getBungieDisplayName } from "~/util/destiny"
 export interface ColumnLeaderEntry {
     player: RaidHubInstancePlayerExtended
     value: string
+    shareLabel?: string
     caption?: string
     accent?: "deaths"
 }
@@ -97,6 +98,7 @@ const SummaryColumn = ({ label, teamValue, leaders }: TeamSummaryColumn) => (
 const ColumnLeader = ({
     player,
     value,
+    shareLabel,
     caption,
     accent,
     bordered
@@ -136,6 +138,9 @@ const ColumnLeader = ({
                     )}>
                     {value}
                 </div>
+                {shareLabel && (
+                    <div className="text-[10px] text-zinc-500 tabular-nums">{shareLabel}</div>
+                )}
             </div>
         </Link>
     )

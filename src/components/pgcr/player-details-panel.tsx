@@ -15,6 +15,7 @@ import { Button } from "~/shad/button"
 import { Card, CardContent, CardHeader } from "~/shad/card"
 import { Tooltip, TooltipContent, TooltipTrigger } from "~/shad/tooltip"
 import { bungieIconUrl, getBungieDisplayName } from "~/util/destiny"
+import { getActivityParticipationPercentage } from "~/lib/pgcr/formatting"
 import { round } from "~/util/math"
 import { secondsToHMS } from "~/util/presentation/formatting"
 import { WeaponTable } from "./pgcr-weapons"
@@ -86,7 +87,10 @@ const PlayerDetailsPanel = ({ player, onClose }: PlayerDetailsPanelProps) => {
     const activeCharacter = selectedCharacter
         ? player.characters.find(c => c.characterId === selectedCharacter)
         : null
-    const activityPercentage = round(100 * (player.timePlayedSeconds / data.duration), 0)
+    const activityPercentage = getActivityParticipationPercentage(
+        player.timePlayedSeconds,
+        data.duration
+    )
 
     const selectedStats = activeCharacter ?? playerStatsMerged.get(player.playerInfo.membershipId)!
 
@@ -207,24 +211,26 @@ const PlayerDetailsPanel = ({ player, onClose }: PlayerDetailsPanelProps) => {
                                 )}
                                 {player.isFirstClear && <PlayerBadge variant="firstClear" />}
 
-                                <Tooltip>
-                                    <TooltipTrigger asChild>
-                                        <div className="ml-1 flex items-center gap-1">
-                                            <ActivityPieChart
-                                                percentage={activityPercentage}
-                                                size={18}
-                                                color={player.completed ? "green" : "orange"}
-                                            />
-                                            <span className="text-xs text-zinc-400">
-                                                {activityPercentage}% participation
-                                            </span>
-                                        </div>
-                                    </TooltipTrigger>
-                                    <TooltipContent side="bottom" align="start">
-                                        This player participated in {activityPercentage}% of the
-                                        activity
-                                    </TooltipContent>
-                                </Tooltip>
+                                {activityPercentage != null && (
+                                    <Tooltip>
+                                        <TooltipTrigger asChild>
+                                            <div className="ml-1 flex items-center gap-1">
+                                                <ActivityPieChart
+                                                    percentage={activityPercentage}
+                                                    size={18}
+                                                    color={player.completed ? "green" : "orange"}
+                                                />
+                                                <span className="text-xs text-zinc-400">
+                                                    {activityPercentage}% participation
+                                                </span>
+                                            </div>
+                                        </TooltipTrigger>
+                                        <TooltipContent side="bottom" align="start">
+                                            This player participated in {activityPercentage}% of the
+                                            activity
+                                        </TooltipContent>
+                                    </Tooltip>
+                                )}
                             </div>
                         </div>
                     </div>

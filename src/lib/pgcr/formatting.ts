@@ -1,3 +1,49 @@
+import { round } from "~/util/math"
+
+/** Max value stored for `time_played_seconds` (Postgres smallint). ~9h 6m 7s. */
+export const TIME_PLAYED_SECONDS_MAX = 32767
+
+export const isTimePlayedSaturated = (timePlayedSeconds: number) =>
+    timePlayedSeconds >= TIME_PLAYED_SECONDS_MAX
+
+export const getActivityParticipationPercentage = (
+    timePlayedSeconds: number,
+    durationSeconds: number
+): number | null => {
+    if (isTimePlayedSaturated(timePlayedSeconds) || durationSeconds <= 0) {
+        return null
+    }
+
+    return round(
+        100 * (Math.min(timePlayedSeconds, durationSeconds) / durationSeconds),
+        0
+    )
+}
+
+export const formatTeamSharePercentage = (
+    playerValue: number,
+    teamTotal: number,
+    fractionDigits = 1
+): string | null => {
+    if (teamTotal <= 0) {
+        return null
+    }
+
+    return `${((playerValue / teamTotal) * 100).toFixed(fractionDigits)}%`
+}
+
+/** Player K/D as a percentage of the team average K/D (100% = average). */
+export const formatKdRelativeToAveragePercentage = (
+    playerKd: number,
+    teamAverageKd: number
+): string | null => {
+    if (teamAverageKd <= 0) {
+        return null
+    }
+
+    return `${((playerKd / teamAverageKd) * 100).toFixed(0)}%`
+}
+
 type PgcrTitleMetadata = {
     isRaid: boolean
     activityName: string
