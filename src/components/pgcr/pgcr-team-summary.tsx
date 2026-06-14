@@ -1,6 +1,6 @@
 "use client"
 
-import Link from "next/link"
+import { usePGCRContext } from "~/hooks/pgcr/ClientStateManager"
 import { cn } from "~/lib/tw"
 import { type RaidHubInstancePlayerExtended } from "~/services/raidhub/types"
 import { Avatar, AvatarFallback, AvatarImage } from "~/shad/avatar"
@@ -9,8 +9,8 @@ import { bungieProfileIconUrl, getBungieDisplayName } from "~/util/destiny"
 export interface ColumnLeaderEntry {
     player: RaidHubInstancePlayerExtended
     value: string
+    shareLabel?: string
     caption?: string
-    accent?: "deaths"
 }
 
 export interface TeamSummaryColumn {
@@ -27,8 +27,6 @@ interface PGCRTeamSummaryProps {
 export function PGCRTeamSummary({ mvp, columns }: PGCRTeamSummaryProps) {
     return (
         <div className="overflow-hidden rounded-lg border border-zinc-800 bg-zinc-950">
-            {mvp && <MvpBanner player={mvp} />}
-
             <div className="overflow-x-auto">
                 <div
                     className="grid min-w-max divide-x divide-zinc-800"
@@ -40,17 +38,21 @@ export function PGCRTeamSummary({ mvp, columns }: PGCRTeamSummaryProps) {
                     ))}
                 </div>
             </div>
+
+            {mvp && <MvpBanner player={mvp} />}
         </div>
     )
 }
 
 const MvpBanner = ({ player }: { player: RaidHubInstancePlayerExtended }) => {
+    const { query } = usePGCRContext()
     const displayName = getBungieDisplayName(player.playerInfo, { excludeCode: true })
 
     return (
-        <Link
-            href={`/profile/${player.playerInfo.membershipId}`}
-            className="group flex items-center gap-2 border-b border-zinc-800 bg-yellow-500/[0.04] px-3 py-2 transition-colors hover:bg-yellow-500/[0.07] md:gap-3 md:px-4 md:py-2.5">
+        <button
+            type="button"
+            onClick={() => query.set("player", player.playerInfo.membershipId)}
+            className="group flex w-full items-center gap-2 border-t border-zinc-800 bg-yellow-500/[0.04] px-3 py-2 text-left transition-colors hover:bg-yellow-500/[0.07] md:gap-3 md:px-4 md:py-2.5">
             <Avatar className="size-7 flex-shrink-0 rounded-sm md:size-8">
                 <AvatarImage
                     src={bungieProfileIconUrl(player.playerInfo.iconPath)}
@@ -68,7 +70,7 @@ const MvpBanner = ({ player }: { player: RaidHubInstancePlayerExtended }) => {
                     {displayName}
                 </div>
             </div>
-        </Link>
+        </button>
     )
 }
 
@@ -97,19 +99,20 @@ const SummaryColumn = ({ label, teamValue, leaders }: TeamSummaryColumn) => (
 const ColumnLeader = ({
     player,
     value,
+    shareLabel,
     caption,
-    accent,
     bordered
 }: ColumnLeaderEntry & { bordered?: boolean }) => {
+    const { query } = usePGCRContext()
     const displayName = getBungieDisplayName(player.playerInfo, { excludeCode: true })
 
     return (
-        <Link
-            href={`/profile/${player.playerInfo.membershipId}`}
+        <button
+            type="button"
+            onClick={() => query.set("player", player.playerInfo.membershipId)}
             className={cn(
                 "group flex flex-1 flex-col items-center gap-1.5 px-2 py-2.5 text-center transition-colors hover:bg-zinc-900/80 md:gap-2 md:px-3 md:py-3",
-                bordered && "border-t border-zinc-800",
-                accent === "deaths" && "bg-zinc-900/40"
+                bordered && "border-t border-zinc-800"
             )}>
             <Avatar className="size-6 flex-shrink-0 rounded-sm md:size-7">
                 <AvatarImage
@@ -129,14 +132,13 @@ const ColumnLeader = ({
                         {caption}
                     </div>
                 )}
-                <div
-                    className={cn(
-                        "mt-0.5 text-lg font-semibold tabular-nums md:text-xl",
-                        accent === "deaths" ? "text-zinc-400" : "text-primary/90"
-                    )}>
+                <div className="text-primary/90 mt-0.5 text-lg font-semibold tabular-nums md:text-xl">
                     {value}
                 </div>
+                {shareLabel && (
+                    <div className="text-[10px] text-zinc-500 tabular-nums">{shareLabel}</div>
+                )}
             </div>
-        </Link>
+        </button>
     )
 }

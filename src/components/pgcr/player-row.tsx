@@ -6,13 +6,13 @@ import { useMemo } from "react"
 import { useItemDefinition } from "~/hooks/dexie"
 import { usePGCRContext } from "~/hooks/pgcr/ClientStateManager"
 import { useGetCharacterClass } from "~/hooks/pgcr/useCharacterClass"
+import { getActivityParticipationPercentage } from "~/lib/pgcr/formatting"
 import { cn } from "~/lib/tw"
 import { type RaidHubInstancePlayerExtended } from "~/services/raidhub/types"
 import { Avatar, AvatarFallback, AvatarImage } from "~/shad/avatar"
 import { Button } from "~/shad/button"
 import { Tooltip, TooltipContent, TooltipTrigger } from "~/shad/tooltip"
 import { bungieBannerEmblemUrl, bungieProfileIconUrl, getBungieDisplayName } from "~/util/destiny"
-import { round } from "~/util/math"
 import { secondsToHMS } from "~/util/presentation/formatting"
 import { PlayerBadge } from "./player-badge"
 
@@ -30,7 +30,10 @@ export default function PlayerRow({ player }: PlayerRowProps) {
     )
     const killSharePct = teamKills > 0 ? ((stats.kills + stats.assists) / teamKills) * 100 : 0
     const timePlayed = Math.min(stats.timePlayedSeconds, data.duration)
-    const activityPercentage = round(100 * (timePlayed / data.duration), 0)
+    const activityPercentage = getActivityParticipationPercentage(
+        stats.timePlayedSeconds,
+        data.duration
+    )
 
     const displayName = getBungieDisplayName(player.playerInfo, { excludeCode: true })
 
@@ -200,13 +203,17 @@ export default function PlayerRow({ player }: PlayerRowProps) {
                                     )}>
                                     {secondsToHMS(timePlayed, false)}
                                 </span>
-                                <span className="text-[10px] text-zinc-500 tabular-nums">
-                                    {activityPercentage}%
-                                </span>
+                                {activityPercentage != null && (
+                                    <span className="text-[10px] text-zinc-500 tabular-nums">
+                                        {activityPercentage}%
+                                    </span>
+                                )}
                             </div>
                         </TooltipTrigger>
                         <TooltipContent>
-                            Present for {activityPercentage}% of the activity
+                            {activityPercentage != null
+                                ? `Present for ${activityPercentage}% of the activity`
+                                : "Time played may be capped; participation percentage unavailable"}
                         </TooltipContent>
                     </Tooltip>
                 </div>

@@ -202,6 +202,9 @@ export const RaidsWrapper = () => {
                     <Tab aria-selected={tab === "classic"} onClick={() => setTab("classic")}>
                         Classic
                     </Tab>
+                    <Tab aria-selected={tab === "pantheon"} onClick={() => setTab("pantheon")}>
+                        Pantheon
+                    </Tab>
                     <Tab aria-selected={tab === "history"} onClick={() => setTab("history")}>
                         History
                     </Tab>
@@ -210,9 +213,6 @@ export const RaidsWrapper = () => {
                     </Tab>
                     <Tab aria-selected={tab === "finder"} onClick={() => setTab("finder")}>
                         Finder
-                    </Tab>
-                    <Tab aria-selected={tab === "pantheon"} onClick={() => setTab("pantheon")}>
-                        Pantheon
                     </Tab>
                 </TabSelector>
                 <Flex $padding={0}>
