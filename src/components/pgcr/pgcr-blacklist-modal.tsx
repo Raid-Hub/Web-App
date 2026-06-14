@@ -99,7 +99,9 @@ export const BlacklistModal = ({ open, onOpenChange, onSuccess }: BlacklistModal
                                 type="submit"
                                 variant="destructive"
                                 disabled={blacklistMutation.isLoading || !reason.trim()}>
-                                {blacklistMutation.isLoading ? "Blacklisting..." : "Blacklist Instance"}
+                                {blacklistMutation.isLoading
+                                    ? "Blacklisting..."
+                                    : "Blacklist Instance"}
                             </Button>
                         </DialogFooter>
                     </form>

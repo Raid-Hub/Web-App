@@ -99,10 +99,7 @@ export const ClientStateManager = ({
 
     const [isReportModalOpen, setIsReportModalOpen] = useState(false)
     const [isBlacklisted, setIsBlacklisted] = useState(data.isBlacklisted)
-    const instanceData = useMemo(
-        () => ({ ...data, isBlacklisted }),
-        [data, isBlacklisted]
-    )
+    const instanceData = useMemo(() => ({ ...data, isBlacklisted }), [data, isBlacklisted])
 
     const query = useQueryParams<PGCRPageParams>(
         z.object({
