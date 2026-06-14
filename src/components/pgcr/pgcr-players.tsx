@@ -1,13 +1,12 @@
 import { type Collection } from "@discordjs/collection"
-import { Sword, Trophy } from "lucide-react"
 import { Fragment } from "react"
+import { PGCRTeamSummary } from "~/components/pgcr/pgcr-team-summary"
 import PlayerRow from "~/components/pgcr/player-row"
 import { type PlayerStats } from "~/lib/pgcr/types"
 import { type RaidHubInstanceExtended } from "~/services/raidhub/types"
-import { Card, CardContent, CardHeader } from "~/shad/card"
+import { CardContent } from "~/shad/card"
 import { ScrollArea } from "~/shad/scroll-area"
 import { Separator } from "~/shad/separator"
-import { getBungieDisplayName } from "~/util/destiny"
 import { AllPgcrWeaponsWrapper } from "./pgcr-weapons"
 
 interface PGCRPlayersProps {
@@ -27,14 +26,24 @@ export const PGCRPlayers = ({ data, mvp, playerMergedStats, sortScores }: PGCRPl
     const mvpPlayer = mvp ? data.players.find(p => p.playerInfo.membershipId === mvp)! : null
     const mostKills = playerMergedStats.sort((a, b) => b.kills - a.kills).firstKey()!
     const mostKillsPlayer = data.players.find(p => p.playerInfo.membershipId === mostKills)!
-    const mostAssists = playerMergedStats.sort((a, b) => b.assists - a.assists).firstKey()!
-    const mostAssistsPlayer = data.players.find(p => p.playerInfo.membershipId === mostAssists)!
     const mostDeaths = playerMergedStats.sort((a, b) => b.deaths - a.deaths).firstKey()!
     const mostDeathsPlayer = data.players.find(p => p.playerInfo.membershipId === mostDeaths)!
+    const mostAssists = playerMergedStats.sort((a, b) => b.assists - a.assists).firstKey()!
+    const mostAssistsPlayer = data.players.find(p => p.playerInfo.membershipId === mostAssists)!
     const bestKD = playerMergedStats
         .sort((a, b) => b.kills / (b.deaths || 1) - a.kills / (a.deaths || 1))
         .firstKey()!
     const bestKDPlayer = data.players.find(p => p.playerInfo.membershipId === bestKD)!
+    const mostMelee = playerMergedStats.sort((a, b) => b.meleeKills - a.meleeKills).firstKey()!
+    const mostMeleePlayer = data.players.find(p => p.playerInfo.membershipId === mostMelee)!
+    const mostGrenades = playerMergedStats
+        .sort((a, b) => b.grenadeKills - a.grenadeKills)
+        .firstKey()!
+    const mostGrenadesPlayer = data.players.find(p => p.playerInfo.membershipId === mostGrenades)!
+    const mostSuperKills = playerMergedStats.sort((a, b) => b.superKills - a.superKills).firstKey()!
+    const mostSuperKillsPlayer = data.players.find(
+        p => p.playerInfo.membershipId === mostSuperKills
+    )!
 
     const totals = playerMergedStats.reduce(
         (acc, stats) => ({
@@ -64,6 +73,80 @@ export const PGCRPlayers = ({ data, mvp, playerMergedStats, sortScores }: PGCRPl
     const _bestKdPlayerStats = playerMergedStats.get(bestKD)!
     const bestKd = _bestKdPlayerStats.kills / (_bestKdPlayerStats.deaths || 1)
 
+    const teamSummaryColumns = [
+        {
+            label: "Kills",
+            teamValue: totals.kills.toLocaleString(),
+            leaders: [
+                {
+                    player: mostKillsPlayer,
+                    value: playerMergedStats.get(mostKills)!.kills.toLocaleString()
+                }
+            ]
+        },
+        {
+            label: "Deaths",
+            teamValue: totals.deaths.toLocaleString(),
+            leaders: [
+                {
+                    player: mostDeathsPlayer,
+                    value: playerMergedStats.get(mostDeaths)!.deaths.toLocaleString(),
+                    accent: totals.deaths > 0 ? ("deaths" as const) : undefined
+                }
+            ]
+        },
+        {
+            label: "Assists",
+            teamValue: totals.assists.toLocaleString(),
+            leaders: [
+                {
+                    player: mostAssistsPlayer,
+                    value: playerMergedStats.get(mostAssists)!.assists.toLocaleString()
+                }
+            ]
+        },
+        {
+            label: "K/D",
+            teamValue: totalKd.toFixed(2),
+            leaders: [
+                {
+                    player: bestKDPlayer,
+                    value: bestKd.toFixed(2)
+                }
+            ]
+        },
+        {
+            label: "Melee Kills",
+            teamValue: totals.meleeKills.toLocaleString(),
+            leaders: [
+                {
+                    player: mostMeleePlayer,
+                    value: playerMergedStats.get(mostMelee)!.meleeKills.toLocaleString()
+                }
+            ]
+        },
+        {
+            label: "Grenade Kills",
+            teamValue: totals.grenadeKills.toLocaleString(),
+            leaders: [
+                {
+                    player: mostGrenadesPlayer,
+                    value: playerMergedStats.get(mostGrenades)!.grenadeKills.toLocaleString()
+                }
+            ]
+        },
+        {
+            label: "Super Kills",
+            teamValue: totals.superKills.toLocaleString(),
+            leaders: [
+                {
+                    player: mostSuperKillsPlayer,
+                    value: playerMergedStats.get(mostSuperKills)!.superKills.toLocaleString()
+                }
+            ]
+        }
+    ]
+
     return (
         <CardContent className="space-y-6 bg-black p-2 md:p-6">
             {/* Players Section */}
@@ -74,7 +157,7 @@ export const PGCRPlayers = ({ data, mvp, playerMergedStats, sortScores }: PGCRPl
                     <div className="text-center">Kills</div>
                     <div className="text-center">Deaths</div>
                     <div className="hidden text-center md:block">Assists</div>
-                    <div className="hidden text-center md:block">K/D</div>
+                    <div className="hidden text-center md:block">Kill Share</div>
                     <div className="text-center">Time</div>
                 </div>
 
@@ -90,108 +173,11 @@ export const PGCRPlayers = ({ data, mvp, playerMergedStats, sortScores }: PGCRPl
                 </ScrollArea>
             </div>
 
-            {/* Activity Summary Section */}
-
             {data.playerCount > 1 && (
-                <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                    <Card className="rounded-none border-zinc-800 bg-zinc-950">
-                        <CardHeader>
-                            <h3 className="flex items-center gap-2 text-base font-medium md:text-lg">
-                                <Trophy className="text-raidhub h-4 w-4 md:h-5 md:w-5" />
-                                Activity Highlights
-                            </h3>
-                        </CardHeader>
-                        <CardContent className="space-y-3 p-4 pt-0">
-                            {mvpPlayer && (
-                                <>
-                                    <LabeledStat
-                                        label="MVP"
-                                        value={getBungieDisplayName(mvpPlayer.playerInfo, {
-                                            excludeCode: true
-                                        })}
-                                    />
-                                    <Separator className="bg-zinc-800" />
-                                </>
-                            )}
-                            <LabeledStat
-                                label="Most Kills"
-                                value={`${getBungieDisplayName(mostKillsPlayer.playerInfo, {
-                                    excludeCode: true
-                                })} - ${playerMergedStats.get(mostKills)!.kills.toLocaleString()}`}
-                            />
-                            <Separator className="bg-zinc-800" />
-                            <LabeledStat
-                                label="Most Assists"
-                                value={`${getBungieDisplayName(mostAssistsPlayer.playerInfo, {
-                                    excludeCode: true
-                                })} - ${playerMergedStats.get(mostAssists)!.assists.toLocaleString()}`}
-                            />
-                            <Separator className="bg-zinc-800" />
-                            <LabeledStat
-                                label="Best K/D"
-                                value={`${getBungieDisplayName(bestKDPlayer.playerInfo, {
-                                    excludeCode: true
-                                })} - ${bestKd.toFixed(2)}`}
-                            />
-                            {totals.deaths > 0 && (
-                                <>
-                                    <Separator className="bg-zinc-800" />
-                                    <LabeledStat
-                                        label="Most Deaths"
-                                        value={`${getBungieDisplayName(
-                                            mostDeathsPlayer.playerInfo,
-                                            {
-                                                excludeCode: true
-                                            }
-                                        )} - ${playerMergedStats.get(mostDeaths)!.deaths.toLocaleString()}`}
-                                    />
-                                </>
-                            )}
-                        </CardContent>
-                    </Card>
-
-                    <Card className="rounded-none border-zinc-800 bg-zinc-950">
-                        <CardHeader>
-                            <h3 className="flex items-center gap-2 text-base font-medium md:text-lg">
-                                <Sword className="text-raidhub h-4 w-4 md:h-5 md:w-5" />
-                                Combat Stats
-                            </h3>
-                        </CardHeader>
-                        <CardContent className="space-y-3 p-4 pt-0">
-                            <LabeledStat
-                                label="Total Kills"
-                                value={totals.kills.toLocaleString()}
-                            />
-                            <Separator className="bg-zinc-800" />
-                            <LabeledStat
-                                label="Total Assists"
-                                value={totals.assists.toLocaleString()}
-                            />
-                            <Separator className="bg-zinc-800" />
-                            <LabeledStat
-                                label="Total Deaths"
-                                value={totals.deaths.toLocaleString()}
-                            />
-                            <Separator className="bg-zinc-800" />
-                            <LabeledStat label="Team K/D" value={totalKd.toFixed(2)} />
-                            <Separator className="bg-zinc-800" />
-                            <LabeledStat
-                                label="Total Super Kills"
-                                value={totals.superKills.toLocaleString()}
-                            />
-                        </CardContent>
-                    </Card>
-                </div>
+                <PGCRTeamSummary mvp={mvpPlayer ?? undefined} columns={teamSummaryColumns} />
             )}
 
             <AllPgcrWeaponsWrapper {...totals} />
         </CardContent>
     )
 }
-
-const LabeledStat = ({ label, value }: { label: string; value: string }) => (
-    <div className="flex items-center justify-between">
-        <span className="text-sm text-zinc-400">{label}</span>
-        <span className="text-sm font-medium">{value}</span>
-    </div>
-)

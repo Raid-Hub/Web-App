@@ -2,7 +2,7 @@
 
 import { ChevronRight, SquareArrowLeft } from "lucide-react"
 import Link from "next/link"
-import { ActivityPieChart } from "~/components/pgcr/activity-pie-chart"
+import { useMemo } from "react"
 import { useItemDefinition } from "~/hooks/dexie"
 import { usePGCRContext } from "~/hooks/pgcr/ClientStateManager"
 import { useGetCharacterClass } from "~/hooks/pgcr/useCharacterClass"
@@ -24,6 +24,11 @@ export default function PlayerRow({ player }: PlayerRowProps) {
     const { data, playerStatsMerged, mvp, query } = usePGCRContext()
 
     const stats = playerStatsMerged.get(player.playerInfo.membershipId)!
+    const teamKills = useMemo(
+        () => playerStatsMerged.reduce((total, playerStats) => total + playerStats.kills, 0),
+        [playerStatsMerged]
+    )
+    const killSharePct = teamKills > 0 ? ((stats.kills + stats.assists) / teamKills) * 100 : 0
     const timePlayed = Math.min(stats.timePlayedSeconds, data.duration)
     const activityPercentage = round(100 * (timePlayed / data.duration), 0)
 
@@ -169,29 +174,34 @@ export default function PlayerRow({ player }: PlayerRowProps) {
                             "text-zinc-500": !player.completed
                         }
                     )}>
-                    {(stats.deaths === 0 ? stats.kills : stats.kills / stats.deaths).toFixed(2)}
+                    <Tooltip>
+                        <TooltipTrigger asChild>
+                            <span>{killSharePct.toFixed(1)}%</span>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                            (Kills + assists) / team kills. Participation rate, not a share that
+                            sums to 100%.
+                        </TooltipContent>
+                    </Tooltip>
                 </div>
                 <div
-                    className={cn("text-primary/85 text-center", {
+                    className={cn("text-center", {
                         "text-zinc-500": !player.completed
                     })}>
                     <Tooltip>
                         <TooltipTrigger asChild>
-                            <div className="flex items-center justify-center">
-                                <ActivityPieChart
-                                    percentage={activityPercentage}
-                                    size={16}
-                                    color={player.completed ? "green" : "orange"}
-                                    className="hidden md:block"
-                                />
+                            <div className="flex flex-col items-center gap-0.5">
                                 <span
                                     className={cn(
-                                        "text-primary/85 ml-2 text-xs md:text-sm lg:text-lg",
+                                        "text-primary/85 text-xs tabular-nums md:text-sm lg:text-lg",
                                         {
                                             "text-zinc-500": !player.completed
                                         }
                                     )}>
                                     {secondsToHMS(timePlayed, false)}
+                                </span>
+                                <span className="text-[10px] text-zinc-500 tabular-nums">
+                                    {activityPercentage}%
                                 </span>
                             </div>
                         </TooltipTrigger>
