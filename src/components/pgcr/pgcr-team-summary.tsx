@@ -1,6 +1,6 @@
 "use client"
 
-import Link from "next/link"
+import { usePGCRContext } from "~/hooks/pgcr/ClientStateManager"
 import { cn } from "~/lib/tw"
 import { type RaidHubInstancePlayerExtended } from "~/services/raidhub/types"
 import { Avatar, AvatarFallback, AvatarImage } from "~/shad/avatar"
@@ -46,12 +46,14 @@ export function PGCRTeamSummary({ mvp, columns }: PGCRTeamSummaryProps) {
 }
 
 const MvpBanner = ({ player }: { player: RaidHubInstancePlayerExtended }) => {
+    const { query } = usePGCRContext()
     const displayName = getBungieDisplayName(player.playerInfo, { excludeCode: true })
 
     return (
-        <Link
-            href={`/profile/${player.playerInfo.membershipId}`}
-            className="group flex items-center gap-2 border-b border-zinc-800 bg-yellow-500/[0.04] px-3 py-2 transition-colors hover:bg-yellow-500/[0.07] md:gap-3 md:px-4 md:py-2.5">
+        <button
+            type="button"
+            onClick={() => query.set("player", player.playerInfo.membershipId)}
+            className="group flex w-full items-center gap-2 border-b border-zinc-800 bg-yellow-500/[0.04] px-3 py-2 text-left transition-colors hover:bg-yellow-500/[0.07] md:gap-3 md:px-4 md:py-2.5">
             <Avatar className="size-7 flex-shrink-0 rounded-sm md:size-8">
                 <AvatarImage
                     src={bungieProfileIconUrl(player.playerInfo.iconPath)}
@@ -69,7 +71,7 @@ const MvpBanner = ({ player }: { player: RaidHubInstancePlayerExtended }) => {
                     {displayName}
                 </div>
             </div>
-        </Link>
+        </button>
     )
 }
 
@@ -103,11 +105,13 @@ const ColumnLeader = ({
     accent,
     bordered
 }: ColumnLeaderEntry & { bordered?: boolean }) => {
+    const { query } = usePGCRContext()
     const displayName = getBungieDisplayName(player.playerInfo, { excludeCode: true })
 
     return (
-        <Link
-            href={`/profile/${player.playerInfo.membershipId}`}
+        <button
+            type="button"
+            onClick={() => query.set("player", player.playerInfo.membershipId)}
             className={cn(
                 "group flex flex-1 flex-col items-center gap-1.5 px-2 py-2.5 text-center transition-colors hover:bg-zinc-900/80 md:gap-2 md:px-3 md:py-3",
                 bordered && "border-t border-zinc-800",
@@ -142,6 +146,6 @@ const ColumnLeader = ({
                     <div className="text-[10px] text-zinc-500 tabular-nums">{shareLabel}</div>
                 )}
             </div>
-        </Link>
+        </button>
     )
 }
