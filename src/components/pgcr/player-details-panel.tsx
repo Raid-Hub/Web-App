@@ -233,21 +233,21 @@ const PlayerDetailsPanel = ({ player, onClose }: PlayerDetailsPanelProps) => {
                     : undefined
         },
         {
-            label: "Melee",
+            label: "Melee Kills",
             value: selectedStats.meleeKills.toLocaleString(),
             detail:
                 formatTeamSharePercentage(selectedStats.meleeKills, teamTotals.meleeKills) ??
                 undefined
         },
         {
-            label: "Grenade",
+            label: "Grenade Kills",
             value: selectedStats.grenadeKills.toLocaleString(),
             detail:
                 formatTeamSharePercentage(selectedStats.grenadeKills, teamTotals.grenadeKills) ??
                 undefined
         },
         {
-            label: "Super",
+            label: "Super Kills",
             value: selectedStats.superKills.toLocaleString(),
             detail:
                 formatTeamSharePercentage(selectedStats.superKills, teamTotals.superKills) ??
