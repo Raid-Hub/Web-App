@@ -41,16 +41,16 @@ const StatStrip = ({ stats }: { stats: StatCell[] }) => (
         style={{ gridTemplateColumns: `repeat(${stats.length}, minmax(0, 1fr))` }}>
         {stats.map(stat => {
             const cell = (
-                <div className="px-1.5 py-2 text-center md:px-2">
-                    <div className="text-primary/90 text-sm font-semibold tabular-nums md:text-base">
-                        {stat.value}
-                    </div>
-                    {stat.detail && (
-                        <div className="text-[10px] tabular-nums text-zinc-500">{stat.detail}</div>
-                    )}
+                <div className="px-2.5 py-3 text-center md:px-3">
                     <div className="text-[10px] font-medium tracking-wider text-zinc-500 uppercase">
                         {stat.label}
                     </div>
+                    <div className="text-primary/90 mt-1 text-sm font-semibold tabular-nums md:text-base">
+                        {stat.value}
+                    </div>
+                    {stat.detail && (
+                        <div className="mt-0.5 text-[10px] tabular-nums text-zinc-500">{stat.detail}</div>
+                    )}
                 </div>
             )
 
@@ -303,7 +303,7 @@ const PlayerDetailsPanel = ({ player, onClose }: PlayerDetailsPanelProps) => {
                     />
                 )}
                 <div className="absolute inset-0 bg-gradient-to-r from-zinc-950 via-zinc-950/95 to-zinc-950/80" />
-                <div className="relative z-10 flex items-start gap-2 p-3 md:gap-3">
+                <div className="relative z-10 flex items-start gap-3 p-4 md:gap-4">
                     <Avatar className="size-10 shrink-0 rounded-sm border border-zinc-800">
                         <AvatarImage
                             src={bungieIconUrl(emblemDefinition?.displayProperties.icon)}
@@ -338,7 +338,7 @@ const PlayerDetailsPanel = ({ player, onClose }: PlayerDetailsPanelProps) => {
                                 <TooltipContent>View Profile</TooltipContent>
                             </Tooltip>
                         </div>
-                        <div className="mt-1 flex flex-wrap items-center gap-1">
+                        <div className="mt-1.5 flex flex-wrap items-center gap-1.5">
                             {mvp === player.playerInfo.membershipId && (
                                 <PlayerBadge variant="mvp" />
                             )}
@@ -357,11 +357,11 @@ const PlayerDetailsPanel = ({ player, onClose }: PlayerDetailsPanelProps) => {
                             )}
                         </div>
                         {player.characters.length > 1 && (
-                            <div className="mt-2 flex flex-wrap items-center gap-1">
+                            <div className="mt-2.5 flex flex-wrap items-center gap-1.5">
                                 <Button
                                     variant={selectedCharacter === null ? "default" : "outline"}
                                     size="sm"
-                                    className="h-7 rounded-full px-2 text-[10px]"
+                                    className="h-8 rounded-full px-2.5 text-[10px]"
                                     onClick={() => remove("character")}>
                                     All
                                 </Button>
@@ -379,30 +379,24 @@ const PlayerDetailsPanel = ({ player, onClose }: PlayerDetailsPanelProps) => {
                                         const [CharacterIcon, characterName] =
                                             getCharacterIcon(classHash)
                                         return (
-                                            <Tooltip key={characterId}>
-                                                <TooltipTrigger asChild>
-                                                    <Button
-                                                        variant={
-                                                            selectedCharacter === characterId
-                                                                ? "default"
-                                                                : "outline"
-                                                        }
-                                                        size="sm"
-                                                        className="h-7 gap-1 rounded-full px-2 text-[10px]"
-                                                        onClick={() =>
-                                                            set("character", characterId)
-                                                        }>
-                                                        <CharacterIcon className="size-3.5" />
-                                                        <span className="hidden sm:inline">
-                                                            {characterName}
-                                                        </span>
-                                                        {completed && (
-                                                            <CheckCircle className="size-3 text-green-500" />
-                                                        )}
-                                                    </Button>
-                                                </TooltipTrigger>
-                                                <TooltipContent>{characterName}</TooltipContent>
-                                            </Tooltip>
+                                            <Button
+                                                key={characterId}
+                                                variant={
+                                                    selectedCharacter === characterId
+                                                        ? "default"
+                                                        : "outline"
+                                                }
+                                                size="sm"
+                                                className="h-8 gap-1 rounded-full px-2.5 text-[10px]"
+                                                onClick={() => set("character", characterId)}>
+                                                <CharacterIcon className="size-3.5" />
+                                                <span className="hidden sm:inline">
+                                                    {characterName}
+                                                </span>
+                                                {completed && (
+                                                    <CheckCircle className="size-3 text-green-500" />
+                                                )}
+                                            </Button>
                                         )
                                     })}
                             </div>
@@ -418,9 +412,11 @@ const PlayerDetailsPanel = ({ player, onClose }: PlayerDetailsPanelProps) => {
                 </div>
             </div>
 
-            <div className="min-h-0 flex-1 overflow-y-auto">
-                <StatStrip stats={primaryStats} />
-                <StatStrip stats={secondaryStats} />
+            <div className="min-h-0 flex-1 space-y-3 overflow-y-auto p-3 md:p-4">
+                <div className="overflow-hidden rounded-lg border border-zinc-800">
+                    <StatStrip stats={primaryStats} />
+                    <StatStrip stats={secondaryStats} />
+                </div>
 
                 <WeaponTable
                     compact

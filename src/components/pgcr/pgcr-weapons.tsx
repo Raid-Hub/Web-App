@@ -90,7 +90,7 @@ const WeaponSlot = ({
     compact?: boolean
 }) => (
     <div className={compact ? "min-w-[9rem]" : "min-w-[11rem]"}>
-        <div className="border-b border-zinc-800 px-2 py-1.5 text-center text-[10px] font-medium tracking-wider text-zinc-500 uppercase">
+        <div className="border-b border-zinc-800 px-2.5 py-2 text-center text-[10px] font-medium tracking-wider text-zinc-500 uppercase">
             {label}
         </div>
         <div className="divide-y divide-zinc-800">
@@ -140,7 +140,7 @@ const WeaponRow = ({
     const precisionPct = kills > 0 ? (100 * precisionKills) / kills : 0
 
     return (
-        <div className={cn("flex items-center gap-2 px-2 py-1.5", !compact && "md:gap-3 md:px-3 md:py-2")}>
+        <div className={cn("flex items-center gap-2 px-2.5 py-2", !compact && "md:gap-3 md:px-3 md:py-2.5")}>
             <div
                 className={cn(
                     "flex shrink-0 items-center justify-center overflow-hidden bg-zinc-800",
