@@ -32,7 +32,9 @@ export function PGCRTeamSummary({ mvp, columns }: PGCRTeamSummaryProps) {
             <div className="overflow-x-auto">
                 <div
                     className="grid min-w-max divide-x divide-zinc-800"
-                    style={{ gridTemplateColumns: `repeat(${columns.length}, minmax(7.5rem, 1fr))` }}>
+                    style={{
+                        gridTemplateColumns: `repeat(${columns.length}, minmax(7.5rem, 1fr))`
+                    }}>
                     {columns.map(column => (
                         <SummaryColumn key={column.label} {...column} />
                     ))}
@@ -50,7 +52,10 @@ const MvpBanner = ({ player }: { player: RaidHubInstancePlayerExtended }) => {
             href={`/profile/${player.playerInfo.membershipId}`}
             className="group flex items-center gap-2 border-b border-zinc-800 bg-yellow-500/[0.04] px-3 py-2 transition-colors hover:bg-yellow-500/[0.07] md:gap-3 md:px-4 md:py-2.5">
             <Avatar className="size-7 flex-shrink-0 rounded-sm md:size-8">
-                <AvatarImage src={bungieProfileIconUrl(player.playerInfo.iconPath)} alt={displayName} />
+                <AvatarImage
+                    src={bungieProfileIconUrl(player.playerInfo.iconPath)}
+                    alt={displayName}
+                />
                 <AvatarFallback className="rounded-sm bg-zinc-800 text-xs">
                     {displayName.charAt(0).toLocaleUpperCase()}
                 </AvatarFallback>
@@ -70,8 +75,12 @@ const MvpBanner = ({ player }: { player: RaidHubInstancePlayerExtended }) => {
 const SummaryColumn = ({ label, teamValue, leaders }: TeamSummaryColumn) => (
     <div className="flex min-w-[7.5rem] flex-col">
         <div className="border-b border-zinc-800 px-3 py-3 text-center md:px-4 md:py-4">
-            <div className="text-primary/90 text-xl font-semibold tabular-nums md:text-2xl">{teamValue}</div>
-            <div className="text-[10px] font-medium tracking-wider text-zinc-500 uppercase">{label}</div>
+            <div className="text-primary/90 text-xl font-semibold tabular-nums md:text-2xl">
+                {teamValue}
+            </div>
+            <div className="text-[10px] font-medium tracking-wider text-zinc-500 uppercase">
+                {label}
+            </div>
         </div>
         <div className="flex flex-1 flex-col">
             {leaders.map((leader, index) => (
@@ -103,13 +112,18 @@ const ColumnLeader = ({
                 accent === "deaths" && "bg-zinc-900/40"
             )}>
             <Avatar className="size-6 flex-shrink-0 rounded-sm md:size-7">
-                <AvatarImage src={bungieProfileIconUrl(player.playerInfo.iconPath)} alt={displayName} />
+                <AvatarImage
+                    src={bungieProfileIconUrl(player.playerInfo.iconPath)}
+                    alt={displayName}
+                />
                 <AvatarFallback className="rounded-sm bg-zinc-800 text-[10px]">
                     {displayName.charAt(0).toLocaleUpperCase()}
                 </AvatarFallback>
             </Avatar>
             <div className="w-full min-w-0">
-                <div className="truncate text-xs font-medium group-hover:text-white">{displayName}</div>
+                <div className="truncate text-xs font-medium group-hover:text-white">
+                    {displayName}
+                </div>
                 {caption && (
                     <div className="text-[10px] font-medium tracking-wider text-zinc-500 uppercase">
                         {caption}

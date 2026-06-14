@@ -156,11 +156,14 @@ const WeaponRow = ({
                         </TooltipTrigger>
                         <TooltipContent>
                             {Array.from(users).map(id => (
-                                <div key={id}>{getBungieDisplayName(
-                                    data.players.find(player => player.playerInfo.membershipId === id)!
-                                        .playerInfo,
-                                    { excludeCode: true }
-                                )}</div>
+                                <div key={id}>
+                                    {getBungieDisplayName(
+                                        data.players.find(
+                                            player => player.playerInfo.membershipId === id
+                                        )!.playerInfo,
+                                        { excludeCode: true }
+                                    )}
+                                </div>
                             ))}
                         </TooltipContent>
                     </Tooltip>
@@ -174,7 +177,7 @@ const WeaponRow = ({
                 <div className="text-primary/90 text-sm font-semibold tabular-nums md:text-base">
                     {kills.toLocaleString()}
                 </div>
-                <div className="text-[10px] tabular-nums text-zinc-500">{sharePct.toFixed(1)}%</div>
+                <div className="text-[10px] text-zinc-500 tabular-nums">{sharePct.toFixed(1)}%</div>
             </div>
         </div>
     )
@@ -202,7 +205,9 @@ export const AllPgcrWeaponsWrapper = (stats: PlayerStats) => {
         weaponStats.sort((a, b) => b.kills - a.kills)
 
         const byBucket = (bucketHash: number) =>
-            weaponStats.filter((_, key) => weaponsMap.get(key)?.inventory?.bucketTypeHash === bucketHash)
+            weaponStats.filter(
+                (_, key) => weaponsMap.get(key)?.inventory?.bucketTypeHash === bucketHash
+            )
 
         return {
             kineticWeapons: byBucket(KINETIC_BUCKET),

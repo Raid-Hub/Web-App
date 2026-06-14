@@ -1,7 +1,7 @@
 import { type Collection } from "@discordjs/collection"
 import { Fragment } from "react"
-import PlayerRow from "~/components/pgcr/player-row"
 import { PGCRTeamSummary } from "~/components/pgcr/pgcr-team-summary"
+import PlayerRow from "~/components/pgcr/player-row"
 import { type PlayerStats } from "~/lib/pgcr/types"
 import { type RaidHubInstanceExtended } from "~/services/raidhub/types"
 import { CardContent } from "~/shad/card"
@@ -36,10 +36,14 @@ export const PGCRPlayers = ({ data, mvp, playerMergedStats, sortScores }: PGCRPl
     const bestKDPlayer = data.players.find(p => p.playerInfo.membershipId === bestKD)!
     const mostMelee = playerMergedStats.sort((a, b) => b.meleeKills - a.meleeKills).firstKey()!
     const mostMeleePlayer = data.players.find(p => p.playerInfo.membershipId === mostMelee)!
-    const mostGrenades = playerMergedStats.sort((a, b) => b.grenadeKills - a.grenadeKills).firstKey()!
+    const mostGrenades = playerMergedStats
+        .sort((a, b) => b.grenadeKills - a.grenadeKills)
+        .firstKey()!
     const mostGrenadesPlayer = data.players.find(p => p.playerInfo.membershipId === mostGrenades)!
     const mostSuperKills = playerMergedStats.sort((a, b) => b.superKills - a.superKills).firstKey()!
-    const mostSuperKillsPlayer = data.players.find(p => p.playerInfo.membershipId === mostSuperKills)!
+    const mostSuperKillsPlayer = data.players.find(
+        p => p.playerInfo.membershipId === mostSuperKills
+    )!
 
     const totals = playerMergedStats.reduce(
         (acc, stats) => ({

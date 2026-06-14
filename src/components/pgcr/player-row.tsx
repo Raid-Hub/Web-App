@@ -1,8 +1,8 @@
 "use client"
 
-import { useMemo } from "react"
 import { ChevronRight, SquareArrowLeft } from "lucide-react"
 import Link from "next/link"
+import { useMemo } from "react"
 import { useItemDefinition } from "~/hooks/dexie"
 import { usePGCRContext } from "~/hooks/pgcr/ClientStateManager"
 import { useGetCharacterClass } from "~/hooks/pgcr/useCharacterClass"
@@ -25,12 +25,10 @@ export default function PlayerRow({ player }: PlayerRowProps) {
 
     const stats = playerStatsMerged.get(player.playerInfo.membershipId)!
     const teamKills = useMemo(
-        () =>
-            playerStatsMerged.reduce((total, playerStats) => total + playerStats.kills, 0),
+        () => playerStatsMerged.reduce((total, playerStats) => total + playerStats.kills, 0),
         [playerStatsMerged]
     )
-    const killSharePct =
-        teamKills > 0 ? ((stats.kills + stats.assists) / teamKills) * 100 : 0
+    const killSharePct = teamKills > 0 ? ((stats.kills + stats.assists) / teamKills) * 100 : 0
     const timePlayed = Math.min(stats.timePlayedSeconds, data.duration)
     const activityPercentage = round(100 * (timePlayed / data.duration), 0)
 
@@ -180,9 +178,7 @@ export default function PlayerRow({ player }: PlayerRowProps) {
                         <TooltipTrigger asChild>
                             <span>{killSharePct.toFixed(1)}%</span>
                         </TooltipTrigger>
-                        <TooltipContent>
-                            Kill share: (kills + assists) / team kills
-                        </TooltipContent>
+                        <TooltipContent>Kill share: (kills + assists) / team kills</TooltipContent>
                     </Tooltip>
                 </div>
                 <div
@@ -194,14 +190,14 @@ export default function PlayerRow({ player }: PlayerRowProps) {
                             <div className="flex flex-col items-center gap-0.5">
                                 <span
                                     className={cn(
-                                        "text-primary/85 tabular-nums text-xs md:text-sm lg:text-lg",
+                                        "text-primary/85 text-xs tabular-nums md:text-sm lg:text-lg",
                                         {
                                             "text-zinc-500": !player.completed
                                         }
                                     )}>
                                     {secondsToHMS(timePlayed, false)}
                                 </span>
-                                <span className="text-[10px] tabular-nums text-zinc-500">
+                                <span className="text-[10px] text-zinc-500 tabular-nums">
                                     {activityPercentage}%
                                 </span>
                             </div>
