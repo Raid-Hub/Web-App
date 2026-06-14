@@ -12,7 +12,6 @@ import {
     type LucideIcon
 } from "lucide-react"
 import Link from "next/link"
-import D2CheckpointFlag from "~/components/icons/D2CP"
 import { cn } from "~/lib/tw"
 
 const navLinks: { title: string; href: string; icon: LucideIcon }[] = [
@@ -24,7 +23,6 @@ const navLinks: { title: string; href: string; icon: LucideIcon }[] = [
     },
     { title: "Weapon Meta", href: "/analytics/weapon-meta", icon: ChartNoAxesCombined },
     { title: "Population", href: "/analytics/player-population", icon: ChartSpline },
-    { title: "Checkpoints", href: "/checkpoints", icon: D2CheckpointFlag },
     {
         title: "Full Clears",
         href: "/leaderboards/individual/global/full-clears",
