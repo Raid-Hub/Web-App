@@ -140,7 +140,11 @@ const WeaponRow = ({
     const precisionPct = kills > 0 ? (100 * precisionKills) / kills : 0
 
     return (
-        <div className={cn("flex items-center gap-2 px-2.5 py-2", !compact && "md:gap-3 md:px-3 md:py-2.5")}>
+        <div
+            className={cn(
+                "flex items-center gap-2 px-2.5 py-2",
+                !compact && "md:gap-3 md:px-3 md:py-2.5"
+            )}>
             <div
                 className={cn(
                     "flex shrink-0 items-center justify-center overflow-hidden bg-zinc-800",

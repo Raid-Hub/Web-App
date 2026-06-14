@@ -14,10 +14,7 @@ export const getActivityParticipationPercentage = (
         return null
     }
 
-    return round(
-        100 * (Math.min(timePlayedSeconds, durationSeconds) / durationSeconds),
-        0
-    )
+    return round(100 * (Math.min(timePlayedSeconds, durationSeconds) / durationSeconds), 0)
 }
 
 export const formatTeamSharePercentage = (
@@ -41,7 +38,7 @@ export const formatKdRelativeToAveragePercentage = (
         return null
     }
 
-    const lift = ((playerKd / teamAverageKd) - 1) * 100
+    const lift = (playerKd / teamAverageKd - 1) * 100
     const rounded = lift.toFixed(0)
     return lift >= 0 ? `+${rounded}%` : `${rounded}%`
 }

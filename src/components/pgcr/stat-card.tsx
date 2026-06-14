@@ -21,9 +21,11 @@ export const StatCard = ({
         )}>
         {icon && <div className="flex size-8 shrink-0 items-center justify-center">{icon}</div>}
         <div className="min-w-0 text-left">
-            <p className="text-[10px] font-medium tracking-wider text-zinc-500 uppercase">{label}</p>
-            <p className="text-lg font-semibold tabular-nums text-white">{value}</p>
-            {detail && <p className="text-[10px] tabular-nums text-zinc-500">{detail}</p>}
+            <p className="text-[10px] font-medium tracking-wider text-zinc-500 uppercase">
+                {label}
+            </p>
+            <p className="text-lg font-semibold text-white tabular-nums">{value}</p>
+            {detail && <p className="text-[10px] text-zinc-500 tabular-nums">{detail}</p>}
         </div>
     </Card>
 )

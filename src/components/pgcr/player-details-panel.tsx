@@ -49,7 +49,9 @@ const StatStrip = ({ stats }: { stats: StatCell[] }) => (
                         {stat.value}
                     </div>
                     {stat.detail && (
-                        <div className="mt-0.5 text-[10px] tabular-nums text-zinc-500">{stat.detail}</div>
+                        <div className="mt-0.5 text-[10px] text-zinc-500 tabular-nums">
+                            {stat.detail}
+                        </div>
                     )}
                 </div>
             )
@@ -208,7 +210,8 @@ const PlayerDetailsPanel = ({ player, onClose }: PlayerDetailsPanelProps) => {
         {
             label: "Assists",
             value: selectedStats.assists.toLocaleString(),
-            detail: formatTeamSharePercentage(selectedStats.assists, teamTotals.assists) ?? undefined
+            detail:
+                formatTeamSharePercentage(selectedStats.assists, teamTotals.assists) ?? undefined
         },
         {
             label: "RIIS",
