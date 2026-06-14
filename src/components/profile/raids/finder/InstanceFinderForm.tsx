@@ -1,5 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod"
 import Image from "next/image"
+import { useEffect, useMemo } from "react"
 import { FormProvider, useFieldArray, useForm, useFormContext } from "react-hook-form"
 import styled from "styled-components"
 import { type DefaultTheme } from "styled-components/dist/types"
@@ -86,17 +87,48 @@ export const InstanceFinderForm = ({
         name: "players"
     })
 
-    const { listedRaidIds, listedVerions, getActivityString, getVersionString } =
-        useRaidHubManifest()
-    const activityOptions = listedRaidIds.map(id => ({
-        value: id,
-        label: getActivityString(id)
-    }))
+    const {
+        listedRaidIds,
+        pantheonIds,
+        getActivityString,
+        getVersionString,
+        getVersionsForActivity
+    } = useRaidHubManifest()
 
-    const versionOptions = listedVerions.map(id => ({
-        value: id,
-        label: getVersionString(id)
-    }))
+    const activityOptions = useMemo(() => {
+        const ids = [...listedRaidIds]
+        for (const id of pantheonIds) {
+            if (!ids.includes(id)) {
+                ids.push(id)
+            }
+        }
+        return ids.map(id => ({
+            value: id,
+            label: getActivityString(id)
+        }))
+    }, [listedRaidIds, pantheonIds, getActivityString])
+
+    const selectedActivityId = form.watch("activityId")
+    const parsedActivityId =
+        selectedActivityId === "" || selectedActivityId === undefined
+            ? undefined
+            : Number(selectedActivityId)
+
+    const versionOptions = useMemo(() => {
+        if (parsedActivityId === undefined || Number.isNaN(parsedActivityId)) {
+            return []
+        }
+        return getVersionsForActivity(parsedActivityId)
+            .filter(version => version !== undefined)
+            .map(version => ({
+                value: version.id,
+                label: getVersionString(version.id)
+            }))
+    }, [parsedActivityId, getVersionsForActivity, getVersionString])
+
+    useEffect(() => {
+        form.setValue("versionId", "")
+    }, [parsedActivityId, form])
 
     const seasonsOptions =
         useSeasons({ reversed: true })

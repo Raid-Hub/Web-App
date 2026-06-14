@@ -121,7 +121,7 @@ export function RaidHubManifestManager(props: {
                 return variants ?? []
             },
             getImageVariantsForVersion(versionId) {
-                const variants = data.versionSplashUrls[versionId]
+                const variants = data.versionSplashUrls?.[versionId]
                 return variants ?? []
             }
         }
