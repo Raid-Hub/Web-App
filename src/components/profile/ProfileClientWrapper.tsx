@@ -14,15 +14,20 @@ export function ProfileClientWrapper({
     const vanity = pageProps.ssrAppProfile?.vanity
 
     useEffect(() => {
-        if (vanity && pathname.startsWith("/profile")) {
-            window.history.replaceState(
-                {
-                    vanity
-                },
-                "",
-                `/${vanity}`
-            )
+        if (!vanity || !pathname.startsWith("/profile")) {
+            return
         }
+
+        const targetPath = `/${vanity}`
+        if (window.location.pathname === targetPath) {
+            return
+        }
+
+        window.history.replaceState(
+            { vanity },
+            "",
+            `${targetPath}${window.location.search}${window.location.hash}`
+        )
     }, [vanity, pathname])
 
     return (
