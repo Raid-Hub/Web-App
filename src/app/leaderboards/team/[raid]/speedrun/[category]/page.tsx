@@ -1,6 +1,6 @@
 import { type Metadata } from "next"
-import NotFound from "~/app/not-found"
 import { Leaderboard } from "~/app/leaderboards/Leaderboard"
+import NotFound from "~/app/not-found"
 import { baseMetadata } from "~/lib/metadata"
 import { SpeedrunVariables, type RTABoardCategory } from "~/lib/speedrun/speedrun-com-mappings"
 import { prefetchManifest } from "~/services/raidhub/prefetchRaidHubManifest"

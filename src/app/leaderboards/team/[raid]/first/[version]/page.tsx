@@ -1,6 +1,6 @@
 import { type Metadata } from "next"
-import NotFound from "~/app/not-found"
 import { LeaderboardSSR } from "~/app/leaderboards/LeaderboardSSR"
+import NotFound from "~/app/not-found"
 import { CloudflareActivitySplash } from "~/components/CloudflareImage"
 import { findPantheonVersionByPath } from "~/lib/manifest/pantheon"
 import { baseMetadata } from "~/lib/metadata"

@@ -1,6 +1,6 @@
 import { type Metadata } from "next"
-import NotFound from "~/app/not-found"
 import { LeaderboardSSR } from "~/app/leaderboards/LeaderboardSSR"
+import NotFound from "~/app/not-found"
 import { CloudflareActivitySplash } from "~/components/CloudflareImage"
 import { baseMetadata } from "~/lib/metadata"
 import { prefetchManifest } from "~/services/raidhub/prefetchRaidHubManifest"
