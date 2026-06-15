@@ -4,7 +4,11 @@ import type { ErrorEvent, EventHint } from "@sentry/nextjs"
 const NEXTJS_CONTROL_FLOW_ERRORS = ["NEXT_NOT_FOUND", "NEXT_REDIRECT"] as const
 
 /** Expected user-facing auth outcomes (OAuth cancel, invalid callback state). */
-const EXPECTED_AUTH_ERRORS = ["CallbackRouteError", "InvalidCheck", "State cookie was missing"] as const
+const EXPECTED_AUTH_ERRORS = [
+    "CallbackRouteError",
+    "InvalidCheck",
+    "State cookie was missing"
+] as const
 
 /** Transient network failures surfaced by global handlers, not app bugs. */
 const TRANSIENT_NETWORK_ERRORS = [
