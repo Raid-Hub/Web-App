@@ -10,14 +10,16 @@ export function ProfileBadge(badge: {
 }) {
     return (
         <Tooltip>
-            <TooltipTrigger>
-                <CloudflareIcon
-                    path={badge.icon}
-                    alt={badge.name}
-                    width={32}
-                    height={32}
-                    objectFit="contain"
-                />
+            <TooltipTrigger asChild>
+                <span className="inline-flex">
+                    <CloudflareIcon
+                        path={badge.icon}
+                        alt={badge.name}
+                        width={32}
+                        height={32}
+                        objectFit="contain"
+                    />
+                </span>
             </TooltipTrigger>
             <TooltipContent side="bottom">
                 <p>

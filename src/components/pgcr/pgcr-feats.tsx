@@ -13,15 +13,17 @@ export const PGCRFeats = () => {
             <div className="flex gap-1 md:gap-2">
                 {selectedFeats.map(feat => (
                     <Tooltip key={feat.hash}>
-                        <TooltipTrigger>
-                            <Image
-                                src={bungieIconUrl(feat.iconPath)}
-                                alt={feat.name}
-                                width={60}
-                                height={60}
-                                className="size-10"
-                                unoptimized
-                            />
+                        <TooltipTrigger asChild>
+                            <span className="inline-flex">
+                                <Image
+                                    src={bungieIconUrl(feat.iconPath)}
+                                    alt={feat.name}
+                                    width={60}
+                                    height={60}
+                                    className="size-10"
+                                    unoptimized
+                                />
+                            </span>
                         </TooltipTrigger>
                         <TooltipContent side="bottom" align="start">
                             <div className="text-xs">

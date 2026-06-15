@@ -20,7 +20,8 @@ const EXPECTED_RAIDHUB_ERROR_CODES = new Set<RaidHubErrorCode>([
     "PathValidationError",
     "QueryValidationError",
     "BodyValidationError",
-    "BungieServiceOffline"
+    "BungieServiceOffline",
+    "ApiKeyError"
 ])
 
 const EXPECTED_TRPC_ERROR_CODES = new Set(["NOT_FOUND", "UNAUTHORIZED", "FORBIDDEN", "BAD_REQUEST"])
@@ -35,12 +36,25 @@ function isAbortError(error: unknown): boolean {
 
 /** CDN/API blips and offline clients — not application bugs. */
 function isTransientNetworkError(error: unknown): boolean {
-    if (!(error instanceof TypeError)) {
-        return false
+    if (error instanceof DOMException && error.name === "NetworkError") {
+        return true
     }
 
-    const { message } = error
-    return message === "Failed to fetch" || message.startsWith("Load failed")
+    if (error instanceof TypeError) {
+        const { message } = error
+        return (
+            message === "Failed to fetch" ||
+            message.startsWith("Load failed") ||
+            message.startsWith("NetworkError when attempting to fetch resource")
+        )
+    }
+
+    if (error instanceof Error && error.name === "TRPCClientError") {
+        const { message } = error
+        return message === "Failed to fetch" || message === "Load failed"
+    }
+
+    return false
 }
 
 /** Dexie transaction aborted when the user navigates away mid-write. */
