@@ -1,6 +1,5 @@
 import { type Metadata } from "next"
 import { notFound } from "next/navigation"
-import { Suspense } from "react"
 import { ProfileClientWrapper } from "~/components/profile/ProfileClientWrapper"
 import { ProfilePage } from "~/components/profile/ProfilePage"
 import { generatePlayerMetadata } from "~/lib/profile/metadata"
@@ -11,7 +10,6 @@ import {
 } from "~/lib/profile/prefetch"
 import { type ProfileProps } from "~/lib/profile/types"
 import { getServerSession } from "~/lib/server/auth"
-import { type AppProfile } from "~/types/api"
 import { bungieProfileIconUrl } from "~/util/destiny"
 
 export const revalidate = 0
@@ -26,28 +24,11 @@ type PageProps = {
  * This page preferably should be accessed at /:vanity through rewrites in next.config.js
  */
 export default async function Page({ params }: PageProps) {
-    // Find the app profile by vanity, and if it doesn't exist next will render a 404
-    const appProfile = await getUniqueProfileByVanity(params.vanity).then(p => p ?? notFound())
+    const appProfile = await getUniqueProfileByVanity(params.vanity)
+    if (!appProfile) {
+        notFound()
+    }
 
-    return (
-        <Suspense
-            fallback={
-                <ProfileClientWrapper
-                    pageProps={{
-                        ssrAppProfile: appProfile,
-                        destinyMembershipId: appProfile.destinyMembershipId,
-                        destinyMembershipType: appProfile.destinyMembershipType,
-                        ready: false
-                    }}>
-                    <ProfilePage destinyMembershipId={appProfile.destinyMembershipId} />
-                </ProfileClientWrapper>
-            }>
-            <HydratedVanityPage {...appProfile} />
-        </Suspense>
-    )
-}
-
-const HydratedVanityPage = async (appProfile: NonNullable<AppProfile>) => {
     const session = await getServerSession()
 
     const raidHubProfile = await (session?.raidHubAccessToken
@@ -64,6 +45,7 @@ const HydratedVanityPage = async (appProfile: NonNullable<AppProfile>) => {
         ssrRaidHubProfile: raidHubProfile,
         ready: true
     }
+
     return (
         <ProfileClientWrapper pageProps={pageProps}>
             <ProfilePage destinyMembershipId={pageProps.destinyMembershipId} />
