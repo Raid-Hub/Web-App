@@ -3,7 +3,12 @@ import type { Metadata } from "next"
 import { PageWrapper } from "~/components/PageWrapper"
 import PGCR from "~/components/pgcr/pgcr-view"
 import { baseMetadata } from "~/lib/metadata"
-import { assertValidPath, getMetaData, prefetchActivity } from "~/lib/pgcr/server"
+import {
+    assertValidPath,
+    getMetaData,
+    prefetchActivity,
+    tryPrefetchActivity
+} from "~/lib/pgcr/server"
 import { type PGCRPageProps } from "~/lib/pgcr/types"
 
 export const revalidate = 0
@@ -19,8 +24,11 @@ export default async function Page({ params }: PGCRPageProps) {
 }
 
 export async function generateMetadata({ params }: PGCRPageProps): Promise<Metadata> {
-    assertValidPath(params.instanceId)
-    const activity = await prefetchActivity(params.instanceId)
+    if (!/^\d+$/.test(params.instanceId)) {
+        return {}
+    }
+
+    const activity = await tryPrefetchActivity(params.instanceId)
 
     if (!activity) {
         return {

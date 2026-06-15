@@ -22,28 +22,56 @@ type DynamicParams = {
     searchParams: Record<string, string>
 }
 
-const getDefinitions = (params: DynamicParams["params"], manifest: RaidHubManifestResponse) => {
+const tryGetDefinitions = (params: DynamicParams["params"], manifest: RaidHubManifestResponse) => {
     if (params.raid === "pantheon") {
-        const version = findPantheonVersionByPath(manifest, params.version) ?? notFound()
-        const activity = manifest.activityDefinitions[version.associatedActivityId!] ?? notFound()
+        const version = findPantheonVersionByPath(manifest, params.version)
+        if (!version?.associatedActivityId) {
+            return null
+        }
+
+        const activity = manifest.activityDefinitions[version.associatedActivityId] ?? null
+        if (!activity) {
+            return null
+        }
 
         return { version, activity, isPantheon: true as const }
     }
 
+    const version = Object.values(manifest.versionDefinitions).find(
+        def => def.path === params.version
+    )
+    const activity = Object.values(manifest.activityDefinitions).find(
+        def => def.path === params.raid
+    )
+
+    if (!version || !activity) {
+        return null
+    }
+
     return {
-        version:
-            Object.values(manifest.versionDefinitions).find(def => def.path === params.version) ??
-            notFound(),
-        activity:
-            Object.values(manifest.activityDefinitions).find(def => def.path === params.raid) ??
-            notFound(),
+        version,
+        activity,
         isPantheon: false as const
     }
 }
 
+const getDefinitions = (params: DynamicParams["params"], manifest: RaidHubManifestResponse) => {
+    const definitions = tryGetDefinitions(params, manifest)
+    if (!definitions) {
+        return notFound()
+    }
+
+    return definitions
+}
+
 export async function generateMetadata({ params }: DynamicParams): Promise<Metadata> {
     const manifest = await prefetchManifest()
-    const { version, activity, isPantheon } = getDefinitions(params, manifest)
+    const definitions = tryGetDefinitions(params, manifest)
+    if (!definitions) {
+        return {}
+    }
+
+    const { version, activity, isPantheon } = definitions
 
     const title = isPantheon
         ? `${activity.name}: ${version.name} First Completions Leaderboard`

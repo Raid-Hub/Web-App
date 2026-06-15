@@ -1,10 +1,13 @@
 "use client"
 
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
+import { QueryCache, QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools"
-import { httpLink, loggerLink } from "@trpc/client"
+import { httpLink, loggerLink, type TRPCLink } from "@trpc/client"
+import { observable } from "@trpc/server/observable"
 import { useState } from "react"
 import superjson from "superjson"
+import { captureClientException } from "~/lib/sentry/capture"
+import { type AppRouter } from "~/lib/server/trpc"
 import { trpc } from "~/lib/trpc"
 
 function getBaseUrl() {
@@ -13,10 +16,43 @@ function getBaseUrl() {
     return `https://localhost:${process.env.PORT ?? 3000}`
 }
 
+const sentryLink: TRPCLink<AppRouter> = () => {
+    return ({ next, op }) => {
+        return observable(observer => {
+            const subscription = next(op).subscribe({
+                next(value) {
+                    observer.next(value)
+                },
+                error(error) {
+                    captureClientException(error, {
+                        source: "trpc-client",
+                        trpc_path: op.path,
+                        trpc_type: op.type
+                    })
+                    observer.error(error)
+                },
+                complete() {
+                    observer.complete()
+                }
+            })
+
+            return () => subscription.unsubscribe()
+        })
+    }
+}
+
 export function QueryManager(props: { children: React.ReactNode }) {
     const [queryClient] = useState(
         () =>
             new QueryClient({
+                queryCache: new QueryCache({
+                    onError: (error, query) => {
+                        captureClientException(error, {
+                            source: "react-query",
+                            queryKey: JSON.stringify(query.queryKey)
+                        })
+                    }
+                }),
                 defaultOptions: {
                     queries: {
                         staleTime: 60000,
@@ -27,6 +63,11 @@ export function QueryManager(props: { children: React.ReactNode }) {
                         suspense: false,
                         useErrorBoundary: false,
                         retryDelay: failureCount => Math.min(2 ** failureCount * 1000, 30_000)
+                    },
+                    mutations: {
+                        onError: error => {
+                            captureClientException(error, { source: "react-query-mutation" })
+                        }
                     }
                 }
             })
@@ -41,6 +82,7 @@ export function QueryManager(props: { children: React.ReactNode }) {
                         process.env.NODE_ENV === "development" ||
                         (op.direction === "down" && op.result instanceof Error)
                 }),
+                sentryLink,
                 httpLink({
                     url: getBaseUrl() + "/api/trpc"
                 })

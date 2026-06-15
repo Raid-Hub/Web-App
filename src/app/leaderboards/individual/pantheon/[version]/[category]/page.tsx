@@ -22,14 +22,14 @@ type PantheonVersionLeaderboardDynamicParams = {
     searchParams: Record<string, string>
 }
 
-const getDefinitions = (
+const tryGetDefinitions = (
     params: PantheonVersionLeaderboardDynamicParams["params"],
     manifest: RaidHubManifestResponse
 ) => {
     const definition = findPantheonVersionByPath(manifest, params.version)
 
     if (!definition?.associatedActivityId) {
-        return notFound()
+        return null
     }
 
     const activity = manifest.activityDefinitions[definition.associatedActivityId] ?? null
@@ -41,11 +41,28 @@ const getDefinitions = (
     }
 }
 
+const getDefinitions = (
+    params: PantheonVersionLeaderboardDynamicParams["params"],
+    manifest: RaidHubManifestResponse
+) => {
+    const definitions = tryGetDefinitions(params, manifest)
+    if (!definitions) {
+        return notFound()
+    }
+
+    return definitions
+}
+
 export async function generateMetadata({
     params
 }: PantheonVersionLeaderboardDynamicParams): Promise<Metadata> {
     const manifest = await prefetchManifest()
-    const { definition, activity, categoryName } = getDefinitions(params, manifest)
+    const definitions = tryGetDefinitions(params, manifest)
+    if (!definitions) {
+        return {}
+    }
+
+    const { definition, activity, categoryName } = definitions
     const activityName = activity?.name ?? "The Pantheon"
 
     const title = `${activityName}: ${definition.name} ${categoryName} Completion Leaderboard`

@@ -52,7 +52,8 @@ export function RaidHubManifestManager(props: {
 }) {
     const { data } = useQuery<RaidHubManifestResponse>({
         queryKey: ["raidhub-manifest"],
-        queryFn: () => getRaidHubApi("/manifest", null, null).then(res => res.response),
+        queryFn: ({ signal }) =>
+            getRaidHubApi("/manifest", null, null, { signal }).then(res => res.response),
         initialData: props.serverManifest,
         staleTime: 1000 * 3600 // 1 hour
     })
