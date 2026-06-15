@@ -44,6 +44,7 @@ function isTransientNetworkError(error: unknown): boolean {
         const { message } = error
         return (
             message === "Failed to fetch" ||
+            message === "fetch failed" ||
             message.startsWith("Load failed") ||
             message.startsWith("NetworkError when attempting to fetch resource")
         )
@@ -52,6 +53,17 @@ function isTransientNetworkError(error: unknown): boolean {
     if (error instanceof Error && error.name === "TRPCClientError") {
         const { message } = error
         return message === "Failed to fetch" || message === "Load failed"
+    }
+
+    if (error instanceof Error && error.message.startsWith("Operation failed after")) {
+        let cause: unknown = error.cause
+        while (cause) {
+            if (cause instanceof TypeError && cause.message === "fetch failed") {
+                return true
+            }
+
+            cause = cause instanceof Error ? cause.cause : undefined
+        }
     }
 
     return false
@@ -66,8 +78,18 @@ function isDexieTransactionAbort(error: unknown): boolean {
     )
 }
 
-function shouldCaptureClientError(error: unknown): boolean {
-    if (isAbortError(error) || isTransientNetworkError(error) || isDexieTransactionAbort(error)) {
+/** Dexie unavailable in private browsing / storage-blocked WebViews. */
+function isDexieEnvironmentError(error: unknown): boolean {
+    return error instanceof Error && error.name === "OpenFailedError"
+}
+
+function shouldCaptureError(error: unknown): boolean {
+    if (
+        isAbortError(error) ||
+        isTransientNetworkError(error) ||
+        isDexieTransactionAbort(error) ||
+        isDexieEnvironmentError(error)
+    ) {
         return false
     }
 
@@ -86,7 +108,7 @@ function shouldCaptureClientError(error: unknown): boolean {
 }
 
 export function captureClientException(error: unknown, context?: Record<string, unknown>): void {
-    if (!shouldCaptureClientError(error)) {
+    if (!shouldCaptureError(error)) {
         return
     }
 
@@ -100,7 +122,7 @@ export function captureServerException(
         extra?: Record<string, unknown>
     }
 ): void {
-    if (!getSentryDsnForServer()) {
+    if (!getSentryDsnForServer() || !shouldCaptureError(error)) {
         return
     }
 
