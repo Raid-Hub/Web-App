@@ -46,7 +46,7 @@ export const getLocalDateKey = (date: Date) => {
 
 export const parseLocalDateKey = (key: string) => {
     const [year, month, day] = key.split("-").map(Number)
-    return new Date(year!, month! - 1, day!)
+    return new Date(year, month - 1, day)
 }
 
 const sortNewestFirst = (activities: readonly RaidHubInstanceForPlayer[]) =>
