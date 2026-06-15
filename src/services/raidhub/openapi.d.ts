@@ -3459,6 +3459,10 @@ export interface components {
       readonly versionSplashUrls: {
         [key: string]: readonly components["schemas"]["ImageContentData"][];
       };
+      /** @description The checkpoint encounter name for each raid activityId, used in lowman tag labels */
+      readonly checkpointNames: {
+        readonly [key: string]: string;
+      };
     };
     readonly StatusResponse: {
       readonly AtlasPGCR: components["schemas"]["AtlasStatus"];

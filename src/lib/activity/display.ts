@@ -14,6 +14,7 @@ export type ActivityDisplayInput = {
 export type ActivityDisplayContext = {
     getActivityString: (activityId: number) => string
     getVersionString: (versionId: number) => string
+    getCheckpointName: (activityId: number) => string | null
     pantheonVersions: readonly number[]
 }
 
@@ -23,14 +24,14 @@ export type ActivityDisplayParts = {
     tags: string[]
 }
 
-/** Version-specific labels (Master, Contest, etc.) that belong in the title, not attempt tags. */
+/** Version-specific labels (Challenge, etc.) that belong in the title, not attempt tags. */
 export const getIntrinsicVersionLabel = (
     versionId: number,
     versionName: string,
     isContest: boolean
 ): string | null => {
-    if (isContest && versionName !== Tag.CONTEST) {
-        return Tag.CONTEST
+    if (isContest || versionName === Tag.CONTEST || versionName === Tag.MASTER) {
+        return null
     }
 
     if (versionId === 1 || versionName === "Unknown") {
@@ -81,16 +82,23 @@ export const getActivityDisplayParts = (
         }
     }
 
-    const intrinsicLabel = getIntrinsicVersionLabel(
-        activity.versionId,
-        versionName,
-        activity.isContest
-    )
+    if (versionName === "Master") {
+        tags.push(Tag.MASTER)
+    } else if (activity.isContest) {
+        tags.push(Tag.CONTEST)
+    }
 
     if (wishWall) {
         tags.push("Wish Wall")
     } else if (!activity.fresh && !activity.flawless) {
-        tags.push(Tag.CHECKPOINT)
+        if (activity.completed && activity.playerCount <= 3) {
+            const checkpointName = ctx.getCheckpointName(activity.activityId)
+            if (checkpointName) {
+                tags.push(checkpointName)
+            }
+        } else if (activity.playerCount > 3) {
+            tags.push(Tag.CHECKPOINT)
+        }
     }
 
     if (opts?.excludeTitle) {
@@ -103,9 +111,14 @@ export const getActivityDisplayParts = (
             : versionName
         : activityName
 
-    const versionLabel = intrinsicLabel && !isPantheon ? intrinsicLabel : null
+    const versionLabel = getIntrinsicVersionLabel(
+        activity.versionId,
+        versionName,
+        activity.isContest
+    )
+    const showVersionLabel = versionLabel && !isPantheon ? versionLabel : null
 
-    return { title: baseTitle, versionLabel, tags }
+    return { title: baseTitle, versionLabel: showVersionLabel, tags }
 }
 
 export const formatActivityDisplayParts = ({
