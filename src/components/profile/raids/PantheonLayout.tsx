@@ -6,6 +6,25 @@ import { useRaidHubManifest } from "~/components/providers/RaidHubManifestManage
 import { type RaidHubInstanceForPlayer } from "~/services/raidhub/types"
 import { RaidCardContext } from "./RaidCardContext"
 
+const getPantheonSectionTitle = (activityName: string) => {
+    if (activityName === "Pantheon") return activityName
+    const prefix = "Pantheon: "
+    return activityName.startsWith(prefix) ? activityName.slice(prefix.length) : activityName
+}
+
+const PantheonSectionHeader = ({ title }: { title: string }) => (
+    <header className="border-border/40 border-b pb-3">
+        {title !== "Pantheon" && (
+            <span className="text-muted-foreground block text-[10px] font-medium tracking-widest uppercase sm:text-[11px]">
+                Pantheon
+            </span>
+        )}
+        <h3 className="text-foreground/95 truncate text-base font-semibold tracking-tight sm:text-lg">
+            {title}
+        </h3>
+    </header>
+)
+
 const PantheonModeGrid = ({
     modes,
     instancesByMode,
@@ -45,16 +64,35 @@ export const PantheonLayout = ({
     isLoading: boolean
 }) => {
     const {
-        activePantheonVersions,
-        pantheonSunsetVersions,
+        pantheonIds,
+        pantheonVersions,
         versionDefinitions,
-        activePantheonIds
+        activePantheonIds,
+        getActivityString
     } = useRaidHubManifest()
 
     const getActivityIdForVersion = useCallback(
         (versionId: number) =>
             versionDefinitions[versionId]?.associatedActivityId ?? activePantheonIds[0] ?? 102,
         [activePantheonIds, versionDefinitions]
+    )
+
+    const pantheonSections = useMemo(
+        () =>
+            pantheonIds
+                .map(activityId => {
+                    const modes = pantheonVersions.filter(
+                        versionId =>
+                            versionDefinitions[versionId]?.associatedActivityId === activityId
+                    )
+                    return {
+                        activityId,
+                        title: getPantheonSectionTitle(getActivityString(activityId)),
+                        modes
+                    }
+                })
+                .filter(section => section.modes.length > 0),
+        [getActivityString, pantheonIds, pantheonVersions, versionDefinitions]
     )
 
     const instancesByMode = useMemo(() => {
@@ -71,28 +109,19 @@ export const PantheonLayout = ({
     }, [instances, isLoading])
 
     return (
-        <div className="flex w-full flex-col gap-6">
-            <PantheonModeGrid
-                modes={activePantheonVersions}
-                instancesByMode={instancesByMode}
-                isLoading={isLoading}
-                isExpanded={isExpanded}
-                getActivityIdForVersion={getActivityIdForVersion}
-            />
-            {pantheonSunsetVersions.length > 0 && (
-                <div>
-                    <h3 className="text-secondary mb-3 text-sm font-semibold tracking-wide uppercase">
-                        Historical Modes
-                    </h3>
+        <div className="flex w-full flex-col gap-8">
+            {pantheonSections.map(section => (
+                <section key={section.activityId} className="flex flex-col gap-4">
+                    <PantheonSectionHeader title={section.title} />
                     <PantheonModeGrid
-                        modes={pantheonSunsetVersions}
+                        modes={section.modes}
                         instancesByMode={instancesByMode}
                         isLoading={isLoading}
                         isExpanded={isExpanded}
                         getActivityIdForVersion={getActivityIdForVersion}
                     />
-                </div>
-            )}
+                </section>
+            ))}
         </div>
     )
 }

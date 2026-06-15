@@ -132,7 +132,8 @@ export const CloudflareActivitySplash = ({
         getImageVariantsForActivity,
         getImageVariantsForVersion,
         getActivityDefinition,
-        getVersionString
+        getVersionString,
+        pantheonVersions
     } = useRaidHubManifest()
 
     const loader = useCallback<ImageLoader>(
@@ -141,7 +142,7 @@ export const CloudflareActivitySplash = ({
             const minWidth = (width * (quality || 75)) / 100
 
             const splashVariants =
-                versionId != null
+                versionId != null && pantheonVersions.includes(versionId)
                     ? getImageVariantsForVersion(versionId)
                     : getImageVariantsForActivity(activityId)
             if (!splashVariants.length) {
@@ -159,7 +160,13 @@ export const CloudflareActivitySplash = ({
 
             return content.url
         },
-        [activityId, versionId, getImageVariantsForActivity, getImageVariantsForVersion]
+        [
+            activityId,
+            versionId,
+            pantheonVersions,
+            getImageVariantsForActivity,
+            getImageVariantsForVersion
+        ]
     )
 
     const activityDefinition = getActivityDefinition(activityId)
