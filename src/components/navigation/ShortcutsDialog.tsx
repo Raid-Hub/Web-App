@@ -2,26 +2,20 @@
 
 import { useLocale } from "~/components/providers/LocaleManager"
 import { KEYBOARD_SHORTCUTS } from "~/lib/navigation/shortcuts"
-import {
-    Dialog,
-    DialogContent,
-    DialogDescription,
-    DialogHeader,
-    DialogTitle
-} from "~/shad/dialog"
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "~/shad/dialog"
 
-function ShortcutKeys({
-    keys,
-    modKey
-}: {
-    keys: readonly string[]
-    modKey: string
-}) {
+function ShortcutKeys({ keys, modKey }: { keys: readonly string[]; modKey: string }) {
     return (
         <span className="flex items-center gap-1">
             {keys.map(key => {
                 const label =
-                    key === "mod" ? modKey : key === "shift" ? "⇧" : key.length === 1 ? key.toUpperCase() : key
+                    key === "mod"
+                        ? modKey
+                        : key === "shift"
+                          ? "⇧"
+                          : key.length === 1
+                            ? key.toUpperCase()
+                            : key
 
                 return (
                     <kbd
