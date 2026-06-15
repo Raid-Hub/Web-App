@@ -47,6 +47,11 @@ export function QueryManager(props: { children: React.ReactNode }) {
             new QueryClient({
                 queryCache: new QueryCache({
                     onError: (error, query) => {
+                        // tRPC errors are captured by sentryLink — avoid double-reporting.
+                        if (Array.isArray(query.queryKey[0])) {
+                            return
+                        }
+
                         captureClientException(error, {
                             source: "react-query",
                             queryKey: JSON.stringify(query.queryKey)
