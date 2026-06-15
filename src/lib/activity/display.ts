@@ -14,7 +14,7 @@ export type ActivityDisplayInput = {
 export type ActivityDisplayContext = {
     getActivityString: (activityId: number) => string
     getVersionString: (versionId: number) => string
-    getCheckpointName: (activityId: number) => string | null
+    getCheckpointName: (activityId: number, versionId?: number) => string | null
     pantheonVersions: readonly number[]
 }
 
@@ -92,7 +92,7 @@ export const getActivityDisplayParts = (
         tags.push("Wish Wall")
     } else if (!activity.fresh && !activity.flawless) {
         if (activity.completed && activity.playerCount <= 3) {
-            const checkpointName = ctx.getCheckpointName(activity.activityId)
+            const checkpointName = ctx.getCheckpointName(activity.activityId, activity.versionId)
             if (checkpointName) {
                 tags.push(checkpointName)
             }

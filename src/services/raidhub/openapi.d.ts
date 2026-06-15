@@ -3463,6 +3463,10 @@ export interface components {
       readonly checkpointNames: {
         readonly [key: string]: string;
       };
+      /** @description The checkpoint encounter name for each Pantheon versionId, used in lowman tag labels */
+      readonly versionCheckpointNames: {
+        readonly [key: string]: string;
+      };
     };
     readonly StatusResponse: {
       readonly AtlasPGCR: components["schemas"]["AtlasStatus"];
