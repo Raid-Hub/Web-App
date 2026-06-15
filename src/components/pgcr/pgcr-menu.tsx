@@ -19,7 +19,7 @@ import { ReportModal } from "./pgcr-report-modal"
 
 export const PGCRMenu = () => {
     const session = useSession()
-    const { data, setIsBlacklisted } = usePGCRContext()
+    const { data, setIsBlacklisted, allowsReporting } = usePGCRContext()
     const [isMenuOpen, setIsMenuOpen] = useState(false)
     const [isReportModalOpen, setIsReportModalOpen] = useState(false)
     const [isBlacklistModalOpen, setIsBlacklistModalOpen] = useState(false)
@@ -55,7 +55,7 @@ export const PGCRMenu = () => {
                     <Share2 className="mr-2 h-4 w-4" />
                     <span>Share</span>
                 </DropdownMenuItem>
-                {session.status === "authenticated" && (
+                {session.status === "authenticated" && allowsReporting && (
                     <>
                         <DropdownMenuSeparator />
 
