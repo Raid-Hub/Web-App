@@ -3,7 +3,7 @@ import { useRaidHubManifest } from "~/components/providers/RaidHubManifestManage
 import { DotBlacklisted, DotFail, DotFlawless, DotSuccess, DotTaxi } from "~/lib/profile/constants"
 import { Tag } from "~/models/tag"
 import type { RaidHubInstanceForPlayer } from "~/services/raidhub/types"
-import { secondsToHMS } from "~/util/presentation/formatting"
+import { secondsToHMS, wrapText } from "~/util/presentation/formatting"
 import { getRelativeTime } from "~/util/presentation/pastDates"
 import { FULL_HEIGHT } from "./DotGraph"
 import styles from "./raids.module.css"
@@ -23,6 +23,11 @@ const DotTooltip = ({ offset, isShowing, activity }: DotTooltipProps) => {
     const dateString = useMemo(
         () => getRelativeTime(new Date(activity.dateCompleted)),
         [activity.dateCompleted]
+    )
+
+    const versionString = useMemo(
+        () => wrapText(getVersionString(activity.versionId), 18),
+        [activity.versionId, getVersionString]
     )
 
     const lowman = activity.completed
@@ -59,7 +64,7 @@ const DotTooltip = ({ offset, isShowing, activity }: DotTooltipProps) => {
             <div className={styles["dot-tooltip-tags"]}>
                 <span>{lowman}</span>
                 <span>{activity.flawless && Tag.FLAWLESS}</span>
-                <span>{getVersionString(activity.versionId)}</span>
+                <span className={styles["dot-tooltip-wrap"]}>{versionString}</span>
             </div>
         </div>
     )
