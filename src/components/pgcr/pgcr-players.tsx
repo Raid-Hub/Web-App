@@ -6,6 +6,7 @@ import {
     formatKdRelativeToAveragePercentage,
     formatTeamSharePercentage
 } from "~/lib/pgcr/formatting"
+import { cn } from "~/lib/tw"
 import { type PlayerStats } from "~/lib/pgcr/types"
 import { type RaidHubInstanceExtended } from "~/services/raidhub/types"
 import { CardContent } from "~/shad/card"
@@ -171,6 +172,16 @@ export const PGCRPlayers = ({ data, mvp, playerMergedStats, sortScores }: PGCRPl
         }
     ]
 
+    const playerList = sortScores.map((_, id) => (
+        <Fragment key={id}>
+            <Separator className="bg-zinc-800" />
+            <PlayerRow player={data.players.find(p => p.playerInfo.membershipId === id)!} />
+        </Fragment>
+    ))
+
+    const playerListClassName =
+        "bg-background w-full overflow-x-auto border-x-1 border-b-1 border-zinc-800"
+
     return (
         <CardContent className="space-y-6 bg-black p-2 md:p-6">
             {/* Players Section */}
@@ -185,16 +196,17 @@ export const PGCRPlayers = ({ data, mvp, playerMergedStats, sortScores }: PGCRPl
                     <div className="text-center">Time</div>
                 </div>
 
-                <ScrollArea className="bg-background max-h-[600px] w-full overflow-x-auto border-x-1 border-b-1 border-zinc-800">
-                    {sortScores.map((_, id) => (
-                        <Fragment key={id}>
-                            <Separator className="bg-zinc-800" />
-                            <PlayerRow
-                                player={data.players.find(p => p.playerInfo.membershipId === id)!}
-                            />
-                        </Fragment>
-                    ))}
-                </ScrollArea>
+                {sortScores.size > 12 ? (
+                    <ScrollArea
+                        className={cn(
+                            playerListClassName,
+                            "max-h-[calc(12*4rem+12*1px)]"
+                        )}>
+                        {playerList}
+                    </ScrollArea>
+                ) : (
+                    <div className={playerListClassName}>{playerList}</div>
+                )}
             </div>
 
             {data.playerCount > 1 && (
