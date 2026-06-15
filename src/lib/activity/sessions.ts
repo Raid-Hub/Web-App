@@ -42,6 +42,9 @@ const sortNewestFirst = (activities: readonly RaidHubInstanceForPlayer[]) =>
         .filter(a => new Date(a.dateCompleted).getTime() <= Date.now())
         .sort((a, b) => new Date(b.dateCompleted).getTime() - new Date(a.dateCompleted).getTime())
 
+export const getActivityClusterBucketKey = (activity: RaidHubInstanceForPlayer) =>
+    `${activity.activityId}:${activity.versionId}:${activity.isContest ? 1 : 0}`
+
 const clusterWithinSession = (
     sessionActivities: RaidHubInstanceForPlayer[],
     clusterGapMs: number
@@ -51,11 +54,11 @@ const clusterWithinSession = (
     for (const activity of sessionActivities) {
         const completed = new Date(activity.dateCompleted)
         const lastCluster = clusters.at(-1)
-
+        const lastActivity = lastCluster?.activities[0]
         if (
             lastCluster &&
-            lastCluster.activityId === activity.activityId &&
-            lastCluster.versionId === activity.versionId &&
+            lastActivity &&
+            getActivityClusterBucketKey(lastActivity) === getActivityClusterBucketKey(activity) &&
             lastCluster.endedAt.getTime() - completed.getTime() < clusterGapMs
         ) {
             lastCluster.activities.push(activity)
@@ -64,7 +67,7 @@ const clusterWithinSession = (
         }
 
         clusters.push({
-            id: `${activity.instanceId}:${activity.activityId}:${activity.versionId}`,
+            id: `${getActivityClusterBucketKey(activity)}:${activity.instanceId}`,
             activityId: activity.activityId,
             versionId: activity.versionId,
             activities: [activity],
@@ -152,11 +155,24 @@ export const getActivityClusterStats = (cluster: ActivityCluster): ActivityClust
     }
 }
 
+/** Oldest activity in the session (activities are newest-first). */
+const getOldestSessionActivity = (session: PlaySession) =>
+    session.activities[session.activities.length - 1]
+
+/** When the session actually began (oldest activity start). */
+export const getPlaySessionStartAt = (session: PlaySession) => {
+    const oldest = getOldestSessionActivity(session)
+    const oldestCompleted = session.endedAt.getTime()
+    const oldestDurationMs = (oldest?.duration ?? 0) * 1000
+    return new Date(oldestCompleted - oldestDurationMs)
+}
+
+/** When the session ended (newest activity completion). */
+export const getPlaySessionEndAt = (session: PlaySession) => session.startedAt
+
 export const getPlaySessionSpanSeconds = (session: PlaySession) => {
-    const newestEnd = session.startedAt.getTime()
-    const oldestEnd = session.endedAt.getTime()
-    const oldestDuration = session.activities[session.activities.length - 1]?.duration ?? 0
-    const spanMs = newestEnd - oldestEnd + oldestDuration * 1000
+    const spanMs =
+        getPlaySessionEndAt(session).getTime() - getPlaySessionStartAt(session).getTime()
     return Math.max(0, Math.round(spanMs / 1000))
 }
 

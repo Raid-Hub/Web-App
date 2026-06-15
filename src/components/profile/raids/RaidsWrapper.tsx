@@ -163,6 +163,7 @@ export const RaidsWrapper = () => {
                     <ActivityHistoryLayout
                         activities={activities}
                         isLoading={isLoadingActivities}
+                        profileMembershipIds={membershipIds}
                     />
                 )
             case "teammates":
@@ -181,7 +182,8 @@ export const RaidsWrapper = () => {
         activities,
         activitiesByRaid,
         leaderboardEntriesByRaid,
-        isExpanded
+        isExpanded,
+        membershipIds
     ])
 
     const isLoadingMainData = !ready || isLoadingPlayers || isLoadingActivities

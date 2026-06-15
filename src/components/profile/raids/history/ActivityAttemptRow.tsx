@@ -27,8 +27,8 @@ export const ActivityAttemptRow = ({
             href={`/pgcr/${activity.instanceId}`}
             rel="nofollow"
             className={cn(
-                "hover:bg-muted/30 grid grid-cols-[4.25rem_minmax(0,1fr)_auto_auto] items-center gap-x-2 px-3 transition-colors sm:grid-cols-[5rem_minmax(0,1fr)_auto_auto]",
-                compact ? "py-1.5" : "py-2"
+                "hover:bg-muted/25 grid grid-cols-[4.25rem_minmax(0,1fr)_auto_auto] items-center gap-x-2 px-3 transition-colors hover:backdrop-blur-sm sm:grid-cols-[5rem_minmax(0,1fr)_auto_auto]",
+                compact ? "py-2" : "py-2.5"
             )}>
             <time className="text-muted-foreground shrink-0 text-[11px] tabular-nums sm:text-xs">
                 {date.toLocaleTimeString(undefined, {
@@ -44,7 +44,7 @@ export const ActivityAttemptRow = ({
                             key={tag}
                             variant="outline"
                             className={cn(
-                                "h-5 px-1.5 py-0 text-[10px] font-medium",
+                                "border-border/50 bg-background/30 h-5 px-1.5 py-0 text-[10px] font-medium backdrop-blur-sm",
                                 tag === Tag.CHECKPOINT &&
                                     "border-pink-500/30 bg-pink-500/10 text-pink-200"
                             )}>

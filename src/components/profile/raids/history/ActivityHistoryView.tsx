@@ -14,12 +14,14 @@ export const ActivityHistoryView = memo(
         activities,
         visibleSessionCount,
         onLoadMore,
-        isLoading
+        isLoading,
+        profileMembershipIds
     }: {
         activities: Collection<string, RaidHubInstanceForPlayer>
         visibleSessionCount: number
         onLoadMore: () => void
         isLoading: boolean
+        profileMembershipIds: readonly string[]
     }) => {
         const { dayGroups, hasMore } = useActivitySessions(activities, visibleSessionCount)
         const { locale } = useLocale()
@@ -47,7 +49,11 @@ export const ActivityHistoryView = memo(
 
                         <div className="flex flex-col gap-3">
                             {sessions.map(session => (
-                                <PlaySessionBlock key={session.id} session={session} />
+                                <PlaySessionBlock
+                                    key={session.id}
+                                    session={session}
+                                    profileMembershipIds={profileMembershipIds}
+                                />
                             ))}
                         </div>
                     </section>
@@ -59,7 +65,7 @@ export const ActivityHistoryView = memo(
                         disabled={isLoading}
                         onClick={onLoadMore}
                         className="w-full sm:w-auto">
-                        Load more sessions
+                        Load more
                     </Button>
                 )}
             </div>

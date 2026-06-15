@@ -19,7 +19,25 @@ export type ActivityDisplayContext = {
 
 export type ActivityDisplayParts = {
     title: string
+    versionLabel: string | null
     tags: string[]
+}
+
+/** Version-specific labels (Master, Contest, etc.) that belong in the title, not attempt tags. */
+export const getIntrinsicVersionLabel = (
+    versionId: number,
+    versionName: string,
+    isContest: boolean
+): string | null => {
+    if (isContest && versionName !== Tag.CONTEST) {
+        return Tag.CONTEST
+    }
+
+    if (versionId === 1 || versionName === "Unknown") {
+        return null
+    }
+
+    return versionName
 }
 
 export const getActivityDisplayParts = (
@@ -63,10 +81,18 @@ export const getActivityDisplayParts = (
         }
     }
 
-    if (versionName === "Master") {
-        tags.push(Tag.MASTER)
-    } else if (activity.isContest) {
-        tags.push(Tag.CONTEST)
+    const intrinsicLabel = getIntrinsicVersionLabel(
+        activity.versionId,
+        versionName,
+        activity.isContest
+    )
+
+    if (!intrinsicLabel) {
+        if (versionName === "Master") {
+            tags.push(Tag.MASTER)
+        } else if (activity.isContest) {
+            tags.push(Tag.CONTEST)
+        }
     }
 
     if (wishWall) {
@@ -76,24 +102,32 @@ export const getActivityDisplayParts = (
     }
 
     if (opts?.excludeTitle) {
-        return tags.length > 0 ? { title: "", tags } : null
+        return tags.length > 0 ? { title: "", versionLabel: null, tags } : null
     }
 
-    const title = isPantheon
+    const baseTitle = isPantheon
         ? opts?.pantheonTitleStyle === "full"
             ? getPantheonDisplayName(activityName, versionName)
             : versionName
         : activityName
 
-    return { title, tags }
+    const versionLabel = intrinsicLabel && !isPantheon ? intrinsicLabel : null
+
+    return { title: baseTitle, versionLabel, tags }
 }
 
-export const formatActivityDisplayParts = ({ title, tags }: ActivityDisplayParts): string => {
-    if (!title) {
+export const formatActivityDisplayParts = ({
+    title,
+    versionLabel,
+    tags
+}: ActivityDisplayParts): string => {
+    const titleText = [title, versionLabel].filter(Boolean).join(" ")
+
+    if (!titleText) {
         return tags.join(" ")
     }
     if (tags.length === 0) {
-        return title
+        return titleText
     }
-    return [title, ...tags].join(" ")
+    return [titleText, ...tags].join(" ")
 }

@@ -5,15 +5,17 @@ import { useState } from "react"
 import { type RaidHubInstanceForPlayer } from "~/services/raidhub/types"
 import { ActivityHistoryView } from "./history/ActivityHistoryView"
 
-const INITIAL_SESSION_COUNT = 12
-const SESSION_PAGE_SIZE = 8
+const INITIAL_SESSION_COUNT = 20
+const SESSION_PAGE_SIZE = 20
 
 export const ActivityHistoryLayout = ({
     activities,
-    isLoading
+    isLoading,
+    profileMembershipIds
 }: {
     activities: Collection<string, RaidHubInstanceForPlayer>
     isLoading: boolean
+    profileMembershipIds: readonly string[]
 }) => {
     const [visibleSessions, setVisibleSessions] = useState(INITIAL_SESSION_COUNT)
 
@@ -22,6 +24,7 @@ export const ActivityHistoryLayout = ({
             activities={activities}
             visibleSessionCount={visibleSessions}
             isLoading={isLoading}
+            profileMembershipIds={profileMembershipIds}
             onLoadMore={() => setVisibleSessions(count => count + SESSION_PAGE_SIZE)}
         />
     )
