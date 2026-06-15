@@ -95,12 +95,7 @@ const TokenManager = ({ setNextRefetch }: { setNextRefetch: (milliseconds: numbe
                     }
 
                     return bungieClient.onUnauthorized(() => {
-                        const now = Date.now()
-                        if (now - lastRefetch.current < 60_000) {
-                            // If the last refetch was less than 60 seconds ago, don't attempt to refetch again
-                            return
-                        }
-                        lastRefetch.current = now
+                        lastRefetch.current = Date.now()
                         void session.update()
                     })
                 }

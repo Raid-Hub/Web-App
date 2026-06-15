@@ -53,7 +53,7 @@ export default async function RootLayout(params: { children: ReactNode }) {
             <body className="relative m-0 flex min-h-[100svh] flex-col font-[Manrope,sans-serif]">
                 <QueryManager>
                     <BungieClientProvider>
-                        <TooltipProvider>
+                        <TooltipProvider delayDuration={400} disableHoverableContent>
                             <SessionManager>
                                 <LocaleManager>
                                     <ClientComponentManager>

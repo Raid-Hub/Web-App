@@ -84,7 +84,23 @@ async function refreshBungieAuth(bungie: BungieAccount, userId: string) {
             } else {
                 console.error("Unexpected error while refreshing Bungie auth", err)
                 captureServerException(err, {
-                    tags: { area: "session", operation: "bungie_token_refresh" }
+                    tags: {
+                        area: "session",
+                        operation: "bungie_token_refresh",
+                        capture_source: "session-callback"
+                    },
+                    extra: {
+                        userId,
+                        refresh_token_present: !!bungie.refreshToken,
+                        refresh_expires_at: bungie.refreshExpiresAt ?? null,
+                        access_expires_at: bungie.expiresAt ?? null,
+                        ...(err instanceof BungieServiceError
+                            ? {
+                                  bungie_oauth_error: err.cause.error,
+                                  bungie_oauth_description: err.cause.error_description
+                              }
+                            : {})
+                    }
                 })
             }
             errors.push("BungieAccessTokenError")

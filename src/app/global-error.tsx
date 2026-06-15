@@ -1,8 +1,8 @@
 "use client"
 
-import * as Sentry from "@sentry/nextjs"
 import { useEffect } from "react"
 import { PageWrapper } from "~/components/PageWrapper"
+import { captureClientException } from "~/lib/sentry/capture"
 
 export default function GlobalError({
     error,
@@ -13,7 +13,13 @@ export default function GlobalError({
 }) {
     useEffect(() => {
         console.error(error)
-        Sentry.captureException(error)
+        captureClientException(error, {
+            tags: { capture_source: "global-error" },
+            extra: {
+                digest: error.digest ?? null,
+                app_version: process.env.APP_VERSION ?? null
+            }
+        })
     }, [error])
 
     return (

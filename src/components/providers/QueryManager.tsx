@@ -24,10 +24,24 @@ const sentryLink: TRPCLink<AppRouter> = () => {
                     observer.next(value)
                 },
                 error(error) {
+                    if (error instanceof DOMException && error.name === "AbortError") {
+                        observer.error(error)
+                        return
+                    }
+                    if (error instanceof Error && error.name === "AbortError") {
+                        observer.error(error)
+                        return
+                    }
+
                     captureClientException(error, {
-                        source: "trpc-client",
-                        trpc_path: op.path,
-                        trpc_type: op.type
+                        tags: {
+                            capture_source: "trpc-client"
+                        },
+                        extra: {
+                            trpc_path: op.path,
+                            trpc_type: op.type,
+                            trpc_input: op.input ?? null
+                        }
                     })
                     observer.error(error)
                 },
@@ -47,14 +61,31 @@ export function QueryManager(props: { children: React.ReactNode }) {
             new QueryClient({
                 queryCache: new QueryCache({
                     onError: (error, query) => {
+                        // Cancelled queries (navigation/unmount) — not application errors.
+                        if (error instanceof DOMException && error.name === "AbortError") {
+                            return
+                        }
+                        if (error instanceof Error && error.name === "AbortError") {
+                            return
+                        }
+
                         // tRPC errors are captured by sentryLink — avoid double-reporting.
                         if (Array.isArray(query.queryKey[0])) {
                             return
                         }
 
                         captureClientException(error, {
-                            source: "react-query",
-                            queryKey: JSON.stringify(query.queryKey)
+                            tags: {
+                                capture_source: "react-query"
+                            },
+                            extra: {
+                                queryKey: JSON.stringify(query.queryKey),
+                                fetchStatus: query.state.fetchStatus,
+                                status: query.state.status,
+                                fetchFailureCount: query.state.fetchFailureCount,
+                                errorUpdatedAt: query.state.errorUpdatedAt,
+                                dataUpdatedAt: query.state.dataUpdatedAt
+                            }
                         })
                     }
                 }),
@@ -71,7 +102,9 @@ export function QueryManager(props: { children: React.ReactNode }) {
                     },
                     mutations: {
                         onError: error => {
-                            captureClientException(error, { source: "react-query-mutation" })
+                            captureClientException(error, {
+                                tags: { capture_source: "react-query-mutation" }
+                            })
                         }
                     }
                 }

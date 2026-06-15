@@ -1,11 +1,12 @@
 import "server-only"
 
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library"
-import * as Sentry from "@sentry/nextjs"
 import NextAuth from "next-auth"
 import DiscordProvider from "next-auth/providers/discord"
 import TwitchProvider from "next-auth/providers/twitch"
 import TwitterProvider from "next-auth/providers/twitter"
+import { captureServerException } from "~/lib/sentry/capture"
+import { classifyAuthError } from "~/lib/sentry/context"
 import { getSentryDsnForServer } from "~/lib/sentry/env"
 import { prisma } from "~/lib/server/prisma"
 import { reactRequestDedupe } from "~/util/react-cache"
@@ -44,7 +45,23 @@ const {
                 console.error("Error Metadata", JSON.stringify(err.cause.meta, null, 2))
             }
             if (getSentryDsnForServer()) {
-                Sentry.captureException(err, { tags: { area: "nextauth" } })
+                const authContext = classifyAuthError({
+                    name: err.name,
+                    message: err.message,
+                    cause: err.cause
+                })
+                captureServerException(err, {
+                    tags: {
+                        area: "nextauth",
+                        ...authContext.tags
+                    },
+                    extra: {
+                        ...authContext.extra,
+                        ...(err.cause instanceof PrismaClientKnownRequestError
+                            ? { prisma_code: err.cause.code, prisma_meta: err.cause.meta }
+                            : {})
+                    }
+                })
             }
         },
         warn(code) {
