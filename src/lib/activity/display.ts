@@ -87,17 +87,9 @@ export const getActivityDisplayParts = (
         activity.isContest
     )
 
-    if (!intrinsicLabel) {
-        if (versionName === "Master") {
-            tags.push(Tag.MASTER)
-        } else if (activity.isContest) {
-            tags.push(Tag.CONTEST)
-        }
-    }
-
     if (wishWall) {
         tags.push("Wish Wall")
-    } else if (!activity.fresh && !activity.flawless && activity.playerCount > 3) {
+    } else if (!activity.fresh && !activity.flawless) {
         tags.push(Tag.CHECKPOINT)
     }
 

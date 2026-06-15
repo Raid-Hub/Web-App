@@ -4,6 +4,7 @@ import { type Collection } from "@discordjs/collection"
 import { memo } from "react"
 import { useLocale } from "~/components/providers/LocaleManager"
 import { useActivitySessions } from "~/hooks/useActivitySessions"
+import { parseLocalDateKey } from "~/lib/activity/sessions"
 import { type RaidHubInstanceForPlayer } from "~/services/raidhub/types"
 import { Button } from "~/shad/button"
 import { formattedTimeSince, toCustomDateString } from "~/util/presentation/formatting"
@@ -40,10 +41,10 @@ export const ActivityHistoryView = memo(
                     <section key={dayKey} className="flex flex-col gap-3">
                         <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1 px-1">
                             <h3 className="text-base font-semibold">
-                                {toCustomDateString(new Date(dayKey), locale)}
+                                {toCustomDateString(parseLocalDateKey(dayKey), locale)}
                             </h3>
                             <span className="text-muted-foreground text-sm">
-                                {formattedTimeSince(new Date(dayKey), locale)}
+                                {formattedTimeSince(parseLocalDateKey(dayKey), locale)}
                             </span>
                         </div>
 
