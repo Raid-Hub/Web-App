@@ -119,6 +119,7 @@ export function ClanComponent(props: { groupId: string; clan: GroupResponse | nu
     }
 
     const aggStats = clanStatsQuery.data?.aggregateStats.stats
+    const aggRanks = clanStatsQuery.data?.aggregateStats.ranks
     const clanLevelProgression = clan?.detail.clanInfo.d2ClanProgressions[584850370]
 
     return (
@@ -156,6 +157,7 @@ export function ClanComponent(props: { groupId: string; clan: GroupResponse | nu
                                         3
                                     )}
                                     aggLabel="Total"
+                                    rank={aggRanks?.weightedContestScoreRank}
                                 />
                                 <StatBox
                                     label="Full Clears"
@@ -166,6 +168,7 @@ export function ClanComponent(props: { groupId: string; clan: GroupResponse | nu
                                         0
                                     )}
                                     aggLabel="Avg"
+                                    rank={aggRanks?.freshClearsRank}
                                 />
                                 <StatBox
                                     label="Clears"
@@ -176,6 +179,7 @@ export function ClanComponent(props: { groupId: string; clan: GroupResponse | nu
                                         0
                                     )}
                                     aggLabel="Avg"
+                                    rank={aggRanks?.clearsRank}
                                 />
                                 <StatBox
                                     label="Sherpas"
@@ -186,6 +190,7 @@ export function ClanComponent(props: { groupId: string; clan: GroupResponse | nu
                                         0
                                     )}
                                     aggLabel="Avg"
+                                    rank={aggRanks?.sherpasRank}
                                 />
                                 <StatBox
                                     label="Time in Raids"
@@ -195,6 +200,7 @@ export function ClanComponent(props: { groupId: string; clan: GroupResponse | nu
                                         2
                                     )}
                                     aggLabel="Avg"
+                                    rank={aggRanks?.timePlayedSecondsRank}
                                 />
                             </>
                         )}

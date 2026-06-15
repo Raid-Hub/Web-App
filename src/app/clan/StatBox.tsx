@@ -4,12 +4,14 @@ export const StatBox = ({
     label,
     primaryValue,
     secondaryValue,
-    aggLabel
+    aggLabel,
+    rank
 }: {
     label: string
     primaryValue: string
     secondaryValue?: string
     aggLabel: string
+    rank?: number | null
 }) => {
     return (
         <StyledStatBox>
@@ -27,6 +29,7 @@ export const StatBox = ({
                         <span>{aggLabel}</span>
                     )}
                 </div>
+                {rank != null && <div className="stat-box-rank">Rank #{rank.toLocaleString()}</div>}
             </div>
         </StyledStatBox>
     )
@@ -60,5 +63,11 @@ const StyledStatBox = styled.div`
         font-size: 0.8em;
         font-style: italic;
         color: ${({ theme }) => theme.colors.text.secondary};
+    }
+
+    .stat-box-rank {
+        font-size: 0.8em;
+        color: ${({ theme }) => theme.colors.text.secondary};
+        margin-top: 0.25rem;
     }
 `
