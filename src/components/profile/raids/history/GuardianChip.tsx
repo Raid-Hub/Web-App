@@ -21,7 +21,7 @@ export const GuardianChip = ({ guardian }: { guardian: ClusterGuardian }) => {
             <TooltipTrigger asChild>
                 <Link
                     href={`/profile/${guardian.playerInfo.membershipId}?tab=history`}
-                    className="rounded-md outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                    className="focus-visible:ring-ring rounded-md outline-none focus-visible:ring-2"
                     onClick={event => event.stopPropagation()}>
                     <span className="border-border/40 bg-muted/25 hover:bg-muted/40 inline-flex max-w-full items-center gap-1 rounded-md border py-0.5 pr-1.5 pl-0.5 text-xs backdrop-blur-sm transition-colors">
                         <Avatar className="size-6 shrink-0 rounded-[4px]">

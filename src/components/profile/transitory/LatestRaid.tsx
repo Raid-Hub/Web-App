@@ -76,7 +76,7 @@ export const LatestRaid = () => {
     return (
         <Latest $playerCount={latestActivity.playerCount ?? 6}>
             <Link href={`/pgcr/${latestActivity.instanceId}`} className="block h-full text-inherit">
-                <Card className="border-border/60 bg-card/65 h-full flex-col gap-0 overflow-hidden rounded-lg py-0 shadow-sm transition-colors hover:border-border/80">
+                <Card className="border-border/60 bg-card/65 hover:border-border/80 h-full flex-col gap-0 overflow-hidden rounded-lg py-0 shadow-sm transition-colors">
                     <div className="relative h-24 shrink-0 overflow-hidden sm:h-28">
                         <CloudflareActivitySplash
                             activityId={latestActivity.activityId}
@@ -102,11 +102,7 @@ export const LatestRaid = () => {
                                 aria-label={
                                     profileCompleted ? "Activity cleared" : "Activity not cleared"
                                 }>
-                                {profileCompleted ? (
-                                    <Checkmark sx={18} />
-                                ) : (
-                                    <Xmark sx={18} />
-                                )}
+                                {profileCompleted ? <Checkmark sx={18} /> : <Xmark sx={18} />}
                             </div>
                         </div>
 
@@ -123,7 +119,7 @@ export const LatestRaid = () => {
                                 {display?.versionLabel && (
                                     <Badge
                                         variant="outline"
-                                        className="border-white/25 bg-black/40 text-white/90 h-7 shrink-0 px-2 py-0 text-sm font-medium backdrop-blur-sm sm:text-base">
+                                        className="h-7 shrink-0 border-white/25 bg-black/40 px-2 py-0 text-sm font-medium text-white/90 backdrop-blur-sm sm:text-base">
                                         {display.versionLabel}
                                     </Badge>
                                 )}
@@ -145,15 +141,13 @@ export const LatestRaid = () => {
                                     <span
                                         key={player.playerInfo.membershipId}
                                         className={cn(
-                                            "border-border/50 bg-muted/20 inline-flex min-w-0 max-w-full items-center gap-1 rounded-sm border py-0.5 pr-1.5 pl-1 text-base",
+                                            "border-border/50 bg-muted/20 inline-flex max-w-full min-w-0 items-center gap-1 rounded-sm border py-0.5 pr-1.5 pl-1 text-base",
                                             !player.completed && "opacity-70"
                                         )}>
                                         <span
                                             className={cn(
                                                 "flex size-4 shrink-0 items-center justify-center",
-                                                player.completed
-                                                    ? "text-green-400"
-                                                    : "text-red-400"
+                                                player.completed ? "text-green-400" : "text-red-400"
                                             )}
                                             aria-hidden>
                                             {player.completed ? (
@@ -162,7 +156,7 @@ export const LatestRaid = () => {
                                                 <Xmark sx={14} />
                                             )}
                                         </span>
-                                        <span className="text-muted-foreground min-w-0 max-w-[9rem] truncate font-normal sm:max-w-[11rem]">
+                                        <span className="text-muted-foreground max-w-[9rem] min-w-0 truncate font-normal sm:max-w-[11rem]">
                                             {getBungieDisplayName(player.playerInfo)}
                                         </span>
                                     </span>

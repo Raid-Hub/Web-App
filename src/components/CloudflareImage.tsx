@@ -160,7 +160,13 @@ export const CloudflareActivitySplash = ({
 
             return content.url
         },
-        [activityId, versionId, pantheonVersions, getImageVariantsForActivity, getImageVariantsForVersion]
+        [
+            activityId,
+            versionId,
+            pantheonVersions,
+            getImageVariantsForActivity,
+            getImageVariantsForVersion
+        ]
     )
 
     const activityDefinition = getActivityDefinition(activityId)

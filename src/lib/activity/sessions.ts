@@ -171,8 +171,7 @@ export const getPlaySessionStartAt = (session: PlaySession) => {
 export const getPlaySessionEndAt = (session: PlaySession) => session.startedAt
 
 export const getPlaySessionSpanSeconds = (session: PlaySession) => {
-    const spanMs =
-        getPlaySessionEndAt(session).getTime() - getPlaySessionStartAt(session).getTime()
+    const spanMs = getPlaySessionEndAt(session).getTime() - getPlaySessionStartAt(session).getTime()
     return Math.max(0, Math.round(spanMs / 1000))
 }
 

@@ -1,7 +1,4 @@
-import {
-    type RaidHubInstanceExtended,
-    type RaidHubPlayerInfo
-} from "~/services/raidhub/types"
+import { type RaidHubInstanceExtended, type RaidHubPlayerInfo } from "~/services/raidhub/types"
 
 export const CLUSTER_GUARDIAN_DISPLAY_LIMIT = 10
 
@@ -68,5 +65,6 @@ export const mergeClusterGuardians = (
     return [...totals.values()].sort((a, b) => b.timePlayedSeconds - a.timePlayedSeconds)
 }
 
-export const getActivityClusterInstanceIds = (instanceIds: readonly string[]) =>
-    [...new Set(instanceIds)]
+export const getActivityClusterInstanceIds = (instanceIds: readonly string[]) => [
+    ...new Set(instanceIds)
+]
