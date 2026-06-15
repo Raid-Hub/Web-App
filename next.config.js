@@ -23,6 +23,7 @@ const nextConfig = {
         RAIDHUB_API_URL: process.env.RAIDHUB_API_URL ?? "https://api.raidhub.io",
         RAIDHUB_API_KEY: process.env.RAIDHUB_API_KEY,
         SENTRY_DSN: process.env.SENTRY_DSN,
+        NEXT_PUBLIC_SENTRY_DSN: process.env.NEXT_PUBLIC_SENTRY_DSN,
         SENTRY_ENVIRONMENT: process.env.SENTRY_ENVIRONMENT,
         SENTRY_RELEASE: process.env.SENTRY_RELEASE
     },

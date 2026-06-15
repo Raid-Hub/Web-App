@@ -3,7 +3,7 @@
  * For the browser, `next.config.js` `env` inlines these at build time (same pattern as `APP_VERSION`), not `NEXT_PUBLIC_*`.
  */
 export function getSentryDsnForServer(): string | undefined {
-    const dsn = process.env.SENTRY_DSN?.trim()
+    const dsn = process.env.SENTRY_DSN?.trim() ?? process.env.NEXT_PUBLIC_SENTRY_DSN?.trim()
     return dsn && dsn.length > 0 ? dsn : undefined
 }
 
