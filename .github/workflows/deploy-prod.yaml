@@ -22,6 +22,8 @@ jobs:
         steps:
             - name: Checkout
               uses: actions/checkout@v4
+              with:
+                  fetch-tags: true
 
             - name: Setup Bun
               uses: oven-sh/setup-bun@v1
@@ -45,31 +47,10 @@ jobs:
               run: vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
 
             - name: Set APP_VERSION
-              shell: bash
               run: |
-                  VERSION=$(grep -E '^APP_VERSION=' .vercel/.env.production.local | cut -d '=' -f 2 | sed 's/"//g; s/\\n//')
-
-                  VERSION_ARRAY=($(echo -n "$VERSION" | awk -F'.' '{print $1,$2,$3,$4}'))
-
-                  # Get the first three numbers in the version
-                  YEAR=${VERSION_ARRAY[0]}
-                  MONTH=${VERSION_ARRAY[1]}
-                  DAY=${VERSION_ARRAY[2]}
-                  PATCH=${VERSION_ARRAY[3]}
-
-                  # Get the current year, month, and day
-                  CURRENT_YEAR=$(date +%Y)
-                  CURRENT_MONTH=$(date +%-m)
-                  CURRENT_DAY=$(date +%-d)
-
-                  # Check if the major, minor, and patch version numbers match the current date
-                  if [[ "$YEAR" == "$CURRENT_YEAR" && "$MONTH" == "$CURRENT_MONTH" && "$DAY" == "$CURRENT_DAY" ]]; then
-                    PATCH=$((PATCH+1))
-                  else
-                    PATCH=0
-                  fi
-
-                  echo "APP_VERSION=${CURRENT_YEAR}.${CURRENT_MONTH}.${CURRENT_DAY}.${PATCH}" >> $GITHUB_ENV
+                  git fetch --tags --force origin
+                  chmod +x ./.github/scripts/bump-app-version.sh
+                  ./.github/scripts/bump-app-version.sh
 
             - name: Apply Database Migrations
               env:
@@ -114,13 +95,8 @@ jobs:
 
             - name: Create Tag
               run: |
-                  TAG_NAME="v$APP_VERSION"
-                  COMMIT_SHA="${{ github.sha }}"
-                  OWNER=$(echo "${{ github.repository }}" | cut -d '/' -f 1)
-                  REPO=$(echo "${{ github.repository }}" | cut -d '/' -f 2)
-
-                  curl -X POST \
-                    -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
-                    -H "Accept: application/vnd.github.v3+json" \
-                    "https://api.github.com/repos/$OWNER/$REPO/git/refs" \
-                    -d "{\"ref\":\"refs/tags/$TAG_NAME\",\"sha\":\"$COMMIT_SHA\",\"tagger\":{\"name\":\"${{ github.actor }}\",\"email\":\"${{ github.actor }}@users.noreply.github.com\",\"date\":\"$(date --iso-8601=seconds)\"}}"
+                  chmod +x ./.github/scripts/create-release-tag.sh
+                  ./.github/scripts/create-release-tag.sh \
+                    "${{ github.sha }}" \
+                    "${{ secrets.GITHUB_TOKEN }}" \
+                    "${{ github.repository }}"
