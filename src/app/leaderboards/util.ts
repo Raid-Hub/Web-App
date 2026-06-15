@@ -1,4 +1,3 @@
-import { notFound } from "next/navigation"
 import { type RaidHubManifestResponse } from "~/services/raidhub/types"
 
 export const tryGetRaidDefinition = (raid: string, manifest: RaidHubManifestResponse) => {
@@ -8,6 +7,4 @@ export const tryGetRaidDefinition = (raid: string, manifest: RaidHubManifestResp
     )
 }
 
-export const getRaidDefinition = (raid: string, manifest: RaidHubManifestResponse) => {
-    return tryGetRaidDefinition(raid, manifest) ?? notFound()
-}
+export const getRaidDefinition = tryGetRaidDefinition

@@ -1,10 +1,10 @@
 import { type Metadata } from "next"
-import { notFound } from "next/navigation"
+import NotFound from "~/app/not-found"
 import { Leaderboard } from "~/app/leaderboards/Leaderboard"
 import { baseMetadata } from "~/lib/metadata"
 import { SpeedrunVariables, type RTABoardCategory } from "~/lib/speedrun/speedrun-com-mappings"
 import { prefetchManifest } from "~/services/raidhub/prefetchRaidHubManifest"
-import { getRaidDefinition, tryGetRaidDefinition } from "../../../../util"
+import { tryGetRaidDefinition } from "../../../../util"
 import { SpeedrunComBanner } from "./SpeedrunComBanner"
 import { SpeedrunComControls } from "./SpeedrunComControls"
 import { SpeedrunEntries } from "./SpeedrunEntries"
@@ -90,11 +90,16 @@ export async function generateMetadata({ params }: DynamicParams): Promise<Metad
 export default async function Page({ params }: DynamicParams) {
     const manifest = await prefetchManifest()
 
-    const raid = getRaidDefinition(params.raid, manifest)
+    const raid = tryGetRaidDefinition(params.raid, manifest)
+    if (!raid) {
+        return <NotFound />
+    }
     const category = params.category === "all" ? undefined : params.category
 
     const categoryId = SpeedrunVariables[raid.path]?.categoryId
-    if (!categoryId) return notFound()
+    if (!categoryId) {
+        return <NotFound />
+    }
 
     return (
         <Leaderboard

@@ -1,4 +1,5 @@
 import { type Metadata } from "next"
+import NotFound from "~/app/not-found"
 import { LeaderboardSSR } from "~/app/leaderboards/LeaderboardSSR"
 import { CloudflareActivitySplash } from "~/components/CloudflareImage"
 import { baseMetadata } from "~/lib/metadata"
@@ -6,7 +7,7 @@ import { prefetchManifest } from "~/services/raidhub/prefetchRaidHubManifest"
 import { type PathParamsForLeaderboardURL } from "~/services/raidhub/types"
 import { Leaderboard } from "../../../Leaderboard"
 import { Splash } from "../../../LeaderboardSplashComponents"
-import { getRaidDefinition, tryGetRaidDefinition } from "../../../util"
+import { tryGetRaidDefinition } from "../../../util"
 
 export const dynamicParams = true
 export const revalidate = 900
@@ -56,7 +57,10 @@ export async function generateMetadata({ params }: DynamicParams): Promise<Metad
 
 export default async function Page({ params, searchParams }: DynamicParams) {
     const manifest = await prefetchManifest()
-    const definition = getRaidDefinition(params.raid, manifest)
+    const definition = tryGetRaidDefinition(params.raid, manifest)
+    if (!definition) {
+        return <NotFound />
+    }
     const categoryName = getCategoryName(params.category)
 
     return (

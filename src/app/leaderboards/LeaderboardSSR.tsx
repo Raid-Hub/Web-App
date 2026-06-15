@@ -1,4 +1,4 @@
-import { notFound } from "next/navigation"
+import NotFound from "~/app/not-found"
 import { RaidHubError } from "~/services/raidhub/RaidHubError"
 import { getRaidHubApi } from "~/services/raidhub/common"
 import {
@@ -28,13 +28,17 @@ export const LeaderboardSSR = async <T extends RaidHubLeaderboardURL>(props: {
               ) as Promise<ResponseForLeaderboardURL<T>>
           ).catch(e => {
               if (e instanceof RaidHubError && e.errorCode === "PathValidationError") {
-                  notFound()
+                  return "not-found" as const
               } else {
                   console.error(e)
               }
               return null
           })
         : null
+
+    if (ssrData === "not-found") {
+        return <NotFound />
+    }
 
     return (
         <LeaderboardProvider

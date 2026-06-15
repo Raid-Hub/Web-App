@@ -1,5 +1,5 @@
 import { type Metadata } from "next"
-import { notFound } from "next/navigation"
+import NotFound from "~/app/not-found"
 import { LeaderboardSSR } from "~/app/leaderboards/LeaderboardSSR"
 import { CloudflareActivitySplash } from "~/components/CloudflareImage"
 import { getActivePantheonIds, PANTHEON_COMMUNITY_RACE_VERSION_ID } from "~/lib/manifest/pantheon"
@@ -66,7 +66,7 @@ export default async function Page({ searchParams }: { searchParams: Record<stri
     const definitions = tryGetCommunityRaceDefinitions(manifest)
 
     if (!definitions) {
-        notFound()
+        return <NotFound />
     }
 
     const { activity, version } = definitions

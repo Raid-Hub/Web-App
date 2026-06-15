@@ -30,7 +30,8 @@ const LanguageContext = createContext<
     | undefined
 >(undefined)
 
-export function LocaleManager({ children }: { children: ReactNode }) {
+export function LocaleManager(props: { children: ReactNode } | null) {
+    const children = props?.children ?? null
     const [locale, setLocale] = useState<string>("en-US")
     const [userAgent, setUserAgent] = useState(userAgentFromString(""))
     const [manifestLanguage, setManifestLanguage] = useState<DestinyManifestLanguage>("en")

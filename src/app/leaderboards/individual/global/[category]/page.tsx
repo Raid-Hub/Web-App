@@ -1,5 +1,5 @@
 import { type Metadata } from "next"
-import { notFound } from "next/navigation"
+import NotFound from "~/app/not-found"
 import { CloudflareStaticImage } from "~/components/CloudflareImage"
 import { baseMetadata } from "~/lib/metadata"
 import { type PathParamsForLeaderboardURL } from "~/services/raidhub/types"
@@ -26,14 +26,6 @@ const GLOBAL_CATEGORY_TITLES = {
 
 const tryGetCategoryTitle = (category: string) =>
     GLOBAL_CATEGORY_TITLES[category as CategoryParam] ?? null
-
-const getCategoryTitle = (category: CategoryParam) => {
-    const title = tryGetCategoryTitle(category)
-    if (!title) {
-        notFound()
-    }
-    return title
-}
 
 type DynamicParams = {
     params: {
@@ -65,7 +57,10 @@ export async function generateMetadata({ params }: DynamicParams): Promise<Metad
 const ENTRIES_PER_PAGE = 50
 
 export default async function Page({ params, searchParams }: DynamicParams) {
-    const categoryName = getCategoryTitle(params.category)
+    const categoryName = tryGetCategoryTitle(params.category)
+    if (!categoryName) {
+        return <NotFound />
+    }
 
     const apiParams = {
         category: params.category
