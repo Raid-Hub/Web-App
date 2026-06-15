@@ -131,11 +131,10 @@ export const InstanceFinderForm = ({
     }, [parsedActivityId, form])
 
     const seasonsOptions =
-        useSeasons({ reversed: true })
-            ?.map(season => ({
-                value: season.seasonNumber,
-                label: season.displayProperties.name || "Red War"
-            })) ?? []
+        useSeasons({ reversed: true })?.map(season => ({
+            value: season.seasonNumber,
+            label: season.displayProperties.name || "Red War"
+        })) ?? []
 
     return (
         <FormProvider {...form}>
