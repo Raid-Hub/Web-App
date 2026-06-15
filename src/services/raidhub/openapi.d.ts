@@ -107,6 +107,20 @@ export interface paths {
             };
           };
         };
+        /** @description ServiceUnavailableError */
+        503: {
+          content: {
+            readonly "application/json": {
+              /** Format: date-time */
+              readonly minted: string;
+              /** @enum {boolean} */
+              readonly success: false;
+              /** @enum {string} */
+              readonly code: "ServiceUnavailableError";
+              readonly error: components["schemas"]["ServiceUnavailableError"];
+            };
+          };
+        };
       };
     };
   };
@@ -121,6 +135,7 @@ export interface paths {
       parameters: {
         query: {
           count?: number;
+          offset?: number | null;
           query: string;
           membershipType?: components["schemas"]["DestinyMembershipType"];
           global?: boolean;
@@ -1104,6 +1119,14 @@ export interface paths {
               /** @enum {boolean} */
               readonly success: false;
               /** @enum {string} */
+              readonly code: "InvalidActivityVersionComboError";
+              readonly error: components["schemas"]["InvalidActivityVersionComboError"];
+            } | {
+              /** Format: date-time */
+              readonly minted: string;
+              /** @enum {boolean} */
+              readonly success: false;
+              /** @enum {string} */
               readonly code: "QueryValidationError";
               readonly error: components["schemas"]["QueryValidationError"];
             };
@@ -1134,14 +1157,6 @@ export interface paths {
               /** @enum {string} */
               readonly code: "PlayerNotOnLeaderboardError";
               readonly error: components["schemas"]["PlayerNotOnLeaderboardError"];
-            } | {
-              /** Format: date-time */
-              readonly minted: string;
-              /** @enum {boolean} */
-              readonly success: false;
-              /** @enum {string} */
-              readonly code: "InvalidActivityVersionComboError";
-              readonly error: components["schemas"]["InvalidActivityVersionComboError"];
             } | {
               /** Format: date-time */
               readonly minted: string;
@@ -1254,6 +1269,91 @@ export interface paths {
               /** @enum {string} */
               readonly code: "PathValidationError";
               readonly error: components["schemas"]["PathValidationError"];
+            };
+          };
+        };
+        /** @description Internal Server Error */
+        500: {
+          content: {
+            readonly "application/json": {
+              /** Format: date-time */
+              readonly minted: string;
+              /** @enum {boolean} */
+              readonly success: false;
+              /** @enum {string} */
+              readonly code: "InternalServerError";
+              readonly error: components["schemas"]["InternalServerError"];
+            };
+          };
+        };
+      };
+    };
+  };
+  "/leaderboard/team/custom/pantheon-community-race": {
+    /**
+     * /leaderboard/team/custom/pantheon-community-race
+     * @description Ranking of teams that completed the 5-feat Insurrection Prime Revolutionary pantheon version during the community-hosted raid race window (first 24 hours from 2026-06-13 17:00 UTC).
+     */
+    get: {
+      parameters: {
+        query?: {
+          count?: number;
+          search?: string;
+          page?: number;
+        };
+      };
+      responses: {
+        /** @description Success */
+        200: {
+          content: {
+            readonly "application/json": {
+              /** Format: date-time */
+              readonly minted: string;
+              /** @enum {boolean} */
+              readonly success: true;
+              readonly response: components["schemas"]["LeaderboardTeamCustomPantheonCommunityRaceResponse"];
+            };
+          };
+        };
+        /** @description Bad request */
+        400: {
+          content: {
+            readonly "application/json": {
+              /** Format: date-time */
+              readonly minted: string;
+              /** @enum {boolean} */
+              readonly success: false;
+              /** @enum {string} */
+              readonly code: "QueryValidationError";
+              readonly error: components["schemas"]["QueryValidationError"];
+            };
+          };
+        };
+        /** @description Unauthorized */
+        401: {
+          content: {
+            readonly "application/json": {
+              /** Format: date-time */
+              readonly minted: string;
+              /** @enum {boolean} */
+              readonly success: false;
+              /** @enum {string} */
+              readonly code: "ApiKeyError";
+              readonly error: components["schemas"]["ApiKeyError"];
+            };
+          };
+        };
+        /** @description PlayerNotOnLeaderboardError */
+        404: {
+          content: {
+            readonly "application/json": {
+              /** Format: date-time */
+              readonly minted: string;
+              /** @enum {boolean} */
+              readonly success: false;
+              /** @enum {string} */
+              readonly code: "PlayerNotOnLeaderboardError";
+              readonly error: components["schemas"]["PlayerNotOnLeaderboardError"];
             };
           };
         };
@@ -1446,6 +1546,97 @@ export interface paths {
               /** @enum {boolean} */
               readonly success: true;
               readonly response: components["schemas"]["ClanResponse"];
+            };
+          };
+        };
+        /** @description Unauthorized */
+        401: {
+          content: {
+            readonly "application/json": {
+              /** Format: date-time */
+              readonly minted: string;
+              /** @enum {boolean} */
+              readonly success: false;
+              /** @enum {string} */
+              readonly code: "ApiKeyError";
+              readonly error: components["schemas"]["ApiKeyError"];
+            };
+          };
+        };
+        /** @description Not found */
+        404: {
+          content: {
+            readonly "application/json": {
+              /** Format: date-time */
+              readonly minted: string;
+              /** @enum {boolean} */
+              readonly success: false;
+              /** @enum {string} */
+              readonly code: "ClanNotFoundError";
+              readonly error: components["schemas"]["ClanNotFoundError"];
+            } | {
+              /** Format: date-time */
+              readonly minted: string;
+              /** @enum {boolean} */
+              readonly success: false;
+              /** @enum {string} */
+              readonly code: "PathValidationError";
+              readonly error: components["schemas"]["PathValidationError"];
+            };
+          };
+        };
+        /** @description Internal Server Error */
+        500: {
+          content: {
+            readonly "application/json": {
+              /** Format: date-time */
+              readonly minted: string;
+              /** @enum {boolean} */
+              readonly success: false;
+              /** @enum {string} */
+              readonly code: "InternalServerError";
+              readonly error: components["schemas"]["InternalServerError"];
+            };
+          };
+        };
+        /** @description BungieServiceOffline */
+        503: {
+          content: {
+            readonly "application/json": {
+              /** Format: date-time */
+              readonly minted: string;
+              /** @enum {boolean} */
+              readonly success: false;
+              /** @enum {string} */
+              readonly code: "BungieServiceOffline";
+              readonly error: components["schemas"]["BungieServiceOffline"];
+            };
+          };
+        };
+      };
+    };
+  };
+  "/clan/{groupId}/basic": {
+    /**
+     * /clan/{groupId}/basic
+     * @description Low-cost clan identity (name, tag, avatar path) for bots and UIs. Does not load member rosters.
+     */
+    get: {
+      parameters: {
+        path: {
+          groupId: string;
+        };
+      };
+      responses: {
+        /** @description Success */
+        200: {
+          content: {
+            readonly "application/json": {
+              /** Format: date-time */
+              readonly minted: string;
+              /** @enum {boolean} */
+              readonly success: true;
+              readonly response: components["schemas"]["ClanBasicResponse"];
             };
           };
         };
@@ -1742,7 +1933,7 @@ export interface paths {
   "/admin/reporting/standing/{instanceId}": {
     /**
      * /admin/reporting/standing/{instanceId}
-     * @description Find a set of instances based on the query parameters. Some parameters will not work together, such as providing a season outside the range of the min/max season. Requires authentication.
+     * @description Get the standing information for a specific instance, including flags, blacklist status, and per-player standing data.
      */
     get: {
       parameters: {
@@ -1777,21 +1968,32 @@ export interface paths {
             };
           };
         };
+        /** @description Forbidden */
+        403: {
+          content: {
+            readonly "application/json": {
+              /** Format: date-time */
+              readonly minted: string;
+              /** @enum {boolean} */
+              readonly success: false;
+              /** @enum {string} */
+              readonly code: "InsufficientPermissionsError";
+              readonly error: components["schemas"]["InsufficientPermissionsError"];
+            };
+          };
+        };
         /** @description Not found */
         404: {
           content: {
-            readonly "application/json": ({
+            readonly "application/json": {
               /** Format: date-time */
               readonly minted: string;
               /** @enum {boolean} */
               readonly success: false;
               /** @enum {string} */
               readonly code: "InstanceNotFoundError";
-              readonly error: components["schemas"]["InstanceNotFoundError"] & {
-                /** Format: int64 */
-                readonly instanceId?: string;
-              };
-            }) | {
+              readonly error: components["schemas"]["InstanceNotFoundError"];
+            } | {
               /** Format: date-time */
               readonly minted: string;
               /** @enum {boolean} */
@@ -1893,8 +2095,8 @@ export interface paths {
             };
           };
         };
-        /** @description Not found */
-        404: {
+        /** @description Forbidden */
+        403: {
           content: {
             readonly "application/json": {
               /** Format: date-time */
@@ -1902,9 +2104,25 @@ export interface paths {
               /** @enum {boolean} */
               readonly success: false;
               /** @enum {string} */
+              readonly code: "InsufficientPermissionsError";
+              readonly error: components["schemas"]["InsufficientPermissionsError"];
+            };
+          };
+        };
+        /** @description Not found */
+        404: {
+          content: {
+            readonly "application/json": ({
+              /** Format: date-time */
+              readonly minted: string;
+              /** @enum {boolean} */
+              readonly success: false;
+              /** @enum {string} */
               readonly code: "InstanceNotFoundError";
-              readonly error: components["schemas"]["InstanceNotFoundError"];
-            } | {
+              readonly error: components["schemas"]["InstanceNotFoundError"] & {
+                readonly instanceId?: string;
+              };
+            }) | {
               /** Format: date-time */
               readonly minted: string;
               /** @enum {boolean} */
@@ -1935,6 +2153,95 @@ export interface paths {
   "/admin/reporting/player/{membershipId}": {
     /**
      * /admin/reporting/player/{membershipId}
+     * @description Get a player's standing information including recent flags and blacklisted instances. Requires authentication.
+     */
+    get: {
+      parameters: {
+        path: {
+          membershipId: string;
+        };
+      };
+      responses: {
+        /** @description Success */
+        200: {
+          content: {
+            readonly "application/json": {
+              /** Format: date-time */
+              readonly minted: string;
+              /** @enum {boolean} */
+              readonly success: true;
+              readonly response: components["schemas"]["AdminReportingPlayerResponse"];
+            };
+          };
+        };
+        /** @description Unauthorized */
+        401: {
+          content: {
+            readonly "application/json": {
+              /** Format: date-time */
+              readonly minted: string;
+              /** @enum {boolean} */
+              readonly success: false;
+              /** @enum {string} */
+              readonly code: "ApiKeyError";
+              readonly error: components["schemas"]["ApiKeyError"];
+            };
+          };
+        };
+        /** @description Forbidden */
+        403: {
+          content: {
+            readonly "application/json": {
+              /** Format: date-time */
+              readonly minted: string;
+              /** @enum {boolean} */
+              readonly success: false;
+              /** @enum {string} */
+              readonly code: "InsufficientPermissionsError";
+              readonly error: components["schemas"]["InsufficientPermissionsError"];
+            };
+          };
+        };
+        /** @description Not found */
+        404: {
+          content: {
+            readonly "application/json": {
+              /** Format: date-time */
+              readonly minted: string;
+              /** @enum {boolean} */
+              readonly success: false;
+              /** @enum {string} */
+              readonly code: "PlayerNotFoundError";
+              readonly error: components["schemas"]["PlayerNotFoundError"];
+            } | {
+              /** Format: date-time */
+              readonly minted: string;
+              /** @enum {boolean} */
+              readonly success: false;
+              /** @enum {string} */
+              readonly code: "PathValidationError";
+              readonly error: components["schemas"]["PathValidationError"];
+            };
+          };
+        };
+        /** @description Internal Server Error */
+        500: {
+          content: {
+            readonly "application/json": {
+              /** Format: date-time */
+              readonly minted: string;
+              /** @enum {boolean} */
+              readonly success: false;
+              /** @enum {string} */
+              readonly code: "InternalServerError";
+              readonly error: components["schemas"]["InternalServerError"];
+            };
+          };
+        };
+      };
+    };
+    /**
+     * /admin/reporting/player/{membershipId}
      * @description Update fields on a player. Currently, only the cheat level can be updated.
      */
     patch: {
@@ -1959,7 +2266,7 @@ export interface paths {
               readonly minted: string;
               /** @enum {boolean} */
               readonly success: true;
-              readonly response: components["schemas"]["AdminReportingPlayerResponse"];
+              readonly response: components["schemas"]["AdminReportingPlayerResponse"] & string;
             };
           };
         };
@@ -1991,21 +2298,32 @@ export interface paths {
             };
           };
         };
+        /** @description Forbidden */
+        403: {
+          content: {
+            readonly "application/json": {
+              /** Format: date-time */
+              readonly minted: string;
+              /** @enum {boolean} */
+              readonly success: false;
+              /** @enum {string} */
+              readonly code: "InsufficientPermissionsError";
+              readonly error: components["schemas"]["InsufficientPermissionsError"];
+            };
+          };
+        };
         /** @description Not found */
         404: {
           content: {
-            readonly "application/json": ({
+            readonly "application/json": {
               /** Format: date-time */
               readonly minted: string;
               /** @enum {boolean} */
               readonly success: false;
               /** @enum {string} */
               readonly code: "PlayerNotFoundError";
-              readonly error: components["schemas"]["PlayerNotFoundError"] & {
-                /** Format: int64 */
-                readonly membershipId?: string;
-              };
-            }) | {
+              readonly error: components["schemas"]["PlayerNotFoundError"];
+            } | {
               /** Format: date-time */
               readonly minted: string;
               /** @enum {boolean} */
@@ -2206,6 +2524,258 @@ export interface paths {
       };
     };
   };
+  "/subscriptions/discord/webhooks": {
+    /**
+     * /subscriptions/discord/webhooks
+     * @description Get RaidHub subscription webhook status for the current channel (no secrets).
+     */
+    get: {
+      responses: {
+        /** @description Success */
+        200: {
+          content: {
+            readonly "application/json": {
+              /** Format: date-time */
+              readonly minted: string;
+              /** @enum {boolean} */
+              readonly success: true;
+              readonly response: components["schemas"]["SubscriptionsDiscordWebhooksResponse"];
+            };
+          };
+        };
+        /** @description Unauthorized */
+        401: {
+          content: {
+            readonly "application/json": {
+              /** Format: date-time */
+              readonly minted: string;
+              /** @enum {boolean} */
+              readonly success: false;
+              /** @enum {string} */
+              readonly code: "InvalidDiscordAuthError";
+              readonly error: components["schemas"]["InvalidDiscordAuthError"];
+            } | {
+              /** Format: date-time */
+              readonly minted: string;
+              /** @enum {boolean} */
+              readonly success: false;
+              /** @enum {string} */
+              readonly code: "ApiKeyError";
+              readonly error: components["schemas"]["ApiKeyError"];
+            };
+          };
+        };
+        /** @description InsufficientPermissionsError */
+        403: {
+          content: {
+            readonly "application/json": {
+              /** Format: date-time */
+              readonly minted: string;
+              /** @enum {boolean} */
+              readonly success: false;
+              /** @enum {string} */
+              readonly code: "InsufficientPermissionsError";
+              readonly error: components["schemas"]["InsufficientPermissionsError"];
+            };
+          };
+        };
+        /** @description Internal Server Error */
+        500: {
+          content: {
+            readonly "application/json": {
+              /** Format: date-time */
+              readonly minted: string;
+              /** @enum {boolean} */
+              readonly success: false;
+              /** @enum {string} */
+              readonly code: "InternalServerError";
+              readonly error: components["schemas"]["InternalServerError"];
+            };
+          };
+        };
+      };
+    };
+    /**
+     * /subscriptions/discord/webhooks
+     * @description Create or update the RaidHub subscription webhook for this channel (idempotent upsert).
+     */
+    put: {
+      readonly requestBody: {
+        readonly content: {
+          readonly "application/json": components["schemas"]["DiscordWebhookBody"];
+        };
+      };
+      responses: {
+        /** @description Success */
+        200: {
+          content: {
+            readonly "application/json": {
+              /** Format: date-time */
+              readonly minted: string;
+              /** @enum {boolean} */
+              readonly success: true;
+              readonly response: components["schemas"]["SubscriptionsDiscordWebhooksResponse"] & {
+                readonly guildId: string;
+                readonly channelId: string;
+                readonly webhookId: string;
+                /** Format: uri */
+                readonly webhookUrl?: string;
+                readonly created: boolean;
+                readonly activated: boolean;
+                readonly updated: boolean;
+                readonly rules: {
+                  readonly players: {
+                    readonly inserted: number;
+                    readonly updated: number;
+                  };
+                  readonly clans: {
+                    readonly inserted: number;
+                    readonly updated: number;
+                  };
+                };
+              };
+            };
+          };
+        };
+        /** @description Bad request */
+        400: {
+          content: {
+            readonly "application/json": {
+              /** Format: date-time */
+              readonly minted: string;
+              /** @enum {boolean} */
+              readonly success: false;
+              /** @enum {string} */
+              readonly code: "BodyValidationError";
+              readonly error: components["schemas"]["BodyValidationError"];
+            };
+          };
+        };
+        /** @description Unauthorized */
+        401: {
+          content: {
+            readonly "application/json": {
+              /** Format: date-time */
+              readonly minted: string;
+              /** @enum {boolean} */
+              readonly success: false;
+              /** @enum {string} */
+              readonly code: "InvalidDiscordAuthError";
+              readonly error: components["schemas"]["InvalidDiscordAuthError"];
+            } | {
+              /** Format: date-time */
+              readonly minted: string;
+              /** @enum {boolean} */
+              readonly success: false;
+              /** @enum {string} */
+              readonly code: "ApiKeyError";
+              readonly error: components["schemas"]["ApiKeyError"];
+            };
+          };
+        };
+        /** @description InsufficientPermissionsError */
+        403: {
+          content: {
+            readonly "application/json": {
+              /** Format: date-time */
+              readonly minted: string;
+              /** @enum {boolean} */
+              readonly success: false;
+              /** @enum {string} */
+              readonly code: "InsufficientPermissionsError";
+              readonly error: components["schemas"]["InsufficientPermissionsError"];
+            };
+          };
+        };
+        /** @description Internal Server Error */
+        500: {
+          content: {
+            readonly "application/json": {
+              /** Format: date-time */
+              readonly minted: string;
+              /** @enum {boolean} */
+              readonly success: false;
+              /** @enum {string} */
+              readonly code: "InternalServerError";
+              readonly error: components["schemas"]["InternalServerError"];
+            };
+          };
+        };
+      };
+    };
+    /**
+     * /subscriptions/discord/webhooks
+     * @description Delete a Discord subscription webhook registration for the current channel.
+     */
+    delete: {
+      responses: {
+        /** @description Success */
+        200: {
+          content: {
+            readonly "application/json": {
+              /** Format: date-time */
+              readonly minted: string;
+              /** @enum {boolean} */
+              readonly success: true;
+              readonly response: components["schemas"]["SubscriptionsDiscordWebhooksResponse"] & {
+                readonly deleted: boolean;
+              };
+            };
+          };
+        };
+        /** @description Unauthorized */
+        401: {
+          content: {
+            readonly "application/json": {
+              /** Format: date-time */
+              readonly minted: string;
+              /** @enum {boolean} */
+              readonly success: false;
+              /** @enum {string} */
+              readonly code: "InvalidDiscordAuthError";
+              readonly error: components["schemas"]["InvalidDiscordAuthError"];
+            } | {
+              /** Format: date-time */
+              readonly minted: string;
+              /** @enum {boolean} */
+              readonly success: false;
+              /** @enum {string} */
+              readonly code: "ApiKeyError";
+              readonly error: components["schemas"]["ApiKeyError"];
+            };
+          };
+        };
+        /** @description InsufficientPermissionsError */
+        403: {
+          content: {
+            readonly "application/json": {
+              /** Format: date-time */
+              readonly minted: string;
+              /** @enum {boolean} */
+              readonly success: false;
+              /** @enum {string} */
+              readonly code: "InsufficientPermissionsError";
+              readonly error: components["schemas"]["InsufficientPermissionsError"];
+            };
+          };
+        };
+        /** @description Internal Server Error */
+        500: {
+          content: {
+            readonly "application/json": {
+              /** Format: date-time */
+              readonly minted: string;
+              /** @enum {boolean} */
+              readonly success: false;
+              /** @enum {string} */
+              readonly code: "InternalServerError";
+              readonly error: components["schemas"]["InternalServerError"];
+            };
+          };
+        };
+      };
+    };
+  };
 }
 
 export type webhooks = Record<string, never>;
@@ -2213,7 +2783,7 @@ export type webhooks = Record<string, never>;
 export interface components {
   schemas: {
     /** @enum {string} */
-    readonly ErrorCode: "ApiKeyError" | "PathValidationError" | "QueryValidationError" | "BodyValidationError" | "PlayerNotFoundError" | "PlayerPrivateProfileError" | "PlayerProtectedResourceError" | "InstanceNotFoundError" | "PGCRNotFoundError" | "PlayerNotOnLeaderboardError" | "PlayerNotInInstance" | "RaidNotFoundError" | "PantheonVersionNotFoundError" | "InvalidActivityVersionComboError" | "ClanNotFoundError" | "AdminQuerySyntaxError" | "InsufficientPermissionsError" | "InvalidClientSecretError" | "InternalServerError" | "BungieServiceOffline";
+    readonly ErrorCode: "ApiKeyError" | "PathValidationError" | "QueryValidationError" | "BodyValidationError" | "PlayerNotFoundError" | "PlayerPrivateProfileError" | "PlayerProtectedResourceError" | "InstanceNotFoundError" | "PGCRNotFoundError" | "PlayerNotOnLeaderboardError" | "PlayerNotInInstance" | "RaidNotFoundError" | "PantheonVersionNotFoundError" | "InvalidActivityVersionComboError" | "ClanNotFoundError" | "AdminQuerySyntaxError" | "InsufficientPermissionsError" | "InvalidClientSecretError" | "InvalidDiscordAuthError" | "InternalServerError" | "ServiceUnavailableError" | "BungieServiceOffline";
     readonly RaidHubResponse: OneOf<[{
       /** Format: date-time */
       readonly minted: string;
@@ -2256,6 +2826,11 @@ export interface components {
     readonly QueryValidationError: {
       readonly issues: readonly components["schemas"]["ZodIssue"][];
     };
+    /**
+     * @description MotT difficulty tier derived at read time from instance skull_hashes and activity_feat_definition. Adventure uses fixed skulls; Custom has selected feats; Standard is Custom with no feats.
+     * @enum {string}
+     */
+    readonly DifficultyTier: "adventure" | "standard" | "custom";
     /** @enum {integer} */
     readonly DestinyMembershipType: 0 | 1 | 2 | 3 | 4 | 5 | 6 | -1;
     readonly Instance: {
@@ -2268,6 +2843,7 @@ export interface components {
       readonly fresh: boolean | null;
       readonly playerCount: number;
       readonly skullHashes: readonly number[];
+      readonly difficultyTier: components["schemas"]["DifficultyTier"];
       readonly score: number;
       /** Format: date-time */
       readonly dateStarted: string;
@@ -2281,7 +2857,7 @@ export interface components {
       readonly versionId: number;
       /** @description If the instance was completed before the day one end date */
       readonly isDayOne: boolean;
-      /** @description If the instance was completed before the contest end date */
+      /** @description If this clear was contest mode: when the activity exposes version_id 32 (contest) on activity_version, true only for that version while still before contest_end; otherwise true when completed before contest_end (legacy raids). */
       readonly isContest: boolean;
       /** @description If the instance was completed before the week one end date */
       readonly isWeekOne: boolean;
@@ -2298,6 +2874,7 @@ export interface components {
       readonly fresh: boolean | null;
       readonly playerCount: number;
       readonly skullHashes: readonly number[];
+      readonly difficultyTier: components["schemas"]["DifficultyTier"];
       readonly score: number;
       /** Format: date-time */
       readonly dateStarted: string;
@@ -2337,7 +2914,7 @@ export interface components {
       /** Format: int64 */
       readonly membershipId: string;
       /** @description The platform on which the player created their account. */
-      readonly membershipType: components["schemas"]["DestinyMembershipType"] | null;
+      readonly membershipType: components["schemas"]["DestinyMembershipType"];
       readonly iconPath: string | null;
       /** @description The platform-specific display name of the player. No longer shown in-game. */
       readonly displayName: string | null;
@@ -2445,6 +3022,8 @@ export interface components {
       readonly instanceId: string;
       /** Format: int64 */
       readonly membershipId: string;
+      /** Format: date-time */
+      readonly instanceDate: string;
     };
     readonly InstancePlayerStanding: {
       readonly playerInfo: components["schemas"]["PlayerInfo"];
@@ -2463,6 +3042,24 @@ export interface components {
           readonly createdAt: string;
         })[];
       readonly otherRecentFlags: readonly components["schemas"]["InstancePlayerFlag"][];
+    };
+    readonly PlayerBlacklistedInstance: {
+      /** Format: int64 */
+      readonly instanceId: string;
+      /** Format: date-time */
+      readonly instanceDate: string;
+      readonly reason: string;
+      readonly individualReason: string | null;
+      /** Format: date-time */
+      readonly createdAt: string;
+    };
+    readonly ClanBasic: {
+      /** Format: int64 */
+      readonly groupId: string;
+      readonly name: string;
+      readonly callSign: string;
+      readonly motto: string;
+      readonly avatarPath: string | null;
     };
     readonly ClanBannerData: {
       readonly decalId: number;
@@ -2527,13 +3124,6 @@ export interface components {
       readonly totalTimePlayedSeconds: number;
       readonly contestScore: number;
     };
-    readonly ClanStats: {
-      readonly aggregateStats: components["schemas"]["ClanAggregateStats"];
-      readonly members: readonly ({
-          readonly playerInfo: components["schemas"]["PlayerInfo"] | null;
-          readonly stats: components["schemas"]["ClanMemberStats"];
-        })[];
-    };
     readonly InstanceMetadata: {
       readonly activityName: string;
       readonly versionName: string;
@@ -2575,11 +3165,6 @@ export interface components {
       readonly playerInfo: components["schemas"]["PlayerInfo"];
       readonly characters: readonly components["schemas"]["InstanceCharacter"][];
     };
-    readonly InstanceExtended: components["schemas"]["Instance"] & ({
-      readonly leaderboardRank: number | null;
-      readonly metadata: components["schemas"]["InstanceMetadata"];
-      readonly players: readonly components["schemas"]["InstancePlayerExtended"][];
-    });
     readonly TeamLeaderboardEntry: {
       readonly position: number;
       readonly rank: number;
@@ -2594,23 +3179,6 @@ export interface components {
       readonly value: number;
       readonly playerInfo: components["schemas"]["PlayerInfo"];
     };
-    readonly LeaderboardData: OneOf<[{
-      /** @enum {string} */
-      readonly type: "team";
-      /** @enum {string} */
-      readonly format: "duration" | "numerical";
-      readonly page: number;
-      readonly count: number;
-      readonly entries: readonly components["schemas"]["TeamLeaderboardEntry"][];
-    }, {
-      /** @enum {string} */
-      readonly type: "individual";
-      /** @enum {string} */
-      readonly format: "duration" | "numerical";
-      readonly page: number;
-      readonly count: number;
-      readonly entries: readonly components["schemas"]["IndividualLeaderboardEntry"][];
-    }]>;
     /** @enum {string} */
     readonly IndividualGlobalLeaderboardCategory: "clears" | "full-clears" | "sherpas" | "speedrun" | "world-first-rankings" | "in-raid-time";
     /** @description Pagination parameters for leaderboard data */
@@ -2624,22 +3192,7 @@ export interface components {
        */
       readonly page?: number;
     };
-    /**
-     * @description The definition of an activity in the RaidHub database.
-     * @example {
-     *   "id": 9,
-     *   "name": "Vault of Glass",
-     *   "path": "vaultofglass",
-     *   "isSunset": false,
-     *   "isRaid": true,
-     *   "releaseDate": "2021-05-22T00:00:00.000Z",
-     *   "dayOneEnd": "2021-05-23T00:00:00.000Z",
-     *   "contestEnd": "2021-05-23T00:00:00.000Z",
-     *   "weekOneEnd": "2021-05-25T00:00:00.000Z",
-     *   "milestoneHash": 1888320892,
-     *   "splashSlug": "vog"
-     * }
-     */
+    /** @description The definition of an activity in the RaidHub database. */
     readonly ActivityDefinition: {
       readonly id: number;
       readonly name: string;
@@ -2675,7 +3228,7 @@ export interface components {
      * @example medium
      * @enum {string}
      */
-    readonly ImageSize: "tiny" | "small" | "medium" | "large" | "xlarge";
+    readonly ImageSize: "tiny" | "small" | "medium" | "large" | "xlarge" | "full";
     /**
      * @description A URL to a piece of content hosted on the RaidHub CDN.
      * @example {
@@ -2714,92 +3267,15 @@ export interface components {
     readonly PopulationByRaidMetric: {
       [key: string]: number;
     };
-    /** @description A raw PGCR with a few redundant fields removed */
-    readonly RaidHubPostGameCarnageReport: {
-      /** Format: date-time */
-      readonly period: string;
-      readonly startingPhaseIndex?: number;
-      readonly activityWasStartedFromBeginning?: boolean;
-      readonly activityDetails: {
-        /** Format: uint32 */
-        readonly directorActivityHash: number;
-        /** Format: int64 */
-        readonly instanceId: string;
-        /** @enum {integer} */
-        readonly mode: 0 | 2 | 3 | 4 | 5 | 6 | 7 | 9 | 10 | 11 | 12 | 13 | 15 | 16 | 17 | 18 | 19 | 20 | 21 | 22 | 24 | 25 | 26 | 27 | 28 | 29 | 30 | 31 | 32 | 37 | 38 | 39 | 40 | 41 | 42 | 43 | 44 | 45 | 46 | 47 | 48 | 49 | 50 | 51 | 52 | 53 | 54 | 55 | 56 | 57 | 58 | 59 | 60 | 61 | 62 | 63 | 64 | 65 | 66 | 67 | 68 | 69 | 70 | 71 | 72 | 73 | 74 | 75 | 76 | 77 | 78 | 79 | 80 | 81 | 82 | 83 | 84 | 85 | 86 | 87 | 88 | 89 | 90 | 91;
-        readonly modes: readonly (0 | 2 | 3 | 4 | 5 | 6 | 7 | 9 | 10 | 11 | 12 | 13 | 15 | 16 | 17 | 18 | 19 | 20 | 21 | 22 | 24 | 25 | 26 | 27 | 28 | 29 | 30 | 31 | 32 | 37 | 38 | 39 | 40 | 41 | 42 | 43 | 44 | 45 | 46 | 47 | 48 | 49 | 50 | 51 | 52 | 53 | 54 | 55 | 56 | 57 | 58 | 59 | 60 | 61 | 62 | 63 | 64 | 65 | 66 | 67 | 68 | 69 | 70 | 71 | 72 | 73 | 74 | 75 | 76 | 77 | 78 | 79 | 80 | 81 | 82 | 83 | 84 | 85 | 86 | 87 | 88 | 89 | 90 | 91)[];
-        readonly membershipType: components["schemas"]["DestinyMembershipType"];
-      };
-      readonly activityDifficultyTier?: number;
-      readonly selectedSkullHashes?: readonly number[];
-      readonly entries: readonly ({
-          readonly player: {
-            readonly destinyUserInfo: {
-              readonly iconPath?: string | null;
-              readonly crossSaveOverride: components["schemas"]["DestinyMembershipType"];
-              readonly applicableMembershipTypes?: (readonly components["schemas"]["DestinyMembershipType"][]) | null;
-              readonly membershipType?: components["schemas"]["DestinyMembershipType"] | null;
-              readonly membershipId: string;
-              readonly displayName?: string | null;
-              readonly bungieGlobalDisplayName?: string | null;
-              readonly bungieGlobalDisplayNameCode?: number | null;
-            };
-            readonly characterClass?: string | null;
-            /** Format: uint32 */
-            readonly classHash: number;
-            /** Format: uint32 */
-            readonly raceHash: number;
-            /** Format: uint32 */
-            readonly genderHash: number;
-            readonly characterLevel: number;
-            readonly lightLevel: number;
-            /** Format: uint32 */
-            readonly emblemHash: number;
-          };
-          readonly characterId: string;
-          readonly values: {
-            [key: string]: {
-              readonly basic: {
-                readonly value: number;
-                readonly displayValue: string;
-              };
-            };
-          };
-          readonly extended?: {
-            readonly weapons?: (readonly {
-                readonly referenceId: number;
-                readonly values: {
-                  [key: string]: {
-                    readonly basic: {
-                      readonly value: number;
-                      readonly displayValue: string;
-                    };
-                  };
-                };
-              }[]) | null;
-            readonly values: {
-              [key: string]: {
-                readonly basic: {
-                  readonly value: number;
-                  readonly displayValue: string;
-                };
-              };
-            };
-          };
-        })[];
-    };
     readonly InstanceForPlayer: components["schemas"]["Instance"] & {
       readonly player: components["schemas"]["InstancePlayer"];
-    };
-    readonly InstanceWithPlayers: components["schemas"]["Instance"] & {
-      readonly players: readonly components["schemas"]["PlayerInfo"][];
     };
     readonly PlayerProfileActivityStats: {
       readonly activityId: number;
       readonly freshClears: number;
       readonly clears: number;
       readonly sherpas: number;
-      readonly fastestInstance: components["schemas"]["Instance"] | null;
+      readonly fastestInstance: components["schemas"]["Instance"];
     };
     readonly GlobalStat: {
       readonly value: number;
@@ -2824,18 +3300,6 @@ export interface components {
       readonly isContest: boolean;
       readonly isWeekOne: boolean;
       readonly isChallengeMode: boolean;
-    };
-    readonly PlayerProfile: {
-      readonly playerInfo: components["schemas"]["PlayerInfo"];
-      readonly stats: {
-        readonly global: components["schemas"]["PlayerProfileGlobalStats"];
-        readonly activity: {
-          [key: string]: components["schemas"]["PlayerProfileActivityStats"];
-        };
-      };
-      readonly worldFirstEntries: {
-        [key: string]: components["schemas"]["WorldFirstEntry"] | null;
-      };
     };
     readonly Teammate: {
       readonly estimatedTimePlayedSeconds: number;
@@ -2864,9 +3328,81 @@ export interface components {
       readonly incomingRate: number;
       readonly resolveRate: number;
       readonly backlog: number;
-      readonly latestResolvedInstance: components["schemas"]["LatestResolvedInstance"] | null;
+      readonly latestResolvedInstance: components["schemas"]["LatestResolvedInstance"];
       /** Format: date-time */
       readonly estimatedBacklogEmptied: string | null;
+    };
+    /** @default {} */
+    readonly DiscordWebhookBody: {
+      readonly name?: string;
+      readonly targets?: {
+        readonly players?: readonly {
+            readonly membershipId: string;
+            readonly requireFresh?: boolean;
+            readonly requireCompleted?: boolean;
+            readonly raids?: readonly number[];
+          }[];
+        readonly clans?: readonly {
+            readonly groupId: string;
+            readonly requireFresh?: boolean;
+            readonly requireCompleted?: boolean;
+            readonly raids?: readonly number[];
+          }[];
+      };
+    };
+    readonly DiscordWebhookPutResponse: {
+      readonly guildId: string;
+      readonly channelId: string;
+      readonly webhookId: string;
+      /** Format: uri */
+      readonly webhookUrl?: string;
+      readonly created: boolean;
+      readonly activated: boolean;
+      readonly updated: boolean;
+      readonly rules: {
+        readonly players: {
+          readonly inserted: number;
+          readonly updated: number;
+        };
+        readonly clans: {
+          readonly inserted: number;
+          readonly updated: number;
+        };
+      };
+    };
+    readonly DiscordWebhookDeleteResponse: {
+      readonly deleted: boolean;
+    };
+    readonly DiscordWebhookStatusResponse: OneOf<[{
+      /** @enum {boolean} */
+      readonly registered: false;
+    }, {
+      /** @enum {boolean} */
+      readonly registered: true;
+      readonly guildId: string;
+      readonly channelId: string;
+      readonly webhookId: string;
+      readonly destinationActive: boolean;
+      readonly consecutiveDeliveryFailures: number;
+      readonly lastDeliverySuccessAt: string | null;
+      readonly lastDeliveryFailureAt: string | null;
+      readonly lastDeliveryError: string | null;
+      readonly players: readonly {
+          readonly membershipId: string;
+          readonly requireFresh: boolean;
+          readonly requireCompleted: boolean;
+          readonly raidIds: readonly number[];
+        }[];
+      readonly clans: readonly {
+          readonly groupId: string;
+          readonly requireFresh: boolean;
+          readonly requireCompleted: boolean;
+          readonly raidIds: readonly number[];
+        }[];
+    }]>;
+    readonly InvalidDiscordAuthError: {
+      /** @enum {string} */
+      readonly message: "Invalid Discord context token";
     };
     readonly ManifestResponse: {
       /** @description The mapping of each Bungie.net hash to a RaidHub activityId and versionId */
@@ -2900,6 +3436,10 @@ export interface components {
       readonly resprisedChallengeVersionIds: readonly number[];
       /** @description The list of activityId for Pantheon */
       readonly pantheonIds: readonly number[];
+      /** @description Active Pantheon versionId values in display order */
+      readonly pantheonVersionIds: readonly number[];
+      /** @description Sunset Pantheon versionId values in display order */
+      readonly pantheonSunsetVersionIds: readonly number[];
       /** @description The set of versionId for each activityId */
       readonly versionsForActivity: {
         [key: string]: readonly number[];
@@ -2915,28 +3455,48 @@ export interface components {
       readonly splashUrls: {
         [key: string]: readonly components["schemas"]["ImageContentData"][];
       };
+      /** @description The mapping of each RaidHub versionId to its splash image URLs */
+      readonly versionSplashUrls: {
+        [key: string]: readonly components["schemas"]["ImageContentData"][];
+      };
+      /** @description The checkpoint encounter name for each raid activityId, used in lowman tag labels */
+      readonly checkpointNames: {
+        readonly [key: string]: string;
+      };
+      /** @description The checkpoint encounter name for each Pantheon versionId, used in lowman tag labels */
+      readonly versionCheckpointNames: {
+        readonly [key: string]: string;
+      };
     };
     readonly StatusResponse: {
       readonly AtlasPGCR: components["schemas"]["AtlasStatus"];
       readonly FloodgatesPGCR: components["schemas"]["FloodgatesStatus"];
     };
+    readonly ServiceUnavailableError: {
+      readonly serviceName: string;
+      readonly message: string;
+    };
     readonly PlayerSearchResponse: {
       readonly params: {
         readonly count: number;
+        readonly offset: number;
         readonly query: string;
       };
       readonly results: readonly components["schemas"]["PlayerInfo"][];
     };
     readonly PlayerHistoryResponse: {
+      /** Format: int64 */
       readonly membershipId: string;
       /** Format: date-time */
       readonly nextCursor: string | null;
       readonly activities: readonly components["schemas"]["InstanceForPlayer"][];
     };
     readonly PlayerNotFoundError: {
+      /** Format: int64 */
       readonly membershipId: string;
     };
     readonly PlayerPrivateProfileError: {
+      /** Format: int64 */
       readonly membershipId: string;
     };
     /**
@@ -2956,7 +3516,7 @@ export interface components {
       /** Format: int64 */
       readonly membershipId: string;
       /** @description The platform on which the player created their account. */
-      readonly membershipType: components["schemas"]["DestinyMembershipType"] | null;
+      readonly membershipType: components["schemas"]["DestinyMembershipType"];
       readonly iconPath: string | null;
       /** @description The platform-specific display name of the player. No longer shown in-game. */
       readonly displayName: string | null;
@@ -2977,13 +3537,16 @@ export interface components {
         };
       };
       readonly worldFirstEntries: {
-        [key: string]: components["schemas"]["WorldFirstEntry"] | null;
+        [key: string]: components["schemas"]["WorldFirstEntry"];
       };
     };
     readonly PlayerTeammatesResponse: readonly components["schemas"]["Teammate"][];
-    readonly PlayerInstancesResponse: readonly components["schemas"]["InstanceWithPlayers"][];
+    readonly PlayerInstancesResponse: readonly (components["schemas"]["Instance"] & {
+        readonly players: readonly components["schemas"]["PlayerInfo"][];
+      })[];
     readonly PlayerProtectedResourceError: {
       readonly message: string;
+      /** Format: int64 */
       readonly membershipId: string;
     };
     readonly InstanceResponse: components["schemas"]["Instance"] & ({
@@ -2992,6 +3555,7 @@ export interface components {
       readonly players: readonly components["schemas"]["InstancePlayerExtended"][];
     });
     readonly InstanceNotFoundError: {
+      /** Format: int64 */
       readonly instanceId: string;
     };
     readonly LeaderboardIndividualGlobalResponse: OneOf<[{
@@ -3012,6 +3576,7 @@ export interface components {
       readonly entries: readonly components["schemas"]["IndividualLeaderboardEntry"][];
     }]>;
     readonly PlayerNotOnLeaderboardError: {
+      /** Format: int64 */
       readonly membershipId: string;
     };
     readonly LeaderboardIndividualRaidResponse: OneOf<[{
@@ -3092,6 +3657,23 @@ export interface components {
       readonly count: number;
       readonly entries: readonly components["schemas"]["IndividualLeaderboardEntry"][];
     }]>;
+    readonly LeaderboardTeamCustomPantheonCommunityRaceResponse: OneOf<[{
+      /** @enum {string} */
+      readonly type: "team";
+      /** @enum {string} */
+      readonly format: "duration" | "numerical";
+      readonly page: number;
+      readonly count: number;
+      readonly entries: readonly components["schemas"]["TeamLeaderboardEntry"][];
+    }, {
+      /** @enum {string} */
+      readonly type: "individual";
+      /** @enum {string} */
+      readonly format: "duration" | "numerical";
+      readonly page: number;
+      readonly count: number;
+      readonly entries: readonly components["schemas"]["IndividualLeaderboardEntry"][];
+    }]>;
     readonly LeaderboardClanResponse: readonly components["schemas"]["ClanLeaderboardEntry"][];
     /** @description A raw PGCR with a few redundant fields removed */
     readonly PgcrResponse: {
@@ -3117,7 +3699,8 @@ export interface components {
               readonly iconPath?: string | null;
               readonly crossSaveOverride: components["schemas"]["DestinyMembershipType"];
               readonly applicableMembershipTypes?: (readonly components["schemas"]["DestinyMembershipType"][]) | null;
-              readonly membershipType?: components["schemas"]["DestinyMembershipType"] | null;
+              readonly membershipType?: components["schemas"]["DestinyMembershipType"];
+              /** Format: int64 */
               readonly membershipId: string;
               readonly displayName?: string | null;
               readonly bungieGlobalDisplayName?: string | null;
@@ -3135,6 +3718,7 @@ export interface components {
             /** Format: uint32 */
             readonly emblemHash: number;
           };
+          /** Format: int64 */
           readonly characterId: string;
           readonly values: {
             [key: string]: {
@@ -3168,21 +3752,31 @@ export interface components {
         })[];
     };
     readonly PGCRNotFoundError: {
+      /** Format: int64 */
       readonly instanceId: string;
     };
     readonly ClanResponse: {
       readonly aggregateStats: components["schemas"]["ClanAggregateStats"];
-      readonly members: readonly ({
-          readonly playerInfo: components["schemas"]["PlayerInfo"] | null;
+      readonly members: readonly {
+          readonly playerInfo: components["schemas"]["PlayerInfo"];
           readonly stats: components["schemas"]["ClanMemberStats"];
-        })[];
+        }[];
     };
     readonly ClanNotFoundError: {
+      /** Format: int64 */
       readonly groupId: string;
     };
     readonly BungieServiceOffline: {
       readonly message: string;
       readonly route: string;
+    };
+    readonly ClanBasicResponse: {
+      /** Format: int64 */
+      readonly groupId: string;
+      readonly name: string;
+      readonly callSign: string;
+      readonly motto: string;
+      readonly avatarPath: string | null;
     };
     readonly MetricsWeaponsRollingWeekResponse: {
       readonly energy: readonly components["schemas"]["WeaponMetric"][];
@@ -3219,7 +3813,7 @@ export interface components {
     };
     readonly AdminReportingStandingResponse: {
       readonly instanceDetails: components["schemas"]["InstanceBasic"];
-      readonly blacklist: components["schemas"]["InstanceBlacklist"] | null;
+      readonly blacklist: components["schemas"]["InstanceBlacklist"];
       readonly flags: readonly components["schemas"]["InstanceFlag"][];
       readonly players: readonly components["schemas"]["InstancePlayerStanding"][];
     };
@@ -3227,10 +3821,15 @@ export interface components {
       readonly blacklisted: boolean;
     };
     readonly PlayerNotInInstance: {
+      /** Format: int64 */
       readonly instanceId: string;
       readonly players: readonly string[];
     };
-    readonly AdminReportingPlayerResponse: string;
+    readonly AdminReportingPlayerResponse: {
+      readonly playerInfo: components["schemas"]["PlayerInfo"];
+      readonly recentFlags: readonly components["schemas"]["InstancePlayerFlag"][];
+      readonly blacklistedInstances: readonly components["schemas"]["PlayerBlacklistedInstance"][];
+    };
     readonly AuthorizeAdminResponse: {
       readonly value: string;
       /** Format: date-time */
@@ -3242,6 +3841,33 @@ export interface components {
       /** Format: date-time */
       readonly expires: string;
     };
+    readonly SubscriptionsDiscordWebhooksResponse: OneOf<[{
+      /** @enum {boolean} */
+      readonly registered: false;
+    }, {
+      /** @enum {boolean} */
+      readonly registered: true;
+      readonly guildId: string;
+      readonly channelId: string;
+      readonly webhookId: string;
+      readonly destinationActive: boolean;
+      readonly consecutiveDeliveryFailures: number;
+      readonly lastDeliverySuccessAt: string | null;
+      readonly lastDeliveryFailureAt: string | null;
+      readonly lastDeliveryError: string | null;
+      readonly players: readonly {
+          readonly membershipId: string;
+          readonly requireFresh: boolean;
+          readonly requireCompleted: boolean;
+          readonly raidIds: readonly number[];
+        }[];
+      readonly clans: readonly {
+          readonly groupId: string;
+          readonly requireFresh: boolean;
+          readonly requireCompleted: boolean;
+          readonly raidIds: readonly number[];
+        }[];
+    }]>;
   };
   responses: never;
   parameters: {

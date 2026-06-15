@@ -1,6 +1,9 @@
+"use client"
+
 import { CheckCircle, Clock, MapPin, TriangleAlert, Users, XCircle } from "lucide-react"
+import { usePGCRContext } from "~/hooks/pgcr/ClientStateManager"
+import { getPgcrDisplayTitle } from "~/lib/pgcr/formatting"
 import { cn } from "~/lib/tw"
-import { type RaidHubInstanceExtended } from "~/services/raidhub/types"
 import { Badge } from "~/shad/badge"
 import { CardHeader } from "~/shad/card"
 import { Tooltip, TooltipContent, TooltipTrigger } from "~/shad/tooltip"
@@ -11,15 +14,12 @@ import { PGCRHeaderBackground } from "./pgcr-header-bg"
 import { PGCRMenu } from "./pgcr-menu"
 import { PGCRTags } from "./pgcr-tags"
 
-interface PGCRHeaderProps {
-    data: RaidHubInstanceExtended
-}
-
-export const PGCRHeader = ({ data }: PGCRHeaderProps) => {
+export const PGCRHeader = () => {
+    const { data } = usePGCRContext()
     return (
-        <PGCRHeaderBackground activityId={data.activityId}>
+        <PGCRHeaderBackground activityId={data.activityId} versionId={data.versionId}>
             <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/50 to-black/30 backdrop-blur-[2px]" />
-            <CardHeader className="absolute inset-0 flex flex-col gap-2 p-2 md:p-6">
+            <CardHeader className="relative z-10 flex flex-col gap-2 p-2 md:p-6">
                 <div className="inline-flex gap-4">
                     <PGCRDate />
                     {data.isBlacklisted && (
@@ -40,9 +40,7 @@ export const PGCRHeader = ({ data }: PGCRHeaderProps) => {
                 </div>
                 <div className="flex flex-wrap items-center gap-2">
                     <h1 className="text-2xl font-bold tracking-tight text-white md:text-4xl">
-                        {data.metadata.isRaid
-                            ? data.metadata.activityName
-                            : `${data.metadata.activityName}: ${data.metadata.versionName}`}
+                        {getPgcrDisplayTitle(data.metadata)}
                     </h1>
 
                     {/* Cleared status badge */}
@@ -97,6 +95,13 @@ export const PGCRHeader = ({ data }: PGCRHeaderProps) => {
                             variant="secondary"
                             className="bg-primary/90 text-primary-foreground text-sm">
                             {data.isContest ? "Contest" : data.metadata.versionName}
+                        </Badge>
+                    )}
+                    {data.difficultyTier === "adventure" && (
+                        <Badge
+                            variant="secondary"
+                            className="bg-amber-600/90 text-sm text-amber-50">
+                            Adventure
                         </Badge>
                     )}
 

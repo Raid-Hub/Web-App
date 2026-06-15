@@ -112,6 +112,36 @@ export function secondsToYDHMS(totalSeconds: number, count = 5): string {
     return result.slice(0, count).join(" ")
 }
 
+export function wrapText(text: string, maxChars: number): string {
+    if (text.length <= maxChars) {
+        return text
+    }
+
+    const lines: string[] = []
+    let current = ""
+
+    for (const word of text.split(" ")) {
+        if (!current) {
+            current = word
+            continue
+        }
+
+        const next = `${current} ${word}`
+        if (next.length <= maxChars) {
+            current = next
+        } else {
+            lines.push(current)
+            current = word
+        }
+    }
+
+    if (current) {
+        lines.push(current)
+    }
+
+    return lines.join("\n")
+}
+
 const domParser = typeof window !== "undefined" ? new DOMParser() : null
 export const decodeHtmlEntities = (html: string) => {
     if (typeof window === "undefined") return html

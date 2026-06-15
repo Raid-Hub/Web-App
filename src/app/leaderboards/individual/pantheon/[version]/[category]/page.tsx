@@ -2,6 +2,7 @@ import { type Metadata } from "next"
 import { notFound } from "next/navigation"
 import { LeaderboardSSR } from "~/app/leaderboards/LeaderboardSSR"
 import { CloudflareActivitySplash } from "~/components/CloudflareImage"
+import { findPantheonVersionByPath } from "~/lib/manifest/pantheon"
 import { baseMetadata } from "~/lib/metadata"
 import { prefetchManifest } from "~/services/raidhub/prefetchRaidHubManifest"
 import {
@@ -25,17 +26,18 @@ const getDefinitions = (
     params: PantheonVersionLeaderboardDynamicParams["params"],
     manifest: RaidHubManifestResponse
 ) => {
-    const definition = Object.values(manifest.versionDefinitions).find(
-        data => data.associatedActivityId === 101 && data.path === params.version
-    )
+    const definition = findPantheonVersionByPath(manifest, params.version)
 
-    if (!definition) {
+    if (!definition?.associatedActivityId) {
         return notFound()
-    } else {
-        return {
-            definition,
-            categoryName: params.category[0].toUpperCase() + params.category.slice(1)
-        }
+    }
+
+    const activity = manifest.activityDefinitions[definition.associatedActivityId] ?? null
+
+    return {
+        definition,
+        activity,
+        categoryName: params.category[0].toUpperCase() + params.category.slice(1)
     }
 }
 
@@ -43,10 +45,11 @@ export async function generateMetadata({
     params
 }: PantheonVersionLeaderboardDynamicParams): Promise<Metadata> {
     const manifest = await prefetchManifest()
-    const { definition, categoryName } = getDefinitions(params, manifest)
+    const { definition, activity, categoryName } = getDefinitions(params, manifest)
+    const activityName = activity?.name ?? "The Pantheon"
 
-    const title = `The Pantheon: ${definition.name} ${categoryName} Completion Leaderboard`
-    const description = `View the Pantheon: ${
+    const title = `${activityName}: ${definition.name} ${categoryName} Completion Leaderboard`
+    const description = `View the ${activityName}: ${
         definition.name
     } ${categoryName.toLowerCase()} leaderboards`
 
@@ -74,16 +77,21 @@ export default async function Page({
     searchParams
 }: PantheonVersionLeaderboardDynamicParams) {
     const manifest = await prefetchManifest()
-    const { definition, categoryName } = getDefinitions(params, manifest)
+    const { definition, activity, categoryName } = getDefinitions(params, manifest)
 
     return (
         <Leaderboard
             heading={
                 <Splash
-                    tertiaryTitle="The Pantheon"
+                    tertiaryTitle={activity?.name ?? "The Pantheon"}
                     title={definition.name}
                     subtitle={`${categoryName} Leaderboard`}>
-                    <CloudflareActivitySplash activityId={definition.id} fill className="z-[-1]" />
+                    <CloudflareActivitySplash
+                        activityId={definition.associatedActivityId!}
+                        versionId={definition.id}
+                        fill
+                        className="z-[-1]"
+                    />
                 </Splash>
             }
             hasPages

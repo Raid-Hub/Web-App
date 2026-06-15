@@ -85,10 +85,11 @@ export const ManifestStatusOverlay = (
                                     Please try refreshing the page. If that does not work, please
                                     contact us at{" "}
                                     <Link
-                                        href="https://discord.gg/raidhub"
+                                        href="https://discord.raidhub.io"
                                         target="_blank"
+                                        rel="noopener noreferrer"
                                         style={{ color: "lightblue" }}>
-                                        discord.gg/raidhub
+                                        discord.raidhub.io
                                     </Link>
                                     .
                                 </div>

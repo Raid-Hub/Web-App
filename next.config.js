@@ -1,11 +1,16 @@
 // eslint-disable-next-line @typescript-eslint/no-var-requires
+const { withSentryConfig } = require("@sentry/nextjs")
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const withBundleAnalyzer = require("@next/bundle-analyzer")({
     enabled: process.env.ANALYZE === "true"
 })
 
-module.exports = withBundleAnalyzer({
+/** @type {import('next').NextConfig} */
+const nextConfig = {
     experimental: {
-        ppr: true
+        ppr: true,
+        // Quiets Sentry → OpenTelemetry → debug → supports-color optional peer resolution noise during webpack
+        serverComponentsExternalPackages: ["supports-color"]
     },
     reactStrictMode: false,
     compiler: {
@@ -16,7 +21,10 @@ module.exports = withBundleAnalyzer({
         APP_VERSION: process.env.APP_VERSION,
         BUNGIE_API_KEY: process.env.BUNGIE_API_KEY,
         RAIDHUB_API_URL: process.env.RAIDHUB_API_URL ?? "https://api.raidhub.io",
-        RAIDHUB_API_KEY: process.env.RAIDHUB_API_KEY
+        RAIDHUB_API_KEY: process.env.RAIDHUB_API_KEY,
+        SENTRY_DSN: process.env.SENTRY_DSN,
+        SENTRY_ENVIRONMENT: process.env.SENTRY_ENVIRONMENT,
+        SENTRY_RELEASE: process.env.SENTRY_RELEASE
     },
     images: {
         remotePatterns: [
@@ -49,4 +57,9 @@ module.exports = withBundleAnalyzer({
             source: "/:vanity([a-zA-Z0-9]+)"
         }
     ]
+}
+
+module.exports = withSentryConfig(withBundleAnalyzer(nextConfig), {
+    silent: !process.env.CI,
+    widenClientFileUpload: true
 })

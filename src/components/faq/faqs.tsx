@@ -143,7 +143,7 @@ export const faqs: FAQ[] = [
         answer: (
             <p>
                 You can submit bug reports and feature requests in our{" "}
-                <Link href="https://discord.gg/raidhub" className="text-blue-300 hover:underline">
+                <Link href="https://discord.raidhub.io" className="text-blue-300 hover:underline">
                     Discord server
                 </Link>
                 . We have channels set up for both bug reports and feature requests. Alternatively,

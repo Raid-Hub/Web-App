@@ -2,6 +2,12 @@
 
 import { useQuery } from "@tanstack/react-query"
 import { createContext, useContext, useMemo, type ReactNode } from "react"
+import {
+    findPantheonVersionByPath as findPantheonVersionByPathInManifest,
+    getActivePantheonIds,
+    getPantheonCheckpointName,
+    isPantheonVersionSunset as isPantheonVersionSunsetInManifest
+} from "~/lib/manifest/pantheon"
 import { getRaidHubApi } from "~/services/raidhub/common"
 import type {
     ImageContentData,
@@ -13,21 +19,29 @@ import type {
 type ManifestContextData = RaidHubManifestResponse & {
     listedVerions: readonly number[]
     activeRaids: readonly number[]
+    activePantheonIds: readonly number[]
     pantheonVersions: readonly number[]
+    activePantheonVersions: readonly number[]
+    pantheonSunsetVersions: readonly number[]
     elevatedDifficulties: readonly number[]
     milestoneHashes: Map<number, RaidHubActivityDefinition>
     getVersionString(versionId: number): string
     getActivityString(activityId: number): string
     getUrlPathForActivity(activityId: number): string | null
     getUrlPathForVersion(versionId: number): string | null
+    getActivePantheonActivityId(): number | null
+    isPantheonVersionSunset(versionId: number): boolean
     getDefinitionFromHash(hash: string | number): {
         activity: RaidHubActivityDefinition
         version: RaidHubVersionDefinition
     } | null
     getVersionsForActivity(activityId: number): readonly RaidHubVersionDefinition[]
+    findPantheonVersionByPath(versionPath: string): RaidHubVersionDefinition | null
     getActivityDefinition(activityId: number): RaidHubActivityDefinition | null
     isChallengeMode(versionId: number): boolean
+    getCheckpointName(activityId: number, versionId?: number): string | null
     getImageVariantsForActivity(activityId: number | string): readonly ImageContentData[]
+    getImageVariantsForVersion(versionId: number | string): readonly ImageContentData[]
 }
 
 const ManifestContext = createContext<ManifestContextData | undefined>(undefined)
@@ -36,7 +50,7 @@ export function RaidHubManifestManager(props: {
     children: ReactNode
     serverManifest: RaidHubManifestResponse
 }) {
-    const { data } = useQuery({
+    const { data } = useQuery<RaidHubManifestResponse>({
         queryKey: ["raidhub-manifest"],
         queryFn: () => getRaidHubApi("/manifest", null, null).then(res => res.response),
         initialData: props.serverManifest,
@@ -44,13 +58,19 @@ export function RaidHubManifestManager(props: {
     })
 
     const value = useMemo((): ManifestContextData => {
+        const activePantheonIds = getActivePantheonIds(data)
+        const activePantheonVersions = data.pantheonVersionIds ?? []
+        const pantheonSunsetVersions = data.pantheonSunsetVersionIds ?? []
+        const pantheonVersions = [...activePantheonVersions, ...pantheonSunsetVersions]
+
         return {
             ...data,
             listedVerions: Object.keys(data.versionDefinitions).map(Number),
             activeRaids: data.listedRaidIds.filter(id => !data.sunsetRaidIds.includes(id)),
-            pantheonVersions: Array.from(
-                new Set(data.pantheonIds.map(id => data.versionsForActivity[id]).flat())
-            ),
+            activePantheonIds,
+            pantheonVersions,
+            activePantheonVersions,
+            pantheonSunsetVersions,
             elevatedDifficulties: [3, 4],
             milestoneHashes: new Map(
                 Object.entries(data.activityDefinitions)
@@ -69,6 +89,12 @@ export function RaidHubManifestManager(props: {
             getUrlPathForVersion(activityId) {
                 return data.versionDefinitions[activityId]?.path ?? null
             },
+            getActivePantheonActivityId() {
+                return activePantheonIds[0] ?? null
+            },
+            isPantheonVersionSunset(versionId) {
+                return isPantheonVersionSunsetInManifest(data, versionId)
+            },
             getDefinitionFromHash(hash) {
                 const obj = data.hashes[hash]
                 if (!obj) return null
@@ -83,14 +109,34 @@ export function RaidHubManifestManager(props: {
                     v => data.versionDefinitions[v]
                 )
             },
+            findPantheonVersionByPath(versionPath) {
+                return findPantheonVersionByPathInManifest(data, versionPath)
+            },
             getActivityDefinition(activityId) {
                 return data.activityDefinitions[activityId] ?? null
             },
             isChallengeMode(versionId) {
                 return data.versionDefinitions[versionId]?.isChallengeMode ?? false
             },
+            getCheckpointName(activityId, versionId) {
+                if (versionId != null) {
+                    const versionCheckpointName = data.versionCheckpointNames?.[versionId]
+                    if (versionCheckpointName) {
+                        return versionCheckpointName
+                    }
+                    if (pantheonVersions.includes(versionId)) {
+                        const versionName = data.versionDefinitions[versionId]?.name
+                        return versionName ? getPantheonCheckpointName(versionName) : null
+                    }
+                }
+                return data.checkpointNames?.[activityId] ?? null
+            },
             getImageVariantsForActivity(activityId) {
                 const variants = data.splashUrls[activityId]
+                return variants ?? []
+            },
+            getImageVariantsForVersion(versionId) {
+                const variants = data.versionSplashUrls?.[versionId]
                 return variants ?? []
             }
         }

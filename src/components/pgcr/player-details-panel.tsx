@@ -4,27 +4,73 @@ import { Collection } from "@discordjs/collection"
 import { CheckCircle, LinkIcon, X } from "lucide-react"
 import Link from "next/link"
 import { useEffect, useMemo } from "react"
-import { ActivityPieChart } from "~/components/pgcr/activity-pie-chart"
 import { useItemDefinition } from "~/hooks/dexie"
 import { usePGCRContext } from "~/hooks/pgcr/ClientStateManager"
 import { useGetCharacterClass } from "~/hooks/pgcr/useCharacterClass"
+import {
+    formatKdRelativeToAveragePercentage,
+    formatTeamSharePercentage,
+    getActivityParticipationPercentage
+} from "~/lib/pgcr/formatting"
 import { cn } from "~/lib/tw"
 import { type RaidHubInstancePlayerExtended } from "~/services/raidhub/types"
 import { Avatar, AvatarFallback, AvatarImage } from "~/shad/avatar"
 import { Button } from "~/shad/button"
-import { Card, CardContent, CardHeader } from "~/shad/card"
 import { Tooltip, TooltipContent, TooltipTrigger } from "~/shad/tooltip"
-import { bungieIconUrl, getBungieDisplayName } from "~/util/destiny"
+import { bungieBannerEmblemUrl, bungieIconUrl, getBungieDisplayName } from "~/util/destiny"
 import { round } from "~/util/math"
 import { secondsToHMS } from "~/util/presentation/formatting"
 import { WeaponTable } from "./pgcr-weapons"
 import { PlayerBadge } from "./player-badge"
-import { StatCard } from "./stat-card"
 
 interface PlayerDetailsPanelProps {
     player: RaidHubInstancePlayerExtended
     onClose: () => void
 }
+
+type StatCell = {
+    label: string
+    value: string
+    detail?: string
+    tooltip?: string
+}
+
+const StatStrip = ({ stats }: { stats: StatCell[] }) => (
+    <div
+        className="grid divide-x divide-zinc-800 border-b border-zinc-800"
+        style={{ gridTemplateColumns: `repeat(${stats.length}, minmax(0, 1fr))` }}>
+        {stats.map(stat => {
+            const cell = (
+                <div className="px-2.5 py-3 text-center md:px-3">
+                    <div className="text-[10px] font-medium tracking-wider text-zinc-500 uppercase">
+                        {stat.label}
+                    </div>
+                    <div className="text-primary/90 mt-1 text-sm font-semibold tabular-nums md:text-base">
+                        {stat.value}
+                    </div>
+                    {stat.detail && (
+                        <div className="mt-0.5 text-[10px] text-zinc-500 tabular-nums">
+                            {stat.detail}
+                        </div>
+                    )}
+                </div>
+            )
+
+            if (!stat.tooltip) {
+                return <div key={stat.label}>{cell}</div>
+            }
+
+            return (
+                <Tooltip key={stat.label}>
+                    <TooltipTrigger asChild>
+                        <div>{cell}</div>
+                    </TooltipTrigger>
+                    <TooltipContent>{stat.tooltip}</TooltipContent>
+                </Tooltip>
+            )
+        })}
+    </div>
+)
 
 export const PlayerDetailsPanelWrapper = () => {
     const {
@@ -46,10 +92,10 @@ export const PlayerDetailsPanelWrapper = () => {
     return (
         <div
             className={cn(
-                `fixed inset-0 top-auto bottom-0 z-50 bg-black/80 transition-opacity duration-200 lg:top-0 lg:flex lg:items-center lg:justify-center`,
+                "fixed inset-0 top-auto bottom-0 z-50 bg-black/80 transition-opacity duration-200 lg:top-0 lg:flex lg:items-center lg:justify-center",
                 selectedPlayer ? "opacity-100" : "pointer-events-none opacity-0"
             )}>
-            <div className="relative mx-auto max-h-[85vh] w-full overflow-y-auto rounded-lg border border-zinc-800 bg-black lg:max-h-[75vh] lg:max-w-4xl">
+            <div className="relative mx-auto max-h-[88vh] w-full overflow-hidden rounded-t-xl border border-zinc-800 bg-zinc-950 lg:max-h-[80vh] lg:max-w-2xl lg:rounded-xl">
                 <PlayerDetailsPanel player={selectedPlayerData} onClose={() => exitPlayerPanel()} />
             </div>
         </div>
@@ -82,21 +128,135 @@ const PlayerDetailsPanel = ({ player, onClose }: PlayerDetailsPanelProps) => {
     }, [get, tx])
 
     const selectedCharacter = validatedSearchParams.get("character")
-    // If no character is selected, show all data
     const activeCharacter = selectedCharacter
         ? player.characters.find(c => c.characterId === selectedCharacter)
         : null
-    const activityPercentage = round(100 * (player.timePlayedSeconds / data.duration), 0)
-
     const selectedStats = activeCharacter ?? playerStatsMerged.get(player.playerInfo.membershipId)!
+
+    const teamTotals = useMemo(() => {
+        const totals = {
+            kills: 0,
+            deaths: 0,
+            assists: 0,
+            meleeKills: 0,
+            grenadeKills: 0,
+            superKills: 0,
+            precisionKills: 0
+        }
+
+        playerStatsMerged.forEach(stats => {
+            totals.kills += stats.kills
+            totals.deaths += stats.deaths
+            totals.assists += stats.assists
+            totals.meleeKills += stats.meleeKills
+            totals.grenadeKills += stats.grenadeKills
+            totals.superKills += stats.superKills
+            totals.precisionKills += stats.precisionKills
+        })
+
+        return {
+            ...totals,
+            kd: totals.kills / Math.max(totals.deaths, 1)
+        }
+    }, [playerStatsMerged])
+
+    const activityPercentage = getActivityParticipationPercentage(
+        selectedStats.timePlayedSeconds,
+        data.duration
+    )
+    const timePlayed = Math.min(selectedStats.timePlayedSeconds, data.duration)
+    const kdRatio = round(selectedStats.kills / Math.max(selectedStats.deaths, 1), 2)
+    const riisScore = scores.get(player.playerInfo.membershipId)?.score
+    const killSharePct =
+        teamTotals.kills > 0
+            ? (((selectedStats.kills + selectedStats.assists) / teamTotals.kills) * 100).toFixed(1)
+            : null
+    const precisionRate =
+        selectedStats.kills > 0
+            ? ((selectedStats.precisionKills / selectedStats.kills) * 100).toFixed(0)
+            : null
 
     const bungieName = getBungieDisplayName(player.playerInfo).split("#")
     const displayName = bungieName[0]
     const bungieNumbers = bungieName[1] ?? ""
-
     const emblemDefinition = useItemDefinition(player.characters[0].emblemHash ?? 0)
-
     const getCharacterIcon = useGetCharacterClass()
+
+    const primaryStats: StatCell[] = [
+        {
+            label: "Time",
+            value: secondsToHMS(timePlayed, false),
+            detail: activityPercentage != null ? `${activityPercentage}%` : undefined,
+            tooltip:
+                activityPercentage != null
+                    ? `Present for ${activityPercentage}% of the activity`
+                    : undefined
+        },
+        {
+            label: "K/D",
+            value: kdRatio.toLocaleString(),
+            detail: formatKdRelativeToAveragePercentage(kdRatio, teamTotals.kd) ?? undefined
+        },
+        {
+            label: "Kills",
+            value: selectedStats.kills.toLocaleString(),
+            detail: formatTeamSharePercentage(selectedStats.kills, teamTotals.kills) ?? undefined
+        },
+        {
+            label: "Deaths",
+            value: selectedStats.deaths.toLocaleString(),
+            detail: formatTeamSharePercentage(selectedStats.deaths, teamTotals.deaths) ?? undefined
+        },
+        {
+            label: "Assists",
+            value: selectedStats.assists.toLocaleString(),
+            detail:
+                formatTeamSharePercentage(selectedStats.assists, teamTotals.assists) ?? undefined
+        },
+        {
+            label: "RIIS",
+            value: riisScore?.toFixed(1) ?? "0.0",
+            tooltip:
+                "RaidHub Individual Impact Score — composite performance metric based on kills, deaths, assists, and time played."
+        }
+    ]
+
+    const secondaryStats: StatCell[] = [
+        {
+            label: "Kill Share",
+            value: killSharePct != null ? `${killSharePct}%` : "—",
+            tooltip: "(Kills + assists) / team kills"
+        },
+        {
+            label: "Precision",
+            value: precisionRate != null ? `${precisionRate}%` : "—",
+            detail:
+                selectedStats.precisionKills > 0
+                    ? `${selectedStats.precisionKills.toLocaleString()} pk`
+                    : undefined
+        },
+        {
+            label: "Melee Kills",
+            value: selectedStats.meleeKills.toLocaleString(),
+            detail:
+                formatTeamSharePercentage(selectedStats.meleeKills, teamTotals.meleeKills) ??
+                undefined
+        },
+        {
+            label: "Grenade Kills",
+            value: selectedStats.grenadeKills.toLocaleString(),
+            detail:
+                formatTeamSharePercentage(selectedStats.grenadeKills, teamTotals.grenadeKills) ??
+                undefined
+        },
+        {
+            label: "Super Kills",
+            value: selectedStats.superKills.toLocaleString(),
+            detail:
+                formatTeamSharePercentage(selectedStats.superKills, teamTotals.superKills) ??
+                undefined
+        }
+    ]
 
     const { kineticWeapons, energyWeapons, powerWeapons } = useMemo(() => {
         const weaponStats = new Collection<
@@ -107,8 +267,10 @@ const PlayerDetailsPanel = ({ player, onClose }: PlayerDetailsPanelProps) => {
                 users: Set<string>
             }
         >()
-        if (activeCharacter) {
-            activeCharacter.weapons.forEach(weapon => {
+
+        const characters = activeCharacter ? [activeCharacter] : player.characters
+        characters.forEach(character => {
+            character.weapons.forEach(weapon => {
                 const prev = weaponStats.get(weapon.weaponHash)
                 weaponStats.set(weapon.weaponHash, {
                     kills: (prev?.kills ?? 0) + weapon.kills,
@@ -116,155 +278,110 @@ const PlayerDetailsPanel = ({ player, onClose }: PlayerDetailsPanelProps) => {
                     users: new Set([player.playerInfo.membershipId])
                 })
             })
-        } else {
-            player.characters.forEach(character => {
-                character.weapons.forEach(weapon => {
-                    const prev = weaponStats.get(weapon.weaponHash)
-                    weaponStats.set(weapon.weaponHash, {
-                        kills: (prev?.kills ?? 0) + weapon.kills,
-                        precisionKills: (prev?.precisionKills ?? 0) + weapon.precisionKills,
-                        users: new Set([player.playerInfo.membershipId])
-                    })
-                })
-            })
-        }
+        })
 
         weaponStats.sort((a, b) => b.kills - a.kills)
 
-        const kineticWeapons = weaponStats.filter((_, key) => {
-            const weapon = weaponsMap.get(key)
-            return weapon?.inventory?.bucketTypeHash === 1498876634
-        })
-        const energyWeapons = weaponStats.filter((_, key) => {
-            const weapon = weaponsMap.get(key)
-            return weapon?.inventory?.bucketTypeHash === 2465295065
-        })
-
-        const powerWeapons = weaponStats.filter((_, key) => {
-            const weapon = weaponsMap.get(key)
-            return weapon?.inventory?.bucketTypeHash === 953998645
-        })
+        const byBucket = (bucketHash: number) =>
+            weaponStats.filter(
+                (_, key) => weaponsMap.get(key)?.inventory?.bucketTypeHash === bucketHash
+            )
 
         return {
-            kineticWeapons,
-            energyWeapons,
-            powerWeapons
+            kineticWeapons: byBucket(1498876634),
+            energyWeapons: byBucket(2465295065),
+            powerWeapons: byBucket(953998645)
         }
     }, [activeCharacter, player, weaponsMap])
 
     return (
-        <div className="flex flex-col">
-            <div className="relative flex items-center gap-3 p-3 md:gap-4 md:p-6">
-                <div className="absolute inset-0 bg-black/70 backdrop-blur-[1px]" />
-                <div className="relative z-10 flex w-full items-center justify-between">
-                    <div className="flex items-center gap-3 md:gap-4">
-                        <Avatar className="size-12 rounded-none border-1 border-zinc-800 md:size-16">
-                            <AvatarImage
-                                src={bungieIconUrl(emblemDefinition?.displayProperties.icon)}
-                                alt={displayName}
-                            />
-                            <AvatarFallback className="rounded-md bg-zinc-800">
-                                {displayName.charAt(0)}
-                            </AvatarFallback>
-                        </Avatar>
-                        <div>
-                            <div className="flex items-center gap-2">
-                                <h2>
-                                    <span className="text-xl font-bold text-white md:text-2xl">
-                                        {displayName}
+        <div className="flex max-h-[88vh] flex-col lg:max-h-[80vh]">
+            <div className="relative shrink-0 overflow-hidden border-b border-zinc-800">
+                {emblemDefinition && (
+                    <div
+                        className="absolute inset-0 bg-[left_10%_center] opacity-15"
+                        style={{
+                            backgroundImage: `url(${bungieBannerEmblemUrl(emblemDefinition)})`
+                        }}
+                    />
+                )}
+                <div className="absolute inset-0 bg-gradient-to-r from-zinc-950 via-zinc-950/95 to-zinc-950/80" />
+                <div className="relative z-10 flex items-start gap-3 p-4 md:gap-4">
+                    <Avatar className="size-10 shrink-0 rounded-sm border border-zinc-800">
+                        <AvatarImage
+                            src={bungieIconUrl(emblemDefinition?.displayProperties.icon)}
+                            alt={displayName}
+                        />
+                        <AvatarFallback className="rounded-sm bg-zinc-800 text-xs">
+                            {displayName.charAt(0)}
+                        </AvatarFallback>
+                    </Avatar>
+                    <div className="min-w-0 flex-1">
+                        <div className="flex items-center gap-1.5">
+                            <h2 className="truncate text-base font-bold text-white md:text-lg">
+                                {displayName}
+                                {bungieNumbers && (
+                                    <span className="text-sm font-normal text-zinc-400">
+                                        {` #${bungieNumbers}`}
                                     </span>
-                                    {bungieNumbers && (
-                                        <span className="text-sm text-zinc-400">
-                                            {`#${bungieNumbers}`}
-                                        </span>
-                                    )}
-                                </h2>
-                                <Tooltip>
-                                    <TooltipTrigger asChild>
-                                        <Button
-                                            variant="ghost"
-                                            size="icon"
-                                            className="size-6 rounded-full hover:bg-zinc-700"
-                                            asChild>
-                                            <Link
-                                                href={`/profile/${player.playerInfo.membershipId}`}>
-                                                <LinkIcon className="size-6" />
-                                            </Link>
-                                        </Button>
-                                    </TooltipTrigger>
-                                    <TooltipContent>View Profile</TooltipContent>
-                                </Tooltip>
-                            </div>
-                            <div className="mt-1 flex items-center gap-2">
-                                {mvp === player.playerInfo.membershipId && (
-                                    <PlayerBadge variant="mvp" />
                                 )}
-                                {player.sherpas > 0 && (
-                                    <PlayerBadge
-                                        variant="sherpa"
-                                        titleOverride={`Sherpa x${player.sherpas}`}
-                                    />
-                                )}
-                                {player.isFirstClear && <PlayerBadge variant="firstClear" />}
-
-                                <Tooltip>
-                                    <TooltipTrigger asChild>
-                                        <div className="ml-1 flex items-center gap-1">
-                                            <ActivityPieChart
-                                                percentage={activityPercentage}
-                                                size={18}
-                                                color={player.completed ? "green" : "orange"}
-                                            />
-                                            <span className="text-xs text-zinc-400">
-                                                {activityPercentage}% participation
-                                            </span>
-                                        </div>
-                                    </TooltipTrigger>
-                                    <TooltipContent side="bottom" align="start">
-                                        This player participated in {activityPercentage}% of the
-                                        activity
-                                    </TooltipContent>
-                                </Tooltip>
-                            </div>
+                            </h2>
+                            <Tooltip>
+                                <TooltipTrigger asChild>
+                                    <Button
+                                        variant="ghost"
+                                        size="icon"
+                                        className="size-6 shrink-0 rounded-full hover:bg-zinc-800"
+                                        asChild>
+                                        <Link href={`/profile/${player.playerInfo.membershipId}`}>
+                                            <LinkIcon className="size-3.5" />
+                                        </Link>
+                                    </Button>
+                                </TooltipTrigger>
+                                <TooltipContent>View Profile</TooltipContent>
+                            </Tooltip>
                         </div>
-                    </div>
-                    <Button
-                        variant="ghost"
-                        size="icon"
-                        className="cursor-pointer rounded-full"
-                        onClick={onClose}>
-                        <X className="size-7 p-1 md:size-10" />
-                    </Button>
-                </div>
-            </div>
-
-            <div className="border-b border-zinc-800 bg-zinc-950" />
-
-            <div className="space-y-4 p-6">
-                {player.characters.length > 1 && (
-                    <div className="scrollbar-none flex items-center gap-1 overflow-x-auto pb-2 md:gap-2">
-                        <Button
-                            variant={selectedCharacter === null ? "default" : "outline"}
-                            size="sm"
-                            className="rounded-full text-xs whitespace-nowrap"
-                            onClick={() => remove("character")}>
-                            All Characters
-                        </Button>
-                        {player.characters
-                            .toSorted((c1, c2) => {
-                                if (!c1.completed !== c2.completed) {
-                                    return c1.completed ? -1 : 1
-                                }
-                                if (c1.timePlayedSeconds !== c2.timePlayedSeconds) {
-                                    return c2.timePlayedSeconds - c1.timePlayedSeconds
-                                }
-                                return c2.kills - c1.kills
-                            })
-                            .map(({ characterId, classHash, completed }) => {
-                                const [CharacterIcon, characterName] = getCharacterIcon(classHash)
-                                return (
-                                    <Tooltip key={characterId}>
-                                        <TooltipTrigger asChild>
+                        <div className="mt-1.5 flex flex-wrap items-center gap-1.5">
+                            {mvp === player.playerInfo.membershipId && (
+                                <PlayerBadge variant="mvp" />
+                            )}
+                            {player.sherpas > 0 && (
+                                <PlayerBadge
+                                    variant="sherpa"
+                                    titleOverride={`Sherpa x${player.sherpas}`}
+                                />
+                            )}
+                            {player.isFirstClear && <PlayerBadge variant="firstClear" />}
+                            {!player.completed && <PlayerBadge variant="dnf" />}
+                            {player.characters.length === 1 && (
+                                <span className="text-[10px] text-zinc-500">
+                                    {getCharacterIcon(player.characters[0].classHash)[1]}
+                                </span>
+                            )}
+                        </div>
+                        {player.characters.length > 1 && (
+                            <div className="mt-2.5 flex flex-wrap items-center gap-1.5">
+                                <Button
+                                    variant={selectedCharacter === null ? "default" : "outline"}
+                                    size="sm"
+                                    className="h-8 rounded-full px-2.5 text-[10px]"
+                                    onClick={() => remove("character")}>
+                                    All
+                                </Button>
+                                {player.characters
+                                    .toSorted((c1, c2) => {
+                                        if (!c1.completed !== c2.completed) {
+                                            return c1.completed ? -1 : 1
+                                        }
+                                        if (c1.timePlayedSeconds !== c2.timePlayedSeconds) {
+                                            return c2.timePlayedSeconds - c1.timePlayedSeconds
+                                        }
+                                        return c2.kills - c1.kills
+                                    })
+                                    .map(({ characterId, classHash, completed }) => {
+                                        const [CharacterIcon, characterName] =
+                                            getCharacterIcon(classHash)
+                                        return (
                                             <Button
                                                 key={characterId}
                                                 variant={
@@ -273,107 +390,39 @@ const PlayerDetailsPanel = ({ player, onClose }: PlayerDetailsPanelProps) => {
                                                         : "outline"
                                                 }
                                                 size="sm"
-                                                className="border-muted-foreground cursor-pointer items-center gap-1 rounded-full text-xs whitespace-nowrap md:gap-2"
+                                                className="h-8 gap-1 rounded-full px-2.5 text-[10px]"
                                                 onClick={() => set("character", characterId)}>
-                                                <CharacterIcon className="size-4 md:size-4" />
+                                                <CharacterIcon className="size-3.5" />
+                                                <span className="hidden sm:inline">
+                                                    {characterName}
+                                                </span>
                                                 {completed && (
-                                                    <CheckCircle className="ml-1 size-3 text-green-500" />
+                                                    <CheckCircle className="size-3 text-green-500" />
                                                 )}
                                             </Button>
-                                        </TooltipTrigger>
-                                        <TooltipContent side="bottom" align="start">
-                                            {characterName}
-                                        </TooltipContent>
-                                    </Tooltip>
-                                )
-                            })}
+                                        )
+                                    })}
+                            </div>
+                        )}
                     </div>
-                )}
-                {/* Performance Stats */}
-                <Card className="gap-2 rounded-none border-zinc-800 bg-zinc-950">
-                    <CardHeader className="pb-0">
-                        <h3 className="text-lg font-medium">Performance</h3>
-                    </CardHeader>
-                    <CardContent>
-                        <div className="mb-3 grid grid-cols-2 gap-3 md:grid-cols-4">
-                            {player.characters.length === 1 && (
-                                <StatCard
-                                    label="Class"
-                                    value={getCharacterIcon(player.characters[0].classHash)[1]}
-                                />
-                            )}
-                            <StatCard
-                                label="Time Played"
-                                value={secondsToHMS(
-                                    Math.min(selectedStats.timePlayedSeconds, data.duration),
-                                    false
-                                )}
-                            />
-                            <StatCard label="Kills" value={selectedStats.kills.toLocaleString()} />
-                            <StatCard
-                                label="Deaths"
-                                value={selectedStats.deaths.toLocaleString()}
-                            />
-                            <StatCard
-                                label="Assists"
-                                value={selectedStats.assists.toLocaleString()}
-                            />
-                            <StatCard
-                                label="K/D Ratio"
-                                value={round(
-                                    selectedStats.kills / Math.max(selectedStats.deaths, 1),
-                                    2
-                                ).toLocaleString()}
-                            />
-                            <StatCard
-                                label="Melee Kills"
-                                value={selectedStats.meleeKills.toLocaleString()}
-                            />
-                            <StatCard
-                                label="Grenade Kills"
-                                value={selectedStats.grenadeKills.toLocaleString()}
-                            />
-                            <StatCard
-                                label="Super Kills"
-                                value={selectedStats.superKills.toLocaleString()}
-                            />
-                            <StatCard
-                                label="Precision Kills"
-                                value={selectedStats.precisionKills.toLocaleString()}
-                            />
-                            <Tooltip>
-                                <TooltipTrigger>
-                                    <StatCard
-                                        label="RIIS"
-                                        value={
-                                            scores
-                                                .get(player.playerInfo.membershipId)
-                                                ?.score.toFixed(3) ?? "0"
-                                        }
-                                    />
-                                </TooltipTrigger>
-                                <TooltipContent>
-                                    <p className="text-sm">
-                                        <strong>RaidHub Individual Impact Score (RIIS)</strong>
-                                        {[
-                                            " is a metric that measures ",
-                                            " a player's performance and determines their contribution to the",
-                                            " team's success. It is calculated using a combination of the player's",
-                                            " kills, deaths, assists, and other available stats."
-                                        ].map((text, index, arr) => (
-                                            <span key={index}>
-                                                {text}
-                                                {index < arr.length - 1 && <br />}
-                                            </span>
-                                        ))}
-                                    </p>
-                                </TooltipContent>
-                            </Tooltip>
-                        </div>
-                    </CardContent>
-                </Card>
+                    <Button
+                        variant="ghost"
+                        size="icon"
+                        className="size-7 shrink-0 rounded-full hover:bg-zinc-800"
+                        onClick={onClose}>
+                        <X className="size-5" />
+                    </Button>
+                </div>
+            </div>
+
+            <div className="min-h-0 flex-1 space-y-3 overflow-y-auto p-3 md:p-4">
+                <div className="overflow-hidden rounded-lg border border-zinc-800">
+                    <StatStrip stats={primaryStats} />
+                    <StatStrip stats={secondaryStats} />
+                </div>
 
                 <WeaponTable
+                    compact
                     kineticWeapons={kineticWeapons}
                     energyWeapons={energyWeapons}
                     powerWeapons={powerWeapons}

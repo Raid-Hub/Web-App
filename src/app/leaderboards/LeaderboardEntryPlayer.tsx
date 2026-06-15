@@ -16,6 +16,7 @@ export const LeaderboardEntryPlayerComponent = (player: LeaderboardEntryPlayer) 
             condition={player.url}
             wrapper={({ children, value }) => (
                 <Link
+                    className="pointer-events-auto"
                     style={{ color: "unset" }}
                     href={value}
                     target={value.startsWith("/") ? "" : "_blank"}>

@@ -84,7 +84,7 @@ export default function PGCR({
             allowsReporting={allowsReporting}>
             <div className="container mx-auto my-auto w-full max-w-5xl">
                 <Card className="w-full gap-0 overflow-hidden border border-zinc-800 bg-zinc-950 py-0 shadow-md md:w-[768px] lg:w-[956px] xl:w-[1096px]">
-                    <PGCRHeader data={data} />
+                    <PGCRHeader />
 
                     <Separator className="bg-zinc-800" />
 

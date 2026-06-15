@@ -45,6 +45,7 @@ interface ClientStateManagerProps {
 
 interface PGCRState {
     data: RaidHubInstanceExtended
+    setIsBlacklisted: Dispatch<SetStateAction<boolean>>
     playerStatsMerged: Collection<string, PlayerStats>
     mvp: string | null
     scores: Collection<
@@ -101,6 +102,8 @@ export const ClientStateManager = ({
     )
 
     const [isReportModalOpen, setIsReportModalOpen] = useState(false)
+    const [isBlacklisted, setIsBlacklisted] = useState(data.isBlacklisted)
+    const instanceData = useMemo(() => ({ ...data, isBlacklisted }), [data, isBlacklisted])
 
     const query = useQueryParams<PGCRPageParams>(
         z.object({
@@ -127,7 +130,8 @@ export const ClientStateManager = ({
     return (
         <PGCRContext.Provider
             value={{
-                data,
+                data: instanceData,
+                setIsBlacklisted,
                 mvp,
                 playerStatsMerged: new Collection(playerStatsMerged),
                 weaponsMap,

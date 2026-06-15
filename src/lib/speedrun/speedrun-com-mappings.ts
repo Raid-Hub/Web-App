@@ -2,6 +2,7 @@ export type RTABoardCategory =
     | "standard"
     | "any-percent"
     | "trio"
+    | "quad"
     | "prestige"
     | "trio-all-encounters"
 
@@ -137,7 +138,15 @@ export const SpeedrunVariables: Record<
         }
     },
     salvationsedge: {
-        categoryId: "9kvzop8d"
+        categoryId: "9kvzop8d",
+        variable: {
+            variableId: "yn26d2gl",
+            values: {
+                "any-percent": { id: "1w4o3xmq", displayName: "Any %" },
+                trio: { id: "qoxod65q", displayName: "Trio" },
+                quad: { id: "qj7vmxeq", displayName: "Quad" }
+            }
+        }
     },
     desertPerpetual: {
         categoryId: "not-implemented"

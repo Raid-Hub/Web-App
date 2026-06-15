@@ -1,3 +1,4 @@
+import { TIME_PLAYED_SECONDS_MAX } from "~/lib/pgcr/formatting"
 import { round } from "~/util/math"
 
 export function generateSortScore(
@@ -39,7 +40,7 @@ export function generateSortScore(
 
     const adjustedTimePlayedSeconds = Math.min(
         d.timePlayedSeconds || 1,
-        options.capTPS ? 32767 : Infinity
+        options.capTPS ? TIME_PLAYED_SECONDS_MAX : Infinity
     )
     // kills weighted 2x assists, slight diminishing returns
     const killScore =
