@@ -5,7 +5,8 @@ import { type RaidHubStatusResponse } from "./types"
 export const useRaidHubStatus = () =>
     useQuery<RaidHubStatusResponse, Error>({
         queryKey: ["raidhub", "status"],
-        queryFn: () => getRaidHubApi("/status", null, null).then(res => res.response),
+        queryFn: ({ signal }) =>
+            getRaidHubApi("/status", null, null, { signal }).then(res => res.response),
         staleTime: 10000,
         refetchOnReconnect: true,
         refetchOnMount: true,

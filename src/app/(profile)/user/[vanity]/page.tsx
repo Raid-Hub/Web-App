@@ -72,7 +72,10 @@ const HydratedVanityPage = async (appProfile: NonNullable<AppProfile>) => {
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
-    const profile = await getUniqueProfileByVanity(params.vanity).then(p => p ?? notFound())
+    const profile = await getUniqueProfileByVanity(params.vanity)
+    if (!profile) {
+        return {}
+    }
 
     const raidhub = await prefetchRaidHubPlayerProfile(profile.destinyMembershipId)
 

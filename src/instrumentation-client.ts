@@ -5,6 +5,7 @@ import {
     getSentryRelease,
     getTracesSampleRate
 } from "./lib/sentry/env"
+import { sentrySharedOptions } from "./lib/sentry/shared-options"
 
 const dsn = getSentryDsnForClient()
 
@@ -14,7 +15,8 @@ if (dsn) {
         environment: getSentryEnvironment(),
         release: getSentryRelease(),
         tracesSampleRate: getTracesSampleRate(),
-        debug: process.env.NODE_ENV !== "production"
+        debug: process.env.NODE_ENV !== "production",
+        ...sentrySharedOptions
     })
 }
 

@@ -3,6 +3,7 @@
 import { type Session } from "next-auth"
 import { SessionProvider, signOut } from "next-auth/react"
 import { useEffect, useRef, useState, type ReactNode } from "react"
+import { SentryUserSync } from "~/components/providers/SentryUserSync"
 import { useSession } from "~/hooks/app/useSession"
 import { useBungieClient } from "./BungieClientProvider"
 
@@ -27,6 +28,7 @@ export const ClientSessionManager = (props: {
             refetchOnWindowFocus={false}
             refetchWhenOffline={false}
             session={props.serverSession}>
+            <SentryUserSync />
             <TokenManager setNextRefetch={setSessionRefetchInterval} />
             {props.children}
         </SessionProvider>

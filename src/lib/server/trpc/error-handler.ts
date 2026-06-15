@@ -1,5 +1,5 @@
-import * as Sentry from "@sentry/nextjs"
 import type { ProcedureType, TRPCError } from "@trpc/server"
+import { captureServerException } from "~/lib/sentry/capture"
 import { getSentryDsnForServer } from "~/lib/sentry/env"
 
 export const trpcErrorHandler = async ({
@@ -18,7 +18,7 @@ export const trpcErrorHandler = async ({
 
     if (getSentryDsnForServer() && error.code === "INTERNAL_SERVER_ERROR") {
         const err = error.cause instanceof Error ? error.cause : error
-        Sentry.captureException(err, {
+        captureServerException(err, {
             tags: {
                 trpc_path: path ?? "unknown",
                 trpc_source: source

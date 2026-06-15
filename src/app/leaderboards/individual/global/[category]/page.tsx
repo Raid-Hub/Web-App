@@ -15,23 +15,24 @@ export const fetchCache = "default-no-store"
 type CategoryParam =
     PathParamsForLeaderboardURL<"/leaderboard/individual/global/{category}">["category"]
 
+const GLOBAL_CATEGORY_TITLES = {
+    clears: "Clears",
+    "full-clears": "Full Clears",
+    sherpas: "Sherpas",
+    speedrun: "Speedrun",
+    "world-first-rankings": "World First Rating",
+    "in-raid-time": "In Raid Time"
+} as const satisfies Record<CategoryParam, string>
+
+const tryGetCategoryTitle = (category: string) =>
+    GLOBAL_CATEGORY_TITLES[category as CategoryParam] ?? null
+
 const getCategoryTitle = (category: CategoryParam) => {
-    switch (category) {
-        case "clears":
-            return "Clears"
-        case "full-clears":
-            return "Full Clears"
-        case "sherpas":
-            return "Sherpas"
-        case "speedrun":
-            return "Speedrun"
-        case "world-first-rankings":
-            return "World First Rating"
-        case "in-raid-time":
-            return "In Raid Time"
-        default:
-            notFound()
+    const title = tryGetCategoryTitle(category)
+    if (!title) {
+        notFound()
     }
+    return title
 }
 
 type DynamicParams = {
@@ -42,7 +43,10 @@ type DynamicParams = {
 }
 
 export async function generateMetadata({ params }: DynamicParams): Promise<Metadata> {
-    const categoryName = getCategoryTitle(params.category)
+    const categoryName = tryGetCategoryTitle(params.category)
+    if (!categoryName) {
+        return {}
+    }
     const title = `${categoryName} Leaderboards`
     const description = `View the Destiny 2 raid ${categoryName.toLowerCase()} leaderboard`
 

@@ -12,17 +12,26 @@ export const assertValidPath = (instanceId: string) => {
     }
 }
 
-export const prefetchActivity = reactRequestDedupe((instanceId: string) =>
+export const tryPrefetchActivity = reactRequestDedupe((instanceId: string) =>
     getRaidHubApi("/instance/{instanceId}", { instanceId }, null)
         .then(res => res.response)
         .catch(err => {
             if (err instanceof RaidHubError && err.errorCode === "InstanceNotFoundError") {
-                notFound()
+                return null
             } else {
                 throw err
             }
         })
 )
+
+export const prefetchActivity = reactRequestDedupe(async (instanceId: string) => {
+    const activity = await tryPrefetchActivity(instanceId)
+    if (!activity) {
+        notFound()
+    }
+
+    return activity
+})
 
 export const getMetaData = (activity: RaidHubInstanceExtended) => {
     const lowmanPrefix = activity.completed

@@ -6,7 +6,7 @@ import { prefetchManifest } from "~/services/raidhub/prefetchRaidHubManifest"
 import { type PathParamsForLeaderboardURL } from "~/services/raidhub/types"
 import { Leaderboard } from "../../../Leaderboard"
 import { Splash } from "../../../LeaderboardSplashComponents"
-import { getRaidDefinition } from "../../../util"
+import { getRaidDefinition, tryGetRaidDefinition } from "../../../util"
 
 export const dynamicParams = true
 export const revalidate = 900
@@ -20,7 +20,10 @@ type DynamicParams = {
 
 export async function generateMetadata({ params }: DynamicParams): Promise<Metadata> {
     const manifest = await prefetchManifest()
-    const definition = getRaidDefinition(params.raid, manifest)
+    const definition = tryGetRaidDefinition(params.raid, manifest)
+    if (!definition) {
+        return {}
+    }
 
     const title = `${definition.name} World First Leaderboard`
     const description = `View the World First completions for ${definition.name}`

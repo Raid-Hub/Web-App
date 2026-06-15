@@ -3,6 +3,7 @@ import "server-only"
 import { type Adapter, type AdapterUser } from "@auth/core/adapters"
 import { type AuthConfig } from "@auth/core/types"
 import { refreshAuthorization } from "bungie-net-core/auth"
+import { captureServerException } from "~/lib/sentry/capture"
 import { prisma } from "~/lib/server/prisma"
 import { BungieServiceError } from "~/models/BungieAPIError"
 import ServerBungieClient from "~/services/bungie/ServerBungieClient"
@@ -82,6 +83,9 @@ async function refreshBungieAuth(bungie: BungieAccount, userId: string) {
                 }
             } else {
                 console.error("Unexpected error while refreshing Bungie auth", err)
+                captureServerException(err, {
+                    tags: { area: "session", operation: "bungie_token_refresh" }
+                })
             }
             errors.push("BungieAccessTokenError")
             return null
@@ -101,6 +105,9 @@ async function refreshBungieAuth(bungie: BungieAccount, userId: string) {
             }).catch(e => {
                 errors.push("PrismaError")
                 console.error("Failed to update Bungie access token", e)
+                captureServerException(e, {
+                    tags: { area: "session", operation: "bungie_token_persist" }
+                })
                 return null
             })
         }
@@ -174,6 +181,9 @@ async function refreshRaidHubBearer({
         .catch(e => {
             errors.push("RaidHubAuthorizationError")
             console.error("Failed to refresh RaidHub auth token", e)
+            captureServerException(e, {
+                tags: { area: "session", operation: "raidhub_token_refresh" }
+            })
             return null
         })
 
@@ -196,6 +206,9 @@ async function refreshRaidHubBearer({
             .catch(e => {
                 errors.push("PrismaError")
                 console.error("Failed to update RaidHub admin token", e)
+                captureServerException(e, {
+                    tags: { area: "session", operation: "raidhub_token_persist" }
+                })
             })
     }
 
