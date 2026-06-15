@@ -21,16 +21,34 @@ import { Latest } from "./Latest"
 
 export const LatestRaid = () => {
     const { destinyMembershipId } = usePageProps<ProfileProps>()
-    const { locale } = useLocale()
-    const { pantheonVersions } = useRaidHubManifest()
     const { data: rawRecentActivity } = useRaidHubActivtiesFirstPage(destinyMembershipId, {
         select: res =>
             res.activities.find(a => a.playerCount < 50) ?? res.activities.find(() => true),
         suspense: true
     })
 
-    const { data: latestActivity } = useRaidHubInstance(rawRecentActivity?.instanceId ?? "", {
-        enabled: !!rawRecentActivity,
+    if (!rawRecentActivity) {
+        return null
+    }
+
+    return (
+        <LatestRaidCard
+            destinyMembershipId={destinyMembershipId}
+            instanceId={rawRecentActivity.instanceId}
+        />
+    )
+}
+
+const LatestRaidCard = ({
+    destinyMembershipId,
+    instanceId
+}: {
+    destinyMembershipId: string
+    instanceId: string
+}) => {
+    const { locale } = useLocale()
+    const { pantheonVersions } = useRaidHubManifest()
+    const { data: latestActivity } = useRaidHubInstance(instanceId, {
         suspense: true
     })
 

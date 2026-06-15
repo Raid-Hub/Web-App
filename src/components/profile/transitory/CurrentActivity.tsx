@@ -1,5 +1,6 @@
 "use client"
 
+import type { BungieMembershipType } from "bungie-net-core/models"
 import type {
     DestinyCharacterActivitiesComponent,
     DestinyProfileTransitoryPartyMember
@@ -41,7 +42,7 @@ const defaultCharacterActivity: DestinyCharacterActivitiesComponent = {
 export const CurrentActivity = () => {
     const { destinyMembershipId, destinyMembershipType } = usePageProps<ProfileProps>()
 
-    const { data: profileTransitoryData, isInitialLoading } = useProfileTransitory(
+    const { data: profileTransitoryData } = useProfileTransitory(
         { destinyMembershipId, membershipType: destinyMembershipType },
         {
             select: data => data?.profileTransitoryData.data,
@@ -50,13 +51,32 @@ export const CurrentActivity = () => {
         }
     )
 
+    if (!profileTransitoryData?.currentActivity?.startTime) {
+        return null
+    }
+
+    return (
+        <CurrentActivityLive
+            destinyMembershipId={destinyMembershipId}
+            destinyMembershipType={destinyMembershipType}
+            startTime={new Date(profileTransitoryData.currentActivity.startTime)}
+            partyMembers={profileTransitoryData.partyMembers}
+        />
+    )
+}
+
+const CurrentActivityLive = (props: {
+    destinyMembershipId: string
+    destinyMembershipType: BungieMembershipType
+    startTime: Date
+    partyMembers: DestinyProfileTransitoryPartyMember[]
+}) => {
     const { data: characterActivity } = useProfileLiveData(
         {
-            destinyMembershipId,
-            membershipType: destinyMembershipType
+            destinyMembershipId: props.destinyMembershipId,
+            membershipType: props.destinyMembershipType
         },
         {
-            enabled: isInitialLoading || !!profileTransitoryData?.currentActivity?.startTime,
             suspense: true,
             select: data =>
                 Object.values(data.characterActivities.data ?? {}).sort((a, b) =>
@@ -66,13 +86,17 @@ export const CurrentActivity = () => {
         }
     )
 
-    return profileTransitoryData?.currentActivity?.startTime && characterActivity ? (
+    if (!characterActivity) {
+        return null
+    }
+
+    return (
         <CurrentActivityCard
             characterActivity={characterActivity}
-            startTime={new Date(profileTransitoryData.currentActivity.startTime)}
-            partyMembers={profileTransitoryData.partyMembers}
+            startTime={props.startTime}
+            partyMembers={props.partyMembers}
         />
-    ) : null
+    )
 }
 
 const CurrentActivityCard = (props: {
