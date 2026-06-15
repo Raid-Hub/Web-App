@@ -1,15 +1,19 @@
+"use client"
+
 import styled from "styled-components"
 
 export const StatBox = ({
     label,
     primaryValue,
     secondaryValue,
-    aggLabel
+    aggLabel,
+    rank
 }: {
     label: string
     primaryValue: string
     secondaryValue?: string
     aggLabel: string
+    rank?: number
 }) => {
     return (
         <StyledStatBox>
@@ -18,6 +22,7 @@ export const StatBox = ({
                 <div className="stat-box-value">
                     <span>{primaryValue}</span>
                 </div>
+                {rank != null && <div className="stat-box-rank">Rank #{rank}</div>}
                 <div className="stat-box-agg-value">
                     {secondaryValue ? (
                         <>
@@ -53,6 +58,11 @@ const StyledStatBox = styled.div`
 
     .stat-box-value {
         font-size: 1.25rem;
+        color: ${({ theme }) => theme.colors.text.primary};
+    }
+
+    .stat-box-rank {
+        font-size: 0.9em;
         color: ${({ theme }) => theme.colors.text.primary};
     }
 
