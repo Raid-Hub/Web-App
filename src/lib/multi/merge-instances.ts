@@ -43,7 +43,7 @@ function mergeCharacterStats(
         characterId: existing.characterId,
         classHash: existing.classHash ?? incoming.classHash,
         emblemHash: incoming.emblemHash ?? existing.emblemHash,
-        completed: existing.completed && incoming.completed,
+        completed: incoming.completed,
         timePlayedSeconds: existing.timePlayedSeconds + incoming.timePlayedSeconds,
         startSeconds: Math.min(existing.startSeconds, incoming.startSeconds),
         score: existing.score + incoming.score,
@@ -61,8 +61,6 @@ function mergeCharacterStats(
 type PlayerMergeAcc = {
     playerInfo: RaidHubInstancePlayerExtended["playerInfo"]
     characters: Map<string, RaidHubInstanceCharacter>
-    completions: number
-    instancesParticipated: number
     isFirstClear: boolean
     sherpas: number
     timePlayedSeconds: number
@@ -106,6 +104,9 @@ export function mergeRaidHubInstances(
     const last = sorted[sorted.length - 1]
 
     const playerMap = new Map<string, PlayerMergeAcc>()
+    const lastInstanceCompleted = new Map(
+        last.players.map(player => [player.playerInfo.membershipId, player.completed])
+    )
 
     for (const instance of sorted) {
         for (const player of instance.players) {
@@ -119,15 +120,11 @@ export function mergeRaidHubInstances(
                 playerMap.set(player.playerInfo.membershipId, {
                     playerInfo: player.playerInfo,
                     characters: charMap,
-                    completions: player.completed ? 1 : 0,
-                    instancesParticipated: 1,
                     isFirstClear: player.isFirstClear,
                     sherpas: player.sherpas,
                     timePlayedSeconds: player.timePlayedSeconds
                 })
             } else {
-                existing.completions += player.completed ? 1 : 0
-                existing.instancesParticipated += 1
                 existing.isFirstClear = existing.isFirstClear || player.isFirstClear
                 existing.sherpas += player.sherpas
                 existing.timePlayedSeconds += player.timePlayedSeconds
@@ -146,7 +143,7 @@ export function mergeRaidHubInstances(
 
     const players: RaidHubInstancePlayerExtended[] = [...playerMap.values()].map(acc => ({
         playerInfo: acc.playerInfo,
-        completed: acc.completions === acc.instancesParticipated,
+        completed: lastInstanceCompleted.get(acc.playerInfo.membershipId) ?? false,
         isFirstClear: acc.isFirstClear,
         sherpas: acc.sherpas,
         timePlayedSeconds: acc.timePlayedSeconds,
@@ -156,7 +153,7 @@ export function mergeRaidHubInstances(
     const merged: RaidHubInstanceExtended = {
         ...first,
         instanceId: `multi:${multiId}`,
-        completed: sorted.every(i => i.completed),
+        completed: last.completed,
         flawless: mergeNullableBool(sorted.map(i => i.flawless)),
         fresh: mergeNullableBool(sorted.map(i => i.fresh)),
         playerCount: players.length,
