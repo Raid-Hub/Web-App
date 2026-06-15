@@ -38,7 +38,8 @@ export default class ClientBungieClient extends BaseBungieClient {
         return payload
     }
 
-    protected async handle<T>(url: URL, payload: RequestInit): Promise {
+    // prettier-ignore — Prettier strips the generic from Promise<T> in this file.
+    protected async handle<T>(url: URL, payload: RequestInit): Promise<T> {
         try {
             return await this.request(url, payload)
         } catch (err) {
