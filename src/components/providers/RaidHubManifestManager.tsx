@@ -38,6 +38,7 @@ type ManifestContextData = RaidHubManifestResponse & {
     findPantheonVersionByPath(versionPath: string): RaidHubVersionDefinition | null
     getActivityDefinition(activityId: number): RaidHubActivityDefinition | null
     isChallengeMode(versionId: number): boolean
+    getCheckpointName(activityId: number): string | null
     getImageVariantsForActivity(activityId: number | string): readonly ImageContentData[]
     getImageVariantsForVersion(versionId: number | string): readonly ImageContentData[]
 }
@@ -115,6 +116,9 @@ export function RaidHubManifestManager(props: {
             },
             isChallengeMode(versionId) {
                 return data.versionDefinitions[versionId]?.isChallengeMode ?? false
+            },
+            getCheckpointName(activityId) {
+                return data.checkpointNames?.[activityId] ?? null
             },
             getImageVariantsForActivity(activityId) {
                 const variants = data.splashUrls[activityId]

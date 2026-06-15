@@ -14,20 +14,22 @@ export const useActivityDisplayParts = (
         pantheonTitleStyle?: "boss" | "full"
     }
 ): ActivityDisplayParts | null => {
-    const { getActivityString, getVersionString, pantheonVersions } = useRaidHubManifest()
+    const { getActivityString, getVersionString, getCheckpointName, pantheonVersions } =
+        useRaidHubManifest()
     const { includeFresh, excludeTitle, pantheonTitleStyle } = opts ?? {}
 
     return useMemo(
         () =>
             getActivityDisplayParts(
                 activity,
-                { getActivityString, getVersionString, pantheonVersions },
+                { getActivityString, getVersionString, getCheckpointName, pantheonVersions },
                 { includeFresh, excludeTitle, pantheonTitleStyle }
             ),
         [
             activity,
             excludeTitle,
             getActivityString,
+            getCheckpointName,
             getVersionString,
             includeFresh,
             pantheonTitleStyle,
