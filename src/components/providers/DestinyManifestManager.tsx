@@ -61,6 +61,16 @@ const DestinyManifestManager = ({ children }: { children: ReactNode }) => {
             dexieDB.updateDefinitions(seedCache, args),
         onSuccess: setManifestVersion,
         onError: async (err: Error | Error[]) => {
+            const errors = Array.isArray(err) ? err : [err]
+
+            if (
+                errors.some(
+                    e => e.name === "InvalidStateError" && e.message.includes("IDBTransaction")
+                )
+            ) {
+                return
+            }
+
             setManifestVersion(null)
             console.warn(
                 `Failed to store the Destiny 2 manifest definitions with error(s): ${

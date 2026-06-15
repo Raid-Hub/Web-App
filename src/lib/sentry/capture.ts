@@ -33,8 +33,27 @@ function isAbortError(error: unknown): boolean {
     return error instanceof Error && error.name === "AbortError"
 }
 
+/** CDN/API blips and offline clients — not application bugs. */
+function isTransientNetworkError(error: unknown): boolean {
+    if (!(error instanceof TypeError)) {
+        return false
+    }
+
+    const { message } = error
+    return message === "Failed to fetch" || message.startsWith("Load failed")
+}
+
+/** Dexie transaction aborted when the user navigates away mid-write. */
+function isDexieTransactionAbort(error: unknown): boolean {
+    return (
+        error instanceof DOMException &&
+        error.name === "InvalidStateError" &&
+        error.message.includes("IDBTransaction")
+    )
+}
+
 function shouldCaptureClientError(error: unknown): boolean {
-    if (isAbortError(error)) {
+    if (isAbortError(error) || isTransientNetworkError(error) || isDexieTransactionAbort(error)) {
         return false
     }
 
