@@ -6,6 +6,7 @@ import { type ReactNode } from "react"
 import { DestinyServiceStatusBanner } from "~/components/overlays/DestinyServiceStatusBanner"
 import { DonationBanner } from "~/components/overlays/DonationBanner"
 import { RaidHubStatusBanner } from "~/components/overlays/RaidHubStatusBanner"
+import { GlobalHotkeys } from "~/components/navigation/GlobalHotkeys"
 import { ClientComponentManager } from "~/components/providers/ClientComponentManager"
 import { LocaleManager } from "~/components/providers/LocaleManager"
 import { QueryManager } from "~/components/providers/QueryManager"
@@ -75,6 +76,7 @@ export default async function RootLayout(params: { children: ReactNode }) {
                                                     {params.children}
                                                     <Footer />
                                                     <SearchCommand />
+                                                    <GlobalHotkeys />
                                                     <Toaster />
                                                 </SearchProvider>
                                             </RaidHubManifestManager>
