@@ -3,6 +3,7 @@ import dynamic from "next/dynamic"
 import NextTopLoader from "nextjs-toploader"
 import { type ReactNode } from "react"
 // import { BungieFoundationBanner } from "~/components/overlays/BungieFoundationBanner"
+import { GlobalHotkeys } from "~/components/navigation/GlobalHotkeys"
 import { DestinyServiceStatusBanner } from "~/components/overlays/DestinyServiceStatusBanner"
 import { DonationBanner } from "~/components/overlays/DonationBanner"
 import { RaidHubStatusBanner } from "~/components/overlays/RaidHubStatusBanner"
@@ -75,6 +76,7 @@ export default async function RootLayout(params: { children: ReactNode }) {
                                                     {params.children}
                                                     <Footer />
                                                     <SearchCommand />
+                                                    <GlobalHotkeys />
                                                     <Toaster />
                                                 </SearchProvider>
                                             </RaidHubManifestManager>
