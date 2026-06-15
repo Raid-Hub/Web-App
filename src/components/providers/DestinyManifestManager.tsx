@@ -65,9 +65,7 @@ const DestinyManifestManager = ({ children }: { children: ReactNode }) => {
 
             if (
                 errors.some(
-                    e =>
-                        e.name === "InvalidStateError" &&
-                        e.message.includes("IDBTransaction")
+                    e => e.name === "InvalidStateError" && e.message.includes("IDBTransaction")
                 )
             ) {
                 return
