@@ -5,6 +5,7 @@ import { createContext, useContext, useMemo, type ReactNode } from "react"
 import {
     findPantheonVersionByPath as findPantheonVersionByPathInManifest,
     getActivePantheonIds,
+    getPantheonCheckpointName,
     isPantheonVersionSunset as isPantheonVersionSunsetInManifest
 } from "~/lib/manifest/pantheon"
 import { getRaidHubApi } from "~/services/raidhub/common"
@@ -38,7 +39,7 @@ type ManifestContextData = RaidHubManifestResponse & {
     findPantheonVersionByPath(versionPath: string): RaidHubVersionDefinition | null
     getActivityDefinition(activityId: number): RaidHubActivityDefinition | null
     isChallengeMode(versionId: number): boolean
-    getCheckpointName(activityId: number): string | null
+    getCheckpointName(activityId: number, versionId?: number): string | null
     getImageVariantsForActivity(activityId: number | string): readonly ImageContentData[]
     getImageVariantsForVersion(versionId: number | string): readonly ImageContentData[]
 }
@@ -117,7 +118,17 @@ export function RaidHubManifestManager(props: {
             isChallengeMode(versionId) {
                 return data.versionDefinitions[versionId]?.isChallengeMode ?? false
             },
-            getCheckpointName(activityId) {
+            getCheckpointName(activityId, versionId) {
+                if (versionId != null) {
+                    const versionCheckpointName = data.versionCheckpointNames?.[versionId]
+                    if (versionCheckpointName) {
+                        return versionCheckpointName
+                    }
+                    if (pantheonVersions.includes(versionId)) {
+                        const versionName = data.versionDefinitions[versionId]?.name
+                        return versionName ? getPantheonCheckpointName(versionName) : null
+                    }
+                }
                 return data.checkpointNames?.[activityId] ?? null
             },
             getImageVariantsForActivity(activityId) {
