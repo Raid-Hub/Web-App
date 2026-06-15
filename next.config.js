@@ -8,8 +8,7 @@ const withBundleAnalyzer = require("@next/bundle-analyzer")({
 /** @type {import('next').NextConfig} */
 const nextConfig = {
     experimental: {
-        ppr: true,
-        // Quiets Sentry → OpenTelemetry → debug → supports-color optional peer resolution noise during webpack
+        // Disabled: experimental React + PPR causes client DOM reconciliation errors on profile/vanity/PGCR routes.
         serverComponentsExternalPackages: ["supports-color"]
     },
     reactStrictMode: false,
