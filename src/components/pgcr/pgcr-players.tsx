@@ -6,8 +6,8 @@ import {
     formatKdRelativeToAveragePercentage,
     formatTeamSharePercentage
 } from "~/lib/pgcr/formatting"
-import { cn } from "~/lib/tw"
 import { type PlayerStats } from "~/lib/pgcr/types"
+import { cn } from "~/lib/tw"
 import { type RaidHubInstanceExtended } from "~/services/raidhub/types"
 import { CardContent } from "~/shad/card"
 import { ScrollArea } from "~/shad/scroll-area"
@@ -197,11 +197,7 @@ export const PGCRPlayers = ({ data, mvp, playerMergedStats, sortScores }: PGCRPl
                 </div>
 
                 {sortScores.size > 12 ? (
-                    <ScrollArea
-                        className={cn(
-                            playerListClassName,
-                            "max-h-[calc(12*4rem+12*1px)]"
-                        )}>
+                    <ScrollArea className={cn(playerListClassName, "max-h-[calc(12*4rem+12*1px)]")}>
                         {playerList}
                     </ScrollArea>
                 ) : (
