@@ -1,7 +1,7 @@
 "use client"
 
-import type { BungieMembershipType } from "bungie-net-core/models"
 import type {
+    BungieMembershipType,
     DestinyCharacterActivitiesComponent,
     DestinyProfileTransitoryPartyMember
 } from "bungie-net-core/models"
