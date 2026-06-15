@@ -1,5 +1,6 @@
 import type { BungieFetchConfig } from "bungie-net-core"
 import EventEmitter from "events"
+import { withBungieAuthFailure } from "~/lib/sentry/context"
 import { BungieHTTPError, BungiePlatformError } from "~/models/BungieAPIError"
 import BaseBungieClient from "./BungieClient"
 
@@ -51,16 +52,41 @@ export default class ClientBungieClient extends BaseBungieClient {
                     (err instanceof BungiePlatformError &&
                         ClientBungieClient.AuthErrorCodes.has(err.ErrorCode)))
             ) {
-                return await new Promise(resolve => {
+                return await new Promise<T>((resolve, reject) => {
+                    const hadAccessToken = !!this.accessToken
+                    const bungiePath = url.pathname
                     const timeout = setTimeout(() => {
                         this.emitter.off("new-token", listener)
-                        url.searchParams.set("retry", "authorization-timeout")
-                        resolve(this.request(url, payload))
+                        this.clearToken()
+                        reject(
+                            withBungieAuthFailure(
+                                err instanceof Error ? err : new Error(String(err)),
+                                {
+                                    outcome: "recovery_timeout",
+                                    bungiePath,
+                                    hadAccessToken,
+                                    waitedMs: 5000
+                                }
+                            )
+                        )
                     }, 5000)
                     const listener = () => {
                         clearTimeout(timeout)
                         url.searchParams.set("retry", "reauthorized")
-                        resolve(this.request(url, payload))
+                        this.request<T>(url, payload).then(resolve).catch(retryErr => {
+                            reject(
+                                withBungieAuthFailure(
+                                    retryErr instanceof Error
+                                        ? retryErr
+                                        : new Error(String(retryErr)),
+                                    {
+                                        outcome: "recovery_retry_failed",
+                                        bungiePath,
+                                        hadAccessToken
+                                    }
+                                )
+                            )
+                        })
                     }
                     this.emitter.once("new-token", listener)
                     this.emitter.emit("unauthorized")

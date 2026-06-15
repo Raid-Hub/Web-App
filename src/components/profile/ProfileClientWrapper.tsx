@@ -1,7 +1,7 @@
 "use client"
 
 import { usePathname } from "next/navigation"
-import { useEffect, type ReactNode } from "react"
+import { useEffect, useState, type ReactNode } from "react"
 import { PageWrapper } from "~/components/PageWrapper"
 import { type ProfileProps } from "~/lib/profile/types"
 import { ProfileStateManager } from "./ProfileStateManager"
@@ -12,9 +12,14 @@ export function ProfileClientWrapper({
 }: { children: ReactNode } & { pageProps: ProfileProps }) {
     const pathname = usePathname()
     const vanity = pageProps.ssrAppProfile?.vanity
+    const [mounted, setMounted] = useState(false)
 
     useEffect(() => {
-        if (!vanity || !pathname.startsWith("/profile")) {
+        setMounted(true)
+    }, [])
+
+    useEffect(() => {
+        if (!mounted || !vanity || !pathname.startsWith("/profile")) {
             return
         }
 
@@ -28,7 +33,7 @@ export function ProfileClientWrapper({
             "",
             `${targetPath}${window.location.search}${window.location.hash}`
         )
-    }, [vanity, pathname])
+    }, [mounted, vanity, pathname])
 
     return (
         <PageWrapper pageProps={pageProps}>

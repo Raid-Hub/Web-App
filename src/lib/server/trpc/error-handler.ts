@@ -20,12 +20,14 @@ export const trpcErrorHandler = async ({
         const err = error.cause instanceof Error ? error.cause : error
         captureServerException(err, {
             tags: {
+                capture_source: "trpc-server",
                 trpc_path: path ?? "unknown",
-                trpc_source: source
+                trpc_source: source,
+                trpc_code: error.code
             },
             extra: {
-                code: error.code,
-                input: input ?? null
+                input: input ?? null,
+                trpc_message: error.message
             }
         })
     }
