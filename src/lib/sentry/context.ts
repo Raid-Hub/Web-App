@@ -24,9 +24,8 @@ function getClientLocation(): Record<string, string> | undefined {
         return undefined
     }
 
-    const connection = (
-        navigator as Navigator & { connection?: { effectiveType?: string } }
-    ).connection
+    const connection = (navigator as Navigator & { connection?: { effectiveType?: string } })
+        .connection
 
     return {
         route_pathname: window.location.pathname,
@@ -123,8 +122,9 @@ function extractErrorDetails(error: unknown): Record<string, unknown> {
     }
 
     if (error && typeof error === "object" && "bungieAuthFailure" in error) {
-        extra.bungie_auth_failure = (error as { bungieAuthFailure: BungieAuthFailureContext })
-            .bungieAuthFailure
+        extra.bungie_auth_failure = (
+            error as { bungieAuthFailure: BungieAuthFailureContext }
+        ).bungieAuthFailure
     }
 
     if (error instanceof Error) {
@@ -170,8 +170,9 @@ export function buildSentryContext(
     }
 
     // Promote known `source` from legacy flat extra into tags for grouping.
-    if (typeof callerContext?.extra?.source === "string") {
-        tags.capture_source = callerContext.extra.source
+    const legacySource = callerContext?.extra?.source
+    if (typeof legacySource === "string") {
+        tags.capture_source = legacySource
     }
 
     return { tags, extra }

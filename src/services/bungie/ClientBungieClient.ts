@@ -38,7 +38,7 @@ export default class ClientBungieClient extends BaseBungieClient {
         return payload
     }
 
-    protected async handle<T>(url: URL, payload: RequestInit): Promise<T> {
+    protected async handle<T>(url: URL, payload: RequestInit): Promise {
         try {
             return await this.request(url, payload)
         } catch (err) {
@@ -73,20 +73,22 @@ export default class ClientBungieClient extends BaseBungieClient {
                     const listener = () => {
                         clearTimeout(timeout)
                         url.searchParams.set("retry", "reauthorized")
-                        this.request<T>(url, payload).then(resolve).catch(retryErr => {
-                            reject(
-                                withBungieAuthFailure(
-                                    retryErr instanceof Error
-                                        ? retryErr
-                                        : new Error(String(retryErr)),
-                                    {
-                                        outcome: "recovery_retry_failed",
-                                        bungiePath,
-                                        hadAccessToken
-                                    }
+                        this.request<T>(url, payload)
+                            .then(resolve)
+                            .catch(retryErr => {
+                                reject(
+                                    withBungieAuthFailure(
+                                        retryErr instanceof Error
+                                            ? retryErr
+                                            : new Error(String(retryErr)),
+                                        {
+                                            outcome: "recovery_retry_failed",
+                                            bungiePath,
+                                            hadAccessToken
+                                        }
+                                    )
                                 )
-                            )
-                        })
+                            })
                     }
                     this.emitter.once("new-token", listener)
                     this.emitter.emit("unauthorized")

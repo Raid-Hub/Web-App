@@ -45,14 +45,18 @@ const {
                 console.error("Error Metadata", JSON.stringify(err.cause.meta, null, 2))
             }
             if (getSentryDsnForServer()) {
-                const { tags, extra } = classifyAuthError(err)
+                const authContext = classifyAuthError({
+                    name: err.name,
+                    message: err.message,
+                    cause: err.cause
+                })
                 captureServerException(err, {
                     tags: {
                         area: "nextauth",
-                        ...tags
+                        ...authContext.tags
                     },
                     extra: {
-                        ...extra,
+                        ...authContext.extra,
                         ...(err.cause instanceof PrismaClientKnownRequestError
                             ? { prisma_code: err.cause.code, prisma_meta: err.cause.meta }
                             : {})
