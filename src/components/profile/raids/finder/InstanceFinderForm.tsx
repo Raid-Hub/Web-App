@@ -132,8 +132,7 @@ export const InstanceFinderForm = ({
 
     const seasonsOptions =
         useSeasons({ reversed: true })
-            ?.filter(s => s.seasonNumber <= 26)
-            .map(season => ({
+            ?.map(season => ({
                 value: season.seasonNumber,
                 label: season.displayProperties.name || "Red War"
             })) ?? []
