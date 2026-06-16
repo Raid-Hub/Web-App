@@ -91,7 +91,11 @@ function isTransientTrpcHtmlError(error: unknown): boolean {
 export function isAmbientNetworkError(error: unknown): boolean {
     const message = getErrorMessage(error)
 
-    if (!(error instanceof TypeError) && !message.includes("Failed to fetch") && !message.includes("Load failed")) {
+    if (
+        !(error instanceof TypeError) &&
+        !message.includes("Failed to fetch") &&
+        !message.includes("Load failed")
+    ) {
         return false
     }
 

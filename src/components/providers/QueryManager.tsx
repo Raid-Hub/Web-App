@@ -6,7 +6,11 @@ import { httpLink, loggerLink, type TRPCLink } from "@trpc/client"
 import { observable } from "@trpc/server/observable"
 import { useState } from "react"
 import superjson from "superjson"
-import { captureClientException, isBenignClientAbort, shouldSkipQueryCacheCapture } from "~/lib/sentry/capture"
+import {
+    captureClientException,
+    isBenignClientAbort,
+    shouldSkipQueryCacheCapture
+} from "~/lib/sentry/capture"
 import { type AppRouter } from "~/lib/server/trpc"
 import { trpc } from "~/lib/trpc"
 
