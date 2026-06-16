@@ -73,13 +73,11 @@ export const ManifestStatusOverlay = (
                                     <b>Error:</b> Failed to save manifest definitions:{" "}
                                     {props.error instanceof AggregateError ? (
                                         <ul>
-                                            {props.error.errors
-                                                .slice(0, 3)
-                                                .map((e, idx) => (
-                                                    <li key={idx}>
-                                                        {e instanceof Error ? e.message : String(e)}
-                                                    </li>
-                                                ))}
+                                            {props.error.errors.slice(0, 3).map((e, idx) => (
+                                                <li key={idx}>
+                                                    {e instanceof Error ? e.message : String(e)}
+                                                </li>
+                                            ))}
                                         </ul>
                                     ) : Array.isArray(props.error) ? (
                                         <ul>
