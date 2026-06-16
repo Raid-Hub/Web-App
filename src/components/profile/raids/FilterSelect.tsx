@@ -1,45 +1,35 @@
 import { FilterPresets } from "~/lib/profile/filters/activityFilters"
-import {
-    Select,
-    SelectContent,
-    SelectGroup,
-    SelectItem,
-    SelectLabel,
-    SelectTrigger,
-    SelectValue
-} from "~/shad/select"
+import { cn } from "~/lib/tw"
 import { useFilterContext } from "./FilterContext"
 
 export const FilterSelect = () => {
     const { setFilter, filter } = useFilterContext()
+
     return (
-        <div className="relative">
-            <Select
-                value={filter?.id}
-                onValueChange={value => {
-                    const data = FilterPresets[value as keyof typeof FilterPresets]
-                    if (filter) {
-                        setFilter({
-                            id: value,
-                            filter: data.getFilter(),
-                            displayName: data.displayName
-                        })
-                    }
-                }}>
-                <SelectTrigger className="w-[180px]">
-                    <SelectValue placeholder="Select a filter" />
-                </SelectTrigger>
-                <SelectContent>
-                    <SelectGroup>
-                        <SelectLabel>Filters</SelectLabel>
-                        {Object.entries(FilterPresets).map(([id, preset]) => (
-                            <SelectItem key={id} value={id}>
-                                {preset.displayName}
-                            </SelectItem>
-                        ))}
-                    </SelectGroup>
-                </SelectContent>
-            </Select>
-        </div>
+        <select
+            aria-label="Activity filter"
+            className={cn(
+                "border-input focus-visible:border-ring focus-visible:ring-ring/50",
+                "h-9 w-[180px] rounded-md border bg-transparent px-3 py-2 text-sm shadow-xs",
+                "outline-none focus-visible:ring-[3px] disabled:cursor-not-allowed disabled:opacity-50"
+            )}
+            value={filter?.id ?? "Default"}
+            onChange={event => {
+                const value = event.target.value as keyof typeof FilterPresets
+                const preset = FilterPresets[value]
+                if (!preset) return
+
+                setFilter({
+                    id: value,
+                    filter: preset.getFilter(),
+                    displayName: preset.displayName
+                })
+            }}>
+            {Object.entries(FilterPresets).map(([id, preset]) => (
+                <option key={id} value={id}>
+                    {preset.displayName}
+                </option>
+            ))}
+        </select>
     )
 }

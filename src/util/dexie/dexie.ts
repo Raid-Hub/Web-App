@@ -276,7 +276,48 @@ class CustomDexie extends Dexie implements Tables {
             return newManifestVersion
         }
 
-        throw errors.map(e => (e instanceof Error ? e : new Error(String(e.reason))))
+        const rejected = errors.map(result =>
+            result.reason instanceof Error ? result.reason : new Error(String(result.reason))
+        )
+
+        if (rejected.length === 1) {
+            throw rejected[0]
+        }
+
+        throw new AggregateError(rejected, "Destiny manifest update failed")
+    }
+}
+
+export function isDexieConnectionLostError(err: unknown): boolean {
+    const errors: unknown[] =
+        err instanceof AggregateError
+            ? Array.from(err.errors)
+            : Array.isArray(err)
+              ? err
+              : err
+                ? [err]
+                : []
+
+    return errors.some(error => {
+        if (!(error instanceof Error)) return false
+
+        return (
+            error.name === "DatabaseClosedError" ||
+            error.name === "InvalidStateError" ||
+            error.message.includes("DatabaseClosedError") ||
+            error.message.includes("Connection to Indexed Database server lost")
+        )
+    })
+}
+
+export async function recoverDexieDatabase(db: CustomDexie): Promise<void> {
+    try {
+        if (!db.isOpen()) {
+            await db.open()
+        }
+    } catch {
+        await db.delete()
+        await db.open()
     }
 }
 

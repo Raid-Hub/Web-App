@@ -3,7 +3,6 @@
 import { Collection } from "@discordjs/collection"
 import { useMutation, useQuery } from "@tanstack/react-query"
 import { getDestinyManifest } from "bungie-net-core/endpoints/Destiny2"
-import Dexie from "dexie"
 import { createContext, useCallback, useContext, useEffect, useState, type ReactNode } from "react"
 import { useInterval } from "~/hooks/util/useInterval"
 import { useLocalStorage } from "~/hooks/util/useLocalStorage"
@@ -11,6 +10,8 @@ import { sentryOptionalQueryMeta } from "~/lib/sentry/react-query"
 import { type BungiePlatformError } from "~/models/BungieAPIError"
 import {
     DB_VERSION,
+    isDexieConnectionLostError,
+    recoverDexieDatabase,
     useDexie,
     type CustomDexieTable,
     type CustomDexieTableDefinition
@@ -57,13 +58,34 @@ const DestinyManifestManager = ({ children }: { children: ReactNode }) => {
         []
     )
 
-    const { mutateAsync: storeManifest, ...mutationState } = useMutation({
+    const { mutateAsync: storeManifest, ...mutationState } = useMutation<
+        string,
+        Error,
+        Parameters<typeof dexieDB.updateDefinitions>[1]
+    >({
         mutationFn: (args: Parameters<typeof dexieDB.updateDefinitions>[1]) =>
             dexieDB.updateDefinitions(seedCache, args),
         meta: sentryOptionalQueryMeta,
         onSuccess: setManifestVersion,
-        onError: async (err: Error | Error[]) => {
-            const errors = Array.isArray(err) ? err : [err]
+        onError: async (err: Error) => {
+            if (isDexieConnectionLostError(err)) {
+                try {
+                    await recoverDexieDatabase(dexieDB)
+                } catch (recoveryError) {
+                    console.error(
+                        "Failed to recover Dexie database after connection loss",
+                        recoveryError
+                    )
+                }
+                return
+            }
+
+            const errors =
+                err instanceof AggregateError
+                    ? err.errors.filter((e): e is Error => e instanceof Error)
+                    : err instanceof Error
+                      ? [err]
+                      : []
 
             if (
                 errors.some(
@@ -76,22 +98,18 @@ const DestinyManifestManager = ({ children }: { children: ReactNode }) => {
             setManifestVersion(null)
             console.warn(
                 `Failed to store the Destiny 2 manifest definitions with error(s): ${
-                    Array.isArray(err)
-                        ? "\n" + err.map((e, idx) => `${idx + 1}. ${e.message}`).join(",\n")
-                        : err.message
+                    errors.length
+                        ? "\n" + errors.map((e, idx) => `${idx + 1}. ${e.message}`).join(",\n")
+                        : String(err)
                 }.`
             )
 
-            if (
-                (Array.isArray(err) ? err : [err]).some(
-                    e => e instanceof Dexie.DexieError || e.message.includes("Dexie")
-                )
-            ) {
-                // Force a reset if there was a dexie related error
+            if (errors.some(e => e.name.startsWith("Dexie") || e.message.includes("Dexie"))) {
                 try {
                     await dexieDB.delete()
-                } catch (err) {
-                    console.error("Failed to reset the Dexie database", err)
+                    await dexieDB.open()
+                } catch (resetError) {
+                    console.error("Failed to reset the Dexie database", resetError)
                 }
             }
         }
@@ -151,7 +169,17 @@ const DestinyManifestManager = ({ children }: { children: ReactNode }) => {
     })
 
     useEffect(() => {
-        dexieDB.on("close", () => setManifestVersion(null))
+        const onClose = () => {
+            setManifestVersion(null)
+            void recoverDexieDatabase(dexieDB).catch(error => {
+                console.error("Failed to recover Dexie database after close", error)
+            })
+        }
+
+        dexieDB.on("close", onClose)
+        return () => {
+            dexieDB.on("close").unsubscribe(onClose)
+        }
     }, [dexieDB, setManifestVersion])
 
     return (

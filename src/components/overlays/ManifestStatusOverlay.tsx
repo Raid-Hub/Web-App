@@ -14,7 +14,7 @@ export const ManifestStatusOverlay = (
           }
         | {
               status: "dexie-error"
-              error: Error | Error[]
+              error: Error | Error[] | AggregateError
           }
 ) => {
     const [isErrorHidden, setIsErrorHidden] = useState(false)
@@ -71,7 +71,17 @@ export const ManifestStatusOverlay = (
                             <ErrorMesssage>
                                 <div style={{ marginBottom: "1rem" }}>
                                     <b>Error:</b> Failed to save manifest definitions:{" "}
-                                    {Array.isArray(props.error) ? (
+                                    {props.error instanceof AggregateError ? (
+                                        <ul>
+                                            {props.error.errors
+                                                .slice(0, 3)
+                                                .map((e, idx) => (
+                                                    <li key={idx}>
+                                                        {e instanceof Error ? e.message : String(e)}
+                                                    </li>
+                                                ))}
+                                        </ul>
+                                    ) : Array.isArray(props.error) ? (
                                         <ul>
                                             {props.error.slice(0, 3).map((e, idx) => (
                                                 <li key={idx}>{e.message}</li>
