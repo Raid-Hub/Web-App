@@ -11,10 +11,11 @@ export const useActivityClusterGuardians = (
     const leadActivity = cluster.activities[0]
     const skip = !leadActivity || leadActivity.playerCount > 50
 
-    const instanceIds = useMemo(
-        () => getActivityClusterInstanceIds(cluster.activities.map(a => a.instanceId)),
-        [cluster.activities]
-    )
+    const instanceIds = useMemo(() => {
+        const ids = getActivityClusterInstanceIds(cluster.activities.map(a => a.instanceId))
+        // One instance is enough for teammate chips; avoids N parallel /instance calls per cluster.
+        return ids.slice(0, 1)
+    }, [cluster.activities])
 
     const queries = useRaidHubInstanceList(skip ? [] : instanceIds)
 

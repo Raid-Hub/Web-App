@@ -30,7 +30,19 @@ const HANDLED_RAIDHUB_ERROR_CODES = new Set<RaidHubErrorCode>([
 /** tRPC codes mapped to handled HTTP semantics — same dedupe rationale as above. */
 const HANDLED_TRPC_ERROR_CODES = new Set(["NOT_FOUND", "UNAUTHORIZED", "FORBIDDEN", "BAD_REQUEST"])
 
+/** Expected aborts (navigation cancel, user cleared site data / IndexedDB). */
+export function isBenignClientAbort(error: unknown): boolean {
+    if (error instanceof DOMException && error.name === "AbortError") {
+        return true
+    }
+
+    return error instanceof Error && error.name === "AbortError"
+}
+
 function shouldCaptureError(error: unknown): boolean {
+    if (isBenignClientAbort(error)) {
+        return false
+    }
     if (error instanceof RaidHubError && HANDLED_RAIDHUB_ERROR_CODES.has(error.errorCode)) {
         return false
     }

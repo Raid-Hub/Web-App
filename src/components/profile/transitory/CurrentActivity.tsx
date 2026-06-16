@@ -13,14 +13,12 @@ import { Container } from "~/components/__deprecated__/layout/Container"
 import { Flex } from "~/components/__deprecated__/layout/Flex"
 import { Grid } from "~/components/__deprecated__/layout/Grid"
 import { H4 } from "~/components/__deprecated__/typography/H4"
-import { useActivityDefinition, useActivityModeDefinition } from "~/hooks/dexie"
+import { useActivityDefinition, useActivityModeDefinition, useItemDefinition } from "~/hooks/dexie"
 import { useTimer } from "~/hooks/util/useTimer"
 import type { ProfileProps } from "~/lib/profile/types"
 import { useProfileLiveData, useProfileTransitory } from "~/services/bungie/hooks"
-import { useRaidHubResolvePlayer } from "~/services/raidhub/hooks"
 import { Card } from "~/shad/card"
-import { bungiePgcrImageUrl, bungieProfileIconUrl } from "~/util/destiny"
-import { getBungieDisplayName } from "~/util/destiny/getBungieDisplayName"
+import { bungieEmblemUrl, bungiePgcrImageUrl } from "~/util/destiny"
 import { Latest } from "./Latest"
 
 const commonTransitoryQuerySettings = {
@@ -167,27 +165,23 @@ const CurrentActivityCard = (props: {
     )
 }
 
-const PartyMember = ({ membershipId }: DestinyProfileTransitoryPartyMember) => {
-    const playerQuery = useRaidHubResolvePlayer(membershipId)
+const PartyMember = (pm: DestinyProfileTransitoryPartyMember) => {
+    const emblem = useItemDefinition(pm.emblemHash)
 
     return (
         <Container>
-            {playerQuery.data ? (
-                <Link href={`/profile/${playerQuery.data.membershipId}`} style={{ color: "unset" }}>
-                    <Flex $padding={0} $align="flex-start">
-                        <Image
-                            src={bungieProfileIconUrl(playerQuery.data.iconPath)}
-                            unoptimized
-                            width={32}
-                            height={32}
-                            alt="player icon"
-                        />
-                        <span>{getBungieDisplayName(playerQuery.data)}</span>
-                    </Flex>
-                </Link>
-            ) : (
-                membershipId
-            )}
+            <Link href={`/profile/${pm.membershipId}`} style={{ color: "unset" }}>
+                <Flex $padding={0} $align="flex-start">
+                    <Image
+                        src={bungieEmblemUrl(emblem)}
+                        unoptimized
+                        width={32}
+                        height={32}
+                        alt={pm.displayName}
+                    />
+                    <span>{pm.displayName}</span>
+                </Flex>
+            </Link>
         </Container>
     )
 }
