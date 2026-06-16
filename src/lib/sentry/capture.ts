@@ -87,6 +87,40 @@ function isTransientTrpcHtmlError(error: unknown): boolean {
     return message.includes("Unexpected token '<'") || message.includes("<!DOCTYPE")
 }
 
+/** Client-side connectivity blips (Safari "Load failed", fetch abort offline). */
+export function isAmbientNetworkError(error: unknown): boolean {
+    const message = getErrorMessage(error)
+
+    if (
+        !(error instanceof TypeError) &&
+        !message.includes("Failed to fetch") &&
+        !message.includes("Load failed")
+    ) {
+        return false
+    }
+
+    return (
+        message === "Load failed" ||
+        message === "Failed to fetch" ||
+        message.includes("Failed to fetch (") ||
+        message.includes("Load failed (") ||
+        message.includes("NetworkError") ||
+        message.includes("network error")
+    )
+}
+
+export function shouldSkipQueryCacheCapture(
+    error: unknown,
+    query: { state: { data: unknown }; meta?: Record<string, unknown> | undefined }
+): boolean {
+    if (query.meta?.sentryCapture === false) {
+        return true
+    }
+
+    // Refetch-on-focus/reconnect failed but stale data is still shown — not an app bug.
+    return isAmbientNetworkError(error) && query.state.data !== undefined
+}
+
 function getEventErrorText(event: ErrorEvent): string {
     return (
         event.exception?.values
@@ -111,6 +145,22 @@ export function shouldDropGlobalBenignEvent(event: ErrorEvent): boolean {
     }
 
     if (text.includes("DataCloneError") || text.includes("The object can not be cloned")) {
+        return true
+    }
+
+    const hasAppStackFrame = event.exception?.values?.some(value =>
+        value.stacktrace?.frames?.some(
+            frame => typeof frame.filename === "string" && frame.filename.includes("/src/")
+        )
+    )
+
+    // Unhandled rejections with no app frames — typically connectivity, not debuggable bugs.
+    if (
+        !hasAppStackFrame &&
+        (text.includes("Failed to fetch") ||
+            text.includes("Load failed") ||
+            text.includes("NetworkError"))
+    ) {
         return true
     }
 

@@ -50,6 +50,11 @@ const {
                     message: err.message,
                     cause: err.cause
                 })
+
+                if (authContext.tags.auth_error_class === "likely_user_action") {
+                    return
+                }
+
                 captureServerException(err, {
                     tags: {
                         area: "nextauth",

@@ -23,6 +23,7 @@ export const useGlobalAlerts = <T = GlobalAlert[]>(
         queryKey: ["bungie", "global-alerts", params] as const,
         queryFn: ({ queryKey }) =>
             getGlobalAlerts(bungieClient, queryKey[2]).then(res => res.Response),
+        meta: { sentryCapture: false },
         ...opts
     })
 }
