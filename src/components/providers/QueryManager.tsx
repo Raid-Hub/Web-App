@@ -8,6 +8,7 @@ import { useState } from "react"
 import superjson from "superjson"
 import { captureClientException } from "~/lib/sentry/capture"
 import {
+    isRetriableNetworkError,
     shouldSkipMutationCapture,
     shouldSkipReactQueryCapture,
     shouldSkipTrpcCapture
@@ -102,7 +103,8 @@ export function QueryManager(props: { children: React.ReactNode }) {
                         staleTime: 60000,
                         refetchOnWindowFocus: false,
                         refetchOnReconnect: true,
-                        retry: false,
+                        retry: (failureCount, error) =>
+                            failureCount < 3 && isRetriableNetworkError(error),
                         refetchIntervalInBackground: false,
                         suspense: false,
                         useErrorBoundary: false,

@@ -115,7 +115,8 @@ function isTransientTrpcHtmlError(error: unknown): boolean {
     return message.includes("Unexpected token '<'") || message.includes("<!DOCTYPE")
 }
 
-function isAmbientNetworkError(error: unknown): boolean {
+/** Client fetch failures that often succeed on retry (offline blip, tab sleep, CDN hiccup). */
+export function isRetriableNetworkError(error: unknown): boolean {
     const message = getErrorMessage(error)
 
     if (
@@ -200,7 +201,7 @@ export function shouldSkipCapture(error: unknown): boolean {
 
 /** tRPC client — connectivity blips while offline or on bad networks. */
 export function shouldSkipTrpcCapture(error: unknown): boolean {
-    return shouldSkipCapture(error) || isAmbientNetworkError(error)
+    return shouldSkipCapture(error) || isRetriableNetworkError(error)
 }
 
 export function shouldSkipReactQueryCapture(
@@ -224,7 +225,7 @@ export function shouldSkipReactQueryCapture(
     }
 
     // Refetch failed but stale data is still shown — user-visible state is fine.
-    return isAmbientNetworkError(error) && query.state.data !== undefined
+    return isRetriableNetworkError(error) && query.state.data !== undefined
 }
 
 export function shouldSkipMutationCapture(mutation: { meta?: SentryQueryMeta }): boolean {

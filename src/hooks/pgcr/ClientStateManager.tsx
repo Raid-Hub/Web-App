@@ -92,13 +92,21 @@ export const ClientStateManager = ({
     }, [queryClient, data])
 
     const dexie = useDexie()
-    const weapons = useLiveQuery(() =>
-        dexie.items.bulkGet(
-            data.players.flatMap(p => p.characters.flatMap(c => c.weapons.map(w => w.weaponHash)))
-        )
+    const weapons = useLiveQuery(
+        () =>
+            dexie.items
+                .bulkGet(
+                    data.players.flatMap(p =>
+                        p.characters.flatMap(c => c.weapons.map(w => w.weaponHash))
+                    )
+                )
+                .catch((): (DestinyInventoryItemDefinition | undefined)[] => []),
+        [data.players]
     )
     const weaponsMap = new Collection(
-        weapons?.filter((w): w is DestinyInventoryItemDefinition => !!w).map(w => [w.hash, w])
+        (weapons ?? [])
+            .filter((weapon): weapon is DestinyInventoryItemDefinition => weapon !== undefined)
+            .map(weapon => [weapon.hash, weapon])
     )
 
     const [isReportModalOpen, setIsReportModalOpen] = useState(false)
