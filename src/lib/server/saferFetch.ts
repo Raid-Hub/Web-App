@@ -3,8 +3,32 @@ import { withRetries } from "./retry"
 const retriableErrorCauseStrings = [
     "socket disconnected before secure TLS connection was established",
     "connect ETIMEDOUT",
-    "other side closed"
+    "other side closed",
+    "write EPIPE",
+    "read ECONNRESET",
+    "ECONNRESET",
+    "fetch failed",
+    "network error",
+    "Connection terminated unexpectedly"
 ]
+
+function collectErrorMessages(err: unknown): string[] {
+    const messages: string[] = []
+    let current: unknown = err
+
+    while (current instanceof Error) {
+        messages.push(current.message)
+        current = current.cause
+    }
+
+    return messages
+}
+
+function isRetriableFetchError(err: unknown): boolean {
+    return collectErrorMessages(err).some(message =>
+        retriableErrorCauseStrings.some(str => message.includes(str))
+    )
+}
 
 // WeakMap to hold buffered request bodies for Requests we've seen before.
 // Using a WeakMap lets buffers be garbage-collected when the original
@@ -62,19 +86,7 @@ export const saferFetch = withRetries(
     {
         maxAttempts: 5,
         backoff: attempt => attempt ** 2 * 5,
-        retryOn: err => {
-            if (err instanceof Error) {
-                const cause = err.cause
-                if (!cause) return false
-
-                return (
-                    cause instanceof Error &&
-                    retriableErrorCauseStrings.some(str => cause.message.includes(str))
-                )
-            }
-
-            return false
-        }
+        retryOn: isRetriableFetchError
     },
     fetchWithBodyClone
 )
