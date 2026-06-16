@@ -6,7 +6,7 @@ import { httpLink, loggerLink, type TRPCLink } from "@trpc/client"
 import { observable } from "@trpc/server/observable"
 import { useState } from "react"
 import superjson from "superjson"
-import { captureClientException } from "~/lib/sentry/capture"
+import { captureClientException, isBenignClientAbort } from "~/lib/sentry/capture"
 import { type AppRouter } from "~/lib/server/trpc"
 import { trpc } from "~/lib/trpc"
 
@@ -24,11 +24,7 @@ const sentryLink: TRPCLink<AppRouter> = () => {
                     observer.next(value)
                 },
                 error(error) {
-                    if (error instanceof DOMException && error.name === "AbortError") {
-                        observer.error(error)
-                        return
-                    }
-                    if (error instanceof Error && error.name === "AbortError") {
+                    if (isBenignClientAbort(error)) {
                         observer.error(error)
                         return
                     }
@@ -61,11 +57,7 @@ export function QueryManager(props: { children: React.ReactNode }) {
             new QueryClient({
                 queryCache: new QueryCache({
                     onError: (error, query) => {
-                        // Cancelled queries (navigation/unmount) — not application errors.
-                        if (error instanceof DOMException && error.name === "AbortError") {
-                            return
-                        }
-                        if (error instanceof Error && error.name === "AbortError") {
+                        if (isBenignClientAbort(error)) {
                             return
                         }
 
