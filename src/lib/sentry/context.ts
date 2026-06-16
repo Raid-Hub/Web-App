@@ -1,15 +1,13 @@
 import { BungieHTTPError, BungiePlatformError } from "~/models/BungieAPIError"
+import type { SentryCaptureContext } from "./types"
+
+export type { SentryCaptureContext } from "./types"
 
 export type BungieAuthFailureContext = {
     outcome: "recovery_timeout" | "recovery_retry_failed"
     bungiePath: string
     hadAccessToken: boolean
     waitedMs?: number
-}
-
-export type SentryCaptureContext = {
-    tags?: Record<string, string>
-    extra?: Record<string, unknown>
 }
 
 /** Attach bungie auth recovery metadata so Sentry events are actionable. */

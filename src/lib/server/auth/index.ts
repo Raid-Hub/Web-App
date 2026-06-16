@@ -8,6 +8,7 @@ import TwitterProvider from "next-auth/providers/twitter"
 import { captureServerException } from "~/lib/sentry/capture"
 import { classifyAuthError } from "~/lib/sentry/context"
 import { getSentryDsnForServer } from "~/lib/sentry/env"
+import { shouldSkipAuthServerCapture } from "~/lib/sentry/policy"
 import { prisma } from "~/lib/server/prisma"
 import { reactRequestDedupe } from "~/util/react-cache"
 import { PrismaAdapter } from "./adapter"
@@ -51,7 +52,7 @@ const {
                     cause: err.cause
                 })
 
-                if (authContext.tags.auth_error_class === "likely_user_action") {
+                if (shouldSkipAuthServerCapture(err)) {
                     return
                 }
 

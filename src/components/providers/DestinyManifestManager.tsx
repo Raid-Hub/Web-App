@@ -7,6 +7,7 @@ import Dexie from "dexie"
 import { createContext, useCallback, useContext, useEffect, useState, type ReactNode } from "react"
 import { useInterval } from "~/hooks/util/useInterval"
 import { useLocalStorage } from "~/hooks/util/useLocalStorage"
+import { sentryOptionalQueryMeta } from "~/lib/sentry/react-query"
 import { type BungiePlatformError } from "~/models/BungieAPIError"
 import {
     DB_VERSION,
@@ -59,7 +60,7 @@ const DestinyManifestManager = ({ children }: { children: ReactNode }) => {
     const { mutateAsync: storeManifest, ...mutationState } = useMutation({
         mutationFn: (args: Parameters<typeof dexieDB.updateDefinitions>[1]) =>
             dexieDB.updateDefinitions(seedCache, args),
-        meta: { sentryCapture: false },
+        meta: sentryOptionalQueryMeta,
         onSuccess: setManifestVersion,
         onError: async (err: Error | Error[]) => {
             const errors = Array.isArray(err) ? err : [err]
@@ -99,7 +100,6 @@ const DestinyManifestManager = ({ children }: { children: ReactNode }) => {
     const queryState = useQuery({
         queryKey: ["bungie", "manifest", manifestLanguage],
         queryFn: () => getDestinyManifest(client).then(res => res.Response),
-        meta: { sentryCapture: false },
         suspense: false,
         enabled: manifestVersion !== undefined,
         staleTime: 3600_000, // 1 hour

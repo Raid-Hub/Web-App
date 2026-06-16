@@ -37,7 +37,6 @@ export const useProfileLiveData = <T = UseLiveProfileQueryData>(
                     204 /*CharacterActivities*/, 205 /*CharacterEquipment*/, 305 /*ItemSockets*/
                 ]
             }).then(res => res.Response),
-        meta: { sentryCapture: false },
         ...opts,
         enabled: isClient && (opts?.enabled ?? true)
     })

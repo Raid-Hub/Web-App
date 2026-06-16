@@ -14,7 +14,6 @@ export const useCommonSettings = <T = CoreSettingsConfiguration>(
     return useQuery({
         queryKey: ["bungie", "platform-settings"] as const,
         queryFn: () => getCommonSettings(bungieClient).then(res => res.Response),
-        meta: { sentryCapture: false },
         ...opts
     })
 }
