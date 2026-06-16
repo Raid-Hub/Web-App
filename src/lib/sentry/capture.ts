@@ -109,11 +109,44 @@ export function isAmbientNetworkError(error: unknown): boolean {
     )
 }
 
+/** Queries whose failures are handled in UI (overlays, optional cards) — not app bugs. */
+const OPTIONAL_PROBE_QUERY_PREFIXES: readonly (readonly string[])[] = [
+    ["bungie", "manifest"],
+    ["bungie", "platform-settings"],
+    ["bungie", "global-alerts"],
+    ["bungie", "profile", "live data"],
+    ["bungie", "profile", "transitory"]
+]
+
+function isOptionalProbeQueryKey(queryKey: unknown): boolean {
+    if (!Array.isArray(queryKey)) {
+        return false
+    }
+
+    return OPTIONAL_PROBE_QUERY_PREFIXES.some(prefix =>
+        prefix.every((segment, index) => queryKey[index] === segment)
+    )
+}
+
+export function shouldSkipMutationCapture(mutation: {
+    meta?: Record<string, unknown> | undefined
+}): boolean {
+    return mutation.meta?.sentryCapture === false
+}
+
 export function shouldSkipQueryCacheCapture(
     error: unknown,
-    query: { state: { data: unknown }; meta?: Record<string, unknown> | undefined }
+    query: {
+        queryKey: unknown
+        state: { data: unknown }
+        meta?: Record<string, unknown> | undefined
+    }
 ): boolean {
     if (query.meta?.sentryCapture === false) {
+        return true
+    }
+
+    if (isOptionalProbeQueryKey(query.queryKey)) {
         return true
     }
 

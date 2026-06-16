@@ -1,6 +1,6 @@
 "use client"
 
-import { QueryCache, QueryClient, QueryClientProvider } from "@tanstack/react-query"
+import { MutationCache, QueryCache, QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools"
 import { httpLink, loggerLink, type TRPCLink } from "@trpc/client"
 import { observable } from "@trpc/server/observable"
@@ -9,6 +9,7 @@ import superjson from "superjson"
 import {
     captureClientException,
     isBenignClientAbort,
+    shouldSkipMutationCapture,
     shouldSkipQueryCacheCapture
 } from "~/lib/sentry/capture"
 import { type AppRouter } from "~/lib/server/trpc"
@@ -89,6 +90,17 @@ export function QueryManager(props: { children: React.ReactNode }) {
                         })
                     }
                 }),
+                mutationCache: new MutationCache({
+                    onError: (error, _variables, _context, mutation) => {
+                        if (shouldSkipMutationCapture(mutation)) {
+                            return
+                        }
+
+                        captureClientException(error, {
+                            tags: { capture_source: "react-query-mutation" }
+                        })
+                    }
+                }),
                 defaultOptions: {
                     queries: {
                         staleTime: 60000,
@@ -99,13 +111,6 @@ export function QueryManager(props: { children: React.ReactNode }) {
                         suspense: false,
                         useErrorBoundary: false,
                         retryDelay: failureCount => Math.min(2 ** failureCount * 1000, 30_000)
-                    },
-                    mutations: {
-                        onError: error => {
-                            captureClientException(error, {
-                                tags: { capture_source: "react-query-mutation" }
-                            })
-                        }
                     }
                 }
             })

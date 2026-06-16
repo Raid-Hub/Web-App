@@ -59,6 +59,7 @@ const DestinyManifestManager = ({ children }: { children: ReactNode }) => {
     const { mutateAsync: storeManifest, ...mutationState } = useMutation({
         mutationFn: (args: Parameters<typeof dexieDB.updateDefinitions>[1]) =>
             dexieDB.updateDefinitions(seedCache, args),
+        meta: { sentryCapture: false },
         onSuccess: setManifestVersion,
         onError: async (err: Error | Error[]) => {
             const errors = Array.isArray(err) ? err : [err]
