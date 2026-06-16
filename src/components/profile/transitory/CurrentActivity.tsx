@@ -1,5 +1,6 @@
 "use client"
 
+import { useQueries } from "@tanstack/react-query"
 import type {
     BungieMembershipType,
     DestinyCharacterActivitiesComponent,
@@ -17,8 +18,11 @@ import { useActivityDefinition, useActivityModeDefinition, useItemDefinition } f
 import { useTimer } from "~/hooks/util/useTimer"
 import type { ProfileProps } from "~/lib/profile/types"
 import { useProfileLiveData, useProfileTransitory } from "~/services/bungie/hooks"
+import { getRaidHubApi } from "~/services/raidhub/common"
+import { type RaidHubPlayerInfo } from "~/services/raidhub/types"
 import { Card } from "~/shad/card"
-import { bungieEmblemUrl, bungiePgcrImageUrl } from "~/util/destiny"
+import { bungieEmblemUrl, bungiePgcrImageUrl, bungieProfileIconUrl } from "~/util/destiny"
+import { getBungieDisplayName } from "~/util/destiny/getBungieDisplayName"
 import { Latest } from "./Latest"
 
 const commonTransitoryQuerySettings = {
@@ -122,6 +126,33 @@ const CurrentActivityCard = (props: {
         }
     }, [activity, activityMode])
 
+    const partyMemberIds = useMemo(
+        () => props.partyMembers.map(pm => pm.membershipId),
+        [props.partyMembers]
+    )
+
+    const resolvedPlayers = useQueries({
+        queries: partyMemberIds.map(membershipId => ({
+            queryKey: ["raidhub", "player", "basic", membershipId] as const,
+            queryFn: () =>
+                getRaidHubApi("/player/{membershipId}/basic", { membershipId }, null).then(
+                    res => res.response
+                ),
+            staleTime: 1000 * 60 * 60
+        }))
+    })
+
+    const resolvedById = useMemo(() => {
+        const map = new Map<string, RaidHubPlayerInfo>()
+        partyMemberIds.forEach((membershipId, index) => {
+            const player = resolvedPlayers[index]?.data
+            if (player) {
+                map.set(membershipId, player)
+            }
+        })
+        return map
+    }, [partyMemberIds, resolvedPlayers])
+
     return (
         <Latest $playerCount={props.partyMembers.length}>
             <Card className="h-full overflow-hidden">
@@ -156,7 +187,11 @@ const CurrentActivityCard = (props: {
                     {activityName}
                     <Grid style={{ marginTop: "1.5em", minWidth: "100%" }}>
                         {props.partyMembers.map(pm => (
-                            <PartyMember key={pm.membershipId} {...pm} />
+                            <PartyMember
+                                key={pm.membershipId}
+                                partyMember={pm}
+                                resolvedPlayer={resolvedById.get(pm.membershipId)}
+                            />
                         ))}
                     </Grid>
                 </Flex>
@@ -165,21 +200,27 @@ const CurrentActivityCard = (props: {
     )
 }
 
-const PartyMember = (pm: DestinyProfileTransitoryPartyMember) => {
-    const emblem = useItemDefinition(pm.emblemHash)
+const PartyMember = ({
+    partyMember,
+    resolvedPlayer
+}: {
+    partyMember: DestinyProfileTransitoryPartyMember
+    resolvedPlayer?: RaidHubPlayerInfo
+}) => {
+    const emblem = useItemDefinition(partyMember.emblemHash)
+    const displayName = resolvedPlayer
+        ? getBungieDisplayName(resolvedPlayer)
+        : partyMember.displayName?.trim() || partyMember.membershipId
+    const iconSrc = resolvedPlayer
+        ? bungieProfileIconUrl(resolvedPlayer.iconPath)
+        : bungieEmblemUrl(emblem)
 
     return (
         <Container>
-            <Link href={`/profile/${pm.membershipId}`} style={{ color: "unset" }}>
+            <Link href={`/profile/${partyMember.membershipId}`} style={{ color: "unset" }}>
                 <Flex $padding={0} $align="flex-start">
-                    <Image
-                        src={bungieEmblemUrl(emblem)}
-                        unoptimized
-                        width={32}
-                        height={32}
-                        alt={pm.displayName}
-                    />
-                    <span>{pm.displayName}</span>
+                    <Image src={iconSrc} unoptimized width={32} height={32} alt={displayName} />
+                    <span>{displayName}</span>
                 </Flex>
             </Link>
         </Container>
