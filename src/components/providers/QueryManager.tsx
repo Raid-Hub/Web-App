@@ -126,7 +126,9 @@ export function QueryManager(props: { children: React.ReactNode }) {
             process.env.NODE_ENV === 'development', so you don't need to worry
              about excluding them during a production build. */}
             <trpc.Provider client={trpcClient} queryClient={queryClient}>
-                <ReactQueryDevtools initialIsOpen={false} />
+                {process.env.NODE_ENV === "development" ? (
+                    <ReactQueryDevtools initialIsOpen={false} />
+                ) : null}
                 {props.children}
             </trpc.Provider>
         </QueryClientProvider>

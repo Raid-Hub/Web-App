@@ -6,6 +6,18 @@ import type {
     GroupsForMemberFilter
 } from "bungie-net-core/models"
 import { useBungieClient } from "~/components/providers/session/BungieClientProvider"
+import { BungiePlatformError } from "~/models/BungieAPIError"
+import BaseBungieClient from "~/services/bungie/BungieClient"
+
+const emptyGroupsForMemberResponse: GetGroupsForMemberResponse = {
+    areAllMembershipsInactive: {},
+    results: [],
+    totalResults: 0,
+    hasMore: false,
+    query: { itemsPerPage: 0, currentPage: 0, requestContinuationToken: "" },
+    replacementContinuationToken: "",
+    useTotalResults: false
+}
 
 export const useClansForMember = <T = GetGroupsForMemberResponse>(
     {
@@ -25,12 +37,24 @@ export const useClansForMember = <T = GetGroupsForMemberResponse>(
 
     return useQuery({
         queryKey: ["bungie", "clan for member", filter, params] as const,
-        queryFn: ({ queryKey }) =>
-            getGroupsForMember(bungieClient, {
-                ...queryKey[3],
-                filter: queryKey[2],
-                groupType: 1 // GroupType.Clan
-            }).then(res => res.Response),
+        queryFn: async ({ queryKey }) => {
+            try {
+                return await getGroupsForMember(bungieClient, {
+                    ...queryKey[3],
+                    filter: queryKey[2],
+                    groupType: 1 // GroupType.Clan
+                }).then(res => res.Response)
+            } catch (error) {
+                if (
+                    error instanceof BungiePlatformError &&
+                    BaseBungieClient.ExpectedErrorCodes.has(error.ErrorCode)
+                ) {
+                    return emptyGroupsForMemberResponse
+                }
+
+                throw error
+            }
+        },
         ...opts
     })
 }

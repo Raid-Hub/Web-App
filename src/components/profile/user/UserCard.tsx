@@ -37,14 +37,21 @@ export function UserCard() {
         }
     )
 
-    const bungieProfileQuery = useLinkedProfiles(
-        {
-            membershipId: props.destinyMembershipId
-        },
-        {
-            select: res => res.bnetMembership
-        }
-    )
+    const linkedProfilesQuery = useLinkedProfiles({
+        membershipId: props.destinyMembershipId
+    })
+
+    const bungieProfileQuery = {
+        data: linkedProfilesQuery.data?.bnetMembership
+    }
+
+    const clanMembershipType = useMemo(() => {
+        const match = linkedProfilesQuery.data?.profiles.find(
+            profile => profile.membershipId === props.destinyMembershipId
+        )
+
+        return match?.membershipType ?? props.destinyMembershipType
+    }, [linkedProfilesQuery.data, props.destinyMembershipId, props.destinyMembershipType])
 
     const { data: raidHubUser } = trpc.profile.getUnique.useQuery(
         {
@@ -95,7 +102,7 @@ export function UserCard() {
         )
 
     const { data: clan } = useClansForMember(
-        { membershipId: props.destinyMembershipId, membershipType: props.destinyMembershipType },
+        { membershipId: props.destinyMembershipId, membershipType: clanMembershipType },
         {
             staleTime: 10 * 60000,
             select: res => (res.results.length > 0 ? res.results[0].group : null)

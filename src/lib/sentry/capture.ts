@@ -1,4 +1,7 @@
+import type { ErrorEvent } from "@sentry/nextjs"
 import * as Sentry from "@sentry/nextjs"
+import { BungiePlatformError } from "~/models/BungieAPIError"
+import BaseBungieClient from "~/services/bungie/BungieClient"
 import { RaidHubError } from "~/services/raidhub/RaidHubError"
 import type { RaidHubErrorCode } from "~/services/raidhub/types"
 import { buildSentryContext, type SentryCaptureContext } from "./context"
@@ -36,11 +39,102 @@ export function isBenignClientAbort(error: unknown): boolean {
         return true
     }
 
-    return error instanceof Error && error.name === "AbortError"
+    if (error instanceof Error && error.name === "AbortError") {
+        return true
+    }
+
+    const message = getErrorMessage(error)
+    return message.includes("AbortError") && message.includes("Database deleted")
+}
+
+function getErrorMessage(error: unknown): string {
+    if (error instanceof Error) {
+        const parts = [error.message]
+        if (error.cause instanceof Error) {
+            parts.push(error.cause.message)
+        }
+        return parts.join(" ")
+    }
+
+    return typeof error === "string" ? error : String(error)
+}
+
+function isBenignClientStorageError(error: unknown): boolean {
+    const message = getErrorMessage(error)
+    return (
+        message.includes("OpenFailedError") ||
+        message.includes("Database deleted by request of the user")
+    )
+}
+
+function isBenignDataCloneError(error: unknown): boolean {
+    if (error instanceof DOMException && error.name === "DataCloneError") {
+        return true
+    }
+
+    return error instanceof Error && error.name === "DataCloneError"
+}
+
+function isExpectedBungiePlatformError(error: unknown): boolean {
+    return (
+        error instanceof BungiePlatformError &&
+        BaseBungieClient.ExpectedErrorCodes.has(error.ErrorCode)
+    )
+}
+
+function isTransientTrpcHtmlError(error: unknown): boolean {
+    const message = getErrorMessage(error)
+    return message.includes("Unexpected token '<'") || message.includes("<!DOCTYPE")
+}
+
+function getEventErrorText(event: ErrorEvent): string {
+    return (
+        event.exception?.values
+            ?.map(value => [value.type, value.value].filter(Boolean).join(": "))
+            .join(" ") ?? ""
+    )
+}
+
+/** Benign errors caught by Sentry's global unhandled-rejection handler (not captureClientException). */
+export function shouldDropGlobalBenignEvent(event: ErrorEvent): boolean {
+    const text = getEventErrorText(event)
+
+    if (
+        text.includes("Database deleted by request of the user") ||
+        text.includes("OpenFailedError")
+    ) {
+        return true
+    }
+
+    if (text.includes("AbortError") && text.includes("Database deleted")) {
+        return true
+    }
+
+    if (text.includes("DataCloneError") || text.includes("The object can not be cloned")) {
+        return true
+    }
+
+    return false
 }
 
 function shouldCaptureError(error: unknown): boolean {
     if (isBenignClientAbort(error)) {
+        return false
+    }
+
+    if (isBenignClientStorageError(error)) {
+        return false
+    }
+
+    if (isBenignDataCloneError(error)) {
+        return false
+    }
+
+    if (isExpectedBungiePlatformError(error)) {
+        return false
+    }
+
+    if (isTransientTrpcHtmlError(error)) {
         return false
     }
     if (error instanceof RaidHubError && HANDLED_RAIDHUB_ERROR_CODES.has(error.errorCode)) {
