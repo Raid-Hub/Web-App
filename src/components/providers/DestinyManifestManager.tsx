@@ -98,6 +98,7 @@ const DestinyManifestManager = ({ children }: { children: ReactNode }) => {
     const queryState = useQuery({
         queryKey: ["bungie", "manifest", manifestLanguage],
         queryFn: () => getDestinyManifest(client).then(res => res.Response),
+        meta: { sentryCapture: false },
         suspense: false,
         enabled: manifestVersion !== undefined,
         staleTime: 3600_000, // 1 hour
