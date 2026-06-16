@@ -1,6 +1,5 @@
 import { cn } from "~/lib/tw"
 import { Badge } from "~/shad/badge"
-import { Tooltip, TooltipContent, TooltipTrigger } from "~/shad/tooltip"
 
 const variants = {
     mvp: {
@@ -49,17 +48,11 @@ interface PlayerBadgeProps {
 export const PlayerBadge = ({ variant, className, titleOverride }: PlayerBadgeProps) => {
     const { title, description, colors } = variants[variant]
     return (
-        <Tooltip>
-            <TooltipTrigger asChild>
-                <Badge
-                    variant="outline"
-                    className={cn(colors.bg, colors.text, colors.border, className)}>
-                    {titleOverride ?? title}
-                </Badge>
-            </TooltipTrigger>
-            <TooltipContent side="bottom" align="start">
-                {description}
-            </TooltipContent>
-        </Tooltip>
+        <Badge
+            variant="outline"
+            title={description}
+            className={cn(colors.bg, colors.text, colors.border, className)}>
+            {titleOverride ?? title}
+        </Badge>
     )
 }

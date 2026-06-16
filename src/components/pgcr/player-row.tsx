@@ -11,7 +11,6 @@ import { cn } from "~/lib/tw"
 import { type RaidHubInstancePlayerExtended } from "~/services/raidhub/types"
 import { Avatar, AvatarFallback, AvatarImage } from "~/shad/avatar"
 import { Button } from "~/shad/button"
-import { Tooltip, TooltipContent, TooltipTrigger } from "~/shad/tooltip"
 import { bungieBannerEmblemUrl, bungieProfileIconUrl, getBungieDisplayName } from "~/util/destiny"
 import { secondsToHMS } from "~/util/presentation/formatting"
 import { PlayerBadge } from "./player-badge"
@@ -109,21 +108,20 @@ export default function PlayerRow({ player }: PlayerRowProps) {
                                         character.classHash
                                     )
                                     return (
-                                        <Tooltip key={character.characterId}>
-                                            <TooltipTrigger asChild>
-                                                <CharacterIcon
-                                                    className={cn(
-                                                        "size-6",
-                                                        player.completed
-                                                            ? "text-primary"
-                                                            : "text-zinc-500"
-                                                    )}
-                                                />
-                                            </TooltipTrigger>
-                                            <TooltipContent side="bottom" align="start">
-                                                {characterName}
-                                            </TooltipContent>
-                                        </Tooltip>
+                                        <span
+                                            key={character.characterId}
+                                            title={characterName}
+                                            aria-label={characterName}
+                                            className="inline-flex">
+                                            <CharacterIcon
+                                                className={cn(
+                                                    "size-6",
+                                                    player.completed
+                                                        ? "text-primary"
+                                                        : "text-zinc-500"
+                                                )}
+                                            />
+                                        </span>
                                     )
                                 })}
                         </div>
@@ -171,51 +169,40 @@ export default function PlayerRow({ player }: PlayerRowProps) {
                     {stats.assists.toLocaleString()}
                 </div>
                 <div
+                    title="(Kills + assists) / team kills. Participation rate, not a share that sums to 100%."
                     className={cn(
                         "text-primary/85 hidden text-center text-xs md:block md:text-sm lg:text-lg",
                         {
                             "text-zinc-500": !player.completed
                         }
                     )}>
-                    <Tooltip>
-                        <TooltipTrigger asChild>
-                            <span>{killSharePct.toFixed(1)}%</span>
-                        </TooltipTrigger>
-                        <TooltipContent>
-                            (Kills + assists) / team kills. Participation rate, not a share that
-                            sums to 100%.
-                        </TooltipContent>
-                    </Tooltip>
+                    {killSharePct.toFixed(1)}%
                 </div>
                 <div
+                    title={
+                        activityPercentage != null
+                            ? `Present for ${activityPercentage}% of the activity`
+                            : "Time played may be capped; participation percentage unavailable"
+                    }
                     className={cn("text-center", {
                         "text-zinc-500": !player.completed
                     })}>
-                    <Tooltip>
-                        <TooltipTrigger asChild>
-                            <div className="flex flex-col items-center gap-0.5">
-                                <span
-                                    className={cn(
-                                        "text-primary/85 text-xs tabular-nums md:text-sm lg:text-lg",
-                                        {
-                                            "text-zinc-500": !player.completed
-                                        }
-                                    )}>
-                                    {secondsToHMS(timePlayed, false)}
-                                </span>
-                                {activityPercentage != null && (
-                                    <span className="text-[10px] text-zinc-500 tabular-nums">
-                                        {activityPercentage}%
-                                    </span>
-                                )}
-                            </div>
-                        </TooltipTrigger>
-                        <TooltipContent>
-                            {activityPercentage != null
-                                ? `Present for ${activityPercentage}% of the activity`
-                                : "Time played may be capped; participation percentage unavailable"}
-                        </TooltipContent>
-                    </Tooltip>
+                    <div className="flex flex-col items-center gap-0.5">
+                        <span
+                            className={cn(
+                                "text-primary/85 text-xs tabular-nums md:text-sm lg:text-lg",
+                                {
+                                    "text-zinc-500": !player.completed
+                                }
+                            )}>
+                            {secondsToHMS(timePlayed, false)}
+                        </span>
+                        {activityPercentage != null && (
+                            <span className="text-[10px] text-zinc-500 tabular-nums">
+                                {activityPercentage}%
+                            </span>
+                        )}
+                    </div>
                 </div>
             </div>
         </Button>

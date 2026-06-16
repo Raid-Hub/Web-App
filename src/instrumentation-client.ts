@@ -1,12 +1,12 @@
 import * as Sentry from "@sentry/nextjs"
-import { shouldDropGlobalBenignEvent } from "./lib/sentry/capture"
+import { beforeSendClientEvent } from "./lib/sentry/client"
 import {
     getSentryDsnForClient,
     getSentryEnvironment,
     getSentryRelease,
     getTracesSampleRate
 } from "./lib/sentry/env"
-import { sentrySharedOptions, shouldDropSentryEvent } from "./lib/sentry/shared-options"
+import { sentrySharedOptions } from "./lib/sentry/shared-options"
 
 const dsn = getSentryDsnForClient()
 
@@ -18,17 +18,7 @@ if (dsn) {
         tracesSampleRate: getTracesSampleRate(),
         debug: process.env.NODE_ENV !== "production",
         ...sentrySharedOptions,
-        beforeSend(event, hint) {
-            if (shouldDropSentryEvent(event, hint)) {
-                return null
-            }
-
-            if (shouldDropGlobalBenignEvent(event)) {
-                return null
-            }
-
-            return event
-        }
+        beforeSend: beforeSendClientEvent
     })
 }
 

@@ -21,7 +21,6 @@ export const useProfileTransitory = <T = DestinyProfileResponse<[1000]>>(
                 ...params,
                 components: [1000]
             }).then(res => res.Response),
-        meta: { sentryCapture: false },
         ...opts,
         enabled: isClient && (opts?.enabled ?? true)
     })
