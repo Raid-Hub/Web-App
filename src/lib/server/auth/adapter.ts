@@ -39,7 +39,9 @@ export const PrismaAdapter = (prisma: PrismaClientWithExtensions): Adapter => ({
             }
         })
 
-        await updateDestinyProfiles(input.userMembershipData)
+        await updateDestinyProfiles(input.userMembershipData).catch(error => {
+            console.warn("Failed to sync Destiny profiles during signup", error)
+        })
 
         return {
             ...user,

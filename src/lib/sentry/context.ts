@@ -183,19 +183,20 @@ export function classifyAuthError(err: { name?: string; message?: string; cause?
     extra: Record<string, unknown>
 } {
     const name = err.name ?? ""
-    const message = err.message ?? ""
+    const combinedText = getAuthErrorText(err)
 
     const likelyUserAction =
         name === "CallbackRouteError" ||
         name === "AccessDenied" ||
         name === "OAuthCallbackError" ||
         name === "OAuthSignInError" ||
-        message.includes("State cookie was missing") ||
-        message.includes("access_denied") ||
-        message.includes("errors.authjs.dev")
+        combinedText.includes("State cookie was missing") ||
+        combinedText.includes("access_denied") ||
+        combinedText.includes("errors.authjs.dev") ||
+        combinedText.includes("No primary Destiny membership found")
 
     const extra: Record<string, unknown> = {
-        auth_error_message: message
+        auth_error_message: err.message ?? ""
     }
 
     if (err.cause instanceof Error) {
@@ -212,4 +213,23 @@ export function classifyAuthError(err: { name?: string; message?: string; cause?
         },
         extra
     }
+}
+
+function getAuthErrorText(err: { message?: string; cause?: unknown }): string {
+    const parts: string[] = []
+    if (err.message) {
+        parts.push(err.message)
+    }
+
+    let cause: unknown = err.cause
+    for (let depth = 0; depth < 4 && cause; depth++) {
+        if (cause instanceof Error) {
+            parts.push(cause.message)
+            cause = cause.cause
+        } else {
+            break
+        }
+    }
+
+    return parts.join(" ")
 }
