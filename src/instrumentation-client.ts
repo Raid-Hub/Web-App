@@ -5,7 +5,8 @@ import {
     getSentryRelease,
     getTracesSampleRate
 } from "./lib/sentry/env"
-import { sentrySharedOptions } from "./lib/sentry/shared-options"
+import { shouldDropGlobalBenignEvent } from "./lib/sentry/capture"
+import { sentrySharedOptions, shouldDropSentryEvent } from "./lib/sentry/shared-options"
 
 const dsn = getSentryDsnForClient()
 
@@ -16,7 +17,18 @@ if (dsn) {
         release: getSentryRelease(),
         tracesSampleRate: getTracesSampleRate(),
         debug: process.env.NODE_ENV !== "production",
-        ...sentrySharedOptions
+        ...sentrySharedOptions,
+        beforeSend(event, hint) {
+            if (shouldDropSentryEvent(event, hint)) {
+                return null
+            }
+
+            if (shouldDropGlobalBenignEvent(event)) {
+                return null
+            }
+
+            return event
+        }
     })
 }
 
