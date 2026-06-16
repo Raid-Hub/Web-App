@@ -1,6 +1,6 @@
 import { type Metadata } from "next"
-import { notFound } from "next/navigation"
 import { LeaderboardSSR } from "~/app/leaderboards/LeaderboardSSR"
+import NotFound from "~/app/not-found"
 import { CloudflareActivitySplash } from "~/components/CloudflareImage"
 import { findPantheonVersionByPath } from "~/lib/manifest/pantheon"
 import { baseMetadata } from "~/lib/metadata"
@@ -56,12 +56,7 @@ const tryGetDefinitions = (params: DynamicParams["params"], manifest: RaidHubMan
 }
 
 const getDefinitions = (params: DynamicParams["params"], manifest: RaidHubManifestResponse) => {
-    const definitions = tryGetDefinitions(params, manifest)
-    if (!definitions) {
-        return notFound()
-    }
-
-    return definitions
+    return tryGetDefinitions(params, manifest)
 }
 
 export async function generateMetadata({ params }: DynamicParams): Promise<Metadata> {
@@ -100,7 +95,13 @@ export async function generateMetadata({ params }: DynamicParams): Promise<Metad
 
 export default async function Page({ params, searchParams }: DynamicParams) {
     const manifest = await prefetchManifest()
-    const { version, activity, isPantheon } = getDefinitions(params, manifest)
+    const definitions = getDefinitions(params, manifest)
+    if (!definitions) {
+        return <NotFound />
+    }
+
+    const { version, activity, isPantheon } = definitions
+
     return (
         <Leaderboard
             heading={

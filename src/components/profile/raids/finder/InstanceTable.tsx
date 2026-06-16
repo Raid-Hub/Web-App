@@ -119,7 +119,7 @@ const InstanceTableRow = memo(
         const { getActivityString, getVersionString } = useRaidHubManifest()
         const { locale } = useLocale()
         const seasons = useSeasons()
-        const seasonName = seasons?.[instance.season - 1].displayProperties.name
+        const seasonName = seasons?.[instance.season - 1]?.displayProperties.name
 
         const attrs = useAtttributes(instance)
 
