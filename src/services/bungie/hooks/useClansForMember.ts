@@ -5,8 +5,8 @@ import type {
     GetGroupsForMemberResponse,
     GroupsForMemberFilter
 } from "bungie-net-core/models"
-import { BungiePlatformError } from "~/models/BungieAPIError"
 import { useBungieClient } from "~/components/providers/session/BungieClientProvider"
+import { BungiePlatformError } from "~/models/BungieAPIError"
 import BaseBungieClient from "~/services/bungie/BungieClient"
 
 const emptyGroupsForMemberResponse: GetGroupsForMemberResponse = {

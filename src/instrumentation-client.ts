@@ -1,11 +1,11 @@
 import * as Sentry from "@sentry/nextjs"
+import { shouldDropGlobalBenignEvent } from "./lib/sentry/capture"
 import {
     getSentryDsnForClient,
     getSentryEnvironment,
     getSentryRelease,
     getTracesSampleRate
 } from "./lib/sentry/env"
-import { shouldDropGlobalBenignEvent } from "./lib/sentry/capture"
 import { sentrySharedOptions, shouldDropSentryEvent } from "./lib/sentry/shared-options"
 
 const dsn = getSentryDsnForClient()

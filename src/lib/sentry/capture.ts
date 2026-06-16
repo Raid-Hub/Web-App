@@ -1,9 +1,9 @@
-import * as Sentry from "@sentry/nextjs"
 import type { ErrorEvent } from "@sentry/nextjs"
+import * as Sentry from "@sentry/nextjs"
 import { BungiePlatformError } from "~/models/BungieAPIError"
+import BaseBungieClient from "~/services/bungie/BungieClient"
 import { RaidHubError } from "~/services/raidhub/RaidHubError"
 import type { RaidHubErrorCode } from "~/services/raidhub/types"
-import BaseBungieClient from "~/services/bungie/BungieClient"
 import { buildSentryContext, type SentryCaptureContext } from "./context"
 import { getSentryDsnForServer } from "./env"
 
