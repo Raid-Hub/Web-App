@@ -7,7 +7,6 @@ import { useMemo } from "react"
 import { usePGCRContext } from "~/hooks/pgcr/ClientStateManager"
 import { type PlayerStats } from "~/lib/pgcr/types"
 import { cn } from "~/lib/tw"
-import { Tooltip, TooltipContent, TooltipTrigger } from "~/shad/tooltip"
 import { bungieItemUrl, getBungieDisplayName } from "~/util/destiny"
 
 interface WeaponData {
@@ -170,25 +169,20 @@ const WeaponRow = ({
                     {weaponName}
                 </Link>
                 {showUsers ? (
-                    <Tooltip>
-                        <TooltipTrigger asChild>
-                            <span className="text-[10px] text-zinc-500">
-                                {users.size} player{users.size !== 1 ? "s" : ""}
-                            </span>
-                        </TooltipTrigger>
-                        <TooltipContent>
-                            {Array.from(users).map(id => (
-                                <div key={id}>
-                                    {getBungieDisplayName(
-                                        data.players.find(
-                                            player => player.playerInfo.membershipId === id
-                                        )!.playerInfo,
-                                        { excludeCode: true }
-                                    )}
-                                </div>
-                            ))}
-                        </TooltipContent>
-                    </Tooltip>
+                    <span
+                        title={Array.from(users)
+                            .map(id =>
+                                getBungieDisplayName(
+                                    data.players.find(
+                                        player => player.playerInfo.membershipId === id
+                                    )!.playerInfo,
+                                    { excludeCode: true }
+                                )
+                            )
+                            .join(", ")}
+                        className="text-[10px] text-zinc-500">
+                        {users.size} player{users.size !== 1 ? "s" : ""}
+                    </span>
                 ) : (
                     <span className="text-[10px] text-zinc-500">
                         {precisionPct.toFixed(0)}% precision

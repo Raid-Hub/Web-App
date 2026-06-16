@@ -16,7 +16,6 @@ import { cn } from "~/lib/tw"
 import { type RaidHubInstancePlayerExtended } from "~/services/raidhub/types"
 import { Avatar, AvatarFallback, AvatarImage } from "~/shad/avatar"
 import { Button } from "~/shad/button"
-import { Tooltip, TooltipContent, TooltipTrigger } from "~/shad/tooltip"
 import { bungieBannerEmblemUrl, bungieIconUrl, getBungieDisplayName } from "~/util/destiny"
 import { round } from "~/util/math"
 import { secondsToHMS } from "~/util/presentation/formatting"
@@ -61,12 +60,9 @@ const StatStrip = ({ stats }: { stats: StatCell[] }) => (
             }
 
             return (
-                <Tooltip key={stat.label}>
-                    <TooltipTrigger asChild>
-                        <div>{cell}</div>
-                    </TooltipTrigger>
-                    <TooltipContent>{stat.tooltip}</TooltipContent>
-                </Tooltip>
+                <div key={stat.label} title={stat.tooltip}>
+                    {cell}
+                </div>
             )
         })}
     </div>
@@ -326,20 +322,16 @@ const PlayerDetailsPanel = ({ player, onClose }: PlayerDetailsPanelProps) => {
                                     </span>
                                 )}
                             </h2>
-                            <Tooltip>
-                                <TooltipTrigger asChild>
-                                    <Button
-                                        variant="ghost"
-                                        size="icon"
-                                        className="size-6 shrink-0 rounded-full hover:bg-zinc-800"
-                                        asChild>
-                                        <Link href={`/profile/${player.playerInfo.membershipId}`}>
-                                            <LinkIcon className="size-3.5" />
-                                        </Link>
-                                    </Button>
-                                </TooltipTrigger>
-                                <TooltipContent>View Profile</TooltipContent>
-                            </Tooltip>
+                            <Button
+                                variant="ghost"
+                                size="icon"
+                                title="View Profile"
+                                className="size-6 shrink-0 rounded-full hover:bg-zinc-800"
+                                asChild>
+                                <Link href={`/profile/${player.playerInfo.membershipId}`}>
+                                    <LinkIcon className="size-3.5" />
+                                </Link>
+                            </Button>
                         </div>
                         <div className="mt-1.5 flex flex-wrap items-center gap-1.5">
                             {mvp === player.playerInfo.membershipId && (

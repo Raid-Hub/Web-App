@@ -5,7 +5,6 @@ import { useCallback, useMemo } from "react"
 import { type MultiInstanceTimelineSegment } from "~/lib/multi/multi-types"
 import { cn } from "~/lib/tw"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "~/shad/card"
-import { Tooltip, TooltipContent, TooltipTrigger } from "~/shad/tooltip"
 import { secondsToHMS } from "~/util/presentation/formatting"
 
 export const PGCRMultiTimeline = ({ segments }: { segments: MultiInstanceTimelineSegment[] }) => {
@@ -59,29 +58,26 @@ export const PGCRMultiTimeline = ({ segments }: { segments: MultiInstanceTimelin
                         const endPct = getRatio(d.end) * 100
 
                         return (
-                            <Tooltip key={d.instanceId}>
-                                <TooltipTrigger asChild>
-                                    <Link
-                                        className={cn(
-                                            "bg-raidhub/75 absolute top-0 h-full border-x",
-                                            d.completed && "bg-green-500"
-                                        )}
-                                        style={{
-                                            left: `${startPct}%`,
-                                            width: `${endPct - startPct}%`
-                                        }}
-                                        href={`/pgcr/${d.instanceId}`}
-                                        target="_blank"
-                                    />
-                                </TooltipTrigger>
-                                <TooltipContent>
-                                    <h4 className="font-bold">{`Instance #${i + 1}: ${d.instanceId}`}</h4>
-                                    <div className="mb-2 font-semibold">{`${d.activityName}: ${d.versionName}`}</div>
-                                    <div>{`Started: ${d.start.toLocaleString()}`}</div>
-                                    <div>{`Ended: ${d.end.toLocaleString()}`}</div>
-                                    <div>{`Duration: ${secondsToHMS(d.duration, false)}`}</div>
-                                </TooltipContent>
-                            </Tooltip>
+                            <Link
+                                key={d.instanceId}
+                                title={[
+                                    `Instance #${i + 1}: ${d.instanceId}`,
+                                    `${d.activityName}: ${d.versionName}`,
+                                    `Started: ${d.start.toLocaleString()}`,
+                                    `Ended: ${d.end.toLocaleString()}`,
+                                    `Duration: ${secondsToHMS(d.duration, false)}`
+                                ].join("\n")}
+                                className={cn(
+                                    "bg-raidhub/75 absolute top-0 h-full border-x",
+                                    d.completed && "bg-green-500"
+                                )}
+                                style={{
+                                    left: `${startPct}%`,
+                                    width: `${endPct - startPct}%`
+                                }}
+                                href={`/pgcr/${d.instanceId}`}
+                                target="_blank"
+                            />
                         )
                     })}
                 </div>
