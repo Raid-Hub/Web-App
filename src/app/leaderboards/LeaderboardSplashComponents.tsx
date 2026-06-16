@@ -1,8 +1,8 @@
 "use client"
 
 import Link from "next/link"
+import { cloneElement, isValidElement } from "react"
 import styled, { css } from "styled-components"
-import { TooltipContainer, TooltipData } from "~/components/Tooltip"
 import { Panel } from "~/components/__deprecated__/Panel"
 import { Flex } from "~/components/__deprecated__/layout/Flex"
 import { H4 } from "~/components/__deprecated__/typography/H4"
@@ -49,19 +49,15 @@ const Subtitle = styled.div`
         font-size: 2.75rem;
     `}
 `
+
 export const TooltipWrapper = ({
-    id,
     title,
     children
 }: {
     title: string
     id: string
     children: JSX.Element
-}) => (
-    <TooltipContainer tooltipId={id} tooltipBody={<TooltipData $mb={0.5}>{title}</TooltipData>}>
-        {children}
-    </TooltipContainer>
-)
+}) => (isValidElement(children) ? cloneElement(children, { title } as { title: string }) : children)
 
 export const ExtLink = styled(Link).attrs({ target: "_blank" })`
     display: flex;

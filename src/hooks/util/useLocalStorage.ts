@@ -1,5 +1,21 @@
 import { useCallback, useEffect, useState, type Dispatch, type SetStateAction } from "react"
 
+function safeGetItem(key: string): string | null {
+    try {
+        return localStorage.getItem(key)
+    } catch {
+        return null
+    }
+}
+
+function safeSetItem(key: string, value: string): void {
+    try {
+        localStorage.setItem(key, value)
+    } catch {
+        // Safari private mode / disabled storage — keep in-memory state only.
+    }
+}
+
 export const useLocalStorage = <V extends string | boolean | number | object | null>(
     key: string,
     defaultValue: V | (() => V)
@@ -7,7 +23,7 @@ export const useLocalStorage = <V extends string | boolean | number | object | n
     const [_value, setValue] = useState<V>(defaultValue)
 
     useEffect(() => {
-        const fromStore = localStorage.getItem(key)
+        const fromStore = safeGetItem(key)
         const getDefault = () => (defaultValue instanceof Function ? defaultValue() : defaultValue)
         const parse = (value: string) => {
             try {
@@ -23,7 +39,7 @@ export const useLocalStorage = <V extends string | boolean | number | object | n
         (value: SetStateAction<V>) => {
             setValue(old => {
                 const toSave = value instanceof Function ? value(old) : value
-                localStorage.setItem(key, JSON.stringify(toSave))
+                safeSetItem(key, JSON.stringify(toSave))
                 return toSave
             })
         },
@@ -42,7 +58,7 @@ export const useLocalStorageObject = <V>(args: {
     const [store, setStore] = useState<Record<string, V>>({ [args.paramKey]: args.defaultValue })
 
     useEffect(() => {
-        const fromStore = localStorage.getItem(args.storageKey)
+        const fromStore = safeGetItem(args.storageKey)
         const parsed = fromStore ? (JSON.parse(fromStore) as Record<string, V>) : {}
         if (args.paramKey in parsed) {
             setValue(fromStore ? parsed[args.paramKey] : args.defaultValue)
@@ -51,12 +67,12 @@ export const useLocalStorageObject = <V>(args: {
 
     const save = (value: V | ((old: V) => V)) => {
         const toSave = typeof value === "function" ? (value as (old: V) => V)(_value) : value
-        const currStore = localStorage.getItem(args.storageKey)
+        const currStore = safeGetItem(args.storageKey)
         const newValue = {
             ...(currStore ? (JSON.parse(currStore) as Record<string, V>) : {}),
             [args.paramKey]: toSave
         }
-        localStorage.setItem(args.storageKey, JSON.stringify(newValue))
+        safeSetItem(args.storageKey, JSON.stringify(newValue))
         setValue(toSave)
         setStore(newValue)
     }
