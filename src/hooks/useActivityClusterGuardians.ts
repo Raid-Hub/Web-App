@@ -5,11 +5,13 @@ import { useRaidHubInstanceList } from "~/services/raidhub/hooks"
 
 export const useActivityClusterGuardians = (
     cluster: ActivityCluster,
-    profileMembershipIds: readonly string[] = []
+    profileMembershipIds: readonly string[] = [],
+    opts?: { enabled?: boolean }
 ) => {
     const profileIds = useMemo(() => new Set(profileMembershipIds), [profileMembershipIds])
     const leadActivity = cluster.activities[0]
     const skip = !leadActivity || leadActivity.playerCount > 50
+    const enabled = opts?.enabled ?? true
 
     const instanceIds = useMemo(() => {
         const ids = getActivityClusterInstanceIds(cluster.activities.map(a => a.instanceId))
@@ -17,7 +19,7 @@ export const useActivityClusterGuardians = (
         return ids.slice(0, 1)
     }, [cluster.activities])
 
-    const queries = useRaidHubInstanceList(skip ? [] : instanceIds)
+    const queries = useRaidHubInstanceList(skip || !enabled ? [] : instanceIds)
 
     return useMemo(() => {
         if (skip) {

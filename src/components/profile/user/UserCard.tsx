@@ -14,7 +14,6 @@ import { useRaidHubPlayer, useRaidHubResolvePlayer } from "~/services/raidhub/ho
 import { type RaidHubPlayerInfo } from "~/services/raidhub/types"
 import { Avatar, AvatarImage } from "~/shad/avatar"
 import { Card, CardHeader } from "~/shad/card"
-import { Tooltip, TooltipContent, TooltipTrigger } from "~/shad/tooltip"
 import { bungieBannerEmblemUrl, bungieProfileIconUrl } from "~/util/destiny"
 import { fixClanName } from "~/util/destiny/fixClanName"
 import { getBungieDisplayName } from "~/util/destiny/getBungieDisplayName"
@@ -154,15 +153,12 @@ export function UserCard() {
                     <div className="flex flex-col items-start gap-1 p-1">
                         <h1 className="flex items-center gap-2 text-2xl">
                             {isPrivate && (
-                                <Tooltip>
-                                    <TooltipTrigger asChild>
-                                        <PrivacyLockIcon className="text-raidhub" />
-                                    </TooltipTrigger>
-                                    <TooltipContent>
-                                        The owner of this profile has chosen to keep their activity
-                                        history private.
-                                    </TooltipContent>
-                                </Tooltip>
+                                <span
+                                    title="The owner of this profile has chosen to keep their activity history private."
+                                    aria-label="Private profile"
+                                    className="inline-flex">
+                                    <PrivacyLockIcon className="text-raidhub" />
+                                </span>
                             )}
                             <span>
                                 {displayName}

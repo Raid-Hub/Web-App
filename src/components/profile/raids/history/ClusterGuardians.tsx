@@ -1,6 +1,8 @@
 "use client"
 
+import { useRef } from "react"
 import { useActivityClusterGuardians } from "~/hooks/useActivityClusterGuardians"
+import { useIsVisible } from "~/hooks/util/useIsVisible"
 import { CLUSTER_GUARDIAN_DISPLAY_LIMIT } from "~/lib/activity/guardians"
 import { type ActivityCluster } from "~/lib/activity/sessions"
 import { cn } from "~/lib/tw"
@@ -15,22 +17,27 @@ export const ClusterGuardians = ({
     profileMembershipIds: readonly string[]
     className?: string
 }) => {
+    const containerRef = useRef<HTMLDivElement>(null)
+    const isVisible = useIsVisible(containerRef, { rootMargin: "240px" })
     const { guardians, isLoading, skip } = useActivityClusterGuardians(
         cluster,
-        profileMembershipIds
+        profileMembershipIds,
+        { enabled: isVisible }
     )
 
     const teammates = guardians?.filter(guardian => !guardian.isProfilePlayer) ?? []
 
-    if (skip || isLoading || teammates.length === 0) {
-        return null
+    if (!isVisible || skip || isLoading || teammates.length === 0) {
+        return <div ref={containerRef} className={className} />
     }
 
     const visible = teammates.slice(0, CLUSTER_GUARDIAN_DISPLAY_LIMIT)
     const overflow = teammates.length - visible.length
 
     return (
-        <div className={cn("flex min-w-0 flex-wrap items-center gap-1.5", className)}>
+        <div
+            ref={containerRef}
+            className={cn("flex min-w-0 flex-wrap items-center gap-1.5", className)}>
             {visible.map(guardian => (
                 <GuardianChip key={guardian.playerInfo.membershipId} guardian={guardian} />
             ))}

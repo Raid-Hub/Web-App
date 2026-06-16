@@ -88,6 +88,21 @@ function isBenignDataCloneError(error: unknown): boolean {
     return error instanceof Error && error.name === "DataCloneError"
 }
 
+function isBenignDomMutationError(error: unknown): boolean {
+    const message = getErrorMessage(error)
+    const name =
+        error instanceof DOMException ? error.name : error instanceof Error ? error.name : ""
+
+    return (
+        name === "NotFoundError" &&
+        (message.includes("removeChild") || message.includes("The object can not be found here"))
+    )
+}
+
+function isExtensionInjectedError(error: unknown): boolean {
+    return /_0x[0-9a-f]+/i.test(getErrorMessage(error))
+}
+
 function isExpectedBungiePlatformError(error: unknown): boolean {
     return (
         error instanceof BungiePlatformError &&
@@ -150,6 +165,14 @@ export function shouldSkipCapture(error: unknown): boolean {
     }
 
     if (isBenignDataCloneError(error)) {
+        return true
+    }
+
+    if (isBenignDomMutationError(error)) {
+        return true
+    }
+
+    if (isExtensionInjectedError(error)) {
         return true
     }
 
@@ -237,6 +260,10 @@ export function shouldDropClientEvent(event: ErrorEvent): boolean {
     }
 
     if (text.includes("DataCloneError") || text.includes("The object can not be cloned")) {
+        return true
+    }
+
+    if (text.includes("removeChild") || text.includes("The object can not be found here")) {
         return true
     }
 

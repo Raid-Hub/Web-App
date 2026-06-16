@@ -1,5 +1,4 @@
 import { CloudflareIcon } from "~/components/CloudflareImage"
-import { Tooltip, TooltipContent, TooltipTrigger } from "~/shad/tooltip"
 
 export function ProfileBadge(badge: {
     id: string
@@ -9,25 +8,14 @@ export function ProfileBadge(badge: {
     size: number
 }) {
     return (
-        <Tooltip>
-            <TooltipTrigger asChild>
-                <span className="inline-flex">
-                    <CloudflareIcon
-                        path={badge.icon}
-                        alt={badge.name}
-                        width={32}
-                        height={32}
-                        objectFit="contain"
-                    />
-                </span>
-            </TooltipTrigger>
-            <TooltipContent side="bottom">
-                <p>
-                    <b>{badge.name}</b>
-                    <br />
-                    {badge.description}
-                </p>
-            </TooltipContent>
-        </Tooltip>
+        <span className="inline-flex" title={`${badge.name} — ${badge.description}`}>
+            <CloudflareIcon
+                path={badge.icon}
+                alt={badge.name}
+                width={32}
+                height={32}
+                objectFit="contain"
+            />
+        </span>
     )
 }

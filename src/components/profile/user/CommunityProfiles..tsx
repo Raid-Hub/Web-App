@@ -3,7 +3,6 @@ import Image from "next/image"
 import Link from "next/link"
 import { usePageProps } from "~/components/PageWrapper"
 import { type ProfileProps } from "~/lib/profile/types"
-import { Tooltip, TooltipContent, TooltipTrigger } from "~/shad/tooltip"
 
 const memTypeToString: Record<number, string> = {
     1: "xb",
@@ -67,18 +66,17 @@ export function CommunityProfiles() {
 
 const Profile = ({ title, url, icon }: { title: string; url: string; icon: string }) => {
     return (
-        <Tooltip>
-            <TooltipTrigger asChild>
-                <Link href={url} target="_blank" className="relative aspect-square w-5 md:w-7">
-                    <Image src={icon} alt={title} fill unoptimized />
-                </Link>
-            </TooltipTrigger>
-            <TooltipContent>
-                <div className="flex items-center gap-2">
-                    {title}
-                    <ExternalLink className="size-4" />
-                </div>
-            </TooltipContent>
-        </Tooltip>
+        <Link
+            href={url}
+            target="_blank"
+            title={title}
+            aria-label={title}
+            className="relative aspect-square w-5 md:w-7">
+            <Image src={icon} alt={title} fill unoptimized />
+            <span className="sr-only">
+                {title}
+                <ExternalLink className="size-4" aria-hidden />
+            </span>
+        </Link>
     )
 }
