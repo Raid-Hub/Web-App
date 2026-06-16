@@ -108,15 +108,20 @@ export default function PlayerRow({ player }: PlayerRowProps) {
                                         character.classHash
                                     )
                                     return (
-                                        <CharacterIcon
+                                        <span
                                             key={character.characterId}
                                             title={characterName}
                                             aria-label={characterName}
-                                            className={cn(
-                                                "size-6",
-                                                player.completed ? "text-primary" : "text-zinc-500"
-                                            )}
-                                        />
+                                            className="inline-flex">
+                                            <CharacterIcon
+                                                className={cn(
+                                                    "size-6",
+                                                    player.completed
+                                                        ? "text-primary"
+                                                        : "text-zinc-500"
+                                                )}
+                                            />
+                                        </span>
                                     )
                                 })}
                         </div>
