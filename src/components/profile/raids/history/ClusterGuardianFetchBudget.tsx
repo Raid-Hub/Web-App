@@ -1,13 +1,6 @@
 "use client"
 
-import {
-    createContext,
-    useCallback,
-    useContext,
-    useMemo,
-    useState,
-    type ReactNode
-} from "react"
+import { createContext, useCallback, useContext, useMemo, useState, type ReactNode } from "react"
 
 const MAX_CONCURRENT_INSTANCE_FETCHES = 3
 
@@ -59,10 +52,7 @@ export function ClusterGuardianFetchBudgetProvider({ children }: { children: Rea
         [bump]
     )
 
-    const value = useMemo(
-        () => ({ revision, tryClaim, release }),
-        [revision, tryClaim, release]
-    )
+    const value = useMemo(() => ({ revision, tryClaim, release }), [revision, tryClaim, release])
 
     return (
         <ClusterGuardianFetchBudgetContext.Provider value={value}>
