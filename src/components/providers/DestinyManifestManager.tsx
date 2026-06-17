@@ -11,6 +11,8 @@ import { type BungiePlatformError } from "~/models/BungieAPIError"
 import {
     DB_VERSION,
     isDexieConnectionLostError,
+    isDexieManifestStorageError,
+    isIndexedDBAvailable,
     recoverDexieDatabase,
     useDexie,
     type CustomDexieTable,
@@ -68,14 +70,16 @@ const DestinyManifestManager = ({ children }: { children: ReactNode }) => {
         meta: sentryOptionalQueryMeta,
         onSuccess: setManifestVersion,
         onError: async (err: Error) => {
-            if (isDexieConnectionLostError(err)) {
-                try {
-                    await recoverDexieDatabase(dexieDB)
-                } catch (recoveryError) {
-                    console.error(
-                        "Failed to recover Dexie database after connection loss",
-                        recoveryError
-                    )
+            if (isDexieConnectionLostError(err) || isDexieManifestStorageError(err)) {
+                if (isDexieConnectionLostError(err)) {
+                    try {
+                        await recoverDexieDatabase(dexieDB)
+                    } catch (recoveryError) {
+                        console.error(
+                            "Failed to recover Dexie database after connection loss",
+                            recoveryError
+                        )
+                    }
                 }
                 return
             }
@@ -131,16 +135,20 @@ const DestinyManifestManager = ({ children }: { children: ReactNode }) => {
 
             if (
                 manifestVersion !== newManifestVersion ||
-                // Check if any of the tables are empty
-                (
-                    await Promise.all(
-                        dexieDB.allTables.map(tableName => dexieDB[tableName].limit(1).first())
-                    ).catch(err => {
-                        console.error("Failed to check if tables are empty", err)
-                        return []
-                    })
-                ).reduce((acc, val) => (acc += +(val !== undefined)), 0) !==
-                    dexieDB.allTables.length
+                // Check if any of the tables are empty (skip Dexie probe when IDB unavailable)
+                (isIndexedDBAvailable()
+                    ? (
+                          await Promise.all(
+                              dexieDB.allTables.map(tableName =>
+                                  dexieDB[tableName].limit(1).first()
+                              )
+                          ).catch(err => {
+                              console.error("Failed to check if tables are empty", err)
+                              return []
+                          })
+                      ).reduce((acc, val) => (acc += +(val !== undefined)), 0) !==
+                      dexieDB.allTables.length
+                    : cache.items.size === 0)
             ) {
                 await storeManifest({
                     newManifestVersion,
@@ -169,6 +177,10 @@ const DestinyManifestManager = ({ children }: { children: ReactNode }) => {
     })
 
     useEffect(() => {
+        if (!isIndexedDBAvailable()) {
+            return
+        }
+
         const onClose = () => {
             setManifestVersion(null)
             void recoverDexieDatabase(dexieDB).catch(error => {

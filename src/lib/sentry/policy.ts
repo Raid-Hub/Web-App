@@ -55,16 +55,36 @@ function getErrorMessage(error: unknown): string {
 }
 
 function isBenignClientAbort(error: unknown): boolean {
-    if (error instanceof DOMException && error.name === "AbortError") {
-        return true
-    }
+    let current: unknown = error
+    for (let depth = 0; depth < 5 && current; depth++) {
+        if (current instanceof DOMException && current.name === "AbortError") {
+            return true
+        }
 
-    if (error instanceof Error && error.name === "AbortError") {
-        return true
+        if (current instanceof Error && current.name === "AbortError") {
+            return true
+        }
+
+        current = current instanceof Error ? current.cause : undefined
     }
 
     const message = getErrorMessage(error)
-    return message.includes("AbortError") && message.includes("Database deleted")
+    return (
+        message.includes("AbortError") &&
+        (message.includes("Database deleted") ||
+            message.includes("signal is aborted") ||
+            message.includes("operation was aborted") ||
+            message.includes("This operation was aborted"))
+    )
+}
+
+function isBenignServerFetchAbort(error: unknown): boolean {
+    const message = getErrorMessage(error)
+    return (
+        message.includes("Operation failed after") &&
+        message.includes("attempt") &&
+        isBenignClientAbort(error)
+    )
 }
 
 function isBenignClientStorageError(error: unknown): boolean {
@@ -75,13 +95,20 @@ function isBenignClientStorageError(error: unknown): boolean {
         name === "DatabaseClosedError" ||
         name === "SecurityError" ||
         name === "InvalidStateError" ||
+        name === "MissingAPIError" ||
         message.includes("OpenFailedError") ||
         message.includes("Database deleted by request of the user") ||
         message.includes("Connection to Indexed Database server lost") ||
         message.includes("DatabaseClosedError") ||
         message.includes("invalid security context") ||
         message.includes("IDBTransaction") ||
-        message.includes("The operation is insecure")
+        message.includes("The operation is insecure") ||
+        message.includes("IndexedDB API missing") ||
+        message.includes("Can't find variable: indexedDB") ||
+        message.includes("indexedDB is not defined") ||
+        (name === "BulkError" && message.includes("bulkPut()")) ||
+        message.includes("Destiny manifest update failed") ||
+        message.includes("Attempt to delete range from database without an in-progress transaction")
     )
 }
 
@@ -99,9 +126,29 @@ function isBenignDomMutationError(error: unknown): boolean {
         error instanceof DOMException ? error.name : error instanceof Error ? error.name : ""
 
     return (
-        name === "NotFoundError" &&
-        (message.includes("removeChild") || message.includes("The object can not be found here"))
+        (name === "NotFoundError" &&
+            (message.includes("removeChild") ||
+                message.includes("The object can not be found here"))) ||
+        (name === "TypeError" &&
+            (message.includes("parentNode") || message.includes("parallelRoutes.get")))
     )
+}
+
+function isBenignRscStreamError(error: unknown): boolean {
+    const message = getErrorMessage(error)
+    return (
+        message.includes("Connection closed") ||
+        message.includes("An error occurred in the Server Components render")
+    )
+}
+
+function isOpaqueMinifiedError(error: unknown): boolean {
+    if (!(error instanceof Error)) {
+        return false
+    }
+
+    const message = error.message.trim()
+    return message.length > 0 && message.length <= 3 && !error.stack
 }
 
 function isExtensionInjectedError(error: unknown): boolean {
@@ -187,6 +234,10 @@ export function shouldSkipCapture(error: unknown): boolean {
         return true
     }
 
+    if (isBenignServerFetchAbort(error)) {
+        return true
+    }
+
     if (isBenignClientStorageError(error)) {
         return true
     }
@@ -196,6 +247,14 @@ export function shouldSkipCapture(error: unknown): boolean {
     }
 
     if (isBenignDomMutationError(error)) {
+        return true
+    }
+
+    if (isBenignRscStreamError(error)) {
+        return true
+    }
+
+    if (isOpaqueMinifiedError(error)) {
         return true
     }
 
@@ -287,7 +346,11 @@ export function shouldDropClientEvent(event: ErrorEvent): boolean {
         text.includes("Connection to Indexed Database server lost") ||
         text.includes("DatabaseClosedError") ||
         text.includes("invalid security context") ||
-        text.includes("The operation is insecure")
+        text.includes("The operation is insecure") ||
+        text.includes("IndexedDB API missing") ||
+        text.includes("Can't find variable: indexedDB") ||
+        text.includes("Destiny manifest update failed") ||
+        (text.includes("BulkError") && text.includes("bulkPut()"))
     ) {
         return true
     }
@@ -296,7 +359,28 @@ export function shouldDropClientEvent(event: ErrorEvent): boolean {
         return true
     }
 
-    if (text.includes("AbortError") && text.includes("Database deleted")) {
+    const hasAppStackFrame = eventHasAppStackFrame(event)
+
+    if (!hasAppStackFrame && text.includes("AbortError")) {
+        return true
+    }
+
+    if (!hasAppStackFrame && text.includes("Connection closed")) {
+        return true
+    }
+
+    if (
+        text.includes("parallelRoutes.get") ||
+        (text.includes("parentNode") && text.includes("TypeError"))
+    ) {
+        return true
+    }
+
+    if (text.includes("An error occurred in the Server Components render")) {
+        return true
+    }
+
+    if (text.includes("BungieHTMLError") && text.includes("401")) {
         return true
     }
 
@@ -307,8 +391,6 @@ export function shouldDropClientEvent(event: ErrorEvent): boolean {
     if (text.includes("removeChild") || text.includes("The object can not be found here")) {
         return true
     }
-
-    const hasAppStackFrame = eventHasAppStackFrame(event)
 
     if (
         !hasAppStackFrame &&
@@ -326,8 +408,13 @@ export function shouldDropClientEvent(event: ErrorEvent): boolean {
             text.includes("Can't find variable: CONFIG") ||
             text.includes("Can't find variable: currentInset") ||
             text.includes("CONFIG is not defined") ||
-            text.includes("currentInset is not defined"))
+            text.includes("currentInset is not defined") ||
+            text.includes("Maximum call stack size exceeded"))
     ) {
+        return true
+    }
+
+    if (!hasAppStackFrame && /^Error: \S{1,3}$/.test(text.split("\n")[0] ?? "")) {
         return true
     }
 

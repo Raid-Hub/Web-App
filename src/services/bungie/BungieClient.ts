@@ -88,7 +88,9 @@ export default abstract class BaseBungieClient implements BungieClientProtocol {
 
     static readonly ExpectedErrorCodes = new Set<PlatformErrorCodes>([
         5, // SystemDisabled
+        8, // ParameterInvalidRange — bad membership/type combos on clan lookups
         18, // InvalidParameters — bad membership/type combos on optional lookups (e.g. clans)
+        217, // UserCannotResolveCentralAccount — player search miss
         686, // ClanNotFound
         1618, // DestinyUnexpectedError — Bungie-side 500, surfaced in UI as load failure
         1653, // PGCRNotFound

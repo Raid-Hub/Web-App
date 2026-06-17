@@ -28,11 +28,31 @@ export function ProfileClientWrapper({
             return
         }
 
-        window.history.replaceState(
-            { vanity },
-            "",
-            `${targetPath}${window.location.search}${window.location.hash}`
-        )
+        // Defer until after RSC hydration — immediate replaceState races Next flight scripts ($RC).
+        let cancelled = false
+        let innerFrameId: number | undefined
+
+        const outerFrameId = requestAnimationFrame(() => {
+            innerFrameId = requestAnimationFrame(() => {
+                if (cancelled || window.location.pathname === targetPath) {
+                    return
+                }
+
+                window.history.replaceState(
+                    { vanity },
+                    "",
+                    `${targetPath}${window.location.search}${window.location.hash}`
+                )
+            })
+        })
+
+        return () => {
+            cancelled = true
+            cancelAnimationFrame(outerFrameId)
+            if (innerFrameId !== undefined) {
+                cancelAnimationFrame(innerFrameId)
+            }
+        }
     }, [mounted, vanity, pathname])
 
     return (
