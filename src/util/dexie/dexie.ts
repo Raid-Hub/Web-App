@@ -143,6 +143,15 @@ class CustomDexie extends Dexie implements Tables {
             language: DestinyManifestLanguage
         }
     ) => {
+        if (!isIndexedDBAvailable()) {
+            return this.updateDefinitionsInMemoryOnly(dispatch, {
+                newManifestVersion,
+                client,
+                manifest,
+                language
+            })
+        }
+
         const allSettled = await Promise.allSettled([
             getDestinyManifestComponent(client, {
                 destinyManifest: manifest,
@@ -286,6 +295,133 @@ class CustomDexie extends Dexie implements Tables {
 
         throw new AggregateError(rejected, "Destiny manifest update failed")
     }
+
+    /** Populate in-memory manifest cache when IndexedDB is unavailable (PS5, strict privacy). */
+    private updateDefinitionsInMemoryOnly = async (
+        dispatch: <K extends CustomDexieTable>([table, values]: [
+            table: K,
+            values: CustomDexieTableDefinition<K>[]
+        ]) => void,
+        {
+            newManifestVersion,
+            client,
+            manifest,
+            language
+        }: {
+            newManifestVersion: string
+            client: ClientBungieClient
+            manifest: DestinyManifest
+            language: DestinyManifestLanguage
+        }
+    ) => {
+        await Promise.all([
+            getDestinyManifestComponent(client, {
+                destinyManifest: manifest,
+                tableName: "DestinyInventoryItemLiteDefinition",
+                language
+            }).then(items => {
+                const itemsWithHashes = Object.entries(items)
+                    .filter(([, item]) => item.itemType === 3 || item.itemType === 14)
+                    .map(([hash, item]) => ({
+                        ...item,
+                        hash: Number(hash)
+                    }))
+                dispatch(["items", itemsWithHashes])
+            }),
+
+            getDestinyManifestComponent(client, {
+                destinyManifest: manifest,
+                tableName: "DestinyActivityDefinition",
+                language
+            }).then(activities => {
+                dispatch(["activities", Object.values(activities)])
+            }),
+
+            getDestinyManifestComponent(client, {
+                destinyManifest: manifest,
+                tableName: "DestinyActivityModeDefinition",
+                language
+            }).then(modes => {
+                dispatch(["activityModes", Object.values(modes)])
+            }),
+
+            getDestinyManifestComponent(client, {
+                destinyManifest: manifest,
+                tableName: "DestinySeasonDefinition",
+                language
+            }).then(seasons => {
+                dispatch(["seasons", Object.values(seasons)])
+            }),
+
+            getDestinyManifestComponent(client, {
+                destinyManifest: manifest,
+                tableName: "DestinyActivityModifierDefinition",
+                language
+            }).then(modifiers => {
+                dispatch(["activityModifiers", Object.values(modifiers)])
+            }),
+
+            getDestinyManifestComponent(client, {
+                destinyManifest: manifest,
+                tableName: "DestinyClassDefinition",
+                language
+            }).then(classes => {
+                dispatch(["characterClasses", Object.values(classes)])
+            }),
+
+            getDestinyManifestComponent(client, {
+                destinyManifest: manifest,
+                tableName: "DestinyMilestoneDefinition",
+                language
+            }).then(milestones => {
+                dispatch(["milestones", Object.values(milestones)])
+            }),
+
+            getClanBannerSource(client).then(response => {
+                const banners = response.Response
+                const hash = <K extends keyof ClanBannerSource>(key: K) =>
+                    o.entries(banners[key]).map(([hash, def]) =>
+                        typeof def === "string"
+                            ? { hash: Number(hash), value: def }
+                            : {
+                                  hash: Number(hash),
+                                  ...(def as Prettify<
+                                      ClanBannerSource[K][keyof ClanBannerSource[K]]
+                                  >)
+                              }
+                    )
+
+                for (const key of Object.keys(banners) as (keyof ClanBannerSource)[]) {
+                    dispatch([key as CustomDexieTable, hash(key)] as [
+                        CustomDexieTable,
+                        CustomDexieTableDefinition<CustomDexieTable>[]
+                    ])
+                }
+            })
+        ])
+
+        return newManifestVersion
+    }
+}
+
+export function isIndexedDBAvailable(): boolean {
+    try {
+        return typeof indexedDB !== "undefined" && indexedDB !== null
+    } catch {
+        return false
+    }
+}
+
+export function isDexieManifestStorageError(err: unknown): boolean {
+    const message = err instanceof Error ? err.message : String(err)
+    const name = err instanceof Error ? err.name : ""
+
+    return (
+        name === "BulkError" ||
+        name === "MissingAPIError" ||
+        message.includes("Destiny manifest update failed") ||
+        message.includes("bulkPut()")
+    )
 }
 
 export function isDexieConnectionLostError(err: unknown): boolean {
@@ -311,6 +447,10 @@ export function isDexieConnectionLostError(err: unknown): boolean {
 }
 
 export async function recoverDexieDatabase(db: CustomDexie): Promise<void> {
+    if (!isIndexedDBAvailable()) {
+        return
+    }
+
     try {
         if (!db.isOpen()) {
             await db.open()

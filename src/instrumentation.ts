@@ -1,4 +1,5 @@
 import * as Sentry from "@sentry/nextjs"
+import { shouldSkipCapture } from "./lib/sentry/policy"
 
 export async function register() {
     if (process.env.NEXT_RUNTIME === "nodejs") {
@@ -8,4 +9,10 @@ export async function register() {
     }
 }
 
-export const onRequestError = Sentry.captureRequestError
+export const onRequestError: typeof Sentry.captureRequestError = (error, request, errorContext) => {
+    if (shouldSkipCapture(error)) {
+        return
+    }
+
+    return Sentry.captureRequestError(error, request, errorContext)
+}

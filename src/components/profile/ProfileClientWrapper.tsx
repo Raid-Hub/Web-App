@@ -28,11 +28,20 @@ export function ProfileClientWrapper({
             return
         }
 
-        window.history.replaceState(
-            { vanity },
-            "",
-            `${targetPath}${window.location.search}${window.location.hash}`
-        )
+        // Defer until after RSC hydration — immediate replaceState races Next flight scripts ($RC).
+        const frameId = requestAnimationFrame(() => {
+            requestAnimationFrame(() => {
+                if (window.location.pathname !== targetPath) {
+                    window.history.replaceState(
+                        { vanity },
+                        "",
+                        `${targetPath}${window.location.search}${window.location.hash}`
+                    )
+                }
+            })
+        })
+
+        return () => cancelAnimationFrame(frameId)
     }, [mounted, vanity, pathname])
 
     return (

@@ -1,4 +1,5 @@
 import { useQuery } from "@tanstack/react-query"
+import { RaidHubError } from "./RaidHubError"
 import { getRaidHubApi } from "./common"
 
 export const useClanStats = (
@@ -18,6 +19,12 @@ export const useClanStats = (
                 },
                 null
             ).then(res => res.response),
+        retry: (failureCount, error) =>
+            failureCount < 2 &&
+            error instanceof RaidHubError &&
+            (error.errorCode === "InternalServerError" ||
+                error.errorCode === "ServiceUnavailableError"),
+        retryDelay: failureCount => Math.min(2 ** failureCount * 1000, 8000),
         ...opts
     })
 }

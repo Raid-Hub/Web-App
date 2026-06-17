@@ -1,4 +1,5 @@
 import { BungieHTTPError, BungiePlatformError } from "~/models/BungieAPIError"
+import { isIndexedDBAvailable } from "~/util/dexie/dexie"
 import type { SentryCaptureContext } from "./types"
 
 export type { SentryCaptureContext } from "./types"
@@ -30,6 +31,7 @@ function getClientLocation(): Record<string, string> | undefined {
         route_search: window.location.search,
         route_hash: window.location.hash,
         online: String(navigator.onLine),
+        idb_available: String(isIndexedDBAvailable()),
         ...(connection?.effectiveType ? { network_effective_type: connection.effectiveType } : {})
     }
 }

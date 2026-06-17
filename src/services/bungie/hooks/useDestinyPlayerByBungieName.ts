@@ -2,6 +2,7 @@ import { useQuery } from "@tanstack/react-query"
 import { searchDestinyPlayerByBungieName } from "bungie-net-core/endpoints/Destiny2"
 import { type UserInfoCard } from "bungie-net-core/models"
 import { useBungieClient } from "~/components/providers/session/BungieClientProvider"
+import { type BungiePlatformError } from "~/models/BungieAPIError"
 
 export const useDestinyPlayerByBungieName = <T = UserInfoCard[]>(
     params: {
@@ -25,7 +26,16 @@ export const useDestinyPlayerByBungieName = <T = UserInfoCard[]>(
                     membershipType: -1
                 },
                 queryKey[2]
-            ).then(res => res.Response),
+            )
+                .then(res => res.Response)
+                .catch((error: BungiePlatformError): UserInfoCard[] => {
+                    // No matching Bungie account for Name#1234 — normal search miss.
+                    if (error.ErrorCode === 217) {
+                        return []
+                    }
+
+                    throw error
+                }),
         ...opts
     })
 }

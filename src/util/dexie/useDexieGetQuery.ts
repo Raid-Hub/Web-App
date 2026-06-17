@@ -2,7 +2,12 @@ import { type PromiseExtended } from "dexie"
 import { useLiveQuery } from "dexie-react-hooks"
 import { useMemo } from "react"
 import { useDefinitionsCache } from "~/components/providers/DestinyManifestManager"
-import { useDexie, type CustomDexieTable, type CustomDexieTableDefinition } from "./dexie"
+import {
+    isIndexedDBAvailable,
+    useDexie,
+    type CustomDexieTable,
+    type CustomDexieTableDefinition
+} from "./dexie"
 
 /**
  * Custom hook for querying a single item from the Dexie database with in-memory caching.
@@ -11,17 +16,24 @@ import { useDexie, type CustomDexieTable, type CustomDexieTableDefinition } from
  * @returns The queried item or null if not found.
  */
 export const useDexieGetQuery = <K extends CustomDexieTable>(table: K, hash: number) => {
+    const idbAvailable = isIndexedDBAvailable()
     const dexieDB = useDexie()
     const cache = useDefinitionsCache(table)
 
     const liveQuery = useLiveQuery(
-        () =>
-            (
+        () => {
+            if (!idbAvailable) {
+                return undefined
+            }
+
+            return (
                 dexieDB[table].get({ hash: hash }) as PromiseExtended<
                     CustomDexieTableDefinition<K> | undefined
                 >
-            ).catch(() => undefined),
-        [hash]
+            ).catch(() => undefined)
+        },
+        [hash, idbAvailable, table],
+        undefined
     )
 
     return useMemo(() => {
