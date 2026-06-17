@@ -1,4 +1,6 @@
 // eslint-disable-next-line @typescript-eslint/no-var-requires
+const reservedVanitySlugs = require("./routing/reserved-vanity-slugs.json")
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const { withSentryConfig } = require("@sentry/nextjs")
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const withBundleAnalyzer = require("@next/bundle-analyzer")({
@@ -51,16 +53,23 @@ const nextConfig = {
             }
         ]
     },
-    rewrites: () => [
-        {
-            destination: "/user/:vanity",
-            // Exclude reserved slugs that have their own filesystem routes (e.g. /checkpoints, /calendar).
-            source: "/:vanity((?!checkpoints$|calendar$)[a-zA-Z0-9]+)"
-        }
-    ]
+    rewrites: () => {
+        const vanityExclusion = reservedVanitySlugs.map(slug => `${slug}$`).join("|")
+
+        return [
+            {
+                destination: "/user/:vanity",
+                // Keep in sync with routing/reserved-vanity-slugs.json (see scripts/check-vanity-slugs.mjs).
+                source: `/:vanity((?!${vanityExclusion})[a-zA-Z0-9]+)`
+            }
+        ]
+    }
 }
 
 module.exports = withSentryConfig(withBundleAnalyzer(nextConfig), {
     silent: !process.env.CI,
-    widenClientFileUpload: true
+    widenClientFileUpload: true,
+    org: process.env.SENTRY_ORG,
+    project: process.env.SENTRY_PROJECT,
+    authToken: process.env.SENTRY_AUTH_TOKEN
 })

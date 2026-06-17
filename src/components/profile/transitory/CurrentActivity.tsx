@@ -19,7 +19,10 @@ import { useTimer } from "~/hooks/util/useTimer"
 import type { ProfileProps } from "~/lib/profile/types"
 import { sentryOptionalQueryMeta } from "~/lib/sentry/react-query"
 import { useProfileLiveData, useProfileTransitory } from "~/services/bungie/hooks"
-import { getRaidHubApi } from "~/services/raidhub/common"
+import {
+    fetchRaidHubPlayersBasic,
+    playersBasicByMembershipId
+} from "~/services/raidhub/fetchPlayersBasic"
 import { type RaidHubPlayerInfo } from "~/services/raidhub/types"
 import { Card } from "~/shad/card"
 import { bungieEmblemUrl, bungiePgcrImageUrl, bungieProfileIconUrl } from "~/util/destiny"
@@ -140,13 +143,7 @@ const CurrentActivityCard = (props: {
     const { data: resolvedById = new Map<string, RaidHubPlayerInfo>() } = useQuery({
         queryKey: ["raidhub", "player", "basic", "fireteam", sortedPartyMemberIds] as const,
         queryFn: async () => {
-            const players = await Promise.all(
-                sortedPartyMemberIds.map(membershipId =>
-                    getRaidHubApi("/player/{membershipId}/basic", { membershipId }, null).then(
-                        res => res.response
-                    )
-                )
-            )
+            const players = await fetchRaidHubPlayersBasic(sortedPartyMemberIds)
 
             players.forEach(player => {
                 queryClient.setQueryData(
@@ -155,7 +152,7 @@ const CurrentActivityCard = (props: {
                 )
             })
 
-            return new Map(players.map(player => [player.membershipId, player]))
+            return playersBasicByMembershipId(players)
         },
         enabled: sortedPartyMemberIds.length > 0,
         staleTime: 1000 * 60 * 60,

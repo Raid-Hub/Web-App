@@ -71,3 +71,17 @@ jobs:
 
             - name: "migrate:drift"
               run: bun migrate:drift
+
+    vanity-slugs:
+        name: Vanity slug sync
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v4
+
+            - name: Setup Bun
+              uses: oven-sh/setup-bun@v1
+              with:
+                  bun-version: latest
+
+            - name: Check vanity rewrite exclusions
+              run: bun run check:vanity-slugs

@@ -199,6 +199,37 @@ export interface paths {
       };
     };
   };
+  "/player/basic/batch": {
+    /**
+     * /player/basic/batch
+     * @description Batch variant of `/player/{membershipId}/basic`. Resolves up to 12 players in one round-trip.
+     */
+    post: {
+      requestBody: {
+        content: {
+          "application/json": {
+            membershipIds: string[];
+          };
+        };
+      };
+      responses: {
+        /** @description Success */
+        200: {
+          content: {
+            readonly "application/json": {
+              /** Format: date-time */
+              readonly minted: string;
+              /** @enum {boolean} */
+              readonly success: true;
+              readonly response: {
+                readonly players: readonly components["schemas"]["PlayerInfo"][];
+              };
+            };
+          };
+        };
+      };
+    };
+  };
   "/player/{membershipId}/history": {
     /**
      * /player/{membershipId}/history
