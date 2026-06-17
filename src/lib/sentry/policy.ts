@@ -359,11 +359,13 @@ export function shouldDropClientEvent(event: ErrorEvent): boolean {
         return true
     }
 
-    if (text.includes("AbortError")) {
+    const hasAppStackFrame = eventHasAppStackFrame(event)
+
+    if (!hasAppStackFrame && text.includes("AbortError")) {
         return true
     }
 
-    if (text.includes("Connection closed")) {
+    if (!hasAppStackFrame && text.includes("Connection closed")) {
         return true
     }
 
@@ -389,8 +391,6 @@ export function shouldDropClientEvent(event: ErrorEvent): boolean {
     if (text.includes("removeChild") || text.includes("The object can not be found here")) {
         return true
     }
-
-    const hasAppStackFrame = eventHasAppStackFrame(event)
 
     if (
         !hasAppStackFrame &&
