@@ -1,6 +1,6 @@
 import { type Metadata } from "next"
+import { notFound } from "next/navigation"
 import { LeaderboardSSR } from "~/app/leaderboards/LeaderboardSSR"
-import NotFound from "~/app/not-found"
 import { CloudflareActivitySplash } from "~/components/CloudflareImage"
 import { findPantheonVersionByPath } from "~/lib/manifest/pantheon"
 import { baseMetadata } from "~/lib/metadata"
@@ -97,7 +97,7 @@ export default async function Page({ params, searchParams }: DynamicParams) {
     const manifest = await prefetchManifest()
     const definitions = getDefinitions(params, manifest)
     if (!definitions) {
-        return <NotFound />
+        notFound()
     }
 
     const { version, activity, isPantheon } = definitions

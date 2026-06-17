@@ -23,4 +23,6 @@ echo "Computed APP_VERSION=${APP_VERSION} (latest tag: ${LATEST_TAG:-none})"
 
 if [[ -n "${GITHUB_ENV:-}" ]]; then
     echo "APP_VERSION=${APP_VERSION}" >>"$GITHUB_ENV"
+    # Keep Sentry release aligned with APP_VERSION so GitHub Fixes resolves in the right version.
+    echo "SENTRY_RELEASE=${APP_VERSION}" >>"$GITHUB_ENV"
 fi

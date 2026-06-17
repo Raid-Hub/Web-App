@@ -1,4 +1,5 @@
-import { useMemo } from "react"
+import { useEffect, useMemo, useState } from "react"
+import { useClusterGuardianFetchBudget } from "~/components/profile/raids/history/ClusterGuardianFetchBudget"
 import { getActivityClusterInstanceIds, mergeClusterGuardians } from "~/lib/activity/guardians"
 import { type ActivityCluster } from "~/lib/activity/sessions"
 import { useRaidHubInstanceList } from "~/services/raidhub/hooks"
@@ -12,6 +13,7 @@ export const useActivityClusterGuardians = (
     const leadActivity = cluster.activities[0]
     const skip = !leadActivity || leadActivity.playerCount > 50
     const enabled = opts?.enabled ?? true
+    const fetchBudget = useClusterGuardianFetchBudget()
 
     const instanceIds = useMemo(() => {
         const ids = getActivityClusterInstanceIds(cluster.activities.map(a => a.instanceId))
@@ -19,7 +21,32 @@ export const useActivityClusterGuardians = (
         return ids.slice(0, 1)
     }, [cluster.activities])
 
-    const queries = useRaidHubInstanceList(skip || !enabled ? [] : instanceIds)
+    const leadInstanceId = instanceIds[0]
+    const [mayFetch, setMayFetch] = useState(false)
+
+    useEffect(() => {
+        if (skip || !enabled || !leadInstanceId) {
+            setMayFetch(false)
+            return
+        }
+
+        if (!fetchBudget) {
+            setMayFetch(true)
+            return
+        }
+
+        if (fetchBudget.tryClaim(leadInstanceId)) {
+            setMayFetch(true)
+            return () => {
+                fetchBudget.release(leadInstanceId)
+                setMayFetch(false)
+            }
+        }
+
+        setMayFetch(false)
+    }, [skip, enabled, leadInstanceId, fetchBudget, fetchBudget?.revision])
+
+    const queries = useRaidHubInstanceList(mayFetch ? instanceIds : [])
 
     return useMemo(() => {
         if (skip) {

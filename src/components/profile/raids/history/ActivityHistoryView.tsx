@@ -8,6 +8,7 @@ import { parseLocalDateKey } from "~/lib/activity/sessions"
 import { type RaidHubInstanceForPlayer } from "~/services/raidhub/types"
 import { Button } from "~/shad/button"
 import { formattedTimeSince, toCustomDateString } from "~/util/presentation/formatting"
+import { ClusterGuardianFetchBudgetProvider } from "./ClusterGuardianFetchBudget"
 import { PlaySessionBlock } from "./PlaySessionBlock"
 
 export const ActivityHistoryView = memo(
@@ -36,40 +37,42 @@ export const ActivityHistoryView = memo(
         }
 
         return (
-            <div className="flex w-full flex-col gap-4">
-                {dayGroups.map(([dayKey, sessions]) => (
-                    <section key={dayKey} className="flex flex-col gap-3">
-                        <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1 px-1">
-                            <h3 className="text-base font-semibold">
-                                {toCustomDateString(parseLocalDateKey(dayKey), locale)}
-                            </h3>
-                            <span className="text-muted-foreground text-sm">
-                                {formattedTimeSince(parseLocalDateKey(dayKey), locale)}
-                            </span>
-                        </div>
+            <ClusterGuardianFetchBudgetProvider>
+                <div className="flex w-full flex-col gap-4">
+                    {dayGroups.map(([dayKey, sessions]) => (
+                        <section key={dayKey} className="flex flex-col gap-3">
+                            <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1 px-1">
+                                <h3 className="text-base font-semibold">
+                                    {toCustomDateString(parseLocalDateKey(dayKey), locale)}
+                                </h3>
+                                <span className="text-muted-foreground text-sm">
+                                    {formattedTimeSince(parseLocalDateKey(dayKey), locale)}
+                                </span>
+                            </div>
 
-                        <div className="flex flex-col gap-3">
-                            {sessions.map(session => (
-                                <PlaySessionBlock
-                                    key={session.id}
-                                    session={session}
-                                    profileMembershipIds={profileMembershipIds}
-                                />
-                            ))}
-                        </div>
-                    </section>
-                ))}
+                            <div className="flex flex-col gap-3">
+                                {sessions.map(session => (
+                                    <PlaySessionBlock
+                                        key={session.id}
+                                        session={session}
+                                        profileMembershipIds={profileMembershipIds}
+                                    />
+                                ))}
+                            </div>
+                        </section>
+                    ))}
 
-                {hasMore && (
-                    <Button
-                        variant="outline"
-                        disabled={isLoading}
-                        onClick={onLoadMore}
-                        className="w-full sm:w-auto">
-                        Load more
-                    </Button>
-                )}
-            </div>
+                    {hasMore && (
+                        <Button
+                            variant="outline"
+                            disabled={isLoading}
+                            onClick={onLoadMore}
+                            className="w-full sm:w-auto">
+                            Load more
+                        </Button>
+                    )}
+                </div>
+            </ClusterGuardianFetchBudgetProvider>
         )
     }
 )

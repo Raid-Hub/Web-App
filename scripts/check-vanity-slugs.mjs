@@ -53,11 +53,26 @@ const urlPrefixes = readdirSync(appDir, { withFileTypes: true })
             isTrackedAppRoute(entry.name)
     )
     .map(entry => entry.name)
-    .sort()
+
+const routeGroupUrlPrefixes = readdirSync(appDir, { withFileTypes: true })
+    .filter(entry => entry.isDirectory() && entry.name.startsWith("("))
+    .flatMap(groupEntry => {
+        const groupDir = join(appDir, groupEntry.name)
+        return readdirSync(groupDir, { withFileTypes: true })
+            .filter(
+                entry =>
+                    entry.isDirectory() &&
+                    !entry.name.startsWith("[") &&
+                    existsSync(join(groupDir, entry.name, "page.tsx"))
+            )
+            .map(entry => entry.name)
+    })
+
+const allUrlPrefixes = [...new Set([...urlPrefixes, ...routeGroupUrlPrefixes])].sort()
 
 const reservedSet = new Set(reserved)
-const missingFromReserved = urlPrefixes.filter(slug => !reservedSet.has(slug))
-const staleReserved = reserved.filter(slug => !urlPrefixes.includes(slug))
+const missingFromReserved = allUrlPrefixes.filter(slug => !reservedSet.has(slug))
+const staleReserved = reserved.filter(slug => !allUrlPrefixes.includes(slug))
 
 const configSource = readFileSync(configPath, "utf8")
 const reservedSorted = [...reserved].sort()

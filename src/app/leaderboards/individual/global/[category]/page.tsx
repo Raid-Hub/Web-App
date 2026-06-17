@@ -1,5 +1,5 @@
 import { type Metadata } from "next"
-import NotFound from "~/app/not-found"
+import { notFound } from "next/navigation"
 import { CloudflareStaticImage } from "~/components/CloudflareImage"
 import { baseMetadata } from "~/lib/metadata"
 import { type PathParamsForLeaderboardURL } from "~/services/raidhub/types"
@@ -59,7 +59,7 @@ const ENTRIES_PER_PAGE = 50
 export default async function Page({ params, searchParams }: DynamicParams) {
     const categoryName = tryGetCategoryTitle(params.category)
     if (!categoryName) {
-        return <NotFound />
+        notFound()
     }
 
     const apiParams = {

@@ -1,4 +1,4 @@
-import NotFound from "~/app/not-found"
+import { notFound } from "next/navigation"
 import { RaidHubError } from "~/services/raidhub/RaidHubError"
 import { getRaidHubApi } from "~/services/raidhub/common"
 import {
@@ -37,7 +37,7 @@ export const LeaderboardSSR = async <T extends RaidHubLeaderboardURL>(props: {
         : null
 
     if (ssrData === "not-found") {
-        return <NotFound />
+        notFound()
     }
 
     return (

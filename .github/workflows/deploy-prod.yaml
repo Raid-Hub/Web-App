@@ -62,6 +62,8 @@ jobs:
               run: |
                   vercel env rm APP_VERSION production --yes --token=${{ secrets.VERCEL_TOKEN }}
                   echo "$APP_VERSION" | vercel env add APP_VERSION production --token=${{ secrets.VERCEL_TOKEN }}
+                  vercel env rm SENTRY_RELEASE production --yes --token=${{ secrets.VERCEL_TOKEN }} || true
+                  echo "$SENTRY_RELEASE" | vercel env add SENTRY_RELEASE production --token=${{ secrets.VERCEL_TOKEN }}
 
             - name: Deploy Project to Vercel
               shell: bash
@@ -100,3 +102,12 @@ jobs:
                     "${{ github.sha }}" \
                     "${{ secrets.GITHUB_TOKEN }}" \
                     "${{ github.repository }}"
+
+            - name: Sync Sentry release and resolve issues
+              env:
+                  SENTRY_ISSUE_AUTH_TOKEN: ${{ secrets.SENTRY_ISSUE_AUTH_TOKEN }}
+                  SENTRY_ORG: raidhub
+                  SENTRY_PROJECT: website
+              run: |
+                  chmod +x ./.github/scripts/sync-sentry-release.sh
+                  ./.github/scripts/sync-sentry-release.sh
