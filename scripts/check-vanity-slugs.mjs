@@ -4,6 +4,7 @@
  * Run: bun scripts/check-vanity-slugs.mjs
  */
 import { existsSync, readdirSync, readFileSync } from "node:fs"
+import { execSync } from "node:child_process"
 import { dirname, join } from "node:path"
 import { fileURLToPath } from "node:url"
 
@@ -11,6 +12,15 @@ const root = join(dirname(fileURLToPath(import.meta.url)), "..")
 const appDir = join(root, "src/app")
 const configPath = join(root, "next.config.js")
 const slugsPath = join(root, "routing/reserved-vanity-slugs.json")
+
+const isGitIgnored = relativePath => {
+    try {
+        execSync(`git check-ignore -q ${relativePath}`, { cwd: root, stdio: "ignore" })
+        return true
+    } catch {
+        return false
+    }
+}
 
 const reserved = JSON.parse(readFileSync(slugsPath, "utf8"))
 if (!Array.isArray(reserved) || reserved.some(slug => typeof slug !== "string")) {
@@ -20,12 +30,15 @@ if (!Array.isArray(reserved) || reserved.some(slug => typeof slug !== "string"))
 
 const ignoredAppDirs = new Set(["api", "header"])
 
+const isTrackedAppRoute = name => !isGitIgnored(`src/app/${name}`)
+
 const topLevelAppSlugs = readdirSync(appDir, { withFileTypes: true })
     .filter(
         entry =>
             entry.isDirectory() &&
             !entry.name.startsWith("(") &&
             !ignoredAppDirs.has(entry.name) &&
+            isTrackedAppRoute(entry.name) &&
             existsSync(join(appDir, entry.name, "page.tsx"))
     )
     .map(entry => entry.name)
@@ -34,7 +47,10 @@ const topLevelAppSlugs = readdirSync(appDir, { withFileTypes: true })
 const urlPrefixes = readdirSync(appDir, { withFileTypes: true })
     .filter(
         entry =>
-            entry.isDirectory() && !entry.name.startsWith("(") && !ignoredAppDirs.has(entry.name)
+            entry.isDirectory() &&
+            !entry.name.startsWith("(") &&
+            !ignoredAppDirs.has(entry.name) &&
+            isTrackedAppRoute(entry.name)
     )
     .map(entry => entry.name)
     .sort()
