@@ -14,6 +14,7 @@
         "lint": "next lint",
         "format": "prettier --write \"src/**/*.{ts,tsx,json}\" && prisma format",
         "format:check": "prettier --check \"src/**/*.{ts,tsx,json}\"",
+        "check:vanity-slugs": "bun scripts/check-vanity-slugs.mjs",
         "build": "bun prisma generate && next build",
         "deploy": "./vercel/dev-deploy.sh"
     },
@@ -164,8 +165,61 @@
             "@next/next/no-page-custom-font": "off",
             "@typescript-eslint/unbound-method": "off",
             "@typescript-eslint/no-unsafe-enum-comparison": "off",
-            "@typescript-eslint/no-misused-promises": "off"
-        }
+            "@typescript-eslint/no-misused-promises": "off",
+            "no-restricted-globals": [
+                "error",
+                {
+                    "name": "localStorage",
+                    "message": "Use ~/lib/storage/safeStorage instead of localStorage directly."
+                }
+            ]
+        },
+        "overrides": [
+            {
+                "files": ["src/lib/storage/**/*.ts", "src/hooks/util/useLocalStorage.ts"],
+                "rules": {
+                    "no-restricted-globals": "off"
+                }
+            },
+            {
+                "files": [
+                    "src/components/profile/**/*",
+                    "src/components/pgcr/**/*",
+                    "src/hooks/pgcr/**/*",
+                    "src/app/pgcr/**/*",
+                    "src/app/(profile)/**/*"
+                ],
+                "rules": {
+                    "no-restricted-imports": [
+                        "error",
+                        {
+                            "paths": [
+                                {
+                                    "name": "@radix-ui/react-select",
+                                    "message": "Use native <select> on profile/PGCR routes."
+                                },
+                                {
+                                    "name": "@radix-ui/react-tooltip",
+                                    "message": "Use the title attribute on profile/PGCR routes."
+                                },
+                                {
+                                    "name": "~/shad/select",
+                                    "message": "Use native <select> on profile/PGCR routes."
+                                },
+                                {
+                                    "name": "~/shad/tooltip",
+                                    "message": "Use the title attribute on profile/PGCR routes."
+                                },
+                                {
+                                    "name": "~/components/Tooltip",
+                                    "message": "Use the title attribute on profile/PGCR routes."
+                                }
+                            ]
+                        }
+                    ]
+                }
+            }
+        ]
     },
     "browserslist": [
         "chrome >= 87",

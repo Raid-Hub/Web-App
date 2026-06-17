@@ -1,20 +1,7 @@
 import { useCallback, useEffect, useState, type Dispatch, type SetStateAction } from "react"
+import { safeGetItem, safeSetItem } from "~/lib/storage/safeStorage"
 
-function safeGetItem(key: string): string | null {
-    try {
-        return localStorage.getItem(key)
-    } catch {
-        return null
-    }
-}
-
-function safeSetItem(key: string, value: string): void {
-    try {
-        localStorage.setItem(key, value)
-    } catch {
-        // Safari private mode / disabled storage — keep in-memory state only.
-    }
-}
+export { safeGetItem, safeRemoveItem, safeSetItem } from "~/lib/storage/safeStorage"
 
 export const useLocalStorage = <V extends string | boolean | number | object | null>(
     key: string,

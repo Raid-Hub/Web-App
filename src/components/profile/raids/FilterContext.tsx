@@ -12,6 +12,7 @@ import {
     decodeFilters,
     type ActivityFilter
 } from "~/lib/profile/filters/activityFilters"
+import { safeGetItem, safeSetItem } from "~/lib/storage/safeStorage"
 
 const FilterContext = createContext<
     | {
@@ -48,7 +49,7 @@ type EncodedFilterData = {
  * @returns The saved activity filter.
  */
 const saveFilter = (_: FilterData | null, data: FilterData | null) => {
-    localStorage.setItem(
+    safeSetItem(
         KEY_ACTIVITY_FILTER,
         JSON.stringify(
             data
@@ -77,7 +78,7 @@ export const FilterContextProvider = ({ children }: { children: ReactNode }) => 
     const [isMounted, setIsMounted] = useState(false)
 
     useEffect(() => {
-        const allFilters = localStorage.getItem(KEY_ACTIVITY_FILTER)
+        const allFilters = safeGetItem(KEY_ACTIVITY_FILTER)
         if (allFilters !== null) {
             try {
                 const fromStore = JSON.parse(allFilters) as EncodedFilterData
