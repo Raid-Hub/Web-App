@@ -18,7 +18,7 @@ export const ClusterGuardians = ({
     className?: string
 }) => {
     const containerRef = useRef<HTMLDivElement>(null)
-    const isVisible = useIsVisible(containerRef, { rootMargin: "240px" })
+    const isVisible = useIsVisible(containerRef, { rootMargin: "0px", threshold: 0.35 })
     const { guardians, isLoading, skip } = useActivityClusterGuardians(
         cluster,
         profileMembershipIds,

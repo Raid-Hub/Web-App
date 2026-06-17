@@ -1,6 +1,6 @@
 import { type Metadata } from "next"
+import { notFound } from "next/navigation"
 import { LeaderboardSSR } from "~/app/leaderboards/LeaderboardSSR"
-import NotFound from "~/app/not-found"
 import { CloudflareActivitySplash } from "~/components/CloudflareImage"
 import { baseMetadata } from "~/lib/metadata"
 import { prefetchManifest } from "~/services/raidhub/prefetchRaidHubManifest"
@@ -59,7 +59,7 @@ export default async function Page({ params, searchParams }: DynamicParams) {
     const manifest = await prefetchManifest()
     const definition = tryGetRaidDefinition(params.raid, manifest)
     if (!definition) {
-        return <NotFound />
+        notFound()
     }
     const categoryName = getCategoryName(params.category)
 

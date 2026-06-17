@@ -7,6 +7,7 @@ export const useRaidHubStatus = () =>
         queryKey: ["raidhub", "status"],
         queryFn: ({ signal }) =>
             getRaidHubApi("/status", null, null, { signal }).then(res => res.response),
+        meta: { sentryCapture: false },
         staleTime: 10000,
         refetchOnReconnect: true,
         refetchOnMount: true,

@@ -8,6 +8,7 @@ import { parseLocalDateKey } from "~/lib/activity/sessions"
 import { type RaidHubInstanceForPlayer } from "~/services/raidhub/types"
 import { Button } from "~/shad/button"
 import { formattedTimeSince, toCustomDateString } from "~/util/presentation/formatting"
+import { ClusterGuardianFetchBudgetProvider } from "./ClusterGuardianFetchBudget"
 import { PlaySessionBlock } from "./PlaySessionBlock"
 
 export const ActivityHistoryView = memo(
@@ -36,6 +37,7 @@ export const ActivityHistoryView = memo(
         }
 
         return (
+            <ClusterGuardianFetchBudgetProvider>
             <div className="flex w-full flex-col gap-4">
                 {dayGroups.map(([dayKey, sessions]) => (
                     <section key={dayKey} className="flex flex-col gap-3">
@@ -70,6 +72,7 @@ export const ActivityHistoryView = memo(
                     </Button>
                 )}
             </div>
+            </ClusterGuardianFetchBudgetProvider>
         )
     }
 )

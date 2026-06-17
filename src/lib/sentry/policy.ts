@@ -22,6 +22,7 @@ import type { SentryQueryMeta } from "./types"
 
 /** RaidHub API codes already handled in UI — dedupe react-query/tRPC noise. */
 const HANDLED_RAIDHUB_ERROR_CODES = new Set<RaidHubErrorCode>([
+    "ApiKeyError",
     "PlayerNotFoundError",
     "PlayerPrivateProfileError",
     "PlayerProtectedResourceError",
@@ -157,6 +158,8 @@ function isExtensionInjectedError(error: unknown): boolean {
         /_0x[0-9a-f]+/i.test(message) ||
         message.includes("Can't find variable: CONFIG") ||
         message.includes("Can't find variable: currentInset") ||
+        message.includes("runtime.sendMessage()") ||
+        message.includes("Tab not found") ||
         message === "CONFIG is not defined" ||
         message === "currentInset is not defined"
     )
@@ -377,6 +380,13 @@ export function shouldDropClientEvent(event: ErrorEvent): boolean {
     }
 
     if (text.includes("An error occurred in the Server Components render")) {
+        return true
+    }
+
+    if (
+        !hasAppStackFrame &&
+        (text.includes("runtime.sendMessage()") || text.includes("Tab not found"))
+    ) {
         return true
     }
 
