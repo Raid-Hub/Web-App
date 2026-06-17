@@ -54,8 +54,8 @@ const nextConfig = {
     rewrites: () => [
         {
             destination: "/user/:vanity",
-            // Exclude reserved slugs that have their own filesystem routes (e.g. /checkpoints).
-            source: "/:vanity((?!checkpoints$)[a-zA-Z0-9]+)"
+            // Exclude reserved slugs that have their own filesystem routes (e.g. /checkpoints, /calendar).
+            source: "/:vanity((?!checkpoints$|calendar$)[a-zA-Z0-9]+)"
         }
     ]
 }

@@ -1,6 +1,6 @@
 "use client"
 
-import { useQueries } from "@tanstack/react-query"
+import { useQuery, useQueryClient } from "@tanstack/react-query"
 import type {
     BungieMembershipType,
     DestinyCharacterActivitiesComponent,
@@ -17,6 +17,7 @@ import { H4 } from "~/components/__deprecated__/typography/H4"
 import { useActivityDefinition, useActivityModeDefinition, useItemDefinition } from "~/hooks/dexie"
 import { useTimer } from "~/hooks/util/useTimer"
 import type { ProfileProps } from "~/lib/profile/types"
+import { sentryOptionalQueryMeta } from "~/lib/sentry/react-query"
 import { useProfileLiveData, useProfileTransitory } from "~/services/bungie/hooks"
 import { getRaidHubApi } from "~/services/raidhub/common"
 import { type RaidHubPlayerInfo } from "~/services/raidhub/types"
@@ -130,28 +131,36 @@ const CurrentActivityCard = (props: {
         () => props.partyMembers.map(pm => pm.membershipId),
         [props.partyMembers]
     )
+    const sortedPartyMemberIds = useMemo(
+        () => [...partyMemberIds].sort((a, b) => a.localeCompare(b)),
+        [partyMemberIds]
+    )
 
-    const resolvedPlayers = useQueries({
-        queries: partyMemberIds.map(membershipId => ({
-            queryKey: ["raidhub", "player", "basic", membershipId] as const,
-            queryFn: () =>
-                getRaidHubApi("/player/{membershipId}/basic", { membershipId }, null).then(
-                    res => res.response
-                ),
-            staleTime: 1000 * 60 * 60
-        }))
+    const queryClient = useQueryClient()
+    const { data: resolvedById = new Map<string, RaidHubPlayerInfo>() } = useQuery({
+        queryKey: ["raidhub", "player", "basic", "fireteam", sortedPartyMemberIds] as const,
+        queryFn: async () => {
+            const players = await Promise.all(
+                sortedPartyMemberIds.map(membershipId =>
+                    getRaidHubApi("/player/{membershipId}/basic", { membershipId }, null).then(
+                        res => res.response
+                    )
+                )
+            )
+
+            players.forEach(player => {
+                queryClient.setQueryData(
+                    ["raidhub", "player", "basic", player.membershipId],
+                    player
+                )
+            })
+
+            return new Map(players.map(player => [player.membershipId, player]))
+        },
+        enabled: sortedPartyMemberIds.length > 0,
+        staleTime: 1000 * 60 * 60,
+        meta: sentryOptionalQueryMeta
     })
-
-    const resolvedById = useMemo(() => {
-        const map = new Map<string, RaidHubPlayerInfo>()
-        partyMemberIds.forEach((membershipId, index) => {
-            const player = resolvedPlayers[index]?.data
-            if (player) {
-                map.set(membershipId, player)
-            }
-        })
-        return map
-    }, [partyMemberIds, resolvedPlayers])
 
     return (
         <Latest $playerCount={props.partyMembers.length}>
