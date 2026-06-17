@@ -1,5 +1,5 @@
 import type { ErrorEvent } from "@sentry/nextjs"
-import { BungiePlatformError } from "~/models/BungieAPIError"
+import { BungieHTMLError, BungiePlatformError } from "~/models/BungieAPIError"
 import BaseBungieClient from "~/services/bungie/BungieClient"
 import { RaidHubError } from "~/services/raidhub/RaidHubError"
 import type { RaidHubErrorCode } from "~/services/raidhub/types"
@@ -73,10 +73,15 @@ function isBenignClientStorageError(error: unknown): boolean {
 
     return (
         name === "DatabaseClosedError" ||
+        name === "SecurityError" ||
+        name === "InvalidStateError" ||
         message.includes("OpenFailedError") ||
         message.includes("Database deleted by request of the user") ||
         message.includes("Connection to Indexed Database server lost") ||
-        message.includes("DatabaseClosedError")
+        message.includes("DatabaseClosedError") ||
+        message.includes("invalid security context") ||
+        message.includes("IDBTransaction") ||
+        message.includes("The operation is insecure")
     )
 }
 
@@ -100,7 +105,28 @@ function isBenignDomMutationError(error: unknown): boolean {
 }
 
 function isExtensionInjectedError(error: unknown): boolean {
-    return /_0x[0-9a-f]+/i.test(getErrorMessage(error))
+    const message = getErrorMessage(error)
+    return (
+        /_0x[0-9a-f]+/i.test(message) ||
+        message.includes("Can't find variable: CONFIG") ||
+        message.includes("Can't find variable: currentInset") ||
+        message === "CONFIG is not defined" ||
+        message === "currentInset is not defined"
+    )
+}
+
+function isBungieHtmlAuthError(error: unknown): boolean {
+    return error instanceof BungieHTMLError && error.status === 401
+}
+
+function isBenignMediaPlaybackError(error: unknown): boolean {
+    const message = getErrorMessage(error)
+    const name = error instanceof Error ? error.name : ""
+
+    return (
+        name === "NotAllowedError" &&
+        message.includes("play method is not allowed by the user agent")
+    )
 }
 
 function isExpectedBungiePlatformError(error: unknown): boolean {
@@ -174,6 +200,14 @@ export function shouldSkipCapture(error: unknown): boolean {
     }
 
     if (isExtensionInjectedError(error)) {
+        return true
+    }
+
+    if (isBungieHtmlAuthError(error)) {
+        return true
+    }
+
+    if (isBenignMediaPlaybackError(error)) {
         return true
     }
 
@@ -251,8 +285,14 @@ export function shouldDropClientEvent(event: ErrorEvent): boolean {
         text.includes("Database deleted by request of the user") ||
         text.includes("OpenFailedError") ||
         text.includes("Connection to Indexed Database server lost") ||
-        text.includes("DatabaseClosedError")
+        text.includes("DatabaseClosedError") ||
+        text.includes("invalid security context") ||
+        text.includes("The operation is insecure")
     ) {
+        return true
+    }
+
+    if (text.includes("IDBTransaction") || text.includes("InvalidStateError")) {
         return true
     }
 
@@ -280,7 +320,14 @@ export function shouldDropClientEvent(event: ErrorEvent): boolean {
     }
 
     // Extension / injected script noise (obfuscated identifiers, no app frames).
-    if (!hasAppStackFrame && /_0x[0-9a-f]+/i.test(text)) {
+    if (
+        !hasAppStackFrame &&
+        (/_0x[0-9a-f]+/i.test(text) ||
+            text.includes("Can't find variable: CONFIG") ||
+            text.includes("Can't find variable: currentInset") ||
+            text.includes("CONFIG is not defined") ||
+            text.includes("currentInset is not defined"))
+    ) {
         return true
     }
 

@@ -315,9 +315,17 @@ export async function recoverDexieDatabase(db: CustomDexie): Promise<void> {
         if (!db.isOpen()) {
             await db.open()
         }
-    } catch {
-        await db.delete()
-        await db.open()
+    } catch (error) {
+        if (error instanceof DOMException && error.name === "SecurityError") {
+            return
+        }
+
+        try {
+            await db.delete()
+            await db.open()
+        } catch {
+            // IndexedDB blocked (private mode, cross-origin iframe, etc.) — manifest stays in-memory.
+        }
     }
 }
 

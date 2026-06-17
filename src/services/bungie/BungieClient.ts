@@ -82,6 +82,7 @@ export default abstract class BaseBungieClient implements BungieClientProtocol {
 
     static readonly RetryableErrorCodes = new Set<PlatformErrorCodes>([
         1672, // DestinyThrottledByGameServer,
+        1618, // DestinyUnexpectedError — Bungie 500 blips, often succeeds on retry
         1688 // DestinyDirectBabelClientTimeout
     ])
 
@@ -89,6 +90,8 @@ export default abstract class BaseBungieClient implements BungieClientProtocol {
         5, // SystemDisabled
         18, // InvalidParameters — bad membership/type combos on optional lookups (e.g. clans)
         686, // ClanNotFound
-        1653 // PGCRNotFound
+        1618, // DestinyUnexpectedError — Bungie-side 500, surfaced in UI as load failure
+        1653, // PGCRNotFound
+        1688 // DestinyDirectBabelClientTimeout
     ])
 }
