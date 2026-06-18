@@ -191,6 +191,17 @@ function isTransientTrpcHtmlError(error: unknown): boolean {
     return message.includes("Unexpected token '<'") || message.includes("<!DOCTYPE")
 }
 
+/** Turso/libSQL blips — retried via saferFetch; still skip if all attempts fail. */
+function isTransientTursoPrismaError(error: unknown): boolean {
+    const message = getErrorMessage(error)
+    return (
+        message.includes("SERVER_ERROR") &&
+        (message.includes("HTTP status 502") ||
+            message.includes("HTTP status 503") ||
+            message.includes("HTTP status 504"))
+    )
+}
+
 /** Client fetch failures that often succeed on retry (offline blip, tab sleep, CDN hiccup). */
 export function isRetriableNetworkError(error: unknown): boolean {
     const message = getErrorMessage(error)
@@ -278,6 +289,10 @@ export function shouldSkipCapture(error: unknown): boolean {
     }
 
     if (isTransientTrpcHtmlError(error)) {
+        return true
+    }
+
+    if (isTransientTursoPrismaError(error)) {
         return true
     }
 
@@ -425,6 +440,15 @@ export function shouldDropClientEvent(event: ErrorEvent): boolean {
     }
 
     if (!hasAppStackFrame && /^Error: \S{1,3}$/.test(text.split("\n")[0] ?? "")) {
+        return true
+    }
+
+    // Minified-chunk parse failures on old browsers / bots (no app frames).
+    if (
+        !hasAppStackFrame &&
+        text.includes("SyntaxError") &&
+        text.includes("Unexpected token '{'")
+    ) {
         return true
     }
 
