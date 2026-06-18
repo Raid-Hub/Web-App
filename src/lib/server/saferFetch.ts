@@ -9,8 +9,13 @@ const retriableErrorCauseStrings = [
     "ECONNRESET",
     "fetch failed",
     "network error",
-    "Connection terminated unexpectedly"
+    "Connection terminated unexpectedly",
+    "HTTP status 502",
+    "HTTP status 503",
+    "HTTP status 504"
 ]
+
+const retriableHttpStatuses = new Set([502, 503, 504])
 
 function collectErrorMessages(err: unknown): string[] {
     const messages: string[] = []
@@ -82,11 +87,24 @@ const fetchWithBodyClone: typeof fetch = async (request, options) => {
     return fetch(request, options)
 }
 
+async function fetchWithRetriableStatuses(
+    request: RequestInfo | URL,
+    options?: RequestInit
+): Promise<Response> {
+    const response = await fetchWithBodyClone(request, options)
+
+    if (retriableHttpStatuses.has(response.status)) {
+        throw new Error(`Server returned HTTP status ${response.status}`)
+    }
+
+    return response
+}
+
 export const saferFetch = withRetries(
     {
         maxAttempts: 5,
         backoff: attempt => attempt ** 2 * 5,
         retryOn: isRetriableFetchError
     },
-    fetchWithBodyClone
+    fetchWithRetriableStatuses
 )
