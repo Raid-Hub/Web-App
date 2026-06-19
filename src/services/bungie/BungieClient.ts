@@ -92,8 +92,11 @@ export default abstract class BaseBungieClient implements BungieClientProtocol {
         18, // InvalidParameters — bad membership/type combos on optional lookups (e.g. clans)
         217, // UserCannotResolveCentralAccount — player search miss
         686, // ClanNotFound
+        1600, // DestinyAccountAcquisitionFailure — no linked Destiny account
+        1601, // DestinyAccountNotFound — deleted/wrong-platform membership on profile
         1618, // DestinyUnexpectedError — Bungie-side 500, surfaced in UI as load failure
         1653, // PGCRNotFound
+        1665, // DestinyPrivacyRestriction — private profile
         1688 // DestinyDirectBabelClientTimeout
     ])
 }
