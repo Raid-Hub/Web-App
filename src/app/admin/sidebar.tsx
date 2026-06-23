@@ -1,6 +1,14 @@
 "use client"
 
-import { Badge, BadgeCheck, Database, FileWarning, Settings, type LucideProps } from "lucide-react"
+import {
+    Badge,
+    BadgeCheck,
+    Database,
+    FileWarning,
+    Settings,
+    UserSearch,
+    type LucideProps
+} from "lucide-react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { useSession } from "~/hooks/app/useSession"
@@ -25,6 +33,11 @@ const adminRoutes: AdminRoute[] = [
         name: "Reporting",
         path: "/reporting",
         Icon: FileWarning
+    },
+    {
+        name: "Player Standing",
+        path: "/players",
+        Icon: UserSearch
     },
     {
         name: "Badges",
