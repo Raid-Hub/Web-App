@@ -419,8 +419,11 @@ export function isDexieManifestStorageError(err: unknown): boolean {
     return (
         name === "BulkError" ||
         name === "MissingAPIError" ||
+        name === "TypeError" ||
         message.includes("Destiny manifest update failed") ||
-        message.includes("bulkPut()")
+        message.includes("bulkPut()") ||
+        message === "e is undefined" ||
+        message === "r is undefined"
     )
 }
 
@@ -470,6 +473,21 @@ export async function recoverDexieDatabase(db: CustomDexie): Promise<void> {
 }
 
 const dexieDB = new CustomDexie()
+
+if (typeof window !== "undefined") {
+    window.addEventListener("unhandledrejection", event => {
+        if (
+            !isDexieManifestStorageError(event.reason) &&
+            !isDexieConnectionLostError(event.reason)
+        ) {
+            return
+        }
+
+        event.preventDefault()
+        console.warn("Dexie unhandled rejection — recovering in-memory", event.reason)
+        void recoverDexieDatabase(dexieDB)
+    })
+}
 
 export const useDexie = () => {
     return dexieDB

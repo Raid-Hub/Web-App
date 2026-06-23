@@ -1,14 +1,24 @@
 import { type Metadata } from "next"
+import { notFound } from "next/navigation"
 import { ClanComponent } from "~/components/__deprecated__/clan/Clan"
 import { PageWrapper } from "~/components/PageWrapper"
 import { baseMetadata } from "~/lib/metadata"
 import { fixClanName } from "~/util/destiny/fixClanName"
+import { isValidClanGroupId } from "~/util/destiny/routeParams"
 import { getClan, type PageProps } from "../server"
 
 export const revalidate = 0
 
 export default async function Page({ params }: PageProps) {
+    if (!isValidClanGroupId(params.groupId)) {
+        notFound()
+    }
+
     const clan = await getClan(params.groupId)
+    if (!clan) {
+        notFound()
+    }
+
     return (
         <PageWrapper>
             <ClanComponent clan={clan} groupId={params.groupId} />
@@ -17,6 +27,10 @@ export default async function Page({ params }: PageProps) {
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+    if (!isValidClanGroupId(params.groupId)) {
+        return {}
+    }
+
     const clan = await getClan(params.groupId)
 
     if (!clan) return {}

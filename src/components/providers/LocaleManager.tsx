@@ -5,6 +5,15 @@ import { type DestinyManifestLanguage } from "bungie-net-core/manifest"
 import { userAgentFromString } from "next/server"
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react"
 
+function isSupportedLocaleTag(locale: string): boolean {
+    const trimmed = locale.trim()
+    return trimmed.length > 0 && /^[a-z]{2,3}(-[a-z0-9]+)*$/i.test(trimmed)
+}
+
+function sanitizeNavigatorLocales(locales: readonly string[]): string[] {
+    return locales.filter(isSupportedLocaleTag)
+}
+
 const d2ManifestLocales = [
     "en",
     "fr",
@@ -37,9 +46,12 @@ export function LocaleManager(props: { children: ReactNode } | null) {
     const [manifestLanguage, setManifestLanguage] = useState<DestinyManifestLanguage>("en")
 
     useEffect(() => {
-        setLocale(navigator.language)
+        const sanitizedLanguages = sanitizeNavigatorLocales(navigator.languages)
+        const preferredLocale = sanitizeNavigatorLocales([navigator.language])[0] ?? "en-US"
+
+        setLocale(preferredLocale)
         const matchedLanguage = match(
-            navigator.languages,
+            sanitizedLanguages.length > 0 ? sanitizedLanguages : [preferredLocale],
             d2ManifestLocales.map(locale => {
                 const transformedLocale = locale
                     .replace(/-chs$/i, "-Hans")

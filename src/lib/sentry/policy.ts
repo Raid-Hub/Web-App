@@ -38,7 +38,9 @@ const HANDLED_RAIDHUB_ERROR_CODES = new Set<RaidHubErrorCode>([
     "PathValidationError",
     "QueryValidationError",
     "BodyValidationError",
-    "BungieServiceOffline"
+    "BungieServiceOffline",
+    "InternalServerError",
+    "ServiceUnavailableError"
 ])
 
 const HANDLED_TRPC_ERROR_CODES = new Set(["NOT_FOUND", "UNAUTHORIZED", "FORBIDDEN", "BAD_REQUEST"])
@@ -191,6 +193,12 @@ function isTransientTrpcHtmlError(error: unknown): boolean {
     return message.includes("Unexpected token '<'") || message.includes("<!DOCTYPE")
 }
 
+function isTransientBungieHtmlError(error: unknown): boolean {
+    return (
+        error instanceof BungieHTMLError && BaseBungieClient.TransientHttpStatuses.has(error.status)
+    )
+}
+
 /** Turso/libSQL blips — retried via saferFetch; still skip if all attempts fail. */
 function isTransientTursoPrismaError(error: unknown): boolean {
     const message = getErrorMessage(error)
@@ -285,6 +293,10 @@ export function shouldSkipCapture(error: unknown): boolean {
     }
 
     if (isExpectedBungiePlatformError(error)) {
+        return true
+    }
+
+    if (isTransientBungieHtmlError(error)) {
         return true
     }
 

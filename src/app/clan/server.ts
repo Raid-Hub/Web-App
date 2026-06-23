@@ -16,7 +16,7 @@ const clanClient = new ServerBungieClient({
     timeout: 6000
 })
 
-const expectedErrorCodes = [1, 621, 622, 686]
+const expectedErrorCodes = [1, 7, 621, 622, 686]
 
 export const getClan = reactRequestDedupe(async (groupId: string) =>
     getGroup(clanClient, { groupId })

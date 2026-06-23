@@ -109,8 +109,16 @@ export const prefetchDestinyLinkedProfiles = reactRequestDedupe((membershipId: s
         .catch(e => {
             if (e instanceof BungiePlatformError) {
                 return null
-            } else {
-                throw e
             }
+
+            if (e instanceof DOMException && e.name === "AbortError") {
+                return null
+            }
+
+            if (e instanceof Error && (e.name === "AbortError" || e.message.includes("aborted"))) {
+                return null
+            }
+
+            throw e
         })
 )
