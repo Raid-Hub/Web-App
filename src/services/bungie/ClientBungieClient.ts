@@ -1,7 +1,7 @@
 import type { BungieFetchConfig } from "bungie-net-core"
 import EventEmitter from "events"
 import { withBungieAuthFailure } from "~/lib/sentry/context"
-import { BungieHTTPError, BungiePlatformError } from "~/models/BungieAPIError"
+import { BungieHTMLError, BungieHTTPError, BungiePlatformError } from "~/models/BungieAPIError"
 import BaseBungieClient from "./BungieClient"
 
 export default class ClientBungieClient extends BaseBungieClient {
@@ -96,9 +96,17 @@ export default class ClientBungieClient extends BaseBungieClient {
                 })
             } else if (
                 err instanceof BungiePlatformError &&
-                ClientBungieClient.RetryableErrorCodes.has(err.ErrorCode)
+                ClientBungieClient.RetryableErrorCodes.has(err.ErrorCode) &&
+                !url.searchParams.has("retry")
             ) {
                 url.searchParams.set("retry", err.cause.ErrorStatus)
+                return this.request(url, payload)
+            } else if (
+                err instanceof BungieHTMLError &&
+                ClientBungieClient.TransientHttpStatuses.has(err.status) &&
+                !url.searchParams.has("retry")
+            ) {
+                url.searchParams.set("retry", `html-${err.status}`)
                 return this.request(url, payload)
             } else {
                 throw err

@@ -1,5 +1,8 @@
 import * as Sentry from "@sentry/nextjs"
+import { installBrowserCompatShims } from "./lib/browser-compat"
 import { beforeSendClientEvent } from "./lib/sentry/client"
+
+installBrowserCompatShims()
 import {
     getSentryDsnForClient,
     getSentryEnvironment,

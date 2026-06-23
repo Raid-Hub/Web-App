@@ -9,6 +9,7 @@ import {
     prefetchRaidHubPlayerBasic
 } from "~/lib/profile/prefetch"
 import { type ProfileProps } from "~/lib/profile/types"
+import { isValidDestinyMembershipId } from "~/util/destiny/routeParams"
 import { bungieProfileIconUrl } from "~/util/destiny"
 
 export const revalidate = 0
@@ -19,7 +20,27 @@ type PageProps = {
     }
 }
 
+function isBenignLinkedProfilesError(err: unknown): boolean {
+    if (err instanceof DOMException && err.name === "AbortError") {
+        return true
+    }
+
+    if (err instanceof Error) {
+        return (
+            err.name === "AbortError" ||
+            err.message.includes("aborted") ||
+            err.message.includes("Operation failed after")
+        )
+    }
+
+    return false
+}
+
 export default async function Page({ params }: PageProps) {
+    if (!isValidDestinyMembershipId(params.destinyMembershipId)) {
+        notFound()
+    }
+
     // Find the app profile by id if it exists
     const [appProfile, basicProfile] = await Promise.all([
         getUniqueProfileByDestinyMembershipId(params.destinyMembershipId),
@@ -32,7 +53,13 @@ export default async function Page({ params }: PageProps) {
 
         const linkedProfilesResponse = await prefetchDestinyLinkedProfiles(
             params.destinyMembershipId
-        )
+        ).catch(err => {
+            if (isBenignLinkedProfilesError(err)) {
+                return null
+            }
+
+            throw err
+        })
         const applicableMemberships = linkedProfilesResponse?.profiles.filter(
             m => m.applicableMembershipTypes.length > 0
         )
@@ -85,6 +112,15 @@ export default async function Page({ params }: PageProps) {
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+    if (!isValidDestinyMembershipId(params.destinyMembershipId)) {
+        return {
+            robots: {
+                follow: true,
+                index: false
+            }
+        }
+    }
+
     const [profile, basic] = await Promise.all([
         getUniqueProfileByDestinyMembershipId(params.destinyMembershipId),
         prefetchRaidHubPlayerBasic(params.destinyMembershipId)

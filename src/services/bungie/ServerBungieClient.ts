@@ -3,7 +3,7 @@ import "server-only"
 import type { BungieFetchConfig } from "bungie-net-core"
 import { saferFetch } from "~/lib/server/saferFetch"
 import { baseUrl } from "~/lib/server/utils"
-import { BungiePlatformError } from "~/models/BungieAPIError"
+import { BungieHTMLError, BungiePlatformError } from "~/models/BungieAPIError"
 import BaseBungieClient from "~/services/bungie/BungieClient"
 
 export default class ServerBungieClient extends BaseBungieClient {
@@ -67,9 +67,19 @@ export default class ServerBungieClient extends BaseBungieClient {
                 console.error(err)
                 if (
                     err instanceof BungiePlatformError &&
-                    ServerBungieClient.RetryableErrorCodes.has(err.ErrorCode)
+                    ServerBungieClient.RetryableErrorCodes.has(err.ErrorCode) &&
+                    !url.searchParams.has("retry")
                 ) {
                     url.searchParams.set("retry", err.cause.ErrorStatus)
+                    return this.request(url, payload) as T
+                }
+
+                if (
+                    err instanceof BungieHTMLError &&
+                    ServerBungieClient.TransientHttpStatuses.has(err.status) &&
+                    !url.searchParams.has("retry")
+                ) {
+                    url.searchParams.set("retry", `html-${err.status}`)
                     return this.request(url, payload) as T
                 }
             }

@@ -223,6 +223,12 @@
     cursor: pointer;
 }
 
+.dot > circle,
+.dot > polygon,
+.dot > svg {
+    pointer-events: none;
+}
+
 .dot:hover circle {
     r: 8;
 }

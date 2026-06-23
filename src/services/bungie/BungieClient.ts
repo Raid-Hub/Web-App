@@ -83,11 +83,16 @@ export default abstract class BaseBungieClient implements BungieClientProtocol {
     static readonly RetryableErrorCodes = new Set<PlatformErrorCodes>([
         1672, // DestinyThrottledByGameServer,
         1618, // DestinyUnexpectedError — Bungie 500 blips, often succeeds on retry
+        1626, // DestinyInternalError — transient Bungie 500 on clan/profile lookups
         1688 // DestinyDirectBabelClientTimeout
     ])
 
+    /** Cloudflare / Bungie HTML error pages — retry once before surfacing. */
+    static readonly TransientHttpStatuses = new Set([502, 503, 504, 520, 522, 524])
+
     static readonly ExpectedErrorCodes = new Set<PlatformErrorCodes>([
         5, // SystemDisabled
+        7, // ParameterParseFailure — invalid clan/group id in URL
         8, // ParameterInvalidRange — bad membership/type combos on clan lookups
         18, // InvalidParameters — bad membership/type combos on optional lookups (e.g. clans)
         217, // UserCannotResolveCentralAccount — player search miss
@@ -95,6 +100,7 @@ export default abstract class BaseBungieClient implements BungieClientProtocol {
         1600, // DestinyAccountAcquisitionFailure — no linked Destiny account
         1601, // DestinyAccountNotFound — deleted/wrong-platform membership on profile
         1618, // DestinyUnexpectedError — Bungie-side 500, surfaced in UI as load failure
+        1626, // DestinyInternalError — Bungie-side blip on optional clan lookups
         1653, // PGCRNotFound
         1665, // DestinyPrivacyRestriction — private profile
         1688 // DestinyDirectBabelClientTimeout
