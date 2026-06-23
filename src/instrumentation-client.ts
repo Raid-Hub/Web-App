@@ -1,8 +1,6 @@
 import * as Sentry from "@sentry/nextjs"
 import { installBrowserCompatShims } from "./lib/browser-compat"
 import { beforeSendClientEvent } from "./lib/sentry/client"
-
-installBrowserCompatShims()
 import {
     getSentryDsnForClient,
     getSentryEnvironment,
@@ -10,6 +8,8 @@ import {
     getTracesSampleRate
 } from "./lib/sentry/env"
 import { sentrySharedOptions } from "./lib/sentry/shared-options"
+
+installBrowserCompatShims()
 
 const dsn = getSentryDsnForClient()
 

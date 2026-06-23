@@ -195,8 +195,7 @@ function isTransientTrpcHtmlError(error: unknown): boolean {
 
 function isTransientBungieHtmlError(error: unknown): boolean {
     return (
-        error instanceof BungieHTMLError &&
-        BaseBungieClient.TransientHttpStatuses.has(error.status)
+        error instanceof BungieHTMLError && BaseBungieClient.TransientHttpStatuses.has(error.status)
     )
 }
 

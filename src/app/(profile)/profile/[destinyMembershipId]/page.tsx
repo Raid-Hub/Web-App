@@ -9,8 +9,8 @@ import {
     prefetchRaidHubPlayerBasic
 } from "~/lib/profile/prefetch"
 import { type ProfileProps } from "~/lib/profile/types"
-import { isValidDestinyMembershipId } from "~/util/destiny/routeParams"
 import { bungieProfileIconUrl } from "~/util/destiny"
+import { isValidDestinyMembershipId } from "~/util/destiny/routeParams"
 
 export const revalidate = 0
 

@@ -3,8 +3,8 @@ import { notFound } from "next/navigation"
 import { ClanComponent } from "~/components/__deprecated__/clan/Clan"
 import { PageWrapper } from "~/components/PageWrapper"
 import { baseMetadata } from "~/lib/metadata"
-import { isValidClanGroupId } from "~/util/destiny/routeParams"
 import { fixClanName } from "~/util/destiny/fixClanName"
+import { isValidClanGroupId } from "~/util/destiny/routeParams"
 import { getClan, type PageProps } from "../server"
 
 export const revalidate = 0
