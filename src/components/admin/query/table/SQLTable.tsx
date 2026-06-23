@@ -1,11 +1,10 @@
 "use client"
 
-import Image from "next/image"
-import Link from "next/link"
-import { useMemo, useRef, useState } from "react"
-import styled from "styled-components"
-import { Table } from "~/components/Table"
-import { Panel } from "~/components/__deprecated__/Panel"
+import { useMemo, useState } from "react"
+import { Badge } from "~/shad/badge"
+import { Button } from "~/shad/button"
+import { Card, CardContent, CardHeader, CardTitle } from "~/shad/card"
+import { Table, TableBody, TableHeader, TableRow } from "~/shad/table"
 import { Cell } from "./Cell"
 import { ColumnLabel } from "./ColumnLabel"
 import { ColumnFormats } from "./formats"
@@ -19,7 +18,6 @@ export function SQLTable<T extends string[]>({
     columnLabels: T
     rows: readonly Record<T[number], unknown>[]
 }) {
-    const ref = useRef<HTMLDivElement>(null)
     const [isEditing, setIsEditing] = useState(false)
     const [fns, setFns] = useState<
         Record<string, (typeof ColumnFormats)[keyof typeof ColumnFormats]>
@@ -36,26 +34,24 @@ export function SQLTable<T extends string[]>({
     }, [columnLabels, setFns])
 
     return (
-        <form onSubmit={e => e.preventDefault()}>
-            <button
-                onClick={() => setIsEditing(isEditing => !isEditing)}
-                type={isEditing ? "submit" : "button"}>
-                {isEditing ? "Save" : "Edit"}
-            </button>
-
-            <TableArea ref={ref}>
-                <Image
-                    src="/logo.png"
-                    alt="logo"
-                    width={30}
-                    height={30}
-                    style={{ position: "absolute", top: 10, left: 10 }}
-                />
-                <h2 style={{ textAlign: "center", marginTop: 0 }}>{title}</h2>
-                <div>
-                    <Table $align>
-                        <thead>
-                            <tr>
+        <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0">
+                <div className="flex items-center gap-4">
+                    <CardTitle>{title}</CardTitle>
+                    <Badge variant="outline">{rows.length} rows</Badge>
+                </div>
+                <Button
+                    onClick={() => setIsEditing(isEditing => !isEditing)}
+                    variant={isEditing ? "default" : "outline"}
+                    size="sm">
+                    {isEditing ? "Save" : "Edit"}
+                </Button>
+            </CardHeader>
+            <CardContent>
+                <div className="overflow-auto rounded-md border border-white/10">
+                    <Table>
+                        <TableHeader>
+                            <TableRow>
                                 {columnLabels.map((label, idx) => (
                                     <ColumnLabel
                                         key={idx}
@@ -64,11 +60,11 @@ export function SQLTable<T extends string[]>({
                                         setColumnFn={setColumnFn[label]}
                                     />
                                 ))}
-                            </tr>
-                        </thead>
-                        <tbody>
+                            </TableRow>
+                        </TableHeader>
+                        <TableBody>
                             {rows.map((row, idx) => (
-                                <tr key={idx}>
+                                <TableRow key={idx}>
                                     {Object.values(row).map((value, i) => (
                                         <Cell
                                             key={i}
@@ -76,44 +72,12 @@ export function SQLTable<T extends string[]>({
                                             Formatter={fns[columnLabels[i]] ?? ColumnFormats.string}
                                         />
                                     ))}
-                                </tr>
+                                </TableRow>
                             ))}
-                        </tbody>
+                        </TableBody>
                     </Table>
-                    <Attribution>
-                        <span>Source: </span>
-                        <Link href="https://raidhub.io">raidhub.io</Link>
-                    </Attribution>
                 </div>
-            </TableArea>
-        </form>
+            </CardContent>
+        </Card>
     )
 }
-
-const TableArea = styled(Panel)`
-    position: relative;
-    padding: 2em;
-
-    background: linear-gradient(
-        78deg,
-        rgba(1, 0, 17, 1) 0%,
-        rgba(1, 0, 17, 1) 25%,
-        rgb(19, 1, 10) 48%,
-        rgba(1, 0, 17, 1) 91%,
-        rgba(19, 3, 1, 1) 100%
-    );
-`
-
-const Attribution = styled.div`
-    font-size: 0.8em;
-    text-align: left;
-
-    margin-top: 1em;
-
-    font-style: italic;
-
-    & a {
-        letter-spacing: 0.04em;
-        color: ${({ theme }) => theme.colors.text.orange};
-    }
-`
