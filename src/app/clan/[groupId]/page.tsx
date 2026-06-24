@@ -28,12 +28,14 @@ export default async function Page({ params }: PageProps) {
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
     if (!isValidClanGroupId(params.groupId)) {
-        return {}
+        notFound()
     }
 
     const clan = await getClan(params.groupId)
 
-    if (!clan) return {}
+    if (!clan) {
+        notFound()
+    }
 
     const clanName = fixClanName(clan.detail.name)
 

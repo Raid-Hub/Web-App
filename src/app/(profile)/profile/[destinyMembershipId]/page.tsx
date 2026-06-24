@@ -113,12 +113,7 @@ export default async function Page({ params }: PageProps) {
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
     if (!isValidDestinyMembershipId(params.destinyMembershipId)) {
-        return {
-            robots: {
-                follow: true,
-                index: false
-            }
-        }
+        notFound()
     }
 
     const [profile, basic] = await Promise.all([
