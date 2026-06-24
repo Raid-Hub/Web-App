@@ -1,4 +1,5 @@
 import type { Metadata } from "next"
+import { notFound } from "next/navigation"
 
 import { PageWrapper } from "~/components/PageWrapper"
 import PGCR from "~/components/pgcr/pgcr-view"
@@ -10,6 +11,7 @@ import {
     tryPrefetchActivity
 } from "~/lib/pgcr/server"
 import { type PGCRPageProps } from "~/lib/pgcr/types"
+import { isValidInstanceId } from "~/util/destiny/routeParams"
 
 export const revalidate = 0
 
@@ -24,19 +26,14 @@ export default async function Page({ params }: PGCRPageProps) {
 }
 
 export async function generateMetadata({ params }: PGCRPageProps): Promise<Metadata> {
-    if (!/^\d+$/.test(params.instanceId)) {
-        return {}
+    if (!isValidInstanceId(params.instanceId)) {
+        notFound()
     }
 
     const activity = await tryPrefetchActivity(params.instanceId)
 
     if (!activity) {
-        return {
-            robots: {
-                follow: true,
-                index: false
-            }
-        }
+        notFound()
     }
 
     const { idTitle, ogTitle, description } = getMetaData(activity)
