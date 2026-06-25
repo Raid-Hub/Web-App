@@ -76,6 +76,7 @@ const Dot = ({ centerX, activity, centerY, isTargeted, setTooltip, tooltipData }
     const selectedFeats = activity.skullHashes.filter(hash => feats.some(f => f.skullHash === hash))
     const isChallenging =
         elevatedDifficulties.includes(activity.versionId) || selectedFeats.length >= 3
+    const hitRadius = RADIUS * 1.5
 
     return (
         <Link
@@ -128,6 +129,14 @@ const Dot = ({ centerX, activity, centerY, isTargeted, setTooltip, tooltipData }
                     cy={centerY}
                 />
             )}
+            <rect
+                className={styles["dot-hit"]}
+                x={centerX - hitRadius}
+                y={centerY - hitRadius}
+                width={hitRadius * 2}
+                height={hitRadius * 2}
+                fill="transparent"
+            />
         </Link>
     )
 }
