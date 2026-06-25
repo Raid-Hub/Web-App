@@ -229,10 +229,6 @@
     pointer-events: none;
 }
 
-.dot > .dot-hit {
-    pointer-events: all;
-}
-
 .dot:hover circle {
     r: 8;
 }
