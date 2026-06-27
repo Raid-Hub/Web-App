@@ -96,9 +96,15 @@ export default async function Page({ params }: DynamicParams) {
     }
     const category = params.category === "all" ? undefined : params.category
 
-    const categoryId = SpeedrunVariables[raid.path]?.categoryId
-    if (!categoryId) {
+    const speedrunData = SpeedrunVariables[raid.path]
+    if (!speedrunData?.categoryId) {
         notFound()
+    }
+
+    if (speedrunData.variable && params.category !== "all") {
+        if (!(params.category in speedrunData.variable.values)) {
+            notFound()
+        }
     }
 
     return (
