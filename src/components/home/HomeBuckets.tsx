@@ -307,7 +307,7 @@ function buildRaidSections(
         }
     } else {
         speedrun.push({
-            href: `/leaderboards/team/${path}/speedrun/any`,
+            href: `/leaderboards/team/${path}/speedrun/all`,
             label: "Any %"
         })
     }
