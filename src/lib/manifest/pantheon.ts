@@ -2,6 +2,16 @@ import type { RaidHubManifestResponse, RaidHubVersionDefinition } from "~/servic
 
 export const PANTHEON_COMMUNITY_RACE_VERSION_ID = 134
 
+/** Pantheon v1 (activity 101) encounter version IDs. */
+export const PANTHEON_V1_ORYX_VERSION_ID = 129
+export const PANTHEON_V1_RHULK_VERSION_ID = 130
+export const PANTHEON_V1_NEZAREC_VERSION_ID = 131
+
+/** Pantheon v2 (activity 102) encounter version IDs. */
+export const PANTHEON_V2_CALUS_VERSION_ID = 132
+export const PANTHEON_V2_MORGETH_VERSION_ID = 133
+export const PANTHEON_V2_INSURRECTION_VERSION_ID = 134
+
 /** Pantheon checkpoint labels drop the trailing difficulty adjective, e.g. "Oryx Exalted" -> "Oryx". */
 export const getPantheonCheckpointName = (versionName: string): string | null => {
     const parts = versionName.trim().split(/\s+/).filter(Boolean)

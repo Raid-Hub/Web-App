@@ -1,6 +1,14 @@
 import type { Collection } from "@discordjs/collection"
 import { useCallback, useMemo } from "react"
 import { useRaidHubManifest } from "~/components/providers/RaidHubManifestManager"
+import {
+    PANTHEON_V1_NEZAREC_VERSION_ID,
+    PANTHEON_V1_ORYX_VERSION_ID,
+    PANTHEON_V1_RHULK_VERSION_ID,
+    PANTHEON_V2_CALUS_VERSION_ID,
+    PANTHEON_V2_INSURRECTION_VERSION_ID,
+    PANTHEON_V2_MORGETH_VERSION_ID
+} from "~/lib/manifest/pantheon"
 import { type RaidHubInstance, type RaidHubInstanceForPlayer } from "~/services/raidhub/types"
 import { includedIn } from "~/util/helpers"
 
@@ -133,14 +141,55 @@ const useGetWeight = () => {
 const soloTaniksFirst = new Date("2024-09-12T17:00:00Z")
 const trioFreshSalvationsEdgeAllowed = new Date("2025-01-01T00:00:00Z")
 
-function isIllegalTag({ activityId, dateCompleted }: RaidHubInstance, weight: number): boolean {
+function isIllegalTag(
+    { activityId, versionId, dateCompleted }: RaidHubInstance,
+    weight: number
+): boolean {
     switch (activityId) {
+        case 101:
+            // Oryx Exalted — solo fresh needs a second player
+            if (versionId === PANTHEON_V1_ORYX_VERSION_ID) {
+                return bitfieldMatches(weight, Solo | Fresh)
+            }
+            // Rhulk Indomitable — fresh lowman needs trio
+            if (versionId === PANTHEON_V1_RHULK_VERSION_ID) {
+                return bitfieldMatches(weight, Duo | Fresh)
+            }
+            // Nezarec Sublime — fresh lowman needs trio
+            if (versionId === PANTHEON_V1_NEZAREC_VERSION_ID) {
+                return bitfieldMatches(weight, Duo | Fresh)
+            }
+            return false
+        case 102:
+            if (!bitfieldMatches(weight, Solo)) {
+                return false
+            }
+            // Calus Resplendent — shadow realm plates require multiple players
+            if (versionId === PANTHEON_V2_CALUS_VERSION_ID) {
+                return true
+            }
+            // Morgeth Surpassing — ogre control and wipe recovery require multiple players
+            if (versionId === PANTHEON_V2_MORGETH_VERSION_ID) {
+                return true
+            }
+            // Insurrection Prime Revolutionary — map routing and capacitor duties require multiple players
+            if (versionId === PANTHEON_V2_INSURRECTION_VERSION_ID) {
+                return true
+            }
+            return false
         case 16:
             // epic desert perpetual - allow solo epic tags
             return false
         case 15:
-            // normal desert perpetual - don't allow solo tags
-            return bitfieldMatches(weight, Solo)
+            // fracturing encounter cannot be completed solo
+            if (bitfieldMatches(weight, Solo)) {
+                return true
+            }
+            // worldline mechanics still need a third player
+            if (bitfieldMatches(weight, Duo) && !bitfieldMatches(weight, Solo)) {
+                return true
+            }
+            return false
         case 14:
             // trio fresh - allow after 1/1/25
             return (
