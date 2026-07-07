@@ -46,7 +46,7 @@ export default abstract class BaseBungieClient implements BungieClientProtocol {
             } else if (contentType?.includes("text/html")) {
                 throw new BungieHTMLError(text, res.status, url.pathname)
             }
-            throw new BungieUnkownHTTPError(res.clone())
+            throw new BungieUnkownHTTPError(res)
         }
 
         return JSON.parse(text) as T
