@@ -101,6 +101,11 @@ export default async function Page({ params }: DynamicParams) {
         notFound()
     }
 
+    const variable = SpeedrunVariables[raid.path]?.variable
+    if (category && (!variable || !variable.values[category as RTABoardCategory])) {
+        notFound()
+    }
+
     return (
         <Leaderboard
             pageProps={{
