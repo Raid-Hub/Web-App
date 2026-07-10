@@ -371,6 +371,7 @@ export function shouldDropClientEvent(event: ErrorEvent): boolean {
     const text = getEventErrorText(event)
 
     if (
+        text.includes("Cannot read properties of undefined (reading 'env')") ||
         text.includes("Database deleted by request of the user") ||
         text.includes("OpenFailedError") ||
         text.includes("Connection to Indexed Database server lost") ||
