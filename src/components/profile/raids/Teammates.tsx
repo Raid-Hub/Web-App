@@ -1,7 +1,7 @@
 "use client"
 
 import { useQuery } from "@tanstack/react-query"
-import { useSession } from "next-auth/react"
+import { useSession } from "~/hooks/app/useSession"
 import Image from "next/image"
 import Link from "next/link"
 import styled from "styled-components"
