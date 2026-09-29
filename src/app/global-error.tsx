@@ -5,8 +5,7 @@ import { PageWrapper } from "~/components/PageWrapper"
 import { captureClientException } from "~/lib/sentry/capture"
 
 export default function GlobalError({
-    error,
-    reset
+    error
 }: {
     error: Error & { digest?: string }
     reset: () => void
@@ -27,7 +26,12 @@ export default function GlobalError({
             <body>
                 <PageWrapper>
                     <h2>Something went wrong!</h2>
-                    <button onClick={() => reset()}>Try again</button>
+                    {/*
+                     * Full reload instead of reset(): re-initialising the App Router in place
+                     * after a broken RSC stream can crash with a null router cache
+                     * ("Cannot read properties of null (reading 'get')").
+                     */}
+                    <button onClick={() => window.location.reload()}>Try again</button>
                 </PageWrapper>
             </body>
         </html>

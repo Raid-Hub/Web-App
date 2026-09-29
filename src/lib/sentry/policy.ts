@@ -123,17 +123,39 @@ function isBenignDataCloneError(error: unknown): boolean {
     return error instanceof Error && error.name === "DataCloneError"
 }
 
+/**
+ * Next.js App Router crash when the router is re-initialised (e.g. global-error `reset()`
+ * after a broken RSC stream) with a null cache node: `fillLazyItemsTillLeafWithHead` calls
+ * `newCache.parallelRoutes.get()` on null.
+ *
+ * - Safari/Firefox messages name the property (`parallelRoutes`).
+ * - Chrome only says "Cannot read properties of null (reading 'get')", so additionally
+ *   require the router-init call site (React `useMemo` / the Next.js function) in the stack.
+ */
+function isNextRouterNullCacheError(message: string, stack: string | undefined): boolean {
+    if (message.includes("parallelRoutes")) {
+        return true
+    }
+
+    return (
+        message.includes("Cannot read properties of null (reading 'get')") &&
+        !!stack &&
+        (stack.includes("fillLazyItemsTillLeafWithHead") || stack.includes("useMemo"))
+    )
+}
+
 function isBenignDomMutationError(error: unknown): boolean {
     const message = getErrorMessage(error)
     const name =
         error instanceof DOMException ? error.name : error instanceof Error ? error.name : ""
+    const stack = error instanceof Error ? error.stack : undefined
 
     return (
         (name === "NotFoundError" &&
             (message.includes("removeChild") ||
                 message.includes("The object can not be found here"))) ||
         (name === "TypeError" &&
-            (message.includes("parentNode") || message.includes("parallelRoutes.get")))
+            (message.includes("parentNode") || isNextRouterNullCacheError(message, stack)))
     )
 }
 
@@ -237,6 +259,25 @@ function getEventErrorText(event: ErrorEvent): string {
         event.exception?.values
             ?.map(value => [value.type, value.value].filter(Boolean).join(": "))
             .join(" ") ?? ""
+    )
+}
+
+function getEventStackText(event: ErrorEvent): string {
+    return (
+        event.exception?.values
+            ?.flatMap(value => value.stacktrace?.frames ?? [])
+            .map(frame => [frame.function, frame.filename].filter(Boolean).join(" "))
+            .join("\n") ?? ""
+    )
+}
+
+function isNextRouterNullCacheEvent(event: ErrorEvent): boolean {
+    return (
+        event.exception?.values?.some(
+            value =>
+                value.type === "TypeError" &&
+                isNextRouterNullCacheError(value.value ?? "", getEventStackText(event))
+        ) ?? false
     )
 }
 
@@ -381,7 +422,7 @@ export function shouldDropClientEvent(event: ErrorEvent): boolean {
         text.includes("Can't find variable: indexedDB") ||
         text.includes("Destiny manifest update failed") ||
         (text.includes("BulkError") && text.includes("bulkPut()"))
-    ) {
+        isNextRouterNullCacheEvent(event) ||
         return true
     }
 
