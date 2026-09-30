@@ -1,5 +1,5 @@
 import { animate } from "framer-motion"
-import Link from "next/link"
+import { useRouter } from "next/navigation"
 import { useCallback, useEffect, useRef, type MouseEvent } from "react"
 import RaidSkull from "~/components/icons/RaidSkull"
 import { useRaidCardContext } from "~/components/profile/raids/RaidCardContext"
@@ -24,7 +24,8 @@ const Dot = ({ centerX, activity, centerY, isTargeted, setTooltip, tooltipData }
     const { raidId } = useRaidCardContext()
     const { getActivityDefinition } = useRaidHubManifest()
     const isRaid = !!getActivityDefinition(raidId)?.isRaid
-    const ref = useRef<HTMLAnchorElement | null>(null)
+    const router = useRouter()
+    const ref = useRef<SVGAElement | null>(null)
     const handleHover = useCallback(
         ({ clientX, currentTarget }: MouseEvent) => {
             // if anything breaks with the tooltip, check this first
@@ -79,10 +80,14 @@ const Dot = ({ centerX, activity, centerY, isTargeted, setTooltip, tooltipData }
     const hitRadius = RADIUS * 1.5
 
     return (
-        <Link
+        <a
             href={`/pgcr/${activity.instanceId}`}
             rel="nofollow"
             ref={ref}
+            onClick={e => {
+                e.preventDefault()
+                router.push(`/pgcr/${activity.instanceId}`)
+            }}
             onMouseEnter={handleHover}
             onMouseLeave={handleMouseLeave}
             className={[styles.dot, styles["dot-hover"]].join(" ")}>
@@ -137,7 +142,7 @@ const Dot = ({ centerX, activity, centerY, isTargeted, setTooltip, tooltipData }
                 height={hitRadius * 2}
                 fill="transparent"
             />
-        </Link>
+        </a>
     )
 }
 
