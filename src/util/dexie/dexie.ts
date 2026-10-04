@@ -152,25 +152,27 @@ class CustomDexie extends Dexie implements Tables {
             })
         }
 
-        const allSettled = await Promise.allSettled([
-            getDestinyManifestComponent(client, {
-                destinyManifest: manifest,
-                tableName: "DestinyInventoryItemLiteDefinition",
-                language: language
-            }).then(items =>
-                this.transaction("rw", this.items, async () => {
-                    const itemsWithHashes = Object.entries(items)
-                        // Weapon & Emblems
-                        .filter(([, item]) => item.itemType === 3 || item.itemType === 14)
-                        .map(([hash, item]) => ({
-                            ...item,
-                            hash: Number(hash)
-                        }))
-                    dispatch(["items", itemsWithHashes])
-                    await this.items.clear()
-                    return this.items.bulkPut(itemsWithHashes)
-                })
-            ),
+        // Fetch and seed the in-memory cache for items outside of any IDB transaction.
+        // The (large) clear + bulkPut is deferred until the other table writes have settled
+        // so it does not compete with them; WebKit may otherwise end the transaction early.
+        const itemsPromise = getDestinyManifestComponent(client, {
+            destinyManifest: manifest,
+            tableName: "DestinyInventoryItemLiteDefinition",
+            language: language
+        }).then(items => {
+            const itemsWithHashes = Object.entries(items)
+                // Weapon & Emblems
+                .filter(([, item]) => item.itemType === 3 || item.itemType === 14)
+                .map(([hash, item]) => ({
+                    ...item,
+                    hash: Number(hash)
+                }))
+            dispatch(["items", itemsWithHashes])
+            return itemsWithHashes
+        })
+
+        const otherSettled = await Promise.allSettled([
+            itemsPromise,
 
             getDestinyManifestComponent(client, {
                 destinyManifest: manifest,
@@ -276,6 +278,19 @@ class CustomDexie extends Dexie implements Tables {
                         )
                 )
             })
+        const [itemsFetchResult] = otherSettled
+        const itemsWriteSettled =
+            itemsFetchResult.status === "fulfilled"
+                ? await Promise.allSettled([
+                      this.transaction("rw", this.items, async () => {
+                          await this.items.clear()
+                          return this.items.bulkPut(itemsFetchResult.value)
+                      })
+                  ])
+                : []
+
+        const allSettled = [...otherSettled, ...itemsWriteSettled]
+
         ] as const)
 
         // Handle errors
@@ -429,7 +444,11 @@ export function isDexieManifestStorageError(err: unknown): boolean {
 
 export function isDexieConnectionLostError(err: unknown): boolean {
     const errors: unknown[] =
-        err instanceof AggregateError
+            error.message.includes("Connection to Indexed Database server lost") ||
+            // WebKit (iOS Safari) ends IDB transactions server-side, e.g.
+            // "Attempt to clear an object store without an in-progress transaction"
+            error.message.includes("without an in-progress transaction") ||
+            (error.name === "UnknownError" && error.message.includes("transaction"))
             ? Array.from(err.errors)
             : Array.isArray(err)
               ? err
