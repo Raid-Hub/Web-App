@@ -3,6 +3,7 @@
 import * as Sentry from "@sentry/nextjs"
 import { useParams, usePathname, useSearchParams } from "next/navigation"
 import { useEffect } from "react"
+import { recoverFromInterruptedRscStream } from "~/lib/sentry/rsc-stream-recovery"
 import { type ErrorBoundaryProps } from "~/types/generic"
 
 export default function ErrorBoundary({ error, reset }: ErrorBoundaryProps) {
@@ -24,6 +25,10 @@ export default function ErrorBoundary({ error, reset }: ErrorBoundaryProps) {
             }
         }
         console.error(err)
+        // Aborted RSC navigation stream: reload once instead of stranding the user here.
+        if (recoverFromInterruptedRscStream(error, "app-error")) {
+            return
+        }
         Sentry.captureException(error, {
             extra: {
                 pathname,
