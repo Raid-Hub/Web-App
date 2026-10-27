@@ -3,6 +3,7 @@
 import { useEffect } from "react"
 import { PageWrapper } from "~/components/PageWrapper"
 import { captureClientException } from "~/lib/sentry/capture"
+import { recoverFromInterruptedRscStream } from "~/lib/sentry/rsc-stream-recovery"
 
 export default function GlobalError({
     error,
@@ -13,6 +14,10 @@ export default function GlobalError({
 }) {
     useEffect(() => {
         console.error(error)
+        // Aborted RSC navigation stream: reload once instead of stranding the user here.
+        if (recoverFromInterruptedRscStream(error, "global-error")) {
+            return
+        }
         captureClientException(error, {
             tags: { capture_source: "global-error" },
             extra: {

@@ -137,10 +137,19 @@ function isBenignDomMutationError(error: unknown): boolean {
     )
 }
 
+/**
+ * RSC flight stream cut off mid-response (e.g. navigating away while a route payload streams).
+ * Chromium reports "Connection closed"; Firefox reports "Error in input stream".
+ */
+export function isInterruptedRscStreamError(error: unknown): boolean {
+    const message = getErrorMessage(error)
+    return message.includes("Connection closed") || message.includes("Error in input stream")
+}
+
 function isBenignRscStreamError(error: unknown): boolean {
     const message = getErrorMessage(error)
     return (
-        message.includes("Connection closed") ||
+        isInterruptedRscStreamError(error) ||
         message.includes("An error occurred in the Server Components render")
     )
 }
@@ -395,7 +404,10 @@ export function shouldDropClientEvent(event: ErrorEvent): boolean {
         return true
     }
 
-    if (!hasAppStackFrame && text.includes("Connection closed")) {
+    if (
+        !hasAppStackFrame &&
+        (text.includes("Connection closed") || text.includes("Error in input stream"))
+    ) {
         return true
     }
 
