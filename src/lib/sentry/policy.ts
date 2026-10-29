@@ -1,4 +1,4 @@
-import type { ErrorEvent } from "@sentry/nextjs"
+import type { ErrorEvent, EventHint } from "@sentry/nextjs"
 import { BungieHTMLError, BungiePlatformError } from "~/models/BungieAPIError"
 import BaseBungieClient from "~/services/bungie/BungieClient"
 import { RaidHubError } from "~/services/raidhub/RaidHubError"
@@ -250,6 +250,37 @@ function eventHasAppStackFrame(event: ErrorEvent): boolean {
     )
 }
 
+const EXTENSION_URL_PATTERN = /(?:chrome|moz|safari(?:-web)?|ms-browser)-extension:\/\//i
+
+function isExtensionFrameFilename(filename: string): boolean {
+    return EXTENSION_URL_PATTERN.test(filename) || filename.startsWith("app:///executors/")
+}
+
+/** True when an error stack string originates from a browser extension script. */
+export function isExtensionOriginStack(stack: unknown): boolean {
+    return typeof stack === "string" && EXTENSION_URL_PATTERN.test(stack)
+}
+
+/**
+ * Third-party browser extension scripts (e.g. `chrome-extension://.../executors/200.js`)
+ * can reject promises in the page context. These are not RaidHub code and are harmless
+ * to the app, so they are dropped when no app frame is present.
+ */
+function eventIsExtensionOnly(event: ErrorEvent, hint?: EventHint): boolean {
+    const original = hint?.originalException
+    if (original instanceof Error && isExtensionOriginStack(original.stack)) {
+        return true
+    }
+
+    const frames =
+        event.exception?.values?.flatMap(value => value.stacktrace?.frames ?? []) ?? []
+    const filenames = frames
+        .map(frame => frame.filename)
+        .filter((filename): filename is string => typeof filename === "string")
+
+    return filenames.length > 0 && filenames.every(isExtensionFrameFilename)
+}
+
 /** Shared skip rules for explicit capture paths (tRPC link, global-error, server). */
 export function shouldSkipCapture(error: unknown): boolean {
     if (isBenignClientAbort(error)) {
@@ -367,7 +398,7 @@ export function shouldSkipAuthServerCapture(err: {
  * Global handler path only (Sentry auto-instrumentation, not captureClientException).
  * App-frame errors always pass through so we can fix real bugs.
  */
-export function shouldDropClientEvent(event: ErrorEvent): boolean {
+export function shouldDropClientEvent(event: ErrorEvent, hint?: EventHint): boolean {
     const text = getEventErrorText(event)
 
     if (
@@ -390,6 +421,11 @@ export function shouldDropClientEvent(event: ErrorEvent): boolean {
     }
 
     const hasAppStackFrame = eventHasAppStackFrame(event)
+
+    // Browser extension scripts rejecting in page context — not app code.
+    if (!hasAppStackFrame && eventIsExtensionOnly(event, hint)) {
+        return true
+    }
 
     if (!hasAppStackFrame && text.includes("AbortError")) {
         return true
