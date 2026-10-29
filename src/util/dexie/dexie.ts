@@ -416,6 +416,11 @@ export function isDexieManifestStorageError(err: unknown): boolean {
     const message = err instanceof Error ? err.message : String(err)
     const name = err instanceof Error ? err.name : ""
 
+    // Rejections thrown by browser extension scripts are not Dexie failures.
+    if (err instanceof Error && /(?:chrome|moz|safari(?:-web)?|ms-browser)-extension:\/\//i.test(err.stack ?? "")) {
+        return false
+    }
+
     return (
         name === "BulkError" ||
         name === "MissingAPIError" ||

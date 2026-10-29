@@ -8,7 +8,7 @@ export function beforeSendClientEvent(event: ErrorEvent, hint: EventHint): Error
         return null
     }
 
-    if (shouldDropClientEvent(event)) {
+    if (shouldDropClientEvent(event, hint)) {
         return null
     }
 
